@@ -6,6 +6,7 @@ import { PlayersModule } from './players/players.module';
 import { GameModule } from './games/games.module';
 import {Player} from './players/player.entity'
 import {Game} from './games/game.entity'
+import { AuthModule } from './auth/auth.module';
 
 require('dotenv').config();
 
@@ -19,7 +20,7 @@ require('dotenv').config();
     database: 'db',
     entities: [Player, Game],
     synchronize: true, //! Setting synchronize: true shouldn't be used in production 
-  }), PlayersModule, GameModule],
+  }), PlayersModule, GameModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

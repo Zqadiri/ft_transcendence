@@ -1,4 +1,5 @@
-import { Entity, Column } from "typeorm";
+import { Entity, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Game } from "src/games/game.entity";
 
 /*
     Marks your model as an entity. Entity is a class which is 
@@ -19,12 +20,24 @@ export class Player {
     @Column({enum:['online', 'offline', 'ongame']})
     status: string;
 
-    @Column()
+    @Column({default: 0})
+    gameCounter: number;
+
+    @Column({default: 0})
     wins: number;
 
     @Column()
     losses: number;
 
-    @Column()
+    @Column({default: 0})
     level: number;
+
+    @Column({default: 'Beginner'})
+    rank: string;
+
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
 }

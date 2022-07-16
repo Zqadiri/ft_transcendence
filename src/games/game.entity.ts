@@ -6,8 +6,9 @@ export class Game{
     id: number;
 
     @Column()
-    winner_score: number;
+    firstPlayerScore: number;
 
     @Column()
-    loser_score: number; 
+    SecondPlayerScore: number;
+
 }
