@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer, Get} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlayersModule } from './players/players.module';
 import { GameModule } from './games/games.module';
-import {Player} from './players/player.entity'
-import {Game} from './games/game.entity'
+import { Player } from './players/player.entity'
+import { Game } from './games/game.entity'
 import { AuthModule } from './auth/auth.module';
+import { AppLoggerMiddleware } from './logger.middleware';
 
 require('dotenv').config();
 
@@ -25,4 +26,9 @@ require('dotenv').config();
   providers: [AppService],
 })
 
-export class AppModule { }
+
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(AppLoggerMiddleware).forRoutes('*');
+  }
+}
