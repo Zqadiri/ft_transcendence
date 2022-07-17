@@ -11,4 +11,5 @@ export class Game{
     @Column()
     SecondPlayerScore: number;
 
+    
 }
