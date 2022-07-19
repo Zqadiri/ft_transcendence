@@ -17,6 +17,9 @@ export class Player {
     @Column()
     avatar: string;
 
+    @Column()
+    email: string;
+
     @Column({enum:['online', 'offline', 'ongame']})
     status: string;
 

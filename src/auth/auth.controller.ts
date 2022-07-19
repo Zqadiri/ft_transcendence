@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { JwtModule } from '@nestjs/jwt';
 /*
     Controllers are responsible for handling incoming 
     requests and returning responses to the client.
@@ -8,4 +9,5 @@ import { AuthService } from './auth.service';
 @Controller('auth')
 export class AuthController {
     constructor(private AuthService: AuthService){}
+
 }
