@@ -11,7 +11,7 @@ export class Player {
     @Column({primary: true})
     id: number;
 
-    @Column({unique: true, })
+    @Column({unique: true })
     username: string;
 
     @Column()

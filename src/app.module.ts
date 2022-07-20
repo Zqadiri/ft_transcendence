@@ -11,6 +11,8 @@ import { AuthModule } from './auth/auth.module';
 import { AppLoggerMiddleware } from './logger.middleware';
 import { AuthService } from './auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { PlayersService } from './players/players.service';
+import { PlayersController } from './players/players.controller';
 
 require('dotenv').config();
 
@@ -19,6 +21,7 @@ require('dotenv').config();
 			envFilePath: '.env',
 			isGlobal: true
 		}),
+		TypeOrmModule.forFeature([]),
 		TypeOrmModule.forRoot({
 			type: 'postgres',
 			host: process.env.POSTGRES_HOST,
@@ -27,10 +30,10 @@ require('dotenv').config();
 			password: process.env.POSTGRES_PASSWORD,
 			database: process.env.POSTGRES_DATABASE,
 			entities: [Player, Game],
-			synchronize: true, //! Setting synchronize: true shouldn't be used in production 
+			synchronize: true,
 		}), PlayersModule, GameModule, AuthModule],
 		controllers: [AppController],
-		providers: [JwtService, AuthService, AppService],
+		providers: [PlayersService, JwtService, AuthService,  AppService],
 	  })
 
 export class AppModule implements NestModule {

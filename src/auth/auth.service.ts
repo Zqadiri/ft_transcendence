@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { Body, HttpException, BadRequestException } from '@nestjs/common';
 import axios, { Axios } from "axios";
 import { JwtService } from '@nestjs/jwt';
 import { CreatePlayerDto } from 'src/players/dto/create-player.dto';
+import { createAvatar } from '@dicebear/avatars';
+import * as style from '@dicebear/big-smile';
 /*
 	TODO: get access token
 	Requesting an access token with the client credentials flow is
@@ -61,9 +64,14 @@ export class AuthService {
 				}
 			})
 			.then((res) => {
-				console.log(res.data);
-				data.email = res.data.email;
-				data.username = res.data.login;
+				const username = res.data.login;
+				const email = res.data.email;
+				const avatar = createAvatar(style, {
+					seed: 'custom-seed',
+					background: 'pink'
+				});
+				data = {username, email, avatar};
+				// console.log(res.data.image_url, res.data.id);
 				return data;
 			})
 			.catch((err) => { 

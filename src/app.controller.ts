@@ -1,11 +1,17 @@
-import { Controller, Get, Query, Redirect, Req } from '@nestjs/common';
+import { Controller, Get, Query, Redirect, Body, HttpException, BadRequestException } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AuthService } from './auth/auth.service';
 import { query, Request } from "express";
+import { CreatePlayerDto } from './players/dto/create-player.dto';
+import { PlayersService } from './players/players.service';
+
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService,
-    private readonly authService: AuthService) {}
+  constructor(
+      private readonly appService: AppService,
+      private readonly playerService: PlayersService,
+      private readonly authService: AuthService
+    ) {}
  
   @Get('/')
   getHello(){
@@ -21,9 +27,20 @@ export class AppController {
   }
 
   @Get('/login')
-  access_token(@Query() query: {code: string}){
-    console.log(`${query.code}`);
-      this.authService.getUserData(query.code);
+  async access_token(@Query() query: {code: string}){
+    let obj : CreatePlayerDto;
+    let userExists;
+    try{
+      obj = await this.authService.getUserData(query.code);
+      if (!obj)
+        throw new BadRequestException('Bad Request');
+      else
+      {
+        userExists = this.playerService.getUserIfExist;
+        console.log({obj});
+      }
+    }
+    catch (err){
+    }
   }
-  
 }
