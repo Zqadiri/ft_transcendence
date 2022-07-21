@@ -5,6 +5,10 @@ import { CreatePlayerDto } from 'src/players/dto/create-player.dto';
 import { Player } from 'src/players/player.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { BadRequestException } from '@nestjs/common';
+import { PlayerRepository } from 'src/players/player.repository';
+import { PlayersService } from 'src/players/players.service';
+
 /*
 	Controllers are responsible for handling incoming 
 	requests and returning responses to the client.
@@ -14,11 +18,8 @@ import { Repository } from 'typeorm';
 export class AuthController 
 {
 	constructor(
-		@InjectRepository(Player)
-		private playerRepo: Repository<Player>,
 		private authService: AuthService,
 	){}
-
 
 	@Get('/login')
 	async access_token(@Query() query: {code: string})
@@ -26,10 +27,10 @@ export class AuthController
 		let obj : CreatePlayerDto;
 		let userExists;
 		obj = await this.authService.getUserData(query.code);
-		// if (!obj)
-		//     throw new BadRequestException('Bad Request');
+		if (!obj)
+		    throw new BadRequestException('Bad Request');
 		console.log({obj});
-		// userExists = await this.playerRepo.findUserIfExist(obj.id);
+		userExists = await this.authService.findUserIfExist(obj.id);
 		if (userExists){
 			console.log(` user is : ${userExists}`);
 		}

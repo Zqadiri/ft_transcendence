@@ -4,6 +4,7 @@ import axios, { Axios } from "axios";
 import { JwtService } from '@nestjs/jwt';
 import { CreatePlayerDto } from 'src/players/dto/create-player.dto';
 import { createAvatar } from '@dicebear/avatars';
+import { Player } from 'src/players/player.entity';
 import * as style from '@dicebear/big-smile';
 /*
 	TODO: get access token
@@ -17,7 +18,8 @@ import * as style from '@dicebear/big-smile';
 @Injectable()
 export class AuthService {
 
-	constructor (private readonly jwtService: JwtService){}
+	constructor (private readonly jwtService: JwtService,
+		private readonly playerModsh ){}
 	async getAccessToken(code : string) : Promise<string> {
 		console.log('--- Acces Token ---');
 		let ret : string;
@@ -68,7 +70,7 @@ export class AuthService {
 				const email = res.data.email;
 				const id = res.data.id;
 				const avatar = createAvatar(style, {
-					seed: 'custom-seed',
+					seed: 'seed',
 					background: 'pink'
 				});
 				data = {id, username, email, avatar};
@@ -84,12 +86,13 @@ export class AuthService {
 		return data;
 	}
 
-	// https://progressivecoder.com/how-to-implement-nestjs-jwt-authentication-using-jwt-strategy/
-	// async loginWithCredentials(user: any) {
-	// 	const payload = { username: user.username, sub: user.userId };
+	async findUserIfExist(id: number) : Promise<Player>{
+		const player = await this.findOne({
+		  where:{
+		    id: id,
+		  }
+		})
+		return null;
+	}
 
-	// 	return {
-	// 		access_token: this.jwtService.sign(payload),
-	// 	};
-	// }
 }

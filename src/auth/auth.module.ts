@@ -8,6 +8,7 @@ import { PlayersModule } from 'src/players/players.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlayerRepository } from 'src/players/player.repository';
 import { Player } from 'src/players/player.entity';
+import { PlayersService } from 'src/players/players.service';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { Player } from 'src/players/player.entity';
       },
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [PlayersService, AuthService],
   controllers: [AuthController]
 })
 

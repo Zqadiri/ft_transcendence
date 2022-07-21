@@ -1,5 +1,6 @@
 import { Entity, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Game } from "src/games/game.entity";
+import { BaseEntity } from "typeorm";
 
 /*
     Marks your model as an entity. Entity is a class which is 
@@ -7,7 +8,7 @@ import { Game } from "src/games/game.entity";
 */
 
 @Entity()
-export class Player {
+export class Player extends BaseEntity {
     @Column({primary: true})
     id: number;
 

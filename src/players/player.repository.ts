@@ -1,11 +1,10 @@
 import { Player } from "./player.entity";
-import { EntityRepository, Repository } from "typeorm";
-import { CreatePlayerDto } from "./dto/create-player.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Injectable } from "@nestjs/common";
+import { Repository } from "typeorm";
+import { EntityRepository } from "typeorm";
 
 @EntityRepository(Player)
 export class PlayerRepository extends Repository<Player> {
+	
 	async findUserIfExist(id: number) : Promise<Player>{
 		const player = await this.findOne({
 			where:{
@@ -14,4 +13,6 @@ export class PlayerRepository extends Repository<Player> {
 		})
 		return player;
 	}
+
+	
 }
