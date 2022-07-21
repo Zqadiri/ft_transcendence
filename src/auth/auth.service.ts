@@ -66,12 +66,12 @@ export class AuthService {
 			.then((res) => {
 				const username = res.data.login;
 				const email = res.data.email;
+				const id = res.data.id;
 				const avatar = createAvatar(style, {
 					seed: 'custom-seed',
 					background: 'pink'
 				});
-				data = {username, email, avatar};
-				// console.log(res.data.image_url, res.data.id);
+				data = {id, username, email, avatar};
 				return data;
 			})
 			.catch((err) => { 
