@@ -15,6 +15,7 @@ import { PlayersService } from './players/players.service';
 import { PlayersController } from './players/players.controller';
 import { PlayerRepository } from './players/player.repository';
 import { AuthController } from './auth/auth.controller';
+import { ChatModule } from './chat/chat.module';
 
 require('dotenv').config();
 
@@ -36,7 +37,8 @@ require('dotenv').config();
 		}),
 		PlayersModule,
 		GameModule,
-		AuthModule
+		AuthModule,
+		ChatModule
 		],
 		controllers: [AuthController, PlayersController, AppController],
 		providers: [PlayersService, JwtService, AuthService,  AppService],

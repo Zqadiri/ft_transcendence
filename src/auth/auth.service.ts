@@ -87,11 +87,11 @@ export class AuthService {
 	}
 
 	async findUserIfExist(id: number) : Promise<Player>{
-		const player = await this.findOne({
-		  where:{
-		    id: id,
-		  }
-		})
+		// const player = await this.findOne({
+		//   where:{
+		//     id: id,
+		//   }
+		// })
 		return null;
 	}
 
