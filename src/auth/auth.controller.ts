@@ -6,7 +6,6 @@ import { Player } from 'src/players/player.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BadRequestException } from '@nestjs/common';
-import { PlayerRepository } from 'src/players/player.repository';
 import { PlayersService } from 'src/players/players.service';
 
 /*

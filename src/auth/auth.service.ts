@@ -18,8 +18,7 @@ import * as style from '@dicebear/big-smile';
 @Injectable()
 export class AuthService {
 
-	constructor (private readonly jwtService: JwtService,
-		private readonly playerModsh ){}
+	constructor (private readonly jwtService: JwtService){}
 	async getAccessToken(code : string) : Promise<string> {
 		console.log('--- Acces Token ---');
 		let ret : string;
