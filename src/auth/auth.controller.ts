@@ -1,10 +1,6 @@
 import { Controller, Get, Redirect, Query} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtModule } from '@nestjs/jwt';
 import { CreatePlayerDto } from 'src/players/dto/create-player.dto';
-import { Player } from 'src/players/player.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { BadRequestException } from '@nestjs/common';
 import { PlayersService } from 'src/players/players.service';
 
@@ -18,22 +14,25 @@ export class AuthController
 {
 	constructor(
 		private authService: AuthService,
+		private readonly playerService: PlayersService
 	){}
 
 	@Get('/login')
 	async access_token(@Query() query: {code: string})
 	{
 		let obj : CreatePlayerDto;
-		let userExists;
+		let playerExists;
 		obj = await this.authService.getUserData(query.code);
 		if (!obj)
 		    throw new BadRequestException('Bad Request');
 		console.log({obj});
-		userExists = await this.authService.findUserIfExist(obj.id);
-		if (userExists){
-			console.log(` user is : ${userExists}`);
+		playerExists = await this.playerService.getUserById(obj.id);
+		if (!playerExists){
+			console.log('does not Exists');
+			this.playerService.create(obj);
 		}
 		else
-			console.log('does not Exists');
+			console.log(` user is : ${{obj}}`);
+		return await this.authService.sendJWTtoken(playerExists);			
 	}
 }

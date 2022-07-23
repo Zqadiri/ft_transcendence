@@ -6,6 +6,9 @@ import { CreatePlayerDto } from 'src/players/dto/create-player.dto';
 import { createAvatar } from '@dicebear/avatars';
 import { Player } from 'src/players/player.entity';
 import * as style from '@dicebear/big-smile';
+import { access } from 'fs';
+import { json } from 'stream/consumers';
+
 /*
 	TODO: get access token
 	Requesting an access token with the client credentials flow is
@@ -48,7 +51,6 @@ export class AuthService {
 		return ret;
 	}
 
-	// https://api.intra.42.fr/apidoc/guides/web_application_flow
 	async getUserData(code: string) : Promise<CreatePlayerDto>{
 		console.log("---  Get User Data ---");
 		let access_token : string;
@@ -68,10 +70,7 @@ export class AuthService {
 				const username = res.data.login;
 				const email = res.data.email;
 				const id = res.data.id;
-				const avatar = createAvatar(style, {
-					seed: 'seed',
-					background: 'pink'
-				});
+				const avatar = `https://avatars.dicebear.com/api/croodles/${username}.svg`
 				data = {id, username, email, avatar};
 				return data;
 			})
@@ -85,13 +84,23 @@ export class AuthService {
 		return data;
 	}
 
-	async findUserIfExist(id: number) : Promise<Player>{
-		// const player = await this.findOne({
-		//   where:{
-		//     id: id,
-		//   }
-		// })
-		return null;
+	async sendJWTtoken(player: Player){
+		console.log('sendJWTtoken');
+		let access_token = await this.loginWithCredentials(player);
+		console.log(`access token :  ` + JSON.stringify(access_token));
 	}
 
+	/*
+		TODO: login method
+		Accepts the Credentials and creates a payload and pass it to the
+		sign function . the sign function generates a JWT.
+	*/
+
+	async loginWithCredentials(player: Player) {
+		console.log('in login method');
+        const payload = {username: player.username, sub: player.id};
+        return {
+			access_token: await this.jwtService.signAsync(payload, { secret: process.env.SECRET }),
+		};
+    }
 }

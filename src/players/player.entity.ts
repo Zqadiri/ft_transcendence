@@ -21,7 +21,10 @@ export class Player extends BaseEntity {
     @Column()
     email: string;
 
-    @Column({enum:['online', 'offline', 'ongame']})
+    @Column({
+        enum:['online', 'offline', 'ongame'],
+        default: 'online'
+    })
     status: string;
 
     @Column({default: 0})
@@ -30,7 +33,7 @@ export class Player extends BaseEntity {
     @Column({default: 0})
     wins: number;
 
-    @Column()
+    @Column({default: 0})
     losses: number;
 
     @Column({default: 0})
@@ -39,9 +42,16 @@ export class Player extends BaseEntity {
     @Column({default: 'Beginner'})
     rank: string;
 
-    @CreateDateColumn()
-    created_at: Date;
-
-    @UpdateDateColumn()
-    updated_at: Date;
+    @Column({ 
+        type: 'timestamp', 
+        default: () => 'CURRENT_TIMESTAMP' 
+    })
+    createdAt: Date;
+  
+    @Column({ 
+        type: 'timestamp',
+        onUpdate: 'CURRENT_TIMESTAMP', 
+        nullable: true 
+    })
+    updatedAt: Date
 }

@@ -1,23 +1,30 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { JwtStrategy } from './jwt.stategy';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { PlayersModule } from 'src/players/players.module';
+import { PlayersService } from 'src/players/players.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Player } from 'src/players/player.entity';
+import { PlayerRepository } from 'src/players/player.repository';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([
+      Player,
+      PlayerRepository
+    ]),
     PassportModule,
     PlayersModule,
     JwtModule.register({
-      secret: 'secret_key',
+      secret: `${process.env.JWT_SECRET_KEY}`,
       signOptions: {
-        expiresIn: 3600,
+        expiresIn: '1d',
       },
     }),
   ],
-  providers: [AuthService],
+  providers: [PlayersService, AuthService],
   controllers: [AuthController]
 })
 
