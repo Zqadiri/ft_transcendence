@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { User } from './player.entity';
+import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { BadRequestException } from '@nestjs/common';
-import { PlayerRepository } from './player.repository';
+import { PlayerRepository } from './user.repository';
 
 
 @Injectable()
