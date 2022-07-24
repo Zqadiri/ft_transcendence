@@ -6,13 +6,13 @@ import { PassportModule } from '@nestjs/passport';
 import { PlayersModule } from 'src/players/players.module';
 import { PlayersService } from 'src/players/players.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Player } from 'src/players/player.entity';
+import { User } from 'src/players/player.entity';
 import { PlayerRepository } from 'src/players/player.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Player,
+      User,
       PlayerRepository
     ]),
     PassportModule,

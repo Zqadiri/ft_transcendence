@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Player } from './player.entity';
+import { User } from './player.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePlayerDto } from './dto/create-player.dto';
@@ -10,7 +10,7 @@ import { PlayerRepository } from './player.repository';
 @Injectable()
 export class PlayersService {
 		constructor(
-			@InjectRepository(Player)
+			@InjectRepository(User)
 			private playerRepository: PlayerRepository,
 		){}
 	
@@ -18,7 +18,7 @@ export class PlayersService {
 				Find a Player By Id
 		*/
 
-		async getUserById(id: number): Promise<Player> {
+		async getUserById(id: number): Promise<User> {
 			const player = await this.playerRepository.findOne({
 				where:{
 					id: id,
@@ -31,7 +31,7 @@ export class PlayersService {
 				Create a User
 		*/
 
-		async create(createPlayerDto: CreatePlayerDto) : Promise<Player>{
+		async create(createPlayerDto: CreatePlayerDto) : Promise<User>{
 			const player = this.playerRepository.create(createPlayerDto);
 			return this.playerRepository.save(player);
 		}

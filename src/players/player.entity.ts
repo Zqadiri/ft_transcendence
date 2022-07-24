@@ -8,7 +8,7 @@ import { BaseEntity } from "typeorm";
 */
 
 @Entity()
-export class Player extends BaseEntity {
+export class User extends BaseEntity {
     @Column({primary: true})
     id: number;
 
