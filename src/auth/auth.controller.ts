@@ -33,7 +33,7 @@ export class AuthController
 			this.playerService.create(obj);
 		}
 		else
-			console.log(` user is : ${{obj}}`);
-		return await this.authService.sendJWTtoken(playerExists, response);			
+		console.log(` user is : ${{obj}}`);
+		return await this.authService.sendJWTtoken(playerExists, response); //!!!!
 	}
 }

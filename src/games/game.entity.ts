@@ -1,6 +1,6 @@
 import { Entity, Column } from "typeorm";
 
-@Entity()
+@Entity('db_game')
 export class Game{
     @Column({primary: true})
     id: number;

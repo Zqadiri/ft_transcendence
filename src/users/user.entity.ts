@@ -1,13 +1,14 @@
 import { Entity, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Game } from "src/games/game.entity";
 import { BaseEntity } from "typeorm";
+import { Friend } from "src/friends/friend.intity";
 
 /*
     Marks your model as an entity. Entity is a class which is 
     transformed into a database table.
 */
 
-@Entity()
+@Entity('db_user')
 export class User extends BaseEntity {
     @Column({primary: true})
     id: number;
@@ -54,4 +55,7 @@ export class User extends BaseEntity {
         nullable: true 
     })
     updatedAt: Date
+
+    @OneToMany(() => Friend, (friend) => friend.user)
+    friends: Friend[];
 }
