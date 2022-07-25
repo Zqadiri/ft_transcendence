@@ -1,6 +1,7 @@
-import { Controller, Get, Redirect, Query} from '@nestjs/common';
+import { Controller, Get, Res, Query} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreatePlayerDto } from 'src/users/dto/create-player.dto';
+import { Response } from "express";
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { BadRequestException } from '@nestjs/common';
 import { PlayersService } from 'src/users/users.service';
 
@@ -18,9 +19,9 @@ export class AuthController
 	){}
 
 	@Get('/login')
-	async access_token(@Query() query: {code: string})
+	async access_token(@Query() query: {code: string}, @Res() response: Response)
 	{
-		let obj : CreatePlayerDto;
+		let obj : CreateUserDto;
 		let playerExists;
 		obj = await this.authService.getUserData(query.code);
 		if (!obj)
@@ -33,6 +34,6 @@ export class AuthController
 		}
 		else
 			console.log(` user is : ${{obj}}`);
-		return await this.authService.sendJWTtoken(playerExists);			
+		return await this.authService.sendJWTtoken(playerExists, response);			
 	}
 }

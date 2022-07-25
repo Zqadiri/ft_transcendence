@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
+import { resolve } from 'path';
 
 @Injectable()
 export class AppLoggerMiddleware implements NestMiddleware {
@@ -13,8 +14,9 @@ export class AppLoggerMiddleware implements NestMiddleware {
     response.on('close', () => {
       const { statusCode } = response;
       const contentLength = response.get('content-length');
+      const cookie = response.get('cookie');
       this.logger.log(
-        `${method} ${url} ${statusCode} ${contentLength} - ${userAgent} ${ip}`
+        `${method} ${url} ${statusCode} ${contentLength} - ${cookie} - ${userAgent} ${ip}`
       );
     });
     next();

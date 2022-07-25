@@ -1,12 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { Body, HttpException, BadRequestException } from '@nestjs/common';
 import axios, { Axios } from "axios";
 import { JwtService } from '@nestjs/jwt';
-import { CreatePlayerDto } from 'src/users/dto/create-player.dto';
-import { createAvatar } from '@dicebear/avatars';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { User } from 'src/users/user.entity';
-import * as style from '@dicebear/big-smile';
-import { access } from 'fs';
 import { json } from 'stream/consumers';
 
 /*
@@ -51,10 +49,10 @@ export class AuthService {
 		return ret;
 	}
 
-	async getUserData(code: string) : Promise<CreatePlayerDto>{
+	async getUserData(code: string) : Promise<CreateUserDto>{
 		console.log("---  Get User Data ---");
 		let access_token : string;
-		let data: CreatePlayerDto;
+		let data: CreateUserDto;
 		try {
 			access_token = await this.getAccessToken (code);
 			console.log(`access token : ${access_token}`);
@@ -84,10 +82,20 @@ export class AuthService {
 		return data;
 	}
 
-	async sendJWTtoken(player: User){
+	async sendJWTtoken(user: User, @Res() response: Response){
 		console.log('sendJWTtoken');
-		let access_token = await this.loginWithCredentials(player);
+		let access_token = await this.loginWithCredentials(user);
 		console.log(`access token :  ` + JSON.stringify(access_token));
+		console.log(`response response` +  JSON.stringify(response.json));
+		// response.set('cookie', String(access_token));
+		response.cookie('token', String(access_token),
+		{
+			// maxAge: 1000 * 60 * 15, // would expire after 15 minutes
+			httpOnly: true, // The cookie only accessible by the web server
+			domain: 'localhost',
+			path: '/'
+		});
+		return response.send('Cookie has been set! :)');
 	}
 
 	/*
@@ -96,9 +104,9 @@ export class AuthService {
 		sign function . the sign function generates a JWT.
 	*/
 
-	async loginWithCredentials(player: User) {
+	async loginWithCredentials(user: User) {
 		console.log('in login method');
-        const payload = {username: player.username, sub: player.id};
+        const payload = {username: user.username, sub: user.id};
         return {
 			access_token: await this.jwtService.signAsync(payload, { secret: process.env.SECRET }),
 		};

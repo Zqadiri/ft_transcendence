@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreatePlayerDto } from './dto/create-player.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { BadRequestException } from '@nestjs/common';
 import { PlayerRepository } from './user.repository';
 
@@ -31,8 +31,8 @@ export class PlayersService {
 				Create a User
 		*/
 
-		async create(createPlayerDto: CreatePlayerDto) : Promise<User>{
-			const player = this.playerRepository.create(createPlayerDto);
+		async create(createUserDto: CreateUserDto) : Promise<User>{
+			const player = this.playerRepository.create(createUserDto);
 			return this.playerRepository.save(player);
 		}
 
