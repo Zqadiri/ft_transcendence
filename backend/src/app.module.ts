@@ -2,19 +2,19 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PlayersModule } from './players/players.module';
+import { PlayersModule } from './users/users.module';
 import { GameModule } from './games/games.module';
-import { Player } from './players/player.entity'
+import { User } from './users/user.entity'
 import { Game } from './games/game.entity'
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { AppLoggerMiddleware } from './logger.middleware';
 import { AuthService } from './auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
-import { PlayersService } from './players/players.service';
-import { PlayersController } from './players/players.controller';
+import { PlayersService } from './users/users.service';
+import { PlayersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
-import { ChatModule } from './chat/chat.module';
+import { ChatsModule } from './chats/chats.module';
 
 require('dotenv').config();
 
@@ -23,7 +23,7 @@ require('dotenv').config();
 			envFilePath: '.env',
 			isGlobal: true
 		}),
-		TypeOrmModule.forFeature([Player]),
+		TypeOrmModule.forFeature([User]),
 		TypeOrmModule.forRoot({
 			type: 'postgres',
 			url: process.env.DATABASE_URL,
@@ -39,7 +39,7 @@ require('dotenv').config();
 		PlayersModule,
 		GameModule,
 		AuthModule,
-		ChatModule
+		ChatsModule
 		],
 		controllers: [AuthController, PlayersController, AppController],
 		providers: [PlayersService, JwtService, AuthService,  AppService],

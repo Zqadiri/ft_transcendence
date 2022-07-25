@@ -12,22 +12,22 @@ const auth_service_1 = require("./auth.service");
 const auth_controller_1 = require("./auth.controller");
 const jwt_1 = require("@nestjs/jwt");
 const passport_1 = require("@nestjs/passport");
-const players_module_1 = require("../players/players.module");
-const players_service_1 = require("../players/players.service");
+const users_module_1 = require("../users/users.module");
+const users_service_1 = require("../users/users.service");
 const typeorm_1 = require("@nestjs/typeorm");
-const player_entity_1 = require("../players/player.entity");
-const player_repository_1 = require("../players/player.repository");
+const user_entity_1 = require("../users/user.entity");
+const user_repository_1 = require("../users/user.repository");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([
-                player_entity_1.Player,
-                player_repository_1.PlayerRepository
+                user_entity_1.User,
+                user_repository_1.PlayerRepository
             ]),
             passport_1.PassportModule,
-            players_module_1.PlayersModule,
+            users_module_1.PlayersModule,
             jwt_1.JwtModule.register({
                 secret: `${process.env.JWT_SECRET_KEY}`,
                 signOptions: {
@@ -35,7 +35,7 @@ AuthModule = __decorate([
                 },
             }),
         ],
-        providers: [players_service_1.PlayersService, auth_service_1.AuthService],
+        providers: [users_service_1.PlayersService, auth_service_1.AuthService],
         controllers: [auth_controller_1.AuthController]
     })
 ], AuthModule);

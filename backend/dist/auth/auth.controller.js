@@ -16,7 +16,7 @@ exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const common_2 = require("@nestjs/common");
-const players_service_1 = require("../players/players.service");
+const users_service_1 = require("../users/users.service");
 let AuthController = class AuthController {
     constructor(authService, playerService) {
         this.authService = authService;
@@ -49,7 +49,7 @@ __decorate([
 AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
-        players_service_1.PlayersService])
+        users_service_1.PlayersService])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth.controller.js.map

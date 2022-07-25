@@ -1,5 +1,5 @@
 import { AuthService } from './auth.service';
-import { PlayersService } from 'src/players/players.service';
+import { PlayersService } from 'src/users/users.service';
 export declare class AuthController {
     private authService;
     private readonly playerService;

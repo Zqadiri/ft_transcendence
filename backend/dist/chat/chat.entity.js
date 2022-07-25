@@ -17,26 +17,6 @@ __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], Chat.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Chat.prototype, "name", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Chat.prototype, "type", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Chat.prototype, "status", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", Boolean)
-], Chat.prototype, "isActive", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Chat.prototype, "ownerId", void 0);
 Chat = __decorate([
     (0, typeorm_1.Entity)()
 ], Chat);

@@ -1,8 +1,8 @@
 import { Controller, Get, Redirect, Query} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreatePlayerDto } from 'src/players/dto/create-player.dto';
+import { CreatePlayerDto } from 'src/users/dto/create-player.dto';
 import { BadRequestException } from '@nestjs/common';
-import { PlayersService } from 'src/players/players.service';
+import { PlayersService } from 'src/users/users.service';
 
 /*
 	Controllers are responsible for handling incoming 

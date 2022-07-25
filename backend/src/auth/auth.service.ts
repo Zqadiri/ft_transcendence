@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Body, HttpException, BadRequestException } from '@nestjs/common';
 import axios, { Axios } from "axios";
 import { JwtService } from '@nestjs/jwt';
-import { CreatePlayerDto } from 'src/players/dto/create-player.dto';
+import { CreatePlayerDto } from 'src/users/dto/create-player.dto';
 import { createAvatar } from '@dicebear/avatars';
-import { Player } from 'src/players/player.entity';
+import { User } from 'src/users/user.entity';
 import * as style from '@dicebear/big-smile';
 import { access } from 'fs';
 import { json } from 'stream/consumers';
@@ -84,7 +84,7 @@ export class AuthService {
 		return data;
 	}
 
-	async sendJWTtoken(player: Player){
+	async sendJWTtoken(player: User){
 		console.log('sendJWTtoken');
 		let access_token = await this.loginWithCredentials(player);
 		console.log(`access token :  ` + JSON.stringify(access_token));
@@ -96,7 +96,7 @@ export class AuthService {
 		sign function . the sign function generates a JWT.
 	*/
 
-	async loginWithCredentials(player: Player) {
+	async loginWithCredentials(player: User) {
 		console.log('in login method');
         const payload = {username: player.username, sub: player.id};
         return {
