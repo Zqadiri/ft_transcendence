@@ -11,8 +11,10 @@ export class Friend extends BaseEntity{
     @Column({default: false})
     blocked: boolean;
 
+    @Column()
+    stat: string;
+
     // User have multiple friends
     @ManyToOne(() => User, (user) => user.friends)
     user: User;
-
 }

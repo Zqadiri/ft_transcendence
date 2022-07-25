@@ -1,5 +1,7 @@
 import { LargeNumberLike } from "crypto";
-import { BaseEntity, Column, Entity } from "typeorm";
+import { BaseEntity, BeforeInsert, Column, Entity } from "typeorm";
+import * as bcrypt from 'bcrypt';
+import { InternalServerErrorException } from "@nestjs/common";
 
 /*
 	TODO: Data Mapper pattern and  Active Record pattern
@@ -75,4 +77,19 @@ export class Chat{
 		nullable: true 
 	})
 	updatedAt: Date
+
+	/*
+		TODO: Entity Listener
+		Entities can have methods with custom logic that listen to specific entity events
+	*/
+
+	@BeforeInsert()
+	async hashPassword(){
+		try{
+			this.password = await bcrypt.hash(this.password, process.env.SALT);
+		}
+		catch(err){
+			throw InternalServerErrorException;
+		}
+	}
 }

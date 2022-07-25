@@ -2,38 +2,40 @@ import { Entity, Column } from "typeorm";
 
 @Entity('db_game')
 export class Game{
-    @Column({primary: true})
-    id: number;
+	@Column({primary: true})
+	id: number;
 
-    @Column('varchar')
-    firstPlayerID: string;
+	@Column({default: false})
+	isPlaying:boolean;
 
-    @Column('varchar')
-    secondPlayerID: string;
+	@Column('varchar')
+	firstPlayerID: string;
 
-    @Column()
-    firstPlayerScore: number;
+	@Column('varchar')
+	secondPlayerID: string;
 
-    @Column()
-    SecondPlayerScore: number;
+	@Column({default: 0})
+	firstPlayerScore: number;
 
-    @Column({
-        enum: ['default', 'power-up', 'double'],
-        default: 'default'
-    })
-    theme: string;
+	@Column({default: 0})
+	SecondPlayerScore: number;
 
-    @Column({ 
-        type: 'timestamp', 
-        default: () => 'CURRENT_TIMESTAMP' 
-    })
-    createdAt: Date;
+	@Column({
+		enum: ['default', 'power-up', 'double'],
+		default: 'default'
+	})
+	theme: string;
+
+	@Column({ 
+		type: 'timestamp', 
+		default: () => 'CURRENT_TIMESTAMP' 
+	})
+	createdAt: Date;
   
-    @Column({ 
-        type: 'timestamp',
-        onUpdate: 'CURRENT_TIMESTAMP', 
-        nullable: true 
-    })
-    modifiedAt: Date;
-
+	@Column({ 
+		type: 'timestamp',
+		onUpdate: 'CURRENT_TIMESTAMP', 
+		nullable: true 
+	})
+	modifiedAt: Date;
 }
