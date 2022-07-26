@@ -16,12 +16,12 @@ exports.TwoFactorAuthenticationController = void 0;
 const common_1 = require("@nestjs/common");
 const common_2 = require("@nestjs/common");
 const two_factor_authentication_service_1 = require("./two-factor-authentication.service");
-const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 let TwoFactorAuthenticationController = class TwoFactorAuthenticationController {
     constructor(twoFacAuth) {
         this.twoFacAuth = twoFacAuth;
     }
     async register(response, request) {
+        console.log(`request data ${request}`);
         const { urlPath } = await this.twoFacAuth.generateTwoFactorAuthenticationSecret(request.user);
         console.log('end');
         return this.twoFacAuth.pipeQrCodeStream(response, urlPath);
@@ -29,7 +29,6 @@ let TwoFactorAuthenticationController = class TwoFactorAuthenticationController 
 };
 __decorate([
     (0, common_1.Post)('generate'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
     __param(0, (0, common_1.Res)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),

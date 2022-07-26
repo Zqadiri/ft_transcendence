@@ -5,7 +5,7 @@ export declare class AppController {
     root(): {
         message: string;
     };
-    getAuthPage(): {
+    getAuthPage(response: Response): Promise<{
         url: string;
-    };
+    }>;
 }

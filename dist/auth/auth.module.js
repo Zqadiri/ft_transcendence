@@ -22,11 +22,11 @@ let AuthModule = class AuthModule {
 AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             typeorm_1.TypeOrmModule.forFeature([
                 user_entity_1.User,
                 user_repository_1.UserRepository
             ]),
-            passport_1.PassportModule,
             users_module_1.UsersModule,
             jwt_1.JwtModule.register({
                 secret: `${process.env.JWT_SECRET_KEY}`,
@@ -36,7 +36,8 @@ AuthModule = __decorate([
             }),
         ],
         providers: [jwt_1.JwtService, users_service_1.UsersService, auth_service_1.AuthService],
-        controllers: [auth_controller_1.AuthController]
+        controllers: [auth_controller_1.AuthController],
+        exports: [auth_service_1.AuthService, passport_1.PassportModule]
     })
 ], AuthModule);
 exports.AuthModule = AuthModule;

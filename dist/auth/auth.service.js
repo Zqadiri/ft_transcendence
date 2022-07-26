@@ -40,12 +40,12 @@ let AuthService = class AuthService {
             }
         })
             .then((res) => {
-            console.log(res.data.access_token);
+            // console.log(res.data.access_token);
             ret = res.data.access_token;
             return ret;
         })
             .catch((err) => {
-            console.log(err);
+            // console.log(err);
         });
         return ret;
     }
@@ -73,19 +73,17 @@ let AuthService = class AuthService {
                 return data;
             })
                 .catch((err) => {
-                console.log(err);
             });
         }
         catch (err) {
-            console.log(err);
         }
         return data;
     }
     async sendJWTtoken(user, response) {
         console.log('sendJWTtoken');
         let access_token = await this.loginWithCredentials(user);
-        console.log(`access token :  ` + JSON.stringify(access_token));
-        console.log(`response response` + JSON.stringify(response.json));
+        // console.log(`access token :  ` + JSON.stringify(access_token));
+        // console.log(`response response` + JSON.stringify(response.json));
         response.cookie('token', String(access_token), {
             httpOnly: true,
             domain: 'localhost',
@@ -94,7 +92,8 @@ let AuthService = class AuthService {
         return response.send({
             id: user.id,
             name: user.username,
-            avatar: user.avatar
+            avatar: user.avatar,
+            email: user.email
         });
     }
     async loginWithCredentials(user) {

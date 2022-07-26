@@ -21,11 +21,14 @@ export class AuthController
 	@Get('/login')
 	async access_token(@Query() query: {code: string}, @Res() response: Response)
 	{
+		console.log('here');
+		console.log(response.statusCode);
 		let obj : CreateUserDto;
 		let playerExists;
 		obj = await this.authService.getUserData(query.code);
 		if (!obj)
-		    throw new BadRequestException('Bad Request');
+			return response.send("fidjgjrd");
+		    // throw new BadRequestException('Bad Request');
 		console.log({obj});
 		playerExists = await this.playerService.getUserById(obj.id);
 		if (!playerExists){
@@ -41,3 +44,4 @@ export class AuthController
 		// }
 	}
 }
+

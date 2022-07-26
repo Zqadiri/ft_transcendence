@@ -72,11 +72,11 @@ export class AuthService {
 				return data;
 			})
 			.catch((err) => { 
-				console.log(err);
+				// console.log(err);
 			})
 		}
 		catch(err){
-			console.log(err);
+			// console.log(err);
 		}
 		return data;
 	}
@@ -97,7 +97,8 @@ export class AuthService {
 		return response.send({
 			id: user.id,
 			name: user.username,
-			avatar: user.avatar
+			avatar: user.avatar,
+			email: user.email
 		});
 	}
 

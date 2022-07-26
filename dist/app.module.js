@@ -28,6 +28,8 @@ const friends_module_1 = require("./friends/friends.module");
 const friend_intity_1 = require("./friends/friend.intity");
 const chat_entity_1 = require("./chats/chat.entity");
 const two_factor_authentication_module_1 = require("./two-factor-authentication/two-factor-authentication.module");
+const passport_1 = require("@nestjs/passport");
+const jwt_stategy_1 = require("./auth/jwt.stategy");
 require('dotenv').config();
 let AppModule = class AppModule {
     configure(consumer) {
@@ -36,7 +38,8 @@ let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [config_1.ConfigModule.forRoot({
+        imports: [passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
+            config_1.ConfigModule.forRoot({
                 envFilePath: '.env',
                 isGlobal: true
             }),
@@ -51,6 +54,7 @@ AppModule = __decorate([
                 entities: [user_entity_1.User, game_entity_1.Game, friend_intity_1.Friend, chat_entity_1.Chat],
                 synchronize: true,
             }),
+            jwt_1.JwtModule,
             users_module_1.UsersModule,
             games_module_1.GameModule,
             auth_module_1.AuthModule,
@@ -59,7 +63,10 @@ AppModule = __decorate([
             two_factor_authentication_module_1.TwoFactorAuthenticationModule,
         ],
         controllers: [auth_controller_1.AuthController, users_controller_1.PlayersController, app_controller_1.AppController],
-        providers: [users_service_1.UsersService, jwt_1.JwtService, auth_service_1.AuthService, app_service_1.AppService],
+        providers: [users_service_1.UsersService, jwt_stategy_1.JwtStrategy, auth_service_1.AuthService, app_service_1.AppService],
+        exports: [
+            auth_service_1.AuthService, passport_1.PassportModule
+        ],
     })
 ], AppModule);
 exports.AppModule = AppModule;

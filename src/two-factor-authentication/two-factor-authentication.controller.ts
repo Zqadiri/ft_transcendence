@@ -18,8 +18,9 @@ export class TwoFactorAuthenticationController {
     */
 
     @Post('generate')
-    @UseGuards(jwtAuthGuard)
+    // @UseGuards(jwtAuthGuard)
     async register(@Res() response: Response, @Req() request: requestWithUser){
+        console.log(`request data ${request}`);
         const { urlPath } = await this.twoFacAuth.generateTwoFactorAuthenticationSecret(
             request.user);
         console.log('end');
