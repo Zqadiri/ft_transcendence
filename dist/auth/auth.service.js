@@ -91,7 +91,11 @@ let AuthService = class AuthService {
             domain: 'localhost',
             path: '/'
         });
-        return response.send('Cookie has been set! :)');
+        return response.send({
+            id: user.id,
+            name: user.username,
+            avatar: user.avatar
+        });
     }
     async loginWithCredentials(user) {
         console.log('in login method');

@@ -4,22 +4,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { BadRequestException } from '@nestjs/common';
-import { PlayerRepository } from './user.repository';
+import { UserRepository } from './user.repository';
 
 
 @Injectable()
-export class PlayersService {
+export class UsersService {
 		constructor(
 			@InjectRepository(User)
-			private playerRepository: PlayerRepository,
+			private userRepository: UserRepository,
 		){}
 	
 		/*
-				Find a Player By Id
+			Find a Player By Id
 		*/
 
 		async getUserById(id: number): Promise<User> {
-			const player = await this.playerRepository.findOne({
+			const player = await this.userRepository.findOne({
 				where:{
 					id: id,
 				}
@@ -28,13 +28,19 @@ export class PlayersService {
 		}
 
 		/*
-				Create a User
+			Create a User
 		*/
 
 		async create(createUserDto: CreateUserDto) : Promise<User>{
-			const player = this.playerRepository.create(createUserDto);
-			return this.playerRepository.save(player);
+			const player = this.userRepository.create(createUserDto);
+			return this.userRepository.save(player);
 		}
 
+		async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
+			return this.userRepository.update(userId, {
+			  twoFactorAuthenticationSecret: secret
+			});
+		}
+		 
 }
 	 

@@ -5,7 +5,6 @@ import axios, { Axios } from "axios";
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { User } from 'src/users/user.entity';
-import { json } from 'stream/consumers';
 
 /*
 	TODO: get access token
@@ -95,7 +94,11 @@ export class AuthService {
 			domain: 'localhost',
 			path: '/'
 		});
-		return response.send('Cookie has been set! :)');
+		return response.send({
+			id: user.id,
+			name: user.username,
+			avatar: user.avatar
+		});
 	}
 
 	/*
@@ -106,9 +109,9 @@ export class AuthService {
 
 	async loginWithCredentials(user: User) {
 		console.log('in login method');
-        const payload = {username: user.username, sub: user.id};
-        return {
+		const payload = {username: user.username, sub: user.id};
+		return {
 			access_token: await this.jwtService.signAsync(payload, { secret: process.env.SECRET }),
 		};
-    }
+	}
 }

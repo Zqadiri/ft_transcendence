@@ -34,8 +34,6 @@ let AuthController = class AuthController {
             console.log('does not Exists');
             this.playerService.create(obj);
         }
-        else
-            console.log(` user is : ${{ obj }}`);
         return await this.authService.sendJWTtoken(playerExists, response);
     }
 };
@@ -50,7 +48,7 @@ __decorate([
 AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
-        users_service_1.PlayersService])
+        users_service_1.UsersService])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth.controller.js.map

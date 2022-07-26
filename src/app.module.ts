@@ -2,7 +2,7 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PlayersModule } from './users/users.module';
+import { UsersModule } from './users/users.module';
 import { GameModule } from './games/games.module';
 import { User } from './users/user.entity'
 import { Game } from './games/game.entity'
@@ -11,13 +11,14 @@ import { AuthModule } from './auth/auth.module';
 import { AppLoggerMiddleware } from './logger.middleware';
 import { AuthService } from './auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
-import { PlayersService } from './users/users.service';
+import { UsersService } from './users/users.service';
 import { PlayersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
 import { ChatModule } from './chats/chats.module';
 import { FriendsModule } from './friends/friends.module';
 import { Friend } from './friends/friend.intity';
 import { Chat } from './chats/chat.entity';
+import { TwoFactorAuthenticationModule } from './two-factor-authentication/two-factor-authentication.module';
 
 require('dotenv').config();
 
@@ -37,14 +38,15 @@ require('dotenv').config();
 			entities: [User, Game, Friend, Chat],
 			synchronize: true,
 		}),
-		PlayersModule,
+		UsersModule,
 		GameModule,
 		AuthModule,
 		ChatModule,
-		FriendsModule
+		FriendsModule,
+		TwoFactorAuthenticationModule,
 		],
 		controllers: [AuthController, PlayersController, AppController],
-		providers: [PlayersService, JwtService, AuthService,  AppService],
+		providers: [UsersService, JwtService, AuthService,  AppService],
 	  })
 
 export class AppModule implements NestModule {

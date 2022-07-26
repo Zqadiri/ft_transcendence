@@ -27,6 +27,7 @@ const chats_module_1 = require("./chats/chats.module");
 const friends_module_1 = require("./friends/friends.module");
 const friend_intity_1 = require("./friends/friend.intity");
 const chat_entity_1 = require("./chats/chat.entity");
+const two_factor_authentication_module_1 = require("./two-factor-authentication/two-factor-authentication.module");
 require('dotenv').config();
 let AppModule = class AppModule {
     configure(consumer) {
@@ -50,14 +51,15 @@ AppModule = __decorate([
                 entities: [user_entity_1.User, game_entity_1.Game, friend_intity_1.Friend, chat_entity_1.Chat],
                 synchronize: true,
             }),
-            users_module_1.PlayersModule,
+            users_module_1.UsersModule,
             games_module_1.GameModule,
             auth_module_1.AuthModule,
             chats_module_1.ChatModule,
-            friends_module_1.FriendsModule
+            friends_module_1.FriendsModule,
+            two_factor_authentication_module_1.TwoFactorAuthenticationModule,
         ],
         controllers: [auth_controller_1.AuthController, users_controller_1.PlayersController, app_controller_1.AppController],
-        providers: [users_service_1.PlayersService, jwt_1.JwtService, auth_service_1.AuthService, app_service_1.AppService],
+        providers: [users_service_1.UsersService, jwt_1.JwtService, auth_service_1.AuthService, app_service_1.AppService],
     })
 ], AppModule);
 exports.AppModule = AppModule;

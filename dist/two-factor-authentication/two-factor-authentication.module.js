@@ -6,22 +6,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UsersModule = void 0;
+exports.TwoFactorAuthenticationModule = void 0;
 const common_1 = require("@nestjs/common");
+const two_factor_authentication_controller_1 = require("./two-factor-authentication.controller");
+const two_factor_authentication_service_1 = require("./two-factor-authentication.service");
+const users_service_1 = require("../users/users.service");
 const typeorm_1 = require("@nestjs/typeorm");
-const user_entity_1 = require("./user.entity");
-const users_controller_1 = require("./users.controller");
-const users_service_1 = require("./users.service");
-let UsersModule = class UsersModule {
+const user_entity_1 = require("../users/user.entity");
+let TwoFactorAuthenticationModule = class TwoFactorAuthenticationModule {
 };
-UsersModule = __decorate([
+TwoFactorAuthenticationModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([
                 user_entity_1.User
             ])],
-        controllers: [users_controller_1.PlayersController],
-        providers: [users_service_1.UsersService]
+        controllers: [two_factor_authentication_controller_1.TwoFactorAuthenticationController],
+        providers: [users_service_1.UsersService, two_factor_authentication_service_1.TwoFactorAuthenticationService]
     })
-], UsersModule);
-exports.UsersModule = UsersModule;
-//# sourceMappingURL=users.module.js.map
+], TwoFactorAuthenticationModule);
+exports.TwoFactorAuthenticationModule = TwoFactorAuthenticationModule;
+//# sourceMappingURL=two-factor-authentication.module.js.map

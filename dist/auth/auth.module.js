@@ -24,10 +24,10 @@ AuthModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([
                 user_entity_1.User,
-                user_repository_1.PlayerRepository
+                user_repository_1.UserRepository
             ]),
             passport_1.PassportModule,
-            users_module_1.PlayersModule,
+            users_module_1.UsersModule,
             jwt_1.JwtModule.register({
                 secret: `${process.env.JWT_SECRET_KEY}`,
                 signOptions: {
@@ -35,7 +35,7 @@ AuthModule = __decorate([
                 },
             }),
         ],
-        providers: [users_service_1.PlayersService, auth_service_1.AuthService],
+        providers: [users_service_1.UsersService, auth_service_1.AuthService],
         controllers: [auth_controller_1.AuthController]
     })
 ], AuthModule);

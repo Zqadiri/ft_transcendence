@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { Response } from "express";
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { BadRequestException } from '@nestjs/common';
-import { PlayersService } from 'src/users/users.service';
+import { UsersService } from 'src/users/users.service';
 
 /*
 	Controllers are responsible for handling incoming 
@@ -15,7 +15,7 @@ export class AuthController
 {
 	constructor(
 		private authService: AuthService,
-		private readonly playerService: PlayersService
+		private readonly playerService: UsersService
 	){}
 
 	@Get('/login')
@@ -32,8 +32,12 @@ export class AuthController
 			console.log('does not Exists');
 			this.playerService.create(obj);
 		}
-		else
-		console.log(` user is : ${{obj}}`);
-		return await this.authService.sendJWTtoken(playerExists, response); //!!!!
+		return await this.authService.sendJWTtoken(playerExists, response);
+		// else if (playerExists && playerExists.is2FacAuth){
+			
+		// }
+		// else if (playerExists && !playerExists.is2FacAuth){
+			
+		// }
 	}
 }

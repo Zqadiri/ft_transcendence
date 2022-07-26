@@ -6,22 +6,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UsersModule = void 0;
+exports. = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
-const user_entity_1 = require("./user.entity");
-const users_controller_1 = require("./users.controller");
-const users_service_1 = require("./users.service");
-let UsersModule = class UsersModule {
+let default_1 = class {
 };
-UsersModule = __decorate([
-    (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([
-                user_entity_1.User
-            ])],
-        controllers: [users_controller_1.PlayersController],
-        providers: [users_service_1.UsersService]
-    })
-], UsersModule);
-exports.UsersModule = UsersModule;
-//# sourceMappingURL=users.module.js.map
+default_1 = __decorate([
+    (0, common_1.Controller)('2-factor-auth')
+], default_1);
+2;
+FactorAuthController;
+{ }
+//# sourceMappingURL=2-factor-auth.controller.js.map

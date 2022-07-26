@@ -17,6 +17,9 @@ export class User extends BaseEntity {
 	username: string;
 
 	@Column()
+	twoFactorAuthenticationSecret : string;
+
+	@Column()
 	avatar: string;
 
 	@Column()

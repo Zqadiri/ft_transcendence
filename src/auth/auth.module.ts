@@ -3,20 +3,20 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { PlayersModule } from 'src/users/users.module';
-import { PlayersService } from 'src/users/users.service';
+import { UsersModule } from 'src/users/users.module';
+import { UsersService } from 'src/users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
-import { PlayerRepository } from 'src/users/user.repository';
+import { UserRepository } from 'src/users/user.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       User,
-      PlayerRepository
+      UserRepository
     ]),
     PassportModule,
-    PlayersModule,
+    UsersModule,
     JwtModule.register({
       secret: `${process.env.JWT_SECRET_KEY}`,
       signOptions: {
@@ -24,7 +24,7 @@ import { PlayerRepository } from 'src/users/user.repository';
       },
     }),
   ],
-  providers: [PlayersService, AuthService],
+  providers: [UsersService, AuthService],
   controllers: [AuthController]
 })
 
