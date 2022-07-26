@@ -26,10 +26,6 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], User.prototype, "twoFactorAuthenticationSecret", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
 ], User.prototype, "avatar", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
@@ -85,6 +81,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => friend_intity_1.Friend, (friend) => friend.user),
     __metadata("design:type", Array)
 ], User.prototype, "friends", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "twoFactorAuthenticationSecret", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)('db_user')
 ], User);

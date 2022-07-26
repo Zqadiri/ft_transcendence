@@ -5,6 +5,7 @@ import { UsersService } from '../users/users.service'
 import { UsersModule } from 'src/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [TypeOrmModule.forFeature([

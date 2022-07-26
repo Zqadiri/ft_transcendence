@@ -17,9 +17,6 @@ export class User extends BaseEntity {
 	username: string;
 
 	@Column()
-	twoFactorAuthenticationSecret : string;
-
-	@Column()
 	avatar: string;
 
 	@Column()
@@ -64,4 +61,7 @@ export class User extends BaseEntity {
 
 	@OneToMany(() => Friend, (friend) => friend.user)
 	friends: Friend[];
+
+	@Column({nullable: true})
+	twoFactorAuthenticationSecret : string;
 }

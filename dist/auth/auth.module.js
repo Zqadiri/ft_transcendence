@@ -35,7 +35,7 @@ AuthModule = __decorate([
                 },
             }),
         ],
-        providers: [users_service_1.UsersService, auth_service_1.AuthService],
+        providers: [jwt_1.JwtService, users_service_1.UsersService, auth_service_1.AuthService],
         controllers: [auth_controller_1.AuthController]
     })
 ], AuthModule);
