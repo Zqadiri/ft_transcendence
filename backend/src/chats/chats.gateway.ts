@@ -19,8 +19,10 @@ export class ChatsGateway {
   constructor(private readonly chatsService: ChatsService) {}
 
   @SubscribeMessage('createChat')
-  async create(@MessageBody() createChatDto: CreateChatDto) {
-    const message = await this.chatsService.create(createChatDto);
+  async create(
+    @MessageBody() createChatDto: CreateChatDto,
+    @ConnectedSocket() client: Socket) {
+    const message = await this.chatsService.create(createChatDto, client.id);
 
     this.server.emit('message', message);
 

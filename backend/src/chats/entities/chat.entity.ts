@@ -32,9 +32,9 @@ export class Chat {
     })
     status: string;
 
-	@ManyToMany(() => User, user => user.chats)
-	@JoinTable()
-	usersID: User[];
+	// @ManyToMany(() => User, user => user.chats)
+	// @JoinTable()
+	// usersID: User[];
 	
 	@Column('varchar')
     ownerID: string;

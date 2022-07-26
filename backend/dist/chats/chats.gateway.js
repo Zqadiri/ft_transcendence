@@ -21,8 +21,8 @@ let ChatsGateway = class ChatsGateway {
     constructor(chatsService) {
         this.chatsService = chatsService;
     }
-    async create(createChatDto) {
-        const message = await this.chatsService.create(createChatDto);
+    async create(createChatDto, client) {
+        const message = await this.chatsService.create(createChatDto, client.id);
         this.server.emit('message', message);
         return message;
     }
@@ -44,8 +44,10 @@ __decorate([
 __decorate([
     (0, websockets_1.SubscribeMessage)('createChat'),
     __param(0, (0, websockets_1.MessageBody)()),
+    __param(1, (0, websockets_1.ConnectedSocket)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_chat_dto_1.CreateChatDto]),
+    __metadata("design:paramtypes", [create_chat_dto_1.CreateChatDto,
+        socket_io_1.Socket]),
     __metadata("design:returntype", Promise)
 ], ChatsGateway.prototype, "create", null);
 __decorate([

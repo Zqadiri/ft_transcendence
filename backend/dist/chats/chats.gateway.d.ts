@@ -5,8 +5,8 @@ export declare class ChatsGateway {
     private readonly chatsService;
     server: Server;
     constructor(chatsService: ChatsService);
-    create(createChatDto: CreateChatDto): Promise<{
-        name: string;
+    create(createChatDto: CreateChatDto, client: Socket): Promise<{
+        name: any;
         text: string;
     }>;
     findAll(): import("./entities/message.entity").Message[];

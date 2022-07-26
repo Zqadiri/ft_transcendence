@@ -9,8 +9,8 @@ import { Message } from './entities/message.entity';
 @Injectable()
 export class ChatsService {
 
-  @InjectRepository(Chat)
-  private readonly repository: Repository<Chat>;
+  // @InjectRepository(Chat)
+  // private readonly repository: Repository<Chat>;
 
   // array of messages just for test chat
   // initialize it with dumy object that represent an existing message 
@@ -28,9 +28,12 @@ export class ChatsService {
     return this.clientToUser[clientId];
   }
   
-  create(createChatDto: CreateChatDto) {
+  create(createChatDto: CreateChatDto, clientId: string) {
     // This action adds a new chat
-    const message = {...createChatDto};
+    const message = {
+      name: this.clientToUser[clientId],
+      text: createChatDto.text,
+    };
     this.messages.push(message);
     return message;
   } 

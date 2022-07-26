@@ -43,8 +43,8 @@ export class User extends BaseEntity {
     @Column({default: 'Beginner'})
     rank: string;
 
-    @ManyToMany(() => Chat, (chat) => chat.usersID)
-    chats: Chat[];
+    // @ManyToMany(() => Chat, (chat) => chat.usersID)
+    // chats: Chat[];
 
     @Column({ 
         type: 'timestamp', 
