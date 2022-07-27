@@ -11,44 +11,49 @@ import { AuthService } from 'src/auth/auth.service';
 @Controller('two-factor-authentication')
 @UseInterceptors(ClassSerializerInterceptor)
 export class TwoFactorAuthenticationController {
-    constructor(
-        private readonly authService: AuthService,
-        private readonly twoFacAuthService: TwoFactorAuthenticationService
-    ){}
+	constructor(
+		private readonly authService: AuthService,
+		private readonly twoFacAuthService: TwoFactorAuthenticationService
+	){}
 
-    /*
-        Guard is responsible for determining whether the 
-        route handler handles the request or not
-    */
+	/*
+		Guard is responsible for determining whether the 
+		route handler handles the request or not
+	*/
 
-    @Post('generate')
-    // @UseGuards(jwtAuthGuard)
-    async register(@Res() response: Response, @Req() request: requestWithUser){
-        console.log(`request data ${JSON.stringify(request.body.user)}`);
-        const { urlPath } = await this.twoFacAuthService.generateTwoFacAuthSecret(request.body.user);
-        return this.twoFacAuthService.pipeQrCodeStream(response, urlPath);
-    }
+	@Post('generate')
+	// @UseGuards(jwtAuthGuard)
+	async register(@Res() response: Response, @Req() request: requestWithUser){
+		console.log(`request data ${JSON.stringify(request.body.user)}`);
+		const { urlPath } = await this.twoFacAuthService.generateTwoFacAuthSecret(request.body.user);
+		return this.twoFacAuthService.pipeQrCodeStream(response, urlPath);
+	}
 
-    @Post('turn-on')
-    @HttpCode(200)
-    // @UseGuards(jwtAuthGuard)
-    async turnOnTwoFacAuth(@Req() request: requestWithUser, 
-                            @Body() {twoFacAuthCode} : TwoFacAuthCodeDto){
-        const isValid = this.twoFacAuthService.isTwoFacAuthCodeValid(twoFacAuthCode, request.body.user.id);
-        if (!isValid)
-            throw new UnauthorizedException('Wrong authentication code');
-        await this.twoFacAuthService.activateTwoFacAuth(request.body.user.id);
-    }
+	@Post('turn-on')
+	@HttpCode(200)
+	// @UseGuards(jwtAuthGuard)
+	async turnOnTwoFacAuth(@Req() request: requestWithUser, 
+							@Body() {twoFacAuthCode} : TwoFacAuthCodeDto){
+		const isValid = this.twoFacAuthService.isTwoFacAuthCodeValid(twoFacAuthCode, request.body.user.id);
+		if (!isValid)
+			throw new UnauthorizedException('Wrong authentication code');
+		await this.twoFacAuthService.activateTwoFacAuth(request.body.user.id);
+	}
 
-    @Post('authenticate')
-    @HttpCode(200)
-    // @UseGuards(JwtTwoFactorGuard)
-    async authenticate(@Req() request: RequestWithUser,
-                        @Body() {twoFacAuthCode} : TwoFacAuthCodeDto){
-        const isValid = this.twoFacAuthService.isTwoFacAuthCodeValid(twoFacAuthCode, request.body.user.id);
-        if (!isValid)
-            throw new UnauthorizedException('Wrong authentication code');
-        this.authService.sendJWTtoken;
-        return request.body.user;
-    }
+	@Post('authenticate')
+	@HttpCode(200)
+	// @UseGuards(JwtTwoFactorGuard)
+	async authenticate(@Req() request: RequestWithUser,
+						@Body() {twoFacAuthCode} : TwoFacAuthCodeDto){
+		const isValid = this.twoFacAuthService.isTwoFacAuthCodeValid(twoFacAuthCode, request.body.user.id);
+		if (!isValid)
+			throw new UnauthorizedException('Wrong authentication code');
+		this.authService.sendJWTtoken;
+		return request.body.user;
+	}
+
+	// @Post('turn-off')
+	// @HttpCode(200)
+	// // @UseGuards(jwtAuthGuard)
+	// async turnOffTwoFacAuth()
 }
