@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
+const common_2 = require("@nestjs/common");
 const users_service_1 = require("../users/users.service");
 let AuthController = class AuthController {
     constructor(authService, playerService) {
@@ -28,14 +29,19 @@ let AuthController = class AuthController {
         let playerExists;
         obj = await this.authService.getUserData(query.code);
         if (!obj)
-            return response.send("fidjgjrd");
+            throw new common_2.BadRequestException('Bad Request');
         console.log({ obj });
         playerExists = await this.playerService.getUserById(obj.id);
         if (!playerExists) {
             console.log('does not Exists');
             this.playerService.create(obj);
+            return await this.authService.sendJWTtoken(playerExists, response);
         }
-        return await this.authService.sendJWTtoken(playerExists, response);
+        else if (playerExists && playerExists.is2FacAuth) {
+        }
+        else if (playerExists && !playerExists.is2FacAuth) {
+        }
+        return response.send("end");
     }
 };
 __decorate([

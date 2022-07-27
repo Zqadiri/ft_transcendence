@@ -15,5 +15,5 @@ export declare class User extends BaseEntity {
     createdAt: Date;
     updatedAt: Date;
     friends: Friend[];
-    twoFactorAuthenticationSecret: string;
+    twoFacAuthSecret: string;
 }

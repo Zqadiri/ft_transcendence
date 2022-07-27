@@ -27,21 +27,21 @@ export class AuthController
 		let playerExists;
 		obj = await this.authService.getUserData(query.code);
 		if (!obj)
-			return response.send("fidjgjrd");
-		    // throw new BadRequestException('Bad Request');
+		    throw new BadRequestException('Bad Request');
 		console.log({obj});
 		playerExists = await this.playerService.getUserById(obj.id);
 		if (!playerExists){
 			console.log('does not Exists');
 			this.playerService.create(obj);
+			return await this.authService.sendJWTtoken(playerExists, response);
 		}
-		return await this.authService.sendJWTtoken(playerExists, response);
-		// else if (playerExists && playerExists.is2FacAuth){
+		else if (playerExists && playerExists.is2FacAuth){
+					
+		}
+		else if (playerExists && !playerExists.is2FacAuth){
 			
-		// }
-		// else if (playerExists && !playerExists.is2FacAuth){
-			
-		// }
+		}
+		return response.send("end");
 	}
 }
 

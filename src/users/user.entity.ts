@@ -63,5 +63,5 @@ export class User extends BaseEntity {
 	friends: Friend[];
 
 	@Column({nullable: true})
-	twoFactorAuthenticationSecret : string;
+	twoFacAuthSecret : string;
 }

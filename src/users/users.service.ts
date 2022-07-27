@@ -38,7 +38,7 @@ export class UsersService {
 
 		async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
 			return this.userRepository.update(userId, {
-			  twoFactorAuthenticationSecret: secret
+				twoFacAuthSecret: secret
 			});
 		}
 		 

@@ -8,18 +8,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TwoFactorAuthenticationService = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("../users/users.service");
 const otplib_1 = require("otplib");
+const user_entity_1 = require("../users/user.entity");
 const qrcode_1 = require("qrcode");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
 let TwoFactorAuthenticationService = class TwoFactorAuthenticationService {
-    constructor(userService) {
+    constructor(userRepository, userService) {
+        this.userRepository = userRepository;
         this.userService = userService;
     }
-    async generateTwoFactorAuthenticationSecret(user) {
+    async generateTwoFacAuthSecret(user) {
         const secret = otplib_1.authenticator.generateSecret();
+        console.log(`user tfa : ${user}`);
         const urlPath = otplib_1.authenticator.keyuri(user.email, process.env.TWO_FACTOR_AUTHENTICATION_APP_NAME, secret);
         await this.userService.setTwoFactorAuthenticationSecret(secret, user.id);
         return {
@@ -30,10 +38,23 @@ let TwoFactorAuthenticationService = class TwoFactorAuthenticationService {
     async pipeQrCodeStream(stream, otpauthUrl) {
         return (0, qrcode_1.toFileStream)(stream, otpauthUrl);
     }
+    async activateTwoFacAuth(userID) {
+        return this.userRepository.update(userID, {
+            is2FacAuth: true
+        });
+    }
+    isTwoFacAuthCodeValid(twoFacAuthCode, user) {
+        return otplib_1.authenticator.verify({
+            token: twoFacAuthCode,
+            secret: user.twoFacAuthSecret
+        });
+    }
 };
 TwoFactorAuthenticationService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [users_service_1.UsersService])
+    __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        users_service_1.UsersService])
 ], TwoFactorAuthenticationService);
 exports.TwoFactorAuthenticationService = TwoFactorAuthenticationService;
 //# sourceMappingURL=two-factor-authentication.service.js.map

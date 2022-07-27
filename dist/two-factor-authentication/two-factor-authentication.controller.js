@@ -16,15 +16,26 @@ exports.TwoFactorAuthenticationController = void 0;
 const common_1 = require("@nestjs/common");
 const common_2 = require("@nestjs/common");
 const two_factor_authentication_service_1 = require("./two-factor-authentication.service");
+const twoFactorAuthenticationCode_dto_1 = require("./dto/twoFactorAuthenticationCode.dto");
 let TwoFactorAuthenticationController = class TwoFactorAuthenticationController {
-    constructor(twoFacAuth) {
-        this.twoFacAuth = twoFacAuth;
+    constructor(twoFacAuthService) {
+        this.twoFacAuthService = twoFacAuthService;
     }
     async register(response, request) {
-        console.log(`request data ${request}`);
-        const { urlPath } = await this.twoFacAuth.generateTwoFactorAuthenticationSecret(request.user);
-        console.log('end');
-        return this.twoFacAuth.pipeQrCodeStream(response, urlPath);
+        console.log(`request data ${JSON.stringify(request.body.user)}`);
+        const { urlPath } = await this.twoFacAuthService.generateTwoFacAuthSecret(request.body.user);
+        return this.twoFacAuthService.pipeQrCodeStream(response, urlPath);
+    }
+    async turnOnTwoFacAuth(request, { twoFacAuthCode }) {
+        const isValid = this.twoFacAuthService.isTwoFacAuthCodeValid(twoFacAuthCode, request.body.user.id);
+        if (!isValid)
+            throw new common_1.UnauthorizedException('Wrong authentication code');
+        await this.twoFacAuthService.activateTwoFacAuth(request.body.user.id);
+    }
+    async authenticate(request, { twoFacAuthCode }) {
+        const isValid = this.twoFacAuthService.isTwoFacAuthCodeValid(twoFacAuthCode, request.body.user.id);
+        if (!isValid)
+            throw new common_1.UnauthorizedException('Wrong authentication code');
     }
 };
 __decorate([
@@ -35,6 +46,25 @@ __decorate([
     __metadata("design:paramtypes", [Response, Object]),
     __metadata("design:returntype", Promise)
 ], TwoFactorAuthenticationController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('turn-on'),
+    (0, common_1.HttpCode)(200),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, twoFactorAuthenticationCode_dto_1.TwoFacAuthCodeDto]),
+    __metadata("design:returntype", Promise)
+], TwoFactorAuthenticationController.prototype, "turnOnTwoFacAuth", null);
+__decorate([
+    (0, common_1.Post)('authenticate'),
+    (0, common_1.HttpCode)(200),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Request,
+        twoFactorAuthenticationCode_dto_1.TwoFacAuthCodeDto]),
+    __metadata("design:returntype", Promise)
+], TwoFactorAuthenticationController.prototype, "authenticate", null);
 TwoFactorAuthenticationController = __decorate([
     (0, common_2.Controller)('two-factor-authentication'),
     (0, common_2.UseInterceptors)(common_2.ClassSerializerInterceptor),
