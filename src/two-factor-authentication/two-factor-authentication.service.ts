@@ -5,13 +5,15 @@ import { User } from 'src/users/user.entity';
 import { toFileStream } from 'qrcode';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class TwoFactorAuthenticationService {
 	constructor(
 		@InjectRepository(User)
 		private userRepository: Repository<User>,
-		private readonly userService: UsersService
+		private readonly userService: UsersService,
+		private readonly jwtService: JwtService
 	){}
 
 	async generateTwoFacAuthSecret(user: User){
@@ -51,6 +53,14 @@ export class TwoFactorAuthenticationService {
 		})
 	}
 
-	
+	//! its temp cus i already have an access token 
+	// getCookieWithJwt(userId: number, isSecondFactorAuthenticated = false){
+	// 	const payload: TokenPayload = { userId, isSecondFactorAuthenticated };
+	// 	const token = this.jwtService.sign(payload, {
+	// 		secret: process.env.SECRET,
+	// 	  	expiresIn: `1d`
+	// 	});
+	// 	return `Authentication=${token}; HttpOnly; Path=/; Max-Age=1d`;
+	// }
 
 }

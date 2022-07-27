@@ -36,7 +36,7 @@ export class AuthController
 			return await this.authService.sendJWTtoken(playerExists, response);
 		}
 		else if (playerExists && playerExists.is2FacAuth){
-					
+				
 		}
 		else if (playerExists && !playerExists.is2FacAuth){
 			

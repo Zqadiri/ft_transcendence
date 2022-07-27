@@ -7,7 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-
+import { JwtService } from '@nestjs/jwt';
+import { AuthService } from 'src/auth/auth.service';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { PassportModule } from '@nestjs/passport';
     User]
   )],
   controllers: [TwoFactorAuthenticationController],
-  providers: [UsersService, TwoFactorAuthenticationService],
+  providers: [AuthService, JwtService, UsersService, TwoFactorAuthenticationService],
   exports: [PassportModule]
 })
 export class TwoFactorAuthenticationModule {}

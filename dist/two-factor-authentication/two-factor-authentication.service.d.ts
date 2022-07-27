@@ -1,10 +1,12 @@
 import { UsersService } from '../users/users.service';
 import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 export declare class TwoFactorAuthenticationService {
     private userRepository;
     private readonly userService;
-    constructor(userRepository: Repository<User>, userService: UsersService);
+    private readonly jwtService;
+    constructor(userRepository: Repository<User>, userService: UsersService, jwtService: JwtService);
     generateTwoFacAuthSecret(user: User): Promise<{
         secret: string;
         urlPath: string;

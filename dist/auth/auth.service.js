@@ -96,9 +96,11 @@ let AuthService = class AuthService {
             email: user.email
         });
     }
+
+    // isTwoFacAuth we can distinguish between tokens created with and without two-factor authentication
     async loginWithCredentials(user) {
         console.log('in login method');
-        const payload = { username: user.username, sub: user.id };
+        const payload = { username: user.username, sub: user.id, isTwoFacAuth: user.is2FacAuth};
         return {
             access_token: await this.jwtService.signAsync(payload, { secret: process.env.SECRET }),
         };

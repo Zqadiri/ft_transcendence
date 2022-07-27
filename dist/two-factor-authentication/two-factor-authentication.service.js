@@ -20,10 +20,12 @@ const user_entity_1 = require("../users/user.entity");
 const qrcode_1 = require("qrcode");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const jwt_1 = require("@nestjs/jwt");
 let TwoFactorAuthenticationService = class TwoFactorAuthenticationService {
-    constructor(userRepository, userService) {
+    constructor(userRepository, userService, jwtService) {
         this.userRepository = userRepository;
         this.userService = userService;
+        this.jwtService = jwtService;
     }
     async generateTwoFacAuthSecret(user) {
         const secret = otplib_1.authenticator.generateSecret();
@@ -54,7 +56,8 @@ TwoFactorAuthenticationService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        users_service_1.UsersService])
+        users_service_1.UsersService,
+        jwt_1.JwtService])
 ], TwoFactorAuthenticationService);
 exports.TwoFactorAuthenticationService = TwoFactorAuthenticationService;
 //# sourceMappingURL=two-factor-authentication.service.js.map

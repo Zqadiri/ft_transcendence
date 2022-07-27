@@ -14,6 +14,8 @@ const users_service_1 = require("../users/users.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("../users/user.entity");
 const passport_1 = require("@nestjs/passport");
+const jwt_1 = require("@nestjs/jwt");
+const auth_service_1 = require("../auth/auth.service");
 let TwoFactorAuthenticationModule = class TwoFactorAuthenticationModule {
 };
 TwoFactorAuthenticationModule = __decorate([
@@ -25,7 +27,7 @@ TwoFactorAuthenticationModule = __decorate([
             ])
         ],
         controllers: [two_factor_authentication_controller_1.TwoFactorAuthenticationController],
-        providers: [users_service_1.UsersService, two_factor_authentication_service_1.TwoFactorAuthenticationService],
+        providers: [auth_service_1.AuthService, jwt_1.JwtService, users_service_1.UsersService, two_factor_authentication_service_1.TwoFactorAuthenticationService],
         exports: [passport_1.PassportModule]
     })
 ], TwoFactorAuthenticationModule);

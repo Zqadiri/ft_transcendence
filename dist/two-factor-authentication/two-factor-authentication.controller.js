@@ -17,8 +17,10 @@ const common_1 = require("@nestjs/common");
 const common_2 = require("@nestjs/common");
 const two_factor_authentication_service_1 = require("./two-factor-authentication.service");
 const twoFactorAuthenticationCode_dto_1 = require("./dto/twoFactorAuthenticationCode.dto");
+const auth_service_1 = require("../auth/auth.service");
 let TwoFactorAuthenticationController = class TwoFactorAuthenticationController {
-    constructor(twoFacAuthService) {
+    constructor(authService, twoFacAuthService) {
+        this.authService = authService;
         this.twoFacAuthService = twoFacAuthService;
     }
     async register(response, request) {
@@ -36,6 +38,8 @@ let TwoFactorAuthenticationController = class TwoFactorAuthenticationController 
         const isValid = this.twoFacAuthService.isTwoFacAuthCodeValid(twoFacAuthCode, request.body.user.id);
         if (!isValid)
             throw new common_1.UnauthorizedException('Wrong authentication code');
+        this.authService.sendJWTtoken;
+        return request.body.user;
     }
 };
 __decorate([
@@ -61,14 +65,14 @@ __decorate([
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Request,
-        twoFactorAuthenticationCode_dto_1.TwoFacAuthCodeDto]),
+    __metadata("design:paramtypes", [Object, twoFactorAuthenticationCode_dto_1.TwoFacAuthCodeDto]),
     __metadata("design:returntype", Promise)
 ], TwoFactorAuthenticationController.prototype, "authenticate", null);
 TwoFactorAuthenticationController = __decorate([
     (0, common_2.Controller)('two-factor-authentication'),
     (0, common_2.UseInterceptors)(common_2.ClassSerializerInterceptor),
-    __metadata("design:paramtypes", [two_factor_authentication_service_1.TwoFactorAuthenticationService])
+    __metadata("design:paramtypes", [auth_service_1.AuthService,
+        two_factor_authentication_service_1.TwoFactorAuthenticationService])
 ], TwoFactorAuthenticationController);
 exports.TwoFactorAuthenticationController = TwoFactorAuthenticationController;
 //# sourceMappingURL=two-factor-authentication.controller.js.map
