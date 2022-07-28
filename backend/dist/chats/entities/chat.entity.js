@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chat = void 0;
 const typeorm_1 = require("typeorm");
+const user_entity_1 = require("../../users/user.entity");
 let Chat = class Chat {
     ;
 };
@@ -45,21 +46,34 @@ __decorate([
     __metadata("design:type", String)
 ], Chat.prototype, "status", void 0);
 __decorate([
+    (0, typeorm_1.ManyToMany)(() => user_entity_1.User, user => user.chats),
+    (0, typeorm_1.JoinTable)(),
+    __metadata("design:type", Array)
+], Chat.prototype, "usersID", void 0);
+__decorate([
     (0, typeorm_1.Column)('varchar'),
     __metadata("design:type", String)
 ], Chat.prototype, "ownerID", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)("int", { array: true }),
     __metadata("design:type", Array)
 ], Chat.prototype, "AdminsID", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)("int", { array: true }),
     __metadata("design:type", Array)
 ], Chat.prototype, "mutedID", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)("int", { array: true }),
     __metadata("design:type", Array)
 ], Chat.prototype, "banedID", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Chat.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], Chat.prototype, "updated_at", void 0);
 Chat = __decorate([
     (0, typeorm_1.Entity)()
 ], Chat);

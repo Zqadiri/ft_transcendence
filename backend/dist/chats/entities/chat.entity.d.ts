@@ -1,3 +1,4 @@
+import { User } from "src/users/user.entity";
 export declare class Chat {
     id: number;
     name: string;
@@ -5,8 +6,11 @@ export declare class Chat {
     isActive: boolean;
     type: string;
     status: string;
+    usersID: User[];
     ownerID: string;
-    AdminsID: string[];
-    mutedID: string[];
-    banedID: string[];
+    AdminsID: number[];
+    mutedID: number[];
+    banedID: number[];
+    created_at: Date;
+    updated_at: Date;
 }

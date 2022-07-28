@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, OneToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, OneToOne, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { User } from "src/users/user.entity";
 import { Message } from "./message.entity";
 import { MeasureMemoryMode } from "vm";
@@ -16,7 +16,6 @@ export class Chat {
     @Column() 	
     password: string;
 
-
     @Column({default: true})
     isActive: boolean
 
@@ -32,22 +31,30 @@ export class Chat {
     })
     status: string;
 
-	// @ManyToMany(() => User, user => user.chats)
-	// @JoinTable()
-	// usersID: User[];
+	@ManyToMany(() => User, user => user.chats)
+	@JoinTable()
+	usersID: User[];
 	
 	@Column('varchar')
     ownerID: string;
 
-    @Column()
-    AdminsID: string[];
+    @Column("int", {array: true})
+    AdminsID: number[];
 
-    @Column()
-	mutedID: string[];
-	
-	@Column()
-	banedID: string[];
+
+    @Column("int", {array: true})
+    mutedID: number[];
+
+   
+    @Column("int", {array: true})
+    banedID: number[];
 	
 	// @OneToOne(() => Message, (message) => message.ChatID)
 	// messages : Message[];
+
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
 ;}
