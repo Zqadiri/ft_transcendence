@@ -19,9 +19,15 @@ const common_3 = require("@nestjs/common");
 const common_4 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const upload_interceptor_1 = require("./upload.interceptor");
+const swagger_1 = require("@nestjs/swagger");
+const user_entity_1 = require("./user.entity");
+const upload_dto_1 = require("./dto/upload.dto");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
+    }
+    getUserData(id) {
+        return this.usersService.getUserById(id);
     }
     async uploadFile(request, file) {
         console.log(file);
@@ -33,7 +39,27 @@ let UsersController = class UsersController {
     }
 };
 __decorate([
-    (0, common_4.Post)('/upload'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get user data by id' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'The found record',
+        type: user_entity_1.User,
+    }),
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getUserData", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Change a user\'s avatar' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'The uploaded avatar Details',
+        type: upload_dto_1.AvatarDto,
+    }),
+    (0, common_4.Post)('/upload_avatar'),
+    (0, common_1.HttpCode)(200),
     (0, common_2.UseInterceptors)((0, upload_interceptor_1.default)({
         fieldName: 'file',
         path: '/',
@@ -49,6 +75,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "uploadFile", null);
 UsersController = __decorate([
+    (0, swagger_1.ApiTags)('users'),
     (0, common_1.Controller)('users'),
     (0, common_2.UseInterceptors)(common_1.ClassSerializerInterceptor),
     __metadata("design:paramtypes", [users_service_1.UsersService])

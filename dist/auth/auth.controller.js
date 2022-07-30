@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const common_2 = require("@nestjs/common");
 const users_service_1 = require("../users/users.service");
+const swagger_1 = require("@nestjs/swagger");
 let AuthController = class AuthController {
     constructor(authService, playerService) {
         this.authService = authService;
@@ -45,6 +46,11 @@ let AuthController = class AuthController {
     }
 };
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Change a user\'s avatar' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'the route responsible of fetching the authenticated user data from the intra API',
+    }),
     (0, common_1.Get)('/login'),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Res)()),
@@ -53,7 +59,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "access_token", null);
 AuthController = __decorate([
-    (0, common_1.Controller)('auth'),
+    (0, swagger_1.ApiTags)('authentication'),
+    (0, common_1.Controller)('authentication'),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
         users_service_1.UsersService])
 ], AuthController);

@@ -1,21 +1,27 @@
 import { Controller, Get, Render, Redirect, Res, Post } from '@nestjs/common';
 import { response } from 'express';
-
+import {
+	ApiOperation,
+	ApiTags
+}from '@nestjs/swagger'
 import { AppService } from './app.service';
 
+@ApiTags('app')
 @Controller()
 export class AppController {
 	constructor(
 			private readonly appService: AppService,
 		) {}
  
+	@ApiOperation({ summary: 'Get the main page' })
 	@Get()
 	@Render('upload')
 	root(){
 		return ({message: 'hehe'});
 	}
 
-	@Get('/auth_page')
+	@ApiOperation({ summary: 'Redirect to the authorization page of the intra Api' })
+	@Get('/authentication_page')
 	@Redirect()
 	async getAuthPage(@Res() response: Response){
 		return { 

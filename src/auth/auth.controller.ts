@@ -4,13 +4,15 @@ import { Response } from "express";
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { BadRequestException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
+import { ApiTags, ApiOperation, ApiResponse} from '@nestjs/swagger';
 
 /*
 	Controllers are responsible for handling incoming 
 	requests and returning responses to the client.
 */
 
-@Controller('auth')
+@ApiTags('authentication')
+@Controller('authentication')
 export class AuthController 
 {
 	constructor(
@@ -18,6 +20,11 @@ export class AuthController
 		private readonly playerService: UsersService
 	){}
 
+	@ApiOperation({ summary: 'Change a user\'s avatar' })
+	@ApiResponse({
+		status: 200,
+		description: 'the route responsible of fetching the authenticated user data from the intra API',
+	})
 	@Get('/login')
 	async access_token(@Query() query: {code: string}, @Res() response: Response)
 	{
@@ -44,4 +51,3 @@ export class AuthController
 		return response.send("end");
 	}
 }
-

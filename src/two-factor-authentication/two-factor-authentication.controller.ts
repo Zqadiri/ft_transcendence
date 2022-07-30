@@ -6,8 +6,10 @@ import requestWithUser from  './requestWithUser.interface';
 import { TwoFacAuthCodeDto } from './dto/twoFactorAuthenticationCode.dto';
 import RequestWithUser from './requestWithUser.interface';
 import { AuthService } from 'src/auth/auth.service';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 // ! learn more about interceptors
+@ApiTags('two-factor-authentication')
 @Controller('two-factor-authentication')
 @UseInterceptors(ClassSerializerInterceptor)
 export class TwoFactorAuthenticationController {
@@ -21,6 +23,7 @@ export class TwoFactorAuthenticationController {
 		route handler handles the request or not
 	*/
 
+	@ApiOperation({ summary: 'Generate the Qrcode' })
 	@Post('generate')
 	// @UseGuards(jwtAuthGuard)
 	async register(
@@ -32,6 +35,7 @@ export class TwoFactorAuthenticationController {
 		return this.twoFacAuthService.pipeQrCodeStream(response, urlPath);
 	}
 
+	@ApiOperation({ summary: 'Enable 2FA' })
 	@Post('turn-on')
 	@HttpCode(200)
 	// @UseGuards(jwtAuthGuard)
@@ -45,6 +49,7 @@ export class TwoFactorAuthenticationController {
 		await this.twoFacAuthService.activateTwoFacAuth(request.body.user.id);
 	}
 
+	@ApiOperation({ summary: 'Validate the 2FA code and set the cookie' })
 	@Post('authenticate')
 	@HttpCode(200)
 	// @UseGuards(JwtTwoFactorGuard)

@@ -18,6 +18,7 @@ const common_2 = require("@nestjs/common");
 const two_factor_authentication_service_1 = require("./two-factor-authentication.service");
 const twoFactorAuthenticationCode_dto_1 = require("./dto/twoFactorAuthenticationCode.dto");
 const auth_service_1 = require("../auth/auth.service");
+const swagger_1 = require("@nestjs/swagger");
 let TwoFactorAuthenticationController = class TwoFactorAuthenticationController {
     constructor(authService, twoFacAuthService) {
         this.authService = authService;
@@ -43,6 +44,7 @@ let TwoFactorAuthenticationController = class TwoFactorAuthenticationController 
     }
 };
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Generate the Qrcode' }),
     (0, common_1.Post)('generate'),
     __param(0, (0, common_1.Res)()),
     __param(1, (0, common_1.Req)()),
@@ -51,6 +53,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TwoFactorAuthenticationController.prototype, "register", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Enable 2FA' }),
     (0, common_1.Post)('turn-on'),
     (0, common_1.HttpCode)(200),
     __param(0, (0, common_1.Req)()),
@@ -60,6 +63,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TwoFactorAuthenticationController.prototype, "turnOnTwoFacAuth", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Validate the 2FA code and set the cookie' }),
     (0, common_1.Post)('authenticate'),
     (0, common_1.HttpCode)(200),
     __param(0, (0, common_1.Req)()),
@@ -69,6 +73,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], TwoFactorAuthenticationController.prototype, "authenticate", null);
 TwoFactorAuthenticationController = __decorate([
+    (0, swagger_1.ApiTags)('two-factor-authentication'),
     (0, common_2.Controller)('two-factor-authentication'),
     (0, common_2.UseInterceptors)(common_2.ClassSerializerInterceptor),
     __metadata("design:paramtypes", [auth_service_1.AuthService,

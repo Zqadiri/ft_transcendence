@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
 const app_service_1 = require("./app.service");
 let AppController = class AppController {
     constructor(appService) {
@@ -29,6 +30,7 @@ let AppController = class AppController {
     }
 };
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Get the main page' }),
     (0, common_1.Get)(),
     (0, common_1.Render)('upload'),
     __metadata("design:type", Function),
@@ -36,7 +38,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "root", null);
 __decorate([
-    (0, common_1.Get)('/auth_page'),
+    (0, swagger_1.ApiOperation)({ summary: 'Redirect to the authorization page of the intra Api' }),
+    (0, common_1.Get)('/authentication_page'),
     (0, common_1.Redirect)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -44,6 +47,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "getAuthPage", null);
 AppController = __decorate([
+    (0, swagger_1.ApiTags)('app'),
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [app_service_1.AppService])
 ], AppController);
