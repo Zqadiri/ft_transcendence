@@ -24,9 +24,10 @@ let UsersController = class UsersController {
         this.usersService = usersService;
     }
     async uploadFile(request, file) {
-        return this.usersService.uploadAvatar(request.user.id, {
+        console.log(file);
+        return this.usersService.uploadAvatar(58526, {
+            filename: file.filename,
             path: file.path,
-            filename: file.originalname,
             mimetype: file.mimetype
         });
     }

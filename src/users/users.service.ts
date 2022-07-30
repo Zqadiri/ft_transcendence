@@ -5,13 +5,14 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { BadRequestException } from '@nestjs/common';
 import { UserRepository } from './user.repository';
-
+import { AvatarDto } from './dto/upload.dto';
+import * as mime from 'mime'
 
 @Injectable()
 export class UsersService {
 		constructor(
 			@InjectRepository(User)
-			private userRepository: UserRepository,
+			private readonly userRepository: UserRepository,
 		){}
 	
 		/*
@@ -42,7 +43,15 @@ export class UsersService {
 			});
 		}
 
-		async uploadAvatar(id: number, )
-		 
+		/*
+			Change the avatar
+		*/
+
+		async uploadAvatar(id: number, avatarDto: AvatarDto){
+			const newPath = avatarDto.path
+			return this.userRepository.update(id, {
+				avatar: newPath,
+			})
+		}
 }
-	 
+

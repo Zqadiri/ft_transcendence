@@ -18,19 +18,27 @@ export class UsersController {
     ){}
 
 	@Post('/upload')
-	@UseInterceptors(uploadInterceptor({
+	@UseInterceptors(
+        // FileInterceptor('file', {
+    //     storage: diskStorage({
+    //         filename: (req, file, callback) => {
+    //             callback(null, file.originalname);
+    //         }
+    //     }),
+    // }),
+        uploadInterceptor({
         fieldName: 'file',
         path: '/',
         fileFilter: (request, file, callback) => {
             if (!file.mimetype.includes('images'))
                 return callback(new BadRequestException('Provide a valid image'), false);
         },
-        //! limits:{}   add a file limit
     }))
 	async uploadFile(@Req() request: RequestWithUser, @UploadedFile() file: Express.Multer.File) {
-        return this.usersService.uploadAvatar(request.user.id, {
+        console.log(file);
+        return this.usersService.uploadAvatar(58526, {
+            filename: file.filename,
             path: file.path,
-            filename: file.originalname,
             mimetype: file.mimetype
         });
 	}

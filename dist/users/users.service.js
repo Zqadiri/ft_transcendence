@@ -38,6 +38,12 @@ let UsersService = class UsersService {
             twoFacAuthSecret: secret
         });
     }
+    async uploadAvatar(id, avatarDto) {
+        const newPath = avatarDto.path;
+        return this.userRepository.update(id, {
+            avatar: newPath,
+        });
+    }
 };
 UsersService = __decorate([
     (0, common_1.Injectable)(),

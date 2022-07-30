@@ -4,5 +4,5 @@ import RequestWithUser from 'src/two-factor-authentication/requestWithUser.inter
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
-    uploadFile(request: RequestWithUser, file: Express.Multer.File): Promise<any>;
+    uploadFile(request: RequestWithUser, file: Express.Multer.File): Promise<import("typeorm").UpdateResult>;
 }
