@@ -7,7 +7,7 @@ function Canvas( {game, width, height}: {game: (context: CanvasRenderingContext2
 	React.useEffect(() => {
 		if (canvas.current !== null)
 		{
-			const context = canvas.current.getContext('2d');
+			const context = canvas.current.getContext("2d");
 			game(context);
 		}
 	});
