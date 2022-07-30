@@ -9,6 +9,9 @@ function Canvas( {game, width, height}: {game: (context: CanvasRenderingContext2
 		{
 			const context = canvas.current.getContext("2d");
 			game(context);
+			// setInterval(() => {
+			// 	game(context);
+			// }, 1000/50);
 		}
 	});
 
