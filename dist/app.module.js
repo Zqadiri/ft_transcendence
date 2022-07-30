@@ -62,7 +62,7 @@ AppModule = __decorate([
             friends_module_1.FriendsModule,
             two_factor_authentication_module_1.TwoFactorAuthenticationModule,
         ],
-        controllers: [auth_controller_1.AuthController, users_controller_1.PlayersController, app_controller_1.AppController],
+        controllers: [auth_controller_1.AuthController, users_controller_1.UsersController, app_controller_1.AppController],
         providers: [users_service_1.UsersService, jwt_stategy_1.JwtStrategy, auth_service_1.AuthService, app_service_1.AppService],
         exports: [
             auth_service_1.AuthService, passport_1.PassportModule

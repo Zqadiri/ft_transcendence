@@ -41,6 +41,8 @@ export class UsersService {
 				twoFacAuthSecret: secret
 			});
 		}
+
+		async uploadAvatar(id: number, )
 		 
 }
 	 

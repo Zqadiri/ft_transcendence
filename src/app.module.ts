@@ -12,7 +12,7 @@ import { AppLoggerMiddleware } from './logger.middleware';
 import { AuthService } from './auth/auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
-import { PlayersController } from './users/users.controller';
+import { UsersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
 import { ChatModule } from './chats/chats.module';
 import { FriendsModule } from './friends/friends.module';
@@ -50,7 +50,7 @@ require('dotenv').config();
 		FriendsModule,
 		TwoFactorAuthenticationModule,
 		],
-		controllers: [AuthController, PlayersController, AppController],
+		controllers: [AuthController, UsersController, AppController],
 		providers: [UsersService, JwtStrategy, AuthService,  AppService],
 		exports: [
 			AuthService, PassportModule

@@ -7,4 +7,5 @@ export declare class UsersService {
     getUserById(id: number): Promise<User>;
     create(createUserDto: CreateUserDto): Promise<User>;
     setTwoFactorAuthenticationSecret(secret: string, userId: number): Promise<import("typeorm").UpdateResult>;
+    uploadAvatar(id: number): any;
 }

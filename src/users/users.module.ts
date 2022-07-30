@@ -4,7 +4,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { AuthService } from 'src/auth/auth.service';
 import { TwoFactorAuthenticationModule } from 'src/two-factor-authentication/two-factor-authentication.module';
 import { User } from './user.entity';
-import { PlayersController } from './users.controller';
+import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 @Module({
@@ -12,7 +12,7 @@ import { UsersService } from './users.service';
     TypeOrmModule.forFeature([
     User]
     )],
-  controllers: [PlayersController],
+  controllers: [UsersController],
   providers: [UsersService]
 })
 export class UsersModule {}
