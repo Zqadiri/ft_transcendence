@@ -18,15 +18,7 @@ export class UsersController {
     ){}
 
 	@Post('/upload')
-	@UseInterceptors(
-        // FileInterceptor('file', {
-    //     storage: diskStorage({
-    //         filename: (req, file, callback) => {
-    //             callback(null, file.originalname);
-    //         }
-    //     }),
-    // }),
-        uploadInterceptor({
+	@UseInterceptors(uploadInterceptor({
         fieldName: 'file',
         path: '/',
         fileFilter: (request, file, callback) => {
