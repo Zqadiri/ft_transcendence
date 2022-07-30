@@ -1,18 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react'
 
-function Canvas( {game, width, height}: {game: (context: CanvasRenderingContext2D | null) => void; width: number; height: number} ): JSX.Element {
+function Canvas( {game, width, height}: {game: (context: HTMLCanvasElement | null) => void; width: number; height: number} ): JSX.Element {
 	const canvas: React.RefObject<HTMLCanvasElement> = React.useRef(null);
 
 	React.useEffect(() => {
-		if (canvas.current !== null)
-		{
-			const context = canvas.current.getContext("2d");
-			game(context);
-			// setInterval(() => {
-			// 	game(context);
-			// }, 1000/50);
-		}
+		game(canvas.current);
 	});
 
 	return (

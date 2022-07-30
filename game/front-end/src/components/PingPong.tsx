@@ -165,11 +165,38 @@ const update = (): void =>
 		update_score();
 }
 
-const game = (ctx: CanvasRenderingContext2D | null): void =>
+const pongGame = () =>
 {
-	canvas.context = ctx;
-	// update();
+	update();
 	render();
+}
+
+function movePaddle(event: KeyboardEvent): void
+{
+	let move: number = 0;
+
+	console.log({user1});
+	if (event.key === "ArrowUp")
+		move = -20;
+	else if (event.key === "ArrowDown")	
+		move = 20;
+
+	if ((user1.y + user1.height/2) + move > 0 && (user1.y + user1.height/2) + move < canvas.height)
+		user1.y += move;
+	console.log({user1});
+}
+
+const game = (current: HTMLCanvasElement | null): void =>
+{
+	if (current !== null)
+	{
+		canvas.context = current.getContext("2d");
+		window.addEventListener("keydown" , movePaddle);
+		pongGame();
+		setInterval(() => {
+			pongGame();
+		}, 1000/50);
+	}
 }
 
 function PingPong(): JSX.Element {
