@@ -4,7 +4,7 @@ import '../App.css';
 import Canvas from './Canvas';
 import { stringify } from 'querystring';
 
-const draw = (): void => {
+const draw = (context: CanvasRenderingContext2D | null): void => {
 
 }
 
