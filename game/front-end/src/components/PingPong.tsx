@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../App.css';
 import Canvas from './Canvas';
+import Score from './Score';
+
+let g_setScore1: React.Dispatch<React.SetStateAction<number>>;
+let g_setScore2: React.Dispatch<React.SetStateAction<number>>;
 
 const canvas: {context: CanvasRenderingContext2D | null, width: number, height: number, color: string} = {
 	context: null,
 	width: 1000,
-	height: 700,
+	height: 600,
 	color: "black"
 }
 
@@ -47,9 +51,9 @@ const ball:
 {x: number, y: number, speed: number, velocityX: number, velocityY: number, radius: number, color: string} = {
 	x: canvas.width / 2,
 	y: canvas.height / 2,
-	speed: 5,
-	velocityX: 5,
-	velocityY: 5,
+	speed: 9,
+	velocityX: 7,
+	velocityY: 7,
 	radius: 20,
 	color: "WHITE"
 }
@@ -118,16 +122,22 @@ const hasCollided = (player: Users): boolean =>
 const update_score = (): void =>
 {
 	if (ball.x - ball.radius < 0)
+	{
 		user2.score += 1;
+		g_setScore2(user2.score);
+	}
 	else if (ball.x + ball.radius > canvas.width)
+	{
 		user1.score += 1;
+		g_setScore1(user1.score);
+	}
 
 	if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width)
 	{
-		console.log("user1:", user1.score, "user2:", user2.score);
+		// console.log("user1:", user1.score, "user2:", user2.score);
 		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
-		ball.speed = 5;
+		ball.speed = 8;
 		ball.velocityX = -ball.velocityX;
 	}
 }
@@ -147,6 +157,7 @@ const update = (): void =>
 
 	if (hasCollided(player))
 	{
+		console.log("before", ball.velocityX, ball.velocityY);
 		let collidePoint: number = ball.y - (player.y + player.height/2);
 		let direction: number = ball.x < canvas.width/2 ? 1 : -1;
 		// normalize
@@ -156,7 +167,8 @@ const update = (): void =>
 		ball.velocityX = (ball.speed * Math.cos(angle)) * direction;
 		ball.velocityY = ball.speed * Math.sin(angle);
 
-		// ball.speed += 0.1;
+		ball.speed += 0.5;
+		console.log("after", ball.velocityX, ball.velocityY);
 	}
 	else
 		update_score();
@@ -168,7 +180,7 @@ const pongGame = () =>
 	render();
 }
 
-function movePaddle(event: KeyboardEvent): void
+function moveUser1Paddle(event: KeyboardEvent): void
 {
 	let move: number = 0;
 
@@ -181,22 +193,44 @@ function movePaddle(event: KeyboardEvent): void
 		user1.y += move;
 }
 
+let gameStarted: boolean = false;
+
+function startGame(event: KeyboardEvent): void
+{
+	if (!gameStarted && event.key === " ") {
+		setInterval(() => {
+			pongGame();
+		}, 1000/50);
+		gameStarted = true;
+	}
+}
+
 const game = (current: HTMLCanvasElement | null): void =>
 {
 	if (current !== null)
 	{
 		canvas.context = current.getContext("2d");
-		window.addEventListener("keydown" , movePaddle);
-		pongGame();
-		setInterval(() => {
-			pongGame();
-		}, 1000/50);
+		render();
+		window.addEventListener("keydown" , moveUser1Paddle);
+		window.addEventListener("keydown" , startGame);
+		current.addEventListener("mousemove" , (event: MouseEvent) => {
+			user2.y = event.clientY - user2.height/2;
+		});
 	}
 }
 
 function PingPong(): JSX.Element {
-	console.log("user1:", user1.score, "user2:", user2.score);
-	return (<Canvas game={game} width={canvas.width} height={canvas.height} />);
+	let [score1, setScore1] = useState(user1.score);
+	let [score2, setScore2] = useState(user2.score);
+
+	g_setScore1 = setScore1;
+	g_setScore2 = setScore2;
+	return (
+		<div className="container">
+			<Score s1={score1} s2={score2} />
+			<Canvas game={game} width={canvas.width} height={canvas.height} />
+		</div>
+	);
 }
 
 export default PingPong;
