@@ -34,7 +34,6 @@ export class UsersController {
         return this.usersService.getUserById(id);
     }
 
-
     @ApiOperation({ summary: 'Change a user\'s avatar' })
     @ApiResponse({
         status: 200,

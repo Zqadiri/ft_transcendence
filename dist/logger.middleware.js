@@ -13,14 +13,15 @@ let AppLoggerMiddleware = class AppLoggerMiddleware {
         this.logger = new common_1.Logger('HTTP');
     }
     use(request, response, next) {
-        const { ip, method, path: url } = request;
+        const { ip, method, path } = request;
         const userAgent = request.get('user-agent') || '';
+        console.log(Object.keys(request));
         console.log('...');
         response.on('close', () => {
             const { statusCode } = response;
             const contentLength = response.get('content-length');
             const cookie = response.get('cookie');
-            this.logger.log(`${method} ${url} ${statusCode} ${contentLength} - ${cookie} - ${userAgent} ${ip}`);
+            this.logger.log(`${method} ${request.path} ${statusCode} ${contentLength} - ${cookie} -  ${ip}`);
         });
         next();
     }

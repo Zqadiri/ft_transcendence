@@ -1,5 +1,4 @@
 import { Controller, Get, Render, Redirect, Res, Post } from '@nestjs/common';
-import { response } from 'express';
 import {
 	ApiOperation,
 	ApiTags
@@ -15,7 +14,7 @@ export class AppController {
  
 	@ApiOperation({ summary: 'Get the main page' })
 	@Get()
-	@Render('upload')
+	@Render('index')
 	root(){
 		return ({message: 'hehe'});
 	}
@@ -29,5 +28,11 @@ export class AppController {
 		};	
 	}
 
+	@ApiOperation({ summary: 'Get the profile page' })
+	@Get('/2fa')
+	@Render('2fa')
+	profilePage(){
+		return ({message: 'profile'});
+	}
 }
  

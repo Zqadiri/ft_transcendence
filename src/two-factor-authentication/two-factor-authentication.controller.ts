@@ -63,13 +63,4 @@ export class TwoFactorAuthenticationController {
 		this.authService.sendJWTtoken;
 		return request.body.user;
 	}
-
-	// @Post('turn-off')
-	// @HttpCode(200)
-	// // @UseGuards(jwtAuthGuard)
-	// async turnOffTwoFacAuth(
-	// 	@Req() request: RequestWithUser,
-	// ){
-		
-	// }
 }

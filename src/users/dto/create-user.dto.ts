@@ -10,4 +10,5 @@ export class CreateUserDto{
     public  email : string;
 
     public avatar: string;
+    public TwoFA : boolean;
 }

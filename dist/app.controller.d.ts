@@ -8,4 +8,7 @@ export declare class AppController {
     getAuthPage(response: Response): Promise<{
         url: string;
     }>;
+    profilePage(): {
+        message: string;
+    };
 }

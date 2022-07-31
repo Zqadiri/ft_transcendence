@@ -20,7 +20,6 @@ export class AuthService {
 
 	constructor (private readonly jwtService: JwtService){}
 	async getAccessToken(code : string) : Promise<string> {
-		console.log('--- Acces Token ---');
 		let ret : string;
 		const  payload = {
 			grant_type: 'authorization_code',
@@ -29,7 +28,7 @@ export class AuthService {
 			redirect_uri: process.env.REDIRECT_URI,
 			code : code
 		};
-		await axios({ // Requests can be made by passing the relevant config to axios.
+		await axios({
 			method: 'post',
 			url: 'https://api.intra.42.fr/oauth/token',
 			data: JSON.stringify(payload),
@@ -49,13 +48,12 @@ export class AuthService {
 	}
 
 	async getUserData(code: string) : Promise<CreateUserDto>{
-		console.log("---  Get User Data ---");
 		let access_token : string;
 		let data: CreateUserDto;
 		try {
 			access_token = await this.getAccessToken (code);
 			console.log(`access token : ${access_token}`);
-			await axios({ // Requests can be made by passing the relevant config to axios.
+			await axios({
 				method: 'get',
 				url: 'https://api.intra.42.fr/v2/me',
 				headers: {
@@ -68,28 +66,23 @@ export class AuthService {
 				const email = res.data.email;
 				const id = res.data.id;
 				const avatar = `https://avatars.dicebear.com/api/croodles/${username}.svg`
-				data = {id, username, email, avatar};
+				const TwoFA  = res.data.is2FacAuth;
+				data = {id, username, email, avatar, TwoFA};
 				return data;
 			})
 			.catch((err) => { 
-				// console.log(err);
 			})
 		}
 		catch(err){
-			// console.log(err);
 		}
 		return data;
 	}
 
 	async sendJWTtoken(user: User, @Res() response: Response){
-		console.log('sendJWTtoken');
 		let access_token = await this.loginWithCredentials(user);
 		console.log(`access token :  ` + JSON.stringify(access_token));
-		console.log(`response response` +  JSON.stringify(response.json));
-		// response.set('cookie', String(access_token));
-		response.cookie('token', String(access_token),
-		{
-			// maxAge: 1000 * 60 * 15, // would expire after 15 minutes
+		response.cookie('token', String(access_token),{
+			maxAge: 1000 * 60 * 60, // would expire after 15 minutes
 			httpOnly: true, // The cookie only accessible by the web server
 			domain: 'localhost',
 			path: '/'
@@ -109,10 +102,9 @@ export class AuthService {
 	*/
 
 	async loginWithCredentials(user: User) {
-		console.log('in login method');
-		const payload = {username: user.username, sub: user.id};
-		return {
+		const payload = {username: user.username, id: user.id};
+		return JSON.stringify({
 			access_token: await this.jwtService.signAsync(payload, { secret: process.env.SECRET }),
-		};
+		});
 	}
 }

@@ -38,7 +38,8 @@ let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
+        imports: [
+            passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             config_1.ConfigModule.forRoot({
                 envFilePath: '.env',
                 isGlobal: true

@@ -26,29 +26,30 @@ require('dotenv').config();
 
 @Module({
 	imports: 
-		[PassportModule.register({ defaultStrategy: 'jwt' }),
-		ConfigModule.forRoot({
-			envFilePath: '.env',
-			isGlobal: true
-		}),
-		TypeOrmModule.forFeature([User]),
-		TypeOrmModule.forRoot({
-			type: 'postgres',
-			host: process.env.POSTGRES_HOST,
-			port: parseInt(process.env.POSTGRES_PORT),
-			username: process.env.POSTGRES_USER,
-			password: process.env.POSTGRES_PASSWORD,
-			database: process.env.POSTGRES_DATABASE,
-			entities: [User, Game, Friend, Chat],
-			synchronize: true,
-		}),
-		JwtModule,
-		UsersModule,
-		GameModule,
-		AuthModule,
-		ChatModule,
-		FriendsModule,
-		TwoFactorAuthenticationModule,
+		[
+			PassportModule.register({ defaultStrategy: 'jwt' }),
+			ConfigModule.forRoot({
+				envFilePath: '.env',
+				isGlobal: true
+			}),
+			TypeOrmModule.forFeature([User]),
+			TypeOrmModule.forRoot({
+				type: 'postgres',
+				host: process.env.POSTGRES_HOST,
+				port: parseInt(process.env.POSTGRES_PORT),
+				username: process.env.POSTGRES_USER,
+				password: process.env.POSTGRES_PASSWORD,
+				database: process.env.POSTGRES_DATABASE,
+				entities: [User, Game, Friend, Chat],
+				synchronize: true,
+			}),
+			JwtModule,
+			UsersModule,
+			GameModule,
+			AuthModule,
+			ChatModule,
+			FriendsModule,
+			TwoFactorAuthenticationModule,
 		],
 		controllers: [AuthController, UsersController, AppController],
 		providers: [UsersService, JwtStrategy, AuthService,  AppService],

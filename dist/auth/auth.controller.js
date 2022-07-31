@@ -24,25 +24,24 @@ let AuthController = class AuthController {
         this.playerService = playerService;
     }
     async access_token(query, response) {
-        console.log('here');
         console.log(response.statusCode);
         let obj;
         let playerExists;
         obj = await this.authService.getUserData(query.code);
         if (!obj)
             throw new common_2.BadRequestException('Bad Request');
-        console.log({ obj });
         playerExists = await this.playerService.getUserById(obj.id);
+        console.log(`player ${JSON.stringify(playerExists)}`);
         if (!playerExists) {
-            console.log('does not Exists');
+            console.log('does not Exists create user and add cookie');
             this.playerService.create(obj);
             return await this.authService.sendJWTtoken(playerExists, response);
         }
-        else if (playerExists && playerExists.is2FacAuth) {
+        else if (playerExists && playerExists.is2FacAuth === false) {
+            await this.authService.sendJWTtoken(playerExists, response);
+            console.log('Player exists and 2FA is enabled');
+            response.redirect('/2fa');
         }
-        else if (playerExists && !playerExists.is2FacAuth) {
-        }
-        return response.send("end");
     }
 };
 __decorate([
@@ -59,8 +58,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "access_token", null);
 AuthController = __decorate([
-    (0, swagger_1.ApiTags)('authentication'),
-    (0, common_1.Controller)('authentication'),
+    (0, swagger_1.ApiTags)('auth'),
+    (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
         users_service_1.UsersService])
 ], AuthController);

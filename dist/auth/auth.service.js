@@ -22,7 +22,6 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
     }
     async getAccessToken(code) {
-        console.log('--- Acces Token ---');
         let ret;
         const payload = {
             grant_type: 'authorization_code',
@@ -50,7 +49,6 @@ let AuthService = class AuthService {
         return ret;
     }
     async getUserData(code) {
-        console.log("---  Get User Data ---");
         let access_token;
         let data;
         try {
@@ -69,7 +67,8 @@ let AuthService = class AuthService {
                 const email = res.data.email;
                 const id = res.data.id;
                 const avatar = `https://avatars.dicebear.com/api/croodles/${username}.svg`;
-                data = { id, username, email, avatar };
+                const TwoFA = res.data.is2FacAuth;
+                data = { id, username, email, avatar, TwoFA };
                 return data;
             })
                 .catch((err) => {
@@ -80,11 +79,10 @@ let AuthService = class AuthService {
         return data;
     }
     async sendJWTtoken(user, response) {
-        console.log('sendJWTtoken');
         let access_token = await this.loginWithCredentials(user);
         console.log(`access token :  ` + JSON.stringify(access_token));
-        console.log(`response response` + JSON.stringify(response.json));
         response.cookie('token', String(access_token), {
+            maxAge: 1000 * 60 * 60,
             httpOnly: true,
             domain: 'localhost',
             path: '/'
@@ -97,11 +95,10 @@ let AuthService = class AuthService {
         });
     }
     async loginWithCredentials(user) {
-        console.log('in login method');
-        const payload = { username: user.username, sub: user.id };
-        return {
+        const payload = { username: user.username, id: user.id };
+        return JSON.stringify({
             access_token: await this.jwtService.signAsync(payload, { secret: process.env.SECRET }),
-        };
+        });
     }
 };
 __decorate([

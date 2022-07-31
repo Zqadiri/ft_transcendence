@@ -8,7 +8,5 @@ export declare class AuthService {
     getAccessToken(code: string): Promise<string>;
     getUserData(code: string): Promise<CreateUserDto>;
     sendJWTtoken(user: User, response: Response): Promise<Response<any, Record<string, any>>>;
-    loginWithCredentials(user: User): Promise<{
-        access_token: string;
-    }>;
+    loginWithCredentials(user: User): Promise<string>;
 }
