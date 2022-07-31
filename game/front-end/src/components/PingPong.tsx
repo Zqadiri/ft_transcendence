@@ -1,9 +1,6 @@
 import React from 'react';
-import logo from '../logo.svg';
 import '../App.css';
 import Canvas from './Canvas';
-import { stringify } from 'querystring';
-import { couldStartTrivia, EndOfLineState, updateLanguageServiceSourceFile } from 'typescript';
 
 const canvas: {context: CanvasRenderingContext2D | null, width: number, height: number, color: string} = {
 	context: null,
@@ -115,15 +112,15 @@ const hasCollided = (player: Users): boolean =>
 		left: player.x,
 		right: player.x + player.width
 	}
-	return (b.left > p.right && b.down > p.top && b.right > p.left && b.top > p.down);
+	return (b.left < p.right && b.down > p.top && b.right > p.left && b.top < p.down);
 }
 
 const update_score = (): void =>
 {
 	if (ball.x - ball.radius < 0)
-		user1.score += 1;
-	else if (ball.x + ball.radius > canvas.width)
 		user2.score += 1;
+	else if (ball.x + ball.radius > canvas.width)
+		user1.score += 1;
 
 	if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width)
 	{
@@ -175,7 +172,6 @@ function movePaddle(event: KeyboardEvent): void
 {
 	let move: number = 0;
 
-	console.log({user1});
 	if (event.key === "ArrowUp")
 		move = -20;
 	else if (event.key === "ArrowDown")	
@@ -183,7 +179,6 @@ function movePaddle(event: KeyboardEvent): void
 
 	if ((user1.y + user1.height/2) + move > 0 && (user1.y + user1.height/2) + move < canvas.height)
 		user1.y += move;
-	console.log({user1});
 }
 
 const game = (current: HTMLCanvasElement | null): void =>
