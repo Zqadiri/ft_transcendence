@@ -2,69 +2,10 @@ import React, { useState } from 'react';
 import '../App.css';
 import Canvas from './Canvas';
 import Score from './Score';
+import { canvas, ball, user1, user2, net, Users, Directions } from '../data/PingPong.d'; 
 
-let g_setScore1: React.Dispatch<React.SetStateAction<number>>;
-let g_setScore2: React.Dispatch<React.SetStateAction<number>>;
-
-const canvas: {context: CanvasRenderingContext2D | null, width: number, height: number, color: string} = {
-	context: null,
-	width: 1000,
-	height: 600,
-	color: "black"
-}
-
-type Users = {
-	x: number,
-	y: number,
-	width: number,
-	height: number,
-	color: string,
-	score: number,
-}
-
-type Directions = {
-	top: number,
-	down: number,
-	left: number,
-	right: number
-}
-
-const user1: Users = {
-	x: 0,
-	y: canvas.height/2 - 200/2,
-	width: 30,
-	height: 200,
-	color: "WHITE",
-	score: 0,
-}
-
-const user2: Users = {
-	x: canvas.width - 30,
-	y: canvas.height/2 - 200/2,
-	width: user1.width,
-	height: user1.height,
-	color: "WHITE",
-	score: 0,
-}
-
-const ball:
-{x: number, y: number, speed: number, velocityX: number, velocityY: number, radius: number, color: string} = {
-	x: canvas.width / 2,
-	y: canvas.height / 2,
-	speed: 12,
-	velocityX: 11,
-	velocityY: 11,
-	radius: 20,
-	color: "WHITE"
-}
-
-const net: {x: number, y: number, width: number, height: number, color: string} = {
-	x: canvas.width / 2 - 2/2,
-	y: 0,
-	width: 2,
-	height: 10,
-	color: "WHITE"
-}
+export let g_setScore1: React.Dispatch<React.SetStateAction<number>>;
+export let g_setScore2: React.Dispatch<React.SetStateAction<number>>;
 
 const drawRect = (x: number, y: number, w: number, h: number, color: string): void =>
 {
