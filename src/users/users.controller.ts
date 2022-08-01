@@ -80,16 +80,17 @@ export class UsersController {
     @ApiOperation({ summary: 'Add a friend to a user' })
     @UseGuards(jwtAuthGuard)
     @Post('/add_friend')
-    async AddFriend(@Body('id') userID : number, @Req() req){
+    async AddFriend(@Body('id') userID : number, @Req() req, @Res() res){
         try {
             const user = this.usersService.getUserById(req.user.id);
+            const res = this.usersService.createFriendRelation();
         }
         catch(err){
-
+            throw new UnauthorizedException('Can\'t add friend');
         }
-
+        res.send({});
     }
 
-    
+
 
 }

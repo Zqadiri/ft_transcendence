@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { BadRequestException } from '@nestjs/common';
-import { UserRepository } from './user.repository';
+import { UserRepository } from './repositories/user.repository';
 import { AvatarDto } from './dto/upload.dto';
 import * as mime from 'mime'
 
@@ -53,7 +53,9 @@ export class UsersService {
 			await this.userRepository.save(user);
 		}
 
-		
+		async createFriendRelation(){
+			
+		}
 
 }
 

@@ -20,7 +20,7 @@ export class AuthController
 		private readonly playerService: UsersService
 	){}
 
-	@ApiOperation({ summary: 'Change a user\'s avatar' })
+	@ApiOperation({ summary: 'log the user in with the intra and set the cookie' })
 	@ApiResponse({
 		status: 200,
 		description: 'the route responsible of fetching the authenticated user data from the intra API',
@@ -61,7 +61,7 @@ export class AuthController
 
 	@ApiOperation({summary: 'get user profile'})
 	@UseGuards(jwtAuthGuard)
-	@Get('profile')
+	@Get('/profile')
 	getProfile(@Req() req){
 		return req.user;
 	}

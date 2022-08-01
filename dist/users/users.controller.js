@@ -46,12 +46,15 @@ let UsersController = class UsersController {
         });
         res.send({ avatar: user.avatar });
     }
-    async AddFriend(userID, req) {
+    async AddFriend(userID, req, res) {
         try {
             const user = this.usersService.getUserById(req.user.id);
+            const res = this.usersService.createFriendRelation();
         }
         catch (err) {
+            throw new common_1.UnauthorizedException('Can\'t add friend');
         }
+        res.send({});
     }
 };
 __decorate([
@@ -108,8 +111,9 @@ __decorate([
     (0, common_4.Post)('/add_friend'),
     __param(0, (0, common_1.Body)('id')),
     __param(1, (0, common_4.Req)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number, Object, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "AddFriend", null);
 UsersController = __decorate([

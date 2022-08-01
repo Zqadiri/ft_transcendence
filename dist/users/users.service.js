@@ -16,7 +16,7 @@ exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const user_entity_1 = require("./user.entity");
 const typeorm_1 = require("@nestjs/typeorm");
-const user_repository_1 = require("./user.repository");
+const user_repository_1 = require("./repositories/user.repository");
 let UsersService = class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository;
@@ -52,6 +52,8 @@ let UsersService = class UsersService {
             username: newUsername
         });
         await this.userRepository.save(user);
+    }
+    async createFriendRelation() {
     }
 };
 UsersService = __decorate([

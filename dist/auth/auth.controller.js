@@ -53,7 +53,7 @@ let AuthController = class AuthController {
     }
 };
 __decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Change a user\'s avatar' }),
+    (0, swagger_1.ApiOperation)({ summary: 'log the user in with the intra and set the cookie' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'the route responsible of fetching the authenticated user data from the intra API',
@@ -76,7 +76,7 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'get user profile' }),
     (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
-    (0, common_1.Get)('profile'),
+    (0, common_1.Get)('/profile'),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),

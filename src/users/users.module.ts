@@ -5,7 +5,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { TwoFactorAuthenticationModule } from 'src/two-factor-authentication/two-factor-authentication.module';
 import { AvatarDto } from './dto/upload.dto';
 import { User } from './user.entity';
-import { UserRepository } from './user.repository';
+import { UserRepository } from './repositories/user.repository';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 

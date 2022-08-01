@@ -7,5 +7,5 @@ export declare class UsersController {
     getUserData(id: number): Promise<User>;
     updateUsername(req: any, newUsername: string): Promise<void>;
     uploadFile(req: any, file: Express.Multer.File, res: any): Promise<void>;
-    AddFriend(userID: number, req: any): Promise<void>;
+    AddFriend(userID: number, req: any, res: any): Promise<void>;
 }
