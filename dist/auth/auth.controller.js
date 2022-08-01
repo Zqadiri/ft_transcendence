@@ -18,6 +18,7 @@ const auth_service_1 = require("./auth.service");
 const common_2 = require("@nestjs/common");
 const users_service_1 = require("../users/users.service");
 const swagger_1 = require("@nestjs/swagger");
+const jwt_auth_guard_1 = require("./jwt-auth.guard");
 let AuthController = class AuthController {
     constructor(authService, playerService) {
         this.authService = authService;
@@ -43,6 +44,13 @@ let AuthController = class AuthController {
             response.redirect('/2fa');
         }
     }
+    logout(res) {
+        res.clearCookie('token');
+        res.end();
+    }
+    getProfile(req) {
+        return req.user;
+    }
 };
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Change a user\'s avatar' }),
@@ -57,6 +65,23 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "access_token", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'log out and clear cookie' }),
+    (0, common_1.Delete)('/log-out'),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "logout", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'get user profile' }),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
+    (0, common_1.Get)('profile'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "getProfile", null);
 AuthController = __decorate([
     (0, swagger_1.ApiTags)('auth'),
     (0, common_1.Controller)('auth'),

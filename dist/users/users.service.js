@@ -40,9 +40,18 @@ let UsersService = class UsersService {
     }
     async uploadAvatar(id, avatarDto) {
         const newPath = avatarDto.path;
-        return this.userRepository.update(id, {
+        const user = await this.userRepository.preload({
+            id: id,
             avatar: newPath,
         });
+        return await this.userRepository.save(user);
+    }
+    async updateUsername(id, newUsername) {
+        const user = await this.userRepository.preload({
+            id: id,
+            username: newUsername
+        });
+        await this.userRepository.save(user);
     }
 };
 UsersService = __decorate([

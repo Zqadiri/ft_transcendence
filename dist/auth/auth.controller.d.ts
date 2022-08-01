@@ -8,4 +8,6 @@ export declare class AuthController {
     access_token(query: {
         code: string;
     }, response: Response): Promise<Response<any, Record<string, any>>>;
+    logout(res: any): void;
+    getProfile(req: any): any;
 }

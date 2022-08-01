@@ -1,4 +1,5 @@
-import { Controller, ClassSerializerInterceptor,Get, BadRequestException, Param, HttpCode } from '@nestjs/common';
+import { Controller, ClassSerializerInterceptor,Get, UnauthorizedException,
+    BadRequestException, Param, HttpCode, UseGuards, Body, Res } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { Post, Req } from '@nestjs/common';
@@ -13,6 +14,8 @@ import {
 } from '@nestjs/swagger';
 import { User } from './user.entity';
 import { AvatarDto } from './dto/upload.dto';
+
+import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -34,28 +37,59 @@ export class UsersController {
         return this.usersService.getUserById(id);
     }
 
+
+    @ApiOperation({ summary: 'Change a user\'s username' })
+    @UseGuards(jwtAuthGuard)
+    @Post('/update_username')
+    async updateUsername(@Req() req, @Body('username') newUsername: string){
+        try{
+            const result = await this.usersService.updateUsername(req.user.id, newUsername);
+        }
+        catch (err){
+            throw new UnauthorizedException('failed to update the username');
+        }
+    }
+
+
     @ApiOperation({ summary: 'Change a user\'s avatar' })
     @ApiResponse({
         status: 200,
         description: 'The uploaded avatar Details',
         type: AvatarDto,
     })
+    @UseGuards(jwtAuthGuard)
 	@Post('/upload_avatar')
     @HttpCode(200)
 	@UseInterceptors(uploadInterceptor({
         fieldName: 'file',
         path: '/',
-        fileFilter: (request, file, callback) => {
+        fileFilter: (req, file, callback) => {
             if (!file.mimetype.includes('images'))
                 return callback(new BadRequestException('Provide a valid image'), false);
         },
     }))
-	async uploadFile(@Req() request: RequestWithUser, @UploadedFile() file: Express.Multer.File) {
-        console.log(file);
-        return this.usersService.uploadAvatar(58526, {
+	async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File, @Res() res) {
+        const user = await this.usersService.uploadAvatar(req.user.id, {
             filename: file.filename,
             path: file.path,
             mimetype: file.mimetype
         });
+        res.send({avatar: user.avatar});
 	}
+
+    @ApiOperation({ summary: 'Add a friend to a user' })
+    @UseGuards(jwtAuthGuard)
+    @Post('/add_friend')
+    async AddFriend(@Body('id') userID : number, @Req() req){
+        try {
+            const user = this.usersService.getUserById(req.user.id);
+        }
+        catch(err){
+
+        }
+
+    }
+
+    
+
 }

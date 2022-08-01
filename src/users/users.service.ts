@@ -14,10 +14,6 @@ export class UsersService {
 			@InjectRepository(User)
 			private readonly userRepository: UserRepository,
 		){}
-	
-		/*
-			Find a Player By Id
-		*/
 
 		async getUserById(id: number): Promise<User> {
 			const player = await this.userRepository.findOne({
@@ -27,10 +23,6 @@ export class UsersService {
 			});
 			return player;
 		}
-
-		/*
-			Create a User
-		*/
 
 		async create(createUserDto: CreateUserDto) : Promise<User>{
 			const player = this.userRepository.create(createUserDto);
@@ -43,15 +35,25 @@ export class UsersService {
 			});
 		}
 
-		/*
-			Change the avatar
-		*/
-
 		async uploadAvatar(id: number, avatarDto: AvatarDto){
+
 			const newPath = avatarDto.path
-			return this.userRepository.update(id, {
+			const user = await this.userRepository.preload({
+				id: id,
 				avatar: newPath,
-			})
+			});
+			return await this.userRepository.save(user);
 		}
+
+		async updateUsername(id: number, newUsername: string){
+			const user = await this.userRepository.preload({
+				id: id,
+				username: newUsername
+			});
+			await this.userRepository.save(user);
+		}
+
+		
+
 }
 

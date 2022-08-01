@@ -22,6 +22,7 @@ const upload_interceptor_1 = require("./upload.interceptor");
 const swagger_1 = require("@nestjs/swagger");
 const user_entity_1 = require("./user.entity");
 const upload_dto_1 = require("./dto/upload.dto");
+const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -29,13 +30,28 @@ let UsersController = class UsersController {
     getUserData(id) {
         return this.usersService.getUserById(id);
     }
-    async uploadFile(request, file) {
-        console.log(file);
-        return this.usersService.uploadAvatar(58526, {
+    async updateUsername(req, newUsername) {
+        try {
+            const result = await this.usersService.updateUsername(req.user.id, newUsername);
+        }
+        catch (err) {
+            throw new common_1.UnauthorizedException('failed to update the username');
+        }
+    }
+    async uploadFile(req, file, res) {
+        const user = await this.usersService.uploadAvatar(req.user.id, {
             filename: file.filename,
             path: file.path,
             mimetype: file.mimetype
         });
+        res.send({ avatar: user.avatar });
+    }
+    async AddFriend(userID, req) {
+        try {
+            const user = this.usersService.getUserById(req.user.id);
+        }
+        catch (err) {
+        }
     }
 };
 __decorate([
@@ -52,28 +68,50 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "getUserData", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Change a user\'s username' }),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
+    (0, common_4.Post)('/update_username'),
+    __param(0, (0, common_4.Req)()),
+    __param(1, (0, common_1.Body)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateUsername", null);
+__decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Change a user\'s avatar' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'The uploaded avatar Details',
         type: upload_dto_1.AvatarDto,
     }),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
     (0, common_4.Post)('/upload_avatar'),
     (0, common_1.HttpCode)(200),
     (0, common_2.UseInterceptors)((0, upload_interceptor_1.default)({
         fieldName: 'file',
         path: '/',
-        fileFilter: (request, file, callback) => {
+        fileFilter: (req, file, callback) => {
             if (!file.mimetype.includes('images'))
                 return callback(new common_1.BadRequestException('Provide a valid image'), false);
         },
     })),
     __param(0, (0, common_4.Req)()),
     __param(1, (0, common_3.UploadedFile)()),
+    __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "uploadFile", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Add a friend to a user' }),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
+    (0, common_4.Post)('/add_friend'),
+    __param(0, (0, common_1.Body)('id')),
+    __param(1, (0, common_4.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "AddFriend", null);
 UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, common_1.Controller)('users'),
