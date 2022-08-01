@@ -17,17 +17,29 @@ const websockets_1 = require("@nestjs/websockets");
 const chats_service_1 = require("./chats.service");
 const create_chat_dto_1 = require("./dto/create-chat.dto");
 const socket_io_1 = require("socket.io");
+const common_1 = require("@nestjs/common");
 let ChatsGateway = class ChatsGateway {
     constructor(chatsService) {
         this.chatsService = chatsService;
+        this.logger = new common_1.Logger('ChatsGateway');
+    }
+    afterInit(server) {
+        this.logger.log('Initiaalized!');
+    }
+    handleConnection(client, ...args) {
+        console.log(` client Connected ${client.id}`);
+    }
+    handleDisconnect(client) {
+        console.log(` client Disconnected: ${client.id}`);
     }
     async create(createChatDto, client) {
         const message = await this.chatsService.create(createChatDto, client.id);
-        this.server.emit('message', message);
+        client.emit('message', message);
+        client.broadcast.emit('message', message);
         return message;
     }
-    findAll() {
-        return this.chatsService.findAll();
+    async findAll() {
+        return this.chatsService.findAll_Dm_messages();
     }
     joinRoom(name, client) {
         return this.chatsService.identify(name, client.id);
@@ -54,7 +66,7 @@ __decorate([
     (0, websockets_1.SubscribeMessage)('findAllChats'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ChatsGateway.prototype, "findAll", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('join'),

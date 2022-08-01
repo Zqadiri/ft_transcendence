@@ -11,15 +11,17 @@ const common_1 = require("@nestjs/common");
 const chats_service_1 = require("./chats.service");
 const chats_gateway_1 = require("./chats.gateway");
 const typeorm_1 = require("@nestjs/typeorm");
-const chat_entity_1 = require("./entities/chat.entity");
 const users_module_1 = require("../users/users.module");
 const auth_module_1 = require("../auth/auth.module");
+const chats_controller_1 = require("./chats.controller");
+const dm_entitiy_1 = require("./entities/dm.entitiy");
 let ChatsModule = class ChatsModule {
 };
 ChatsModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule, users_module_1.PlayersModule, typeorm_1.TypeOrmModule.forFeature([chat_entity_1.Chat])],
-        providers: [chats_gateway_1.ChatsGateway, chats_service_1.ChatsService]
+        imports: [auth_module_1.AuthModule, users_module_1.PlayersModule, typeorm_1.TypeOrmModule.forFeature([dm_entitiy_1.Dm])],
+        providers: [chats_gateway_1.ChatsGateway, chats_service_1.ChatsService],
+        controllers: [chats_controller_1.ChatsController]
     })
 ], ChatsModule);
 exports.ChatsModule = ChatsModule;

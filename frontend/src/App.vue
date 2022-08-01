@@ -14,10 +14,11 @@ const typingDisplay = ref('');
 
 
 onBeforeMount(() => {
-  socket.emit('findAllChats', {}, (response) => {
-    messages.value = response;
-  });
+  // socket.emit('findAllChats', {}, (response) => {
+  //   messages.value = response;
+  // });
 
+  //
   socket.on('message', (message) => {
     messages.value.push(message);
   });
@@ -85,7 +86,7 @@ function emitTyping(){
   <div class="chat-container" v-else>
   <div class="messagee-container">
     <div v-for="message in messages" :key = "message">
-      [{{ message.name }}]: {{ message.text }}
+      [{{ message.sender }}]: {{ message.text }}
     </div>
   </div>
 

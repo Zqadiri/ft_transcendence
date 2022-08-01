@@ -1,3 +1,3 @@
-import { Message } from "../entities/message.entity";
-export declare class CreateChatDto extends Message {
+import { Dm } from "../entities/dm.entitiy";
+export declare class CreateChatDto extends Dm {
 }

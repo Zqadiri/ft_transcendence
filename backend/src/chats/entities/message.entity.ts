@@ -12,9 +12,9 @@ export class Message
 	// ChatID : Chat;
 
 	// name of the user
-	@Column()
-	name : string;
+	// @Column()
+	// name : string;
 
-	@Column()
-	text : string;
+	// @Column()
+	// text : string;
 }

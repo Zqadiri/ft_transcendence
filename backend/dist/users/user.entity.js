@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("typeorm");
-const chat_entity_1 = require("../chats/entities/chat.entity");
 let User = class User extends typeorm_2.BaseEntity {
 };
 __decorate([
@@ -58,10 +57,6 @@ __decorate([
     (0, typeorm_1.Column)({ default: 'Beginner' }),
     __metadata("design:type", String)
 ], User.prototype, "rank", void 0);
-__decorate([
-    (0, typeorm_1.ManyToMany)(() => chat_entity_1.Chat, (chat) => chat.usersID),
-    __metadata("design:type", Array)
-], User.prototype, "chats", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'timestamp',

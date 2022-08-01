@@ -1,8 +1,10 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket } from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { ChatsService } from './chats.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { Server, Socket } from 'socket.io';
+import { Bind, Logger } from '@nestjs/common';
+import { Dm } from './entities/dm.entitiy';
 
 @WebSocketGateway(
   {
@@ -11,27 +13,40 @@ import { Server, Socket } from 'socket.io';
     }
   },
 )
-export class ChatsGateway {
+export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGatewayDisconnect{
 
   @WebSocketServer()
   server: Server;
 
+  private logger: Logger = new Logger('ChatsGateway');
+
   constructor(private readonly chatsService: ChatsService) {}
+
+  afterInit(server: Server) {
+    this.logger.log('Initiaalized!');
+  }
+
+  handleConnection(client: Socket, ...args: any[]) {
+    console.log(` client Connected ${client.id}`);
+  }
+
+  handleDisconnect(client: Socket) {
+    console.log(` client Disconnected: ${client.id}`);
+  }
 
   @SubscribeMessage('createChat')
   async create(
     @MessageBody() createChatDto: CreateChatDto,
     @ConnectedSocket() client: Socket) {
     const message = await this.chatsService.create(createChatDto, client.id);
-
-    this.server.emit('message', message);
-
+    client.emit('message', message);
+    client.broadcast.emit('message', message);
     return message;
   }
 
   @SubscribeMessage('findAllChats')
-  findAll() {
-    return this.chatsService.findAll();
+  async findAll() {
+    return this.chatsService.findAll_Dm_messages();
   }
 
    // identify the user who join the chat
@@ -52,22 +67,4 @@ export class ChatsGateway {
         const name = await this.chatsService.getClientName(client.id);
         client.broadcast.emit('typing', {name, isTyping});
       }
-
-  // @SubscribeMessage('findOneChat')
-  // findOne(@MessageBody() id: number) {
-  //   return this.chatsService.findOne(id);
-  // }
-
-  // @SubscribeMessage('updateChat')
-  // update(@MessageBody() updateChatDto: UpdateChatDto) {
-  //   return this.chatsService.update(updateChatDto.id, updateChatDto);
-  // }
-
-  // @SubscribeMessage('removeChat')
-  // remove(@MessageBody() id: number) {
-  //   return this.chatsService.remove(id);
-  // }
-
- 
-
 }

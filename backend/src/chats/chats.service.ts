@@ -5,16 +5,19 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
+import { Dm } from './entities/dm.entitiy';
 
 @Injectable()
 export class ChatsService {
 
-  @InjectRepository(Chat)
-  private readonly repository: Repository<Chat>;
+  @InjectRepository(Dm)
+  private readonly DMrepository: Repository<Dm>;
 
   // array of messages just for test chat
   // initialize it with dumy object that represent an existing message 
-  messages : Message[] = [{ name : 'chicky', text: 'hey' }];
+
+  // messages : Message[] = [{ name : 'chicky', text: 'hey' }];
+
   clientToUser = {};
 
   identify(name: string, clientId: string)
@@ -28,30 +31,24 @@ export class ChatsService {
     return this.clientToUser[clientId];
   }
   
-  create(createChatDto: CreateChatDto, clientId: string) {
+  async create(createChatDto: CreateChatDto, clientId: string) : Promise<Dm>
+  {
     // This action adds a new chat
     const message = {
-      name: this.clientToUser[clientId],
+      sender: this.clientToUser[clientId],
       text: createChatDto.text,
     };
-    this.messages.push(message);
-    return message;
+
+    return await this.DMrepository.save(message);
+    // this.messages.push(message);
+    // return message;
   } 
 
-  findAll() {
+  async findAll_Dm_messages() : Promise<Dm[]>
+  {
+    return await this.DMrepository.find();
     // This action returns all chats
-    return this.messages;
+   // return this.messages;
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} chat`;
-  // }
-
-  // update(id: number, updateChatDto: UpdateChatDto) {
-  //   return `This action updates a #${id} chat`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} chat`;
-  // }
 }
