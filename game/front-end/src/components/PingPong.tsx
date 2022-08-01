@@ -51,9 +51,9 @@ const ball:
 {x: number, y: number, speed: number, velocityX: number, velocityY: number, radius: number, color: string} = {
 	x: canvas.width / 2,
 	y: canvas.height / 2,
-	speed: 9,
-	velocityX: 7,
-	velocityY: 7,
+	speed: 12,
+	velocityX: 11,
+	velocityY: 11,
 	radius: 20,
 	color: "WHITE"
 }
@@ -134,11 +134,11 @@ const update_score = (): void =>
 
 	if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width)
 	{
-		// console.log("user1:", user1.score, "user2:", user2.score);
 		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
-		ball.speed = 8;
-		ball.velocityX = -ball.velocityX;
+		ball.speed = 12;
+		ball.velocityX = ball.velocityX < 0 ? 11 : -11;
+		ball.velocityY = 11;
 	}
 }
 
