@@ -1,5 +1,5 @@
 import { LargeNumberLike } from "crypto";
-import { BaseEntity, BeforeInsert, Column, Entity } from "typeorm";
+import { BaseEntity, BeforeInsert, Column, Entity, Generated } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from "@nestjs/common";
 
@@ -23,10 +23,14 @@ export class Chat{
 	})
 	name: string;
 
+	@Generated('uuid')
+	@Column({type: "uuid"})
+	uuid: string;
+
 	@Column()
 	isPLaying: Boolean;
 
-	@Column()
+	@Column({nullable: true})
 	password: string;
 
 	@Column('varchar')

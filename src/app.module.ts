@@ -21,6 +21,8 @@ import { Chat } from './chats/chat.entity';
 import { TwoFactorAuthenticationModule } from './two-factor-authentication/two-factor-authentication.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './auth/jwt.stategy';
+import { ChatLogsModule } from './chat-logs/chat-logs.module';
+import { ChatLogs } from './chat-logs/chat-logs.entity';
 
 require('dotenv').config();
 
@@ -40,7 +42,7 @@ require('dotenv').config();
 				username: process.env.POSTGRES_USER,
 				password: process.env.POSTGRES_PASSWORD,
 				database: process.env.POSTGRES_DATABASE,
-				entities: [User, Game, Friend, Chat],
+				entities: [User, Game, Friend, Chat, ChatLogs],
 				synchronize: true,
 			}),
 			JwtModule,
@@ -50,6 +52,7 @@ require('dotenv').config();
 			ChatModule,
 			FriendsModule,
 			TwoFactorAuthenticationModule,
+			ChatLogsModule
 		],
 		controllers: [AuthController, UsersController, AppController],
 		providers: [UsersService, JwtStrategy, AuthService,  AppService],

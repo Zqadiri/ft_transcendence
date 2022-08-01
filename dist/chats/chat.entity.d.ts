@@ -1,6 +1,7 @@
 export declare class Chat {
     id: number;
     name: string;
+    uuid: string;
     isPLaying: Boolean;
     password: string;
     ownerID: string;

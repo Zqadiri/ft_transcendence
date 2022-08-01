@@ -34,11 +34,16 @@ __decorate([
     __metadata("design:type", String)
 ], Chat.prototype, "name", void 0);
 __decorate([
+    (0, typeorm_1.Generated)('uuid'),
+    (0, typeorm_1.Column)({ type: "uuid" }),
+    __metadata("design:type", String)
+], Chat.prototype, "uuid", void 0);
+__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Boolean)
 ], Chat.prototype, "isPLaying", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Chat.prototype, "password", void 0);
 __decorate([
