@@ -115,12 +115,6 @@ const update = (): void =>
 		update_score();
 }
 
-const pongGame = () =>
-{
-	update();
-	render();
-}
-
 function moveUser1Paddle(event: KeyboardEvent): void
 {
 	let move: number = 0;
@@ -136,16 +130,6 @@ function moveUser1Paddle(event: KeyboardEvent): void
 
 let gameStarted: boolean = false;
 
-function startGame(event: KeyboardEvent): void
-{
-	if (!gameStarted && event.key === " ") {
-		setInterval(() => {
-			pongGame();
-		}, 1000/50);
-		gameStarted = true;
-	}
-}
-
 const game = (current: HTMLCanvasElement | null): void =>
 {
 	if (current !== null)
@@ -153,9 +137,19 @@ const game = (current: HTMLCanvasElement | null): void =>
 		canvas.context = current.getContext("2d");
 		render();
 		window.addEventListener("keydown" , moveUser1Paddle);
-		window.addEventListener("keydown" , startGame);
+		window.addEventListener("keydown" , (event: KeyboardEvent) => {
+			if (!gameStarted && event.key === " ")
+			{
+				setInterval(() => {
+					update();
+					render();
+				}, 1000/50);
+				gameStarted = true;
+			}
+		});
 		current.addEventListener("mousemove" , (event: MouseEvent) => {
-			user2.y = event.clientY - user2.height/2;
+			let rect = current.getBoundingClientRect();
+			user2.y = event.clientY - rect.top - user2.height/2;
 		});
 	}
 }

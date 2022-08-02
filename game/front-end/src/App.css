@@ -48,8 +48,10 @@
 }
 
 .container h1 {
-	color: #caf0f8;
+	color: #0fce6f;
 	padding: 0;
+	margin: 10px 0;
 	width: 50%;
-	float: left
+	float: left;
+	font-size: -webkit-xxx-large;
 }
