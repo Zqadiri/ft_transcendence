@@ -82,7 +82,7 @@ let AuthService = class AuthService {
         let access_token = await this.loginWithCredentials(user);
         console.log(`access token :  ` + JSON.stringify(access_token));
         response.cookie('token', String(access_token), {
-            maxAge: 1000 * 60 * 60,
+            maxAge: 1000 * 60 * 15,
             httpOnly: true,
             domain: 'localhost',
             path: '/'

@@ -32,6 +32,9 @@ const passport_1 = require("@nestjs/passport");
 const jwt_stategy_1 = require("./auth/jwt.stategy");
 const chat_logs_module_1 = require("./chat-logs/chat-logs.module");
 const chat_logs_entity_1 = require("./chat-logs/chat-logs.entity");
+const friends_service_1 = require("./friends/friends.service");
+const user_repository_1 = require("./users/repositories/user.repository");
+const relation_repository_1 = require("./friends/relation.repository");
 require('dotenv').config();
 let AppModule = class AppModule {
     configure(consumer) {
@@ -46,7 +49,7 @@ AppModule = __decorate([
                 envFilePath: '.env',
                 isGlobal: true
             }),
-            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User]),
+            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, user_repository_1.UserRepository, relation_repository_1.relationRepository]),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
                 host: process.env.POSTGRES_HOST,
@@ -67,7 +70,7 @@ AppModule = __decorate([
             chat_logs_module_1.ChatLogsModule
         ],
         controllers: [auth_controller_1.AuthController, users_controller_1.UsersController, app_controller_1.AppController],
-        providers: [users_service_1.UsersService, jwt_stategy_1.JwtStrategy, auth_service_1.AuthService, app_service_1.AppService],
+        providers: [users_service_1.UsersService, friends_service_1.FriendsService, jwt_stategy_1.JwtStrategy, auth_service_1.AuthService, app_service_1.AppService],
         exports: [
             auth_service_1.AuthService, passport_1.PassportModule
         ],

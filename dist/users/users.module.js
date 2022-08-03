@@ -13,18 +13,21 @@ const user_entity_1 = require("./user.entity");
 const user_repository_1 = require("./repositories/user.repository");
 const users_controller_1 = require("./users.controller");
 const users_service_1 = require("./users.service");
+const friends_service_1 = require("../friends/friends.service");
+const relation_repository_1 = require("../friends/relation.repository");
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([
+                relation_repository_1.relationRepository,
                 user_repository_1.UserRepository,
                 user_entity_1.User
-            ])
+            ]),
         ],
         controllers: [users_controller_1.UsersController],
-        providers: [users_service_1.UsersService]
+        providers: [friends_service_1.FriendsService, users_service_1.UsersService]
     })
 ], UsersModule);
 exports.UsersModule = UsersModule;

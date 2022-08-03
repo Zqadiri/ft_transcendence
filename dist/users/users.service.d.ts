@@ -10,5 +10,4 @@ export declare class UsersService {
     setTwoFactorAuthenticationSecret(secret: string, userId: number): Promise<import("typeorm").UpdateResult>;
     uploadAvatar(id: number, avatarDto: AvatarDto): Promise<User>;
     updateUsername(id: number, newUsername: string): Promise<void>;
-    createFriendRelation(): Promise<void>;
 }

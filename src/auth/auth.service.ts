@@ -44,7 +44,7 @@ export class AuthService {
 		.catch((err) => { 
 			console.log(err);
 		})
-		return ret;
+		return ret; 
 	}
 
 	async getUserData(code: string) : Promise<CreateUserDto>{
@@ -82,7 +82,7 @@ export class AuthService {
 		let access_token = await this.loginWithCredentials(user);
 		console.log(`access token :  ` + JSON.stringify(access_token));
 		response.cookie('token', String(access_token),{
-			maxAge: 1000 * 60 * 60, // would expire after 15 minutes
+			maxAge: 1000 * 60 * 15, // would expire after 15 minutes
 			httpOnly: true, // The cookie only accessible by the web server
 			domain: 'localhost',
 			path: '/'
@@ -102,7 +102,7 @@ export class AuthService {
 	*/
 
 	async loginWithCredentials(user: User) {
-		const payload = {username: user.username, id: user.id};
+		const payload = {username: user.username, id: user.id}; //add iS2fa 
 		return JSON.stringify({
 			access_token: await this.jwtService.signAsync(payload, { secret: process.env.SECRET }),
 		});

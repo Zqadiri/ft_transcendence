@@ -23,9 +23,11 @@ const swagger_1 = require("@nestjs/swagger");
 const user_entity_1 = require("./user.entity");
 const upload_dto_1 = require("./dto/upload.dto");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
+const friends_service_1 = require("../friends/friends.service");
 let UsersController = class UsersController {
-    constructor(usersService) {
+    constructor(usersService, FriendService) {
         this.usersService = usersService;
+        this.FriendService = FriendService;
     }
     getUserData(id) {
         return this.usersService.getUserById(id);
@@ -48,8 +50,6 @@ let UsersController = class UsersController {
     }
     async AddFriend(userID, req, res) {
         try {
-            const user = this.usersService.getUserById(req.user.id);
-            const res = this.usersService.createFriendRelation();
         }
         catch (err) {
             throw new common_1.UnauthorizedException('Can\'t add friend');
@@ -120,7 +120,8 @@ UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, common_1.Controller)('users'),
     (0, common_2.UseInterceptors)(common_1.ClassSerializerInterceptor),
-    __metadata("design:paramtypes", [users_service_1.UsersService])
+    __metadata("design:paramtypes", [users_service_1.UsersService,
+        friends_service_1.FriendsService])
 ], UsersController);
 exports.UsersController = UsersController;
 //# sourceMappingURL=users.controller.js.map

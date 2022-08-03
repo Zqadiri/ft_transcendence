@@ -6,7 +6,6 @@ import { Post, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Express } from 'express'
 import uploadInterceptor from './upload.interceptor';
-import RequestWithUser from 'src/two-factor-authentication/requestWithUser.interface';
 import { 
     ApiTags,
     ApiOperation,
@@ -14,8 +13,8 @@ import {
 } from '@nestjs/swagger';
 import { User } from './user.entity';
 import { AvatarDto } from './dto/upload.dto';
-
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { FriendsService } from 'src/friends/friends.service';
 
 @ApiTags('users')
 @Controller('users')
@@ -23,7 +22,8 @@ import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 export class UsersController {
 
     constructor(
-        private readonly usersService: UsersService
+        private readonly usersService: UsersService,
+        private readonly FriendService: FriendsService
     ){}
 
 	@ApiOperation({ summary: 'Get user data by id' })
@@ -77,13 +77,13 @@ export class UsersController {
         res.send({avatar: user.avatar});
 	}
 
+
     @ApiOperation({ summary: 'Add a friend to a user' })
     @UseGuards(jwtAuthGuard)
     @Post('/add_friend')
     async AddFriend(@Body('id') userID : number, @Req() req, @Res() res){
         try {
-            const user = this.usersService.getUserById(req.user.id);
-            const res = this.usersService.createFriendRelation();
+            // this.FriendService.createRelation();
         }
         catch(err){
             throw new UnauthorizedException('Can\'t add friend');
@@ -91,6 +91,6 @@ export class UsersController {
         res.send({});
     }
 
-
+    
 
 }

@@ -53,8 +53,6 @@ let UsersService = class UsersService {
         });
         await this.userRepository.save(user);
     }
-    async createFriendRelation() {
-    }
 };
 UsersService = __decorate([
     (0, common_1.Injectable)(),

@@ -6,7 +6,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { BadRequestException } from '@nestjs/common';
 import { UserRepository } from './repositories/user.repository';
 import { AvatarDto } from './dto/upload.dto';
-import * as mime from 'mime'
+import { CreateRelation } from './interfaces/relations.interface';
+import { Friend } from 'src/friends/friend.intity';
 
 @Injectable()
 export class UsersService {
@@ -51,10 +52,6 @@ export class UsersService {
 				username: newUsername
 			});
 			await this.userRepository.save(user);
-		}
-
-		async createFriendRelation(){
-			
 		}
 
 }

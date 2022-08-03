@@ -23,6 +23,9 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './auth/jwt.stategy';
 import { ChatLogsModule } from './chat-logs/chat-logs.module';
 import { ChatLogs } from './chat-logs/chat-logs.entity';
+import { FriendsService } from './friends/friends.service';
+import { UserRepository } from './users/repositories/user.repository';
+import { relationRepository } from './friends/relation.repository';
 
 require('dotenv').config();
 
@@ -34,7 +37,7 @@ require('dotenv').config();
 				envFilePath: '.env',
 				isGlobal: true
 			}),
-			TypeOrmModule.forFeature([User]),
+			TypeOrmModule.forFeature([User, UserRepository, relationRepository]),
 			TypeOrmModule.forRoot({
 				type: 'postgres',
 				host: process.env.POSTGRES_HOST,
@@ -55,9 +58,9 @@ require('dotenv').config();
 			ChatLogsModule
 		],
 		controllers: [AuthController, UsersController, AppController],
-		providers: [UsersService, JwtStrategy, AuthService,  AppService],
+		providers: [UsersService, FriendsService , JwtStrategy, AuthService,  AppService],
 		exports: [
-			AuthService, PassportModule
+			AuthService, PassportModule 
 		  ],
 	  })
 
