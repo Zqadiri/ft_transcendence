@@ -8,6 +8,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { ChatsController } from './chats.controller';
 import { Dm } from './entities/dm.entitiy';
 
+
 @Module({
   imports: [AuthModule, PlayersModule, TypeOrmModule.forFeature([Dm])],
   providers: [ChatsGateway, ChatsService],

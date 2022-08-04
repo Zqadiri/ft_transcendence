@@ -30,6 +30,7 @@ let ChatsGateway = class ChatsGateway {
         console.log(` client Connected ${client.id}`);
     }
     handleDisconnect(client) {
+        client.broadcast.emit("user disconnected", client.id);
         console.log(` client Disconnected: ${client.id}`);
     }
     async create(createChatDto, client) {
@@ -42,7 +43,18 @@ let ChatsGateway = class ChatsGateway {
         return this.chatsService.findAll_Dm_messages();
     }
     joinRoom(name, client) {
-        return this.chatsService.identify(name, client.id);
+        const users = [];
+        const username = this.chatsService.identify(name, client.id);
+        users.push({
+            userID: client.id,
+            username: username
+        });
+        client.emit("users", users);
+        client.broadcast.emit("user connected", {
+            userID: client.id,
+            username: username,
+        });
+        return username;
     }
     async typing(isTyping, client) {
         const name = await this.chatsService.getClientName(client.id);

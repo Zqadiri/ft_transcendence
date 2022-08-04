@@ -22,6 +22,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
 
   constructor(private readonly chatsService: ChatsService) {}
 
+
   afterInit(server: Server) {
     this.logger.log('Initiaalized!');
   }
@@ -31,6 +32,10 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   }
 
   handleDisconnect(client: Socket) {
+    // notify users upon disconnection
+   
+    client.broadcast.emit("user disconnected", client.id);
+    
     console.log(` client Disconnected: ${client.id}`);
   }
 
@@ -55,7 +60,22 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
       @MessageBody('name') name: string,
       @ConnectedSocket() client: Socket)
     {
-      return this.chatsService.identify(name, client.id);
+      const users = [];
+      const username = this.chatsService.identify(name, client.id);
+      users.push({
+        userID: client.id,
+        username: username
+      });
+
+      client.emit("users", users);
+
+        // notify existing users
+      client.broadcast.emit("user connected", {
+        userID: client.id,
+        username: username,
+      });
+
+      return username;
     }
 
    //type a message and informe other users who is typing

@@ -38,7 +38,7 @@ export class Chat {
 	// @Column('varchar')
     // ownerID: string;
 
-    // @Column("int", {array: true})
+    // @Column("int", {array: true})  
     // AdminsID: number[];
 
 

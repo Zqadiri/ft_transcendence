@@ -12,6 +12,8 @@ const joined = ref(false);
 const name = ref('');
 const typingDisplay = ref('');
 
+// users
+const usersf = ref([]);
 
 onBeforeMount(() => {
   // socket.emit('findAllChats', {}, (response) => {
@@ -33,7 +35,24 @@ onBeforeMount(() => {
       typingDisplay.value = '';
     }
   });
+
+    socket.on("user connected", (user) => {
+        usersf.value.push(user);
+    });
+
+    socket.on("user disconnected", (id) => {
+      for (let i = 0; i < usersf.value.length; i++) {
+        const user =   usersf.value[i];
+        if (user.userID === id) {
+          break;
+        }
+      }
+    });
+
+
 });
+
+
 
 const join = () => {
   socket.emit('join', {name: name.value}, () => {
@@ -84,24 +103,34 @@ function emitTyping(){
       </form>
     </div>
   <div class="chat-container" v-else>
-  <div class="messagee-container">
-    <div v-for="message in messages" :key = "message">
-      [{{ message.sender }}]: {{ message.text }}
+    <div class="left-panel">
+      <div class="user-container">
+        <div v-for="user in usersf" :key = "user.userID">
+                  {{ user.username }}
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div v-if="typingDisplay"> {{ typingDisplay }} </div>
+    <div class= "right-panel"> 
+      <div class="messagee-container">
+        <div v-for="message in messages" :key = "message">
+          [{{ message.sender }}]: {{ message.text }}
+        </div>
+      </div>
 
-  <hr/>
-  
-  <div class="message-input">
-    <form @submit.prevent="sendMessage">
-      <label>Message: </label>
-      <input  v-model= "messageText" @input="emitTyping"/>
+      <div v-if="typingDisplay"> {{ typingDisplay }} </div>
 
-      <button type="submit">Send</button>
-    </form>
-  </div>
+      <hr/>
+      
+      <div class="message-input">
+        <form @submit.prevent="sendMessage">
+          <label>Message: </label>
+          <input  v-model= "messageText" @input="emitTyping"/>
+
+          <button type="submit">Send</button>
+        </form>
+      </div>
+    </div>
 
   </div>
  </div>
@@ -123,6 +152,20 @@ function emitTyping(){
 
 * {
   box-sizing: border-box;
+}
+.left-panel {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 230px;
+  overflow-x: hidden;
+  background-color: #0a484c;
+  color: white;
+}
+
+.right-panel {
+  margin-left: 260px;
 }
 
 html {
