@@ -27,7 +27,6 @@ let FriendsService = class FriendsService {
     async createFriendRelation(createRelation) {
         const newFriend = new friend_entity_1.Friend();
         newFriend.user = await this.userService.getUserById(createRelation.SecondUser.id);
-        console.log(`returned data ${newFriend}`);
         const relationExist = this.relationRepo.findOne({
             where: {},
         });
@@ -39,15 +38,17 @@ let FriendsService = class FriendsService {
         }
     }
     async createFriend(createRelation, user) {
-        console.log(`${createRelation}    ${user}`);
-        const newFriend = await this.relationRepo.create(Object.assign(Object.assign({}, createRelation), { user: user }));
+        const newFriend = this.relationRepo.create(Object.assign(Object.assign({}, createRelation), { user: user }));
         await this.relationRepo.save(newFriend);
         return newFriend;
+    }
+    async getFriendById() {
+        return this.relationRepo.find({ relations: ['author'] });
     }
 };
 FriendsService = __decorate([
     (0, common_1.Injectable)(),
-    __param(1, (0, typeorm_1.InjectRepository)(relation_repository_1.relationRepository)),
+    __param(1, (0, typeorm_1.InjectRepository)(friend_entity_1.Friend)),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         relation_repository_1.relationRepository])
 ], FriendsService);

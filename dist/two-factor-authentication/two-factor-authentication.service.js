@@ -29,7 +29,6 @@ let TwoFactorAuthenticationService = class TwoFactorAuthenticationService {
     }
     async generateTwoFacAuthSecret(user) {
         const secret = otplib_1.authenticator.generateSecret();
-        console.log(`user tfa : ${user}`);
         const urlPath = otplib_1.authenticator.keyuri(user.email, process.env.TWO_FACTOR_AUTHENTICATION_APP_NAME, secret);
         await this.userService.setTwoFactorAuthenticationSecret(secret, user.id);
         return {

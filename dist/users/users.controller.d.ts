@@ -10,4 +10,5 @@ export declare class UsersController {
     updateUsername(req: any, newUsername: string): Promise<void>;
     uploadFile(req: any, file: Express.Multer.File, res: any): Promise<void>;
     AddFriend(userID: number, req: any, res: any): Promise<void>;
+    getAllFriend(): Promise<import("../friends/entities/friend.entity").Friend[]>;
 }

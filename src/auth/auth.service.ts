@@ -79,9 +79,9 @@ export class AuthService {
 	}
 
 	async sendJWTtoken(user: User, @Res() response: Response){
-		let access_token = await this.loginWithCredentials(user);
+		let {access_token} = await this.loginWithCredentials(user);
 		console.log(`access token :  ` + JSON.stringify(access_token));
-		response.cookie('token', String(access_token),{
+		response.cookie('_token', access_token,{
 			maxAge: 1000 * 60 * 15, // would expire after 15 minutes
 			httpOnly: true, // The cookie only accessible by the web server
 			domain: 'localhost',
@@ -103,8 +103,8 @@ export class AuthService {
 
 	async loginWithCredentials(user: User) {
 		const payload = {username: user.username, id: user.id}; //add iS2fa 
-		return JSON.stringify({
+		return {
 			access_token: await this.jwtService.signAsync(payload, { secret: process.env.SECRET }),
-		});
+		};
 	}
 }

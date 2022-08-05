@@ -9,4 +9,5 @@ export declare class FriendsService {
     constructor(userService: UsersService, relationRepo: relationRepository);
     createFriendRelation(createRelation: CreateRelation): Promise<Friend>;
     createFriend(createRelation: CreateRelation, user: User): Promise<Friend>;
+    getFriendById(): Promise<Friend[]>;
 }

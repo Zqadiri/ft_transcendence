@@ -11,14 +11,13 @@ import { User } from 'src/users/entities/user.entity';
 export class FriendsService {
 	constructor(
 		private readonly userService: UsersService,
-		@InjectRepository(relationRepository)
+		@InjectRepository(Friend)
 		private readonly relationRepo : relationRepository
 		){}
 
 	async createFriendRelation(createRelation : CreateRelation){
 		const newFriend  = new Friend();
 		newFriend.user = await this.userService.getUserById(createRelation.SecondUser.id);
-		console.log(`returned data ${newFriend}`)
 		const relationExist = this.relationRepo.findOne({
 			where:{
 				// user: newFriend.user,
@@ -36,13 +35,16 @@ export class FriendsService {
 	}
 
 	async createFriend(createRelation : CreateRelation, user: User) {
-		console.log(`${createRelation}    ${user}`);
-		const newFriend = await this.relationRepo.create({
-			...createRelation,
-			user: user
-		});
-		await this.relationRepo.save(newFriend);
-		return newFriend;
+			const newFriend = this.relationRepo.create({
+				...createRelation,
+				user: user
+			});
+			await this.relationRepo.save(newFriend);
+			return newFriend;
+	}		
+
+	async getFriendById() {
+		return this.relationRepo.find({ relations: ['author'] });
 	}
-			
 }
+

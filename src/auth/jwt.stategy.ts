@@ -1,5 +1,20 @@
 import { PassportStrategy } from "@nestjs/passport";
+import { Request } from "express";
 import { ExtractJwt, Strategy } from "passport-jwt";
+import { UsersService } from "src/users/users.service";
+
+function cookieExtractor(req) : string {
+	var token = null;
+	console.log(` return ${req.headers.cookie}`);
+	if (req && req.headers.cookie){
+		token = req.headers.cookie
+		.split(';')
+		.find((cookie: string) => cookie.startsWith('_token'))
+		.split('=')[1]
+	}
+	console.log(` EXTRACT [${token}]`);
+	return token;
+};
 
 export class JwtStrategy extends PassportStrategy(Strategy) {
 
@@ -8,11 +23,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		specifies the method using which we will extract the JWT from the request
 	*/
 
-	constructor() {
+	constructor(
+		private readonly userService: UsersService
+	) {
 		super({
-			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+			jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
 			ignoreExpiration: false,
-			secretOrKey: `${process.env.JWT_SECRET_KEY}`,
+			secretOrKey: String(process.env.JWT_SECRET_KEY),
 		})
 	}
 
@@ -23,6 +40,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	*/
 
 	async validate(payload: any) {
-		return {id: payload.sub, username: payload.username}
+		console.log('in validate ');
+		const user = this.userService.getUserById( payload.id);
+		if (!user)
+			return ;
+		return user;
 	}
 }

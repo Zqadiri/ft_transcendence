@@ -18,7 +18,7 @@ import { UserRepository } from 'src/users/user.repository';
     ]),
     UsersModule,
     JwtModule.register({
-      secret: `${process.env.JWT_SECRET_KEY}`,
+      secret: String(process.env.JWT_SECRET_KEY),
       signOptions: {
         expiresIn: '1d',
       },

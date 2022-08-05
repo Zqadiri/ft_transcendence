@@ -22,18 +22,11 @@ let UsersService = class UsersService {
         this.userRepository = userRepository;
     }
     async getUserById(id) {
-        var player;
-        try {
-            player = await this.userRepository.findOne({
-                where: {
-                    id: id,
-                }
-            });
-        }
-        catch (err) {
-            console.log('ERROR:  ' + err);
-        }
-        console.log('player :' + player);
+        const player = await this.userRepository.findOne({
+            where: {
+                id: id,
+            }
+        });
         return player;
     }
     async create(createUserDto) {

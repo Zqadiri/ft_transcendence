@@ -49,12 +49,11 @@ let UsersController = class UsersController {
         res.send({ avatar: user.avatar });
     }
     async AddFriend(userID, req, res) {
-        console.log(`${JSON.stringify(req.body.user)}`);
         try {
+            const firstUser = await this.usersService.getUserById(58526);
             const secondUser = await this.usersService.getUserById(req.body.user.id);
-            console.log(`${JSON.stringify(secondUser)}`);
             this.FriendService.createFriend({
-                FirstUser: req.body.user,
+                FirstUser: firstUser,
                 SecondUser: secondUser,
                 isFriend: false,
                 blocked: false
@@ -64,6 +63,9 @@ let UsersController = class UsersController {
             throw new common_1.UnauthorizedException('Can\'t add friend');
         }
         res.send('done');
+    }
+    async getAllFriend() {
+        return this.FriendService.getFriendById();
     }
 };
 __decorate([
@@ -124,6 +126,13 @@ __decorate([
     __metadata("design:paramtypes", [Number, Object, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "AddFriend", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Add a friend to a user' }),
+    (0, common_4.Post)('/all_friend'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getAllFriend", null);
 UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, common_1.Controller)('users'),

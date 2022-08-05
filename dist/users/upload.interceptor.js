@@ -22,7 +22,6 @@ function uploadInterceptor(options) {
                     destination
                 })
             };
-            console.log(`filesDestination : ${filesDestination} , dest: ${destination}`);
             this.fileInterceptor = new ((0, platform_express_1.FileInterceptor)(options.fieldName, multerOptions));
         }
         intercept(...args) {

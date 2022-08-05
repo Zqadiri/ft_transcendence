@@ -10,7 +10,10 @@ import { UserRepository } from 'src/users/user.repository';
 
 @Module({
   imports:[
-    TypeOrmModule.forFeature([User, Friend, relationRepository, UserRepository])
+    TypeOrmModule.forFeature([User, 
+      Friend,
+      relationRepository,
+      UserRepository])
   ],
   controllers: [FriendsController],
   providers: [UsersService, FriendsService]

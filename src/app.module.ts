@@ -23,6 +23,9 @@ import { ChatLogsModule } from './chat-logs/chat-logs.module';
 import { FriendsService } from './friends/friends.service';
 import { UserRepository } from './users/user.repository';
 import { relationRepository } from './friends/relation.repository';
+import { Chat } from './chats/entities/chat.entity';
+import { ChatLogs } from './chat-logs/entities/chat-log.entity';
+import { Auth } from './auth/auth.entity';
 
 require('dotenv').config();
 
@@ -43,7 +46,7 @@ require('dotenv').config();
 				password: process.env.POSTGRES_PASSWORD,
 				database: process.env.POSTGRES_DATABASE,
 				entities: [
-					__dirname + "/entities/*.js"
+					User, Friend, Chat, ChatLogs, Auth
 				],
 				synchronize: true,
 			}),

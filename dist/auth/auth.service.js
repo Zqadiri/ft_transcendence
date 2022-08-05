@@ -79,9 +79,9 @@ let AuthService = class AuthService {
         return data;
     }
     async sendJWTtoken(user, response) {
-        let access_token = await this.loginWithCredentials(user);
+        let { access_token } = await this.loginWithCredentials(user);
         console.log(`access token :  ` + JSON.stringify(access_token));
-        response.cookie('token', String(access_token), {
+        response.cookie('_token', access_token, {
             maxAge: 1000 * 60 * 15,
             httpOnly: true,
             domain: 'localhost',
@@ -96,9 +96,9 @@ let AuthService = class AuthService {
     }
     async loginWithCredentials(user) {
         const payload = { username: user.username, id: user.id };
-        return JSON.stringify({
+        return {
             access_token: await this.jwtService.signAsync(payload, { secret: process.env.SECRET }),
-        });
+        };
     }
 };
 __decorate([

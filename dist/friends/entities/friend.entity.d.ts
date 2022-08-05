@@ -4,5 +4,5 @@ export declare class Friend extends BaseEntity {
     id: number;
     blocked: boolean;
     stat: string;
-    user: User;
+    user: User | null;
 }

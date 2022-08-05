@@ -13,19 +13,11 @@ export class UsersService {
 		){}
 
 		async getUserById(id: number): Promise<User> {
-			var player;
-			try{
-
-				player = await this.userRepository.findOne({
+			const player = await this.userRepository.findOne({
 					where:{
 						id: id,
 					}
 				});
-			}
-			catch(err){
-				console.log('ERROR:  ' + err);
-			}
-			console.log('player :' + player);
 			return player;
 		}
 
@@ -57,6 +49,8 @@ export class UsersService {
 			});
 			await this.userRepository.save(user);
 		}
+
+
 
 }
 

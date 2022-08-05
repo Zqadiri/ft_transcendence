@@ -51,7 +51,6 @@ export class UsersController {
 		}
 	}
 
-
 	@ApiOperation({ summary: 'Change a user\'s avatar' })
 	@ApiResponse({
 		status: 200,
@@ -83,12 +82,12 @@ export class UsersController {
 	// @UseGuards(jwtAuthGuard)
 	@Post('/add_friend')
 	async AddFriend(@Body('id') userID : number, @Req() req, @Res() res){
-		console.log(`${JSON.stringify(req.body.user)}`);
+		// console.log(`${JSON.stringify(req.body.user)}`);
 		try {
+			const firstUser  = await this.usersService.getUserById(58526);
 			const secondUser = await this.usersService.getUserById(req.body.user.id);
-			console.log(`${JSON.stringify(secondUser)}`);
 			this.FriendService.createFriend({
-				FirstUser: req.body.user,
+				FirstUser: firstUser,
 				SecondUser: secondUser,
 				isFriend: false,
 				blocked: false
@@ -98,6 +97,13 @@ export class UsersController {
 			 throw new UnauthorizedException('Can\'t add friend');
 		}
 		res.send('done');
+	}
+
+	@ApiOperation({ summary: 'Add a friend to a user' })
+	// @UseGuards(jwtAuthGuard)
+	@Post('/all_friend')
+	async getAllFriend(){
+		return this.FriendService.getFriendById();
 	}
 
 }

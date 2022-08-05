@@ -32,6 +32,9 @@ const chat_logs_module_1 = require("./chat-logs/chat-logs.module");
 const friends_service_1 = require("./friends/friends.service");
 const user_repository_1 = require("./users/user.repository");
 const relation_repository_1 = require("./friends/relation.repository");
+const chat_entity_1 = require("./chats/entities/chat.entity");
+const chat_log_entity_1 = require("./chat-logs/entities/chat-log.entity");
+const auth_entity_1 = require("./auth/auth.entity");
 require('dotenv').config();
 let AppModule = class AppModule {
     configure(consumer) {
@@ -55,7 +58,7 @@ AppModule = __decorate([
                 password: process.env.POSTGRES_PASSWORD,
                 database: process.env.POSTGRES_DATABASE,
                 entities: [
-                    __dirname + "/entities/*.js"
+                    user_entity_1.User, friend_entity_1.Friend, chat_entity_1.Chat, chat_log_entity_1.ChatLogs, auth_entity_1.Auth
                 ],
                 synchronize: true,
             }),

@@ -15,7 +15,7 @@ const typeorm_1 = require("typeorm");
 let Friend = class Friend extends typeorm_1.BaseEntity {
 };
 __decorate([
-    (0, typeorm_1.Column)({ primary: true }),
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], Friend.prototype, "id", void 0);
 __decorate([
@@ -23,7 +23,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Friend.prototype, "blocked", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Friend.prototype, "stat", void 0);
 __decorate([
