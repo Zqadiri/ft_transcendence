@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, OneToOne, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, OneToOne, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from "typeorm";
 import { User } from "src/users/user.entity";
 import { Message } from "./message.entity";
 import { MeasureMemoryMode } from "vm";
@@ -7,54 +7,61 @@ import { MeasureMemoryMode } from "vm";
 @Entity()
 export class Chat {
 
-	// @PrimaryGeneratedColumn()
-	// id : number;
+	@PrimaryGeneratedColumn()
+	id : number;
 
-	// @Column()
-	// name: string;
+	@Column()
+	name: string;
 
-    // @Column() 	
-    // password: string;
+    @Column() 	
+    password: string;
 
-    // @Column({default: true})
-    // isActive: boolean
+    @Column({default: true})
+    isActive: boolean
 
-    // @Column({
-    //     enum: ['dm', 'chatRoom'],
-    //     nullable: false
-    // })
-    // type: string;
+    @Column({
+        enum: ['dm', 'chatRoom'],
+        nullable: false
+    })
+    type: string;
 
-    // @Column({
-    //     enum:['private', 'public', 'protected'],
-    //     default: 'public'
-    // })
-    // status: string;
+    @Column({
+        enum:['private', 'public', 'protected'],
+        default: 'public'
+    })
+    status: string;
 
-	// @ManyToMany(() => User, user => user.chats)
-	// @JoinTable()
-	// usersID: User[];
-	
-	// @Column('varchar')
-    // ownerID: string;
+    // each chat room can have multiple users
+	@ManyToMany(() => User, user => user.chats)
+	@JoinTable()
+	usersID: User[];
+    
+    // each chat room is owned by only one single user
+	@ManyToOne(() => User, user=> user.rooms)
+    owner: User;
 
-    // @Column("int", {array: true})  
-    // AdminsID: number[];
+    // each chat room can have multiple admins
+    @ManyToMany(() => User, user => user.admins)
+	@JoinTable()
+    AdminsID: User[];
 
+    // each chat room can have multiple muted users
+    @ManyToMany(() => User, user => user.muted)
+	@JoinTable()
+    mutedID: User[];
 
-    // @Column("int", {array: true})
-    // mutedID: number[];
+    // each chat room can have multiple banned users
+    @ManyToMany(() => User, user => user.baned)
+	@JoinTable()
+    banedID: User[];
+    
+    // chat room can have multiple messages
+	@OneToMany(() => Message, (message) => message.chat)
+	messages : Message[];
 
-   
-    // @Column("int", {array: true})
-    // banedID: number[];
-	
-	// // @OneToOne(() => Message, (message) => message.ChatID)
-	// // messages : Message[];
+    @CreateDateColumn()
+    created_at: Date;
 
-    // @CreateDateColumn()
-    // created_at: Date;
-
-    // @UpdateDateColumn()
-    // updated_at: Date;
+    @UpdateDateColumn()
+    updated_at: Date;
 ;}

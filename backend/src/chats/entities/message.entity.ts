@@ -1,20 +1,29 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn } from "typeorm";
 import { Chat } from "./chat.entity";
+import { User } from "src/users/user.entity";
 
 
 @Entity()
 export class Message
 {
-	// @PrimaryGeneratedColumn()
-	// id : number;
+	@PrimaryGeneratedColumn()
+	id : number;
 
-	// @ManyToOne(() => Chat, (chat) => chat.messages)
-	// ChatID : Chat;
+	// messages are related to chat room
+	@ManyToOne(() => Chat, (chat) => chat.messages)
+	chat : Chat;
 
-	// name of the user
+	// messages are owned by one user 
+	@ManyToOne(() => User, (user) => user.messages)
+	owner : User;
+
+	// //name of the user
 	// @Column()
 	// name : string;
 
-	// @Column()
-	// text : string;
+	@Column()
+	text : string;
+
+	@CreateDateColumn()
+    createdAt: Date;
 }

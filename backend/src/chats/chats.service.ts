@@ -6,12 +6,18 @@ import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 import { Dm } from './entities/dm.entitiy';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class ChatsService {
 
   @InjectRepository(Dm)
   private readonly DMrepository: Repository<Dm>;
+  @InjectRepository(Chat)
+  private readonly Chatrepository: Repository<Chat>;
+  @InjectRepository(Message)
+  private readonly Messagerepository: Repository<Message>;
+
 
   // array of messages just for test chat
   // initialize it with dumy object that represent an existing message 
@@ -50,5 +56,11 @@ export class ChatsService {
     // This action returns all chats
    // return this.messages;
   }
+
+  /*********   Room functions *********************/
+              /** TODO:*/
+
+
+
 
 }

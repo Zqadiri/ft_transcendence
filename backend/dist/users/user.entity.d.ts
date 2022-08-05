@@ -1,4 +1,6 @@
 import { BaseEntity } from "typeorm";
+import { Chat } from "src/chats/entities/chat.entity";
+import { Message } from "src/chats/entities/message.entity";
 export declare class User extends BaseEntity {
     id: number;
     username: string;
@@ -12,4 +14,10 @@ export declare class User extends BaseEntity {
     rank: string;
     createdAt: Date;
     updatedAt: Date;
+    chats: Chat[];
+    admins: Chat[];
+    rooms: Chat[];
+    muted: Chat[];
+    baned: Chat[];
+    messages: Message[];
 }

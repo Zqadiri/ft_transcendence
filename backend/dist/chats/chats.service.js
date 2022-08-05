@@ -12,7 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatsService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
+const chat_entity_1 = require("./entities/chat.entity");
 const typeorm_2 = require("typeorm");
+const message_entity_1 = require("./entities/message.entity");
 const dm_entitiy_1 = require("./entities/dm.entitiy");
 let ChatsService = class ChatsService {
     constructor() {
@@ -40,6 +42,14 @@ __decorate([
     (0, typeorm_1.InjectRepository)(dm_entitiy_1.Dm),
     __metadata("design:type", typeorm_2.Repository)
 ], ChatsService.prototype, "DMrepository", void 0);
+__decorate([
+    (0, typeorm_1.InjectRepository)(chat_entity_1.Chat),
+    __metadata("design:type", typeorm_2.Repository)
+], ChatsService.prototype, "Chatrepository", void 0);
+__decorate([
+    (0, typeorm_1.InjectRepository)(message_entity_1.Message),
+    __metadata("design:type", typeorm_2.Repository)
+], ChatsService.prototype, "Messagerepository", void 0);
 ChatsService = __decorate([
     (0, common_1.Injectable)()
 ], ChatsService);
