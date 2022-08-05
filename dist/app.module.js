@@ -49,7 +49,7 @@ AppModule = __decorate([
                 envFilePath: '.env',
                 isGlobal: true
             }),
-            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, user_repository_1.UserRepository, relation_repository_1.relationRepository]),
+            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, friend_entity_1.Friend, user_repository_1.UserRepository, relation_repository_1.relationRepository]),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
                 host: process.env.POSTGRES_HOST,

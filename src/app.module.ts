@@ -37,7 +37,7 @@ require('dotenv').config();
 				envFilePath: '.env',
 				isGlobal: true
 			}),
-			TypeOrmModule.forFeature([User, UserRepository, relationRepository]),
+			TypeOrmModule.forFeature([User, Friend, UserRepository, relationRepository]),
 			TypeOrmModule.forRoot({
 				type: 'postgres',
 				host: process.env.POSTGRES_HOST,

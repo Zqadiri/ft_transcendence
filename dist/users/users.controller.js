@@ -52,16 +52,16 @@ let UsersController = class UsersController {
         try {
             const secondUser = await this.usersService.getUserById(userID);
             this.FriendService.createFriend({
-                FirstUser: req.user,
+                FirstUser: req.body.user,
                 SecondUser: secondUser,
                 isFriend: false,
                 blocked: false
-            }, req.user);
+            }, req.body.user);
         }
         catch (err) {
             throw new common_1.UnauthorizedException('Can\'t add friend');
         }
-        res.send({});
+        res.send('done');
     }
 };
 __decorate([
@@ -114,7 +114,6 @@ __decorate([
 ], UsersController.prototype, "uploadFile", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Add a friend to a user' }),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
     (0, common_4.Post)('/add_friend'),
     __param(0, (0, common_1.Body)('id')),
     __param(1, (0, common_4.Req)()),
