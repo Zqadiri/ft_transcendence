@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, Column, OneToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Game } from "src/games/entities/game.entity";
 import { BaseEntity } from "typeorm";
 import { Friend } from "src/friends/entities/friend.entity";
@@ -10,7 +10,7 @@ import { Friend } from "src/friends/entities/friend.entity";
 
 @Entity('db_chatLogs')
 export class ChatLogs extends BaseEntity {
-    @Column({primary: true})
+    @PrimaryGeneratedColumn()
 	id: number;
 
     @Column()

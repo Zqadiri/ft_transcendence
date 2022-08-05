@@ -15,7 +15,7 @@ const typeorm_2 = require("typeorm");
 let ChatLogs = class ChatLogs extends typeorm_2.BaseEntity {
 };
 __decorate([
-    (0, typeorm_1.Column)({ primary: true }),
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], ChatLogs.prototype, "id", void 0);
 __decorate([
