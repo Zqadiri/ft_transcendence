@@ -7,7 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
-const user_entity_1 = require("./user.entity");
+const user_entity_1 = require("./entities/user.entity");
 const typeorm_1 = require("typeorm");
 let UserRepository = class UserRepository extends typeorm_1.Repository {
 };

@@ -1,6 +1,6 @@
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserRepository } from './repositories/user.repository';
+import { UserRepository } from './user.repository';
 import { AvatarDto } from './dto/upload.dto';
 export declare class UsersService {
     private readonly userRepository;

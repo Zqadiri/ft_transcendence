@@ -6,8 +6,8 @@ import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from 'src/users/users.module';
 import { UsersService } from 'src/users/users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/user.entity';
-import { UserRepository } from 'src/users/repositories/user.repository';
+import { User } from 'src/users/entities/user.entity';
+import { UserRepository } from 'src/users/user.repository';
 
 @Module({
   imports: [

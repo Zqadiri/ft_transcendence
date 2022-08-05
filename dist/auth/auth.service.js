@@ -16,7 +16,7 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("axios");
 const jwt_1 = require("@nestjs/jwt");
-const user_entity_1 = require("../users/user.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 let AuthService = class AuthService {
     constructor(jwtService) {
         this.jwtService = jwtService;

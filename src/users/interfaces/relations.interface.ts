@@ -1,4 +1,4 @@
-import { User } from "../user.entity";
+import { User } from "../entities/user.entity";
 
 export interface CreateRelation{
     FirstUser: User; //! the requester

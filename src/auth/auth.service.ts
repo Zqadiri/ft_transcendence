@@ -4,7 +4,7 @@ import { Body, HttpException, BadRequestException } from '@nestjs/common';
 import axios, { Axios } from "axios";
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { User } from 'src/users/user.entity';
+import { User } from 'src/users/entities/user.entity';
 
 /*
 	TODO: get access token

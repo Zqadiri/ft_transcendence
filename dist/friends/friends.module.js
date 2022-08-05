@@ -9,13 +9,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FriendsModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const user_entity_1 = require("../users/user.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 const users_service_1 = require("../users/users.service");
-const friend_entity_1 = require("./friend.entity");
+const friend_entity_1 = require("./entities/friend.entity");
 const friends_controller_1 = require("./friends.controller");
 const friends_service_1 = require("./friends.service");
 const relation_repository_1 = require("./relation.repository");
-const user_repository_1 = require("../users/repositories/user.repository");
+const user_repository_1 = require("../users/user.repository");
 let FriendsModule = class FriendsModule {
 };
 FriendsModule = __decorate([

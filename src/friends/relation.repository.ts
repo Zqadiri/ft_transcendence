@@ -1,7 +1,8 @@
 import { EntityRepository, Repository } from "typeorm";
-import { Friend } from "src/friends/friend.entity";
+import { Friend } from "src/friends/entities/friend.entity";
 
 @EntityRepository(Friend)
-export class relationRepository extends Repository<Friend> {
+class relationRepository extends Repository<Friend> {
 
 }
+export { relationRepository };

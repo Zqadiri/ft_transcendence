@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service'
 import { authenticator } from 'otplib';
-import { User } from 'src/users/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { toFileStream } from 'qrcode';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

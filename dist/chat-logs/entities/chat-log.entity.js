@@ -9,29 +9,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Friend = void 0;
-const user_entity_1 = require("../users/user.entity");
+exports.ChatLogs = void 0;
 const typeorm_1 = require("typeorm");
-let Friend = class Friend extends typeorm_1.BaseEntity {
+const typeorm_2 = require("typeorm");
+let ChatLogs = class ChatLogs extends typeorm_2.BaseEntity {
 };
 __decorate([
     (0, typeorm_1.Column)({ primary: true }),
     __metadata("design:type", Number)
-], Friend.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ default: false }),
-    __metadata("design:type", Boolean)
-], Friend.prototype, "blocked", void 0);
+], ChatLogs.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Friend.prototype, "stat", void 0);
+], ChatLogs.prototype, "userID", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.friends),
-    __metadata("design:type", user_entity_1.User)
-], Friend.prototype, "user", void 0);
-Friend = __decorate([
-    (0, typeorm_1.Entity)('db_friend')
-], Friend);
-exports.Friend = Friend;
-//# sourceMappingURL=friend.intity.js.map
+    (0, typeorm_1.Column)({ type: "uuid" }),
+    __metadata("design:type", String)
+], ChatLogs.prototype, "chatUUId", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], ChatLogs.prototype, "message", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        type: 'timestamp',
+        default: () => 'CURRENT_TIMESTAMP'
+    }),
+    __metadata("design:type", Date)
+], ChatLogs.prototype, "createdAt", void 0);
+ChatLogs = __decorate([
+    (0, typeorm_1.Entity)('db_chatLogs')
+], ChatLogs);
+exports.ChatLogs = ChatLogs;
+//# sourceMappingURL=chat-log.entity.js.map

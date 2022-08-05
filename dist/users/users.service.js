@@ -14,19 +14,26 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
-const user_entity_1 = require("./user.entity");
+const user_entity_1 = require("./entities/user.entity");
 const typeorm_1 = require("@nestjs/typeorm");
-const user_repository_1 = require("./repositories/user.repository");
+const user_repository_1 = require("./user.repository");
 let UsersService = class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
     async getUserById(id) {
-        const player = await this.userRepository.findOne({
-            where: {
-                id: id,
-            }
-        });
+        var player;
+        try {
+            player = await this.userRepository.findOne({
+                where: {
+                    id: id,
+                }
+            });
+        }
+        catch (err) {
+            console.log('ERROR:  ' + err);
+        }
+        console.log('player :' + player);
         return player;
     }
     async create(createUserDto) {

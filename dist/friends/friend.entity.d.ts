@@ -1,4 +1,4 @@
-import { User } from "src/users/user.entity";
+import { User } from "src/users/users.entity";
 import { BaseEntity } from "typeorm";
 export declare class Friend extends BaseEntity {
     id: number;

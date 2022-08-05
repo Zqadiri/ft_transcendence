@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { User } from 'src/users/user.entity';
+import { User } from 'src/users/entities/user.entity';
 export declare class AuthService {
     private readonly jwtService;
     constructor(jwtService: JwtService);

@@ -13,8 +13,7 @@ const app_service_1 = require("./app.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const users_module_1 = require("./users/users.module");
 const games_module_1 = require("./games/games.module");
-const user_entity_1 = require("./users/user.entity");
-const game_entity_1 = require("./games/game.entity");
+const user_entity_1 = require("./users/entities/user.entity");
 const config_1 = require("@nestjs/config");
 const auth_module_1 = require("./auth/auth.module");
 const logger_middleware_1 = require("./logger.middleware");
@@ -25,15 +24,13 @@ const users_controller_1 = require("./users/users.controller");
 const auth_controller_1 = require("./auth/auth.controller");
 const chats_module_1 = require("./chats/chats.module");
 const friends_module_1 = require("./friends/friends.module");
-const friend_entity_1 = require("./friends/friend.entity");
-const chat_entity_1 = require("./chats/chat.entity");
+const friend_entity_1 = require("./friends/entities/friend.entity");
 const two_factor_authentication_module_1 = require("./two-factor-authentication/two-factor-authentication.module");
 const passport_1 = require("@nestjs/passport");
 const jwt_stategy_1 = require("./auth/jwt.stategy");
 const chat_logs_module_1 = require("./chat-logs/chat-logs.module");
-const chat_logs_entity_1 = require("./chat-logs/chat-logs.entity");
 const friends_service_1 = require("./friends/friends.service");
-const user_repository_1 = require("./users/repositories/user.repository");
+const user_repository_1 = require("./users/user.repository");
 const relation_repository_1 = require("./friends/relation.repository");
 require('dotenv').config();
 let AppModule = class AppModule {
@@ -57,7 +54,9 @@ AppModule = __decorate([
                 username: process.env.POSTGRES_USER,
                 password: process.env.POSTGRES_PASSWORD,
                 database: process.env.POSTGRES_DATABASE,
-                entities: [user_entity_1.User, game_entity_1.Game, friend_entity_1.Friend, chat_entity_1.Chat, chat_logs_entity_1.ChatLogs],
+                entities: [
+                    __dirname + "/entities/*.js"
+                ],
                 synchronize: true,
             }),
             jwt_1.JwtModule,

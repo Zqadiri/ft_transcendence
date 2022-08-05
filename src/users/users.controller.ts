@@ -11,7 +11,7 @@ import {
 	ApiOperation,
 	ApiResponse
 } from '@nestjs/swagger';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import { AvatarDto } from './dto/upload.dto';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FriendsService } from 'src/friends/friends.service';
@@ -83,8 +83,10 @@ export class UsersController {
 	// @UseGuards(jwtAuthGuard)
 	@Post('/add_friend')
 	async AddFriend(@Body('id') userID : number, @Req() req, @Res() res){
+		console.log(`${JSON.stringify(req.body.user)}`);
 		try {
-			const secondUser = await this.usersService.getUserById(userID);
+			const secondUser = await this.usersService.getUserById(req.body.user.id);
+			console.log(`${JSON.stringify(secondUser)}`);
 			this.FriendService.createFriend({
 				FirstUser: req.body.user,
 				SecondUser: secondUser,
@@ -93,7 +95,7 @@ export class UsersController {
 			}, req.body.user);
 		}
 		catch(err){
-			throw new UnauthorizedException('Can\'t add friend');
+			 throw new UnauthorizedException('Can\'t add friend');
 		}
 		res.send('done');
 	}

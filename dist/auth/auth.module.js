@@ -15,8 +15,8 @@ const passport_1 = require("@nestjs/passport");
 const users_module_1 = require("../users/users.module");
 const users_service_1 = require("../users/users.service");
 const typeorm_1 = require("@nestjs/typeorm");
-const user_entity_1 = require("../users/user.entity");
-const user_repository_1 = require("../users/repositories/user.repository");
+const user_entity_1 = require("../users/entities/user.entity");
+const user_repository_1 = require("../users/user.repository");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([

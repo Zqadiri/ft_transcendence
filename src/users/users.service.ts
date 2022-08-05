@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserRepository } from './repositories/user.repository';
+import { UserRepository } from './user.repository';
 import { AvatarDto } from './dto/upload.dto';
 
 @Injectable()
@@ -13,11 +13,19 @@ export class UsersService {
 		){}
 
 		async getUserById(id: number): Promise<User> {
-			const player = await this.userRepository.findOne({
-				where:{
-					id: id,
-				}
-			});
+			var player;
+			try{
+
+				player = await this.userRepository.findOne({
+					where:{
+						id: id,
+					}
+				});
+			}
+			catch(err){
+				console.log('ERROR:  ' + err);
+			}
+			console.log('player :' + player);
 			return player;
 		}
 

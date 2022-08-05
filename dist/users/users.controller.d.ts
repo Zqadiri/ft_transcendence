@@ -1,6 +1,6 @@
 /// <reference types="multer" />
 import { UsersService } from './users.service';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import { FriendsService } from 'src/friends/friends.service';
 export declare class UsersController {
     private readonly usersService;

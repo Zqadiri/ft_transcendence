@@ -6,13 +6,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.relationRepository = void 0;
-const typeorm_1 = require("typeorm");
-const friend_intity_1 = require("../../friends/friend.intity");
-let relationRepository = class relationRepository extends typeorm_1.Repository {
+exports.GameController = void 0;
+const common_1 = require("@nestjs/common");
+let GameController = class GameController {
 };
-relationRepository = __decorate([
-    (0, typeorm_1.EntityRepository)(friend_intity_1.Friend)
-], relationRepository);
-exports.relationRepository = relationRepository;
-//# sourceMappingURL=relation.repository.js.map
+GameController = __decorate([
+    (0, common_1.Controller)('game')
+], GameController);
+exports.GameController = GameController;
+//# sourceMappingURL=games.controller.js.map

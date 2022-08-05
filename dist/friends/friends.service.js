@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FriendsService = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("../users/users.service");
-const friend_entity_1 = require("./friend.entity");
+const friend_entity_1 = require("./entities/friend.entity");
 const typeorm_1 = require("@nestjs/typeorm");
 const relation_repository_1 = require("./relation.repository");
 const class_validator_1 = require("class-validator");
@@ -39,6 +39,7 @@ let FriendsService = class FriendsService {
         }
     }
     async createFriend(createRelation, user) {
+        console.log(`${createRelation}    ${user}`);
         const newFriend = await this.relationRepo.create(Object.assign(Object.assign({}, createRelation), { user: user }));
         await this.relationRepo.save(newFriend);
         return newFriend;

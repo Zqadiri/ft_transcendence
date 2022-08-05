@@ -20,7 +20,7 @@ const common_4 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const upload_interceptor_1 = require("./upload.interceptor");
 const swagger_1 = require("@nestjs/swagger");
-const user_entity_1 = require("./user.entity");
+const user_entity_1 = require("./entities/user.entity");
 const upload_dto_1 = require("./dto/upload.dto");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const friends_service_1 = require("../friends/friends.service");
@@ -49,8 +49,10 @@ let UsersController = class UsersController {
         res.send({ avatar: user.avatar });
     }
     async AddFriend(userID, req, res) {
+        console.log(`${JSON.stringify(req.body.user)}`);
         try {
-            const secondUser = await this.usersService.getUserById(userID);
+            const secondUser = await this.usersService.getUserById(req.body.user.id);
+            console.log(`${JSON.stringify(secondUser)}`);
             this.FriendService.createFriend({
                 FirstUser: req.body.user,
                 SecondUser: secondUser,

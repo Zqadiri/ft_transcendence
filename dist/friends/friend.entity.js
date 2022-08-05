@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Friend = void 0;
-const user_entity_1 = require("../users/user.entity");
+const users_entity_1 = require("../users/users.entity");
 const typeorm_1 = require("typeorm");
 let Friend = class Friend extends typeorm_1.BaseEntity {
 };
@@ -27,8 +27,8 @@ __decorate([
     __metadata("design:type", String)
 ], Friend.prototype, "stat", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.friends),
-    __metadata("design:type", user_entity_1.User)
+    (0, typeorm_1.ManyToOne)(() => users_entity_1.User, (user) => user.friends),
+    __metadata("design:type", users_entity_1.User)
 ], Friend.prototype, "user", void 0);
 Friend = __decorate([
     (0, typeorm_1.Entity)('db_friend')

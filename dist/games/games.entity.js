@@ -9,36 +9,58 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChatLogs = void 0;
+exports.Game = void 0;
 const typeorm_1 = require("typeorm");
-const typeorm_2 = require("typeorm");
-let ChatLogs = class ChatLogs extends typeorm_2.BaseEntity {
+let Game = class Game {
 };
 __decorate([
     (0, typeorm_1.Column)({ primary: true }),
     __metadata("design:type", Number)
-], ChatLogs.prototype, "id", void 0);
+], Game.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], ChatLogs.prototype, "userID", void 0);
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], Game.prototype, "isPlaying", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: "uuid" }),
+    (0, typeorm_1.Column)('varchar'),
     __metadata("design:type", String)
-], ChatLogs.prototype, "chatUUId", void 0);
+], Game.prototype, "firstPlayerID", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)('varchar'),
     __metadata("design:type", String)
-], ChatLogs.prototype, "message", void 0);
+], Game.prototype, "secondPlayerID", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
+    __metadata("design:type", Number)
+], Game.prototype, "firstPlayerScore", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
+    __metadata("design:type", Number)
+], Game.prototype, "SecondPlayerScore", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        enum: ['default', 'power-up', 'double'],
+        default: 'default'
+    }),
+    __metadata("design:type", String)
+], Game.prototype, "theme", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'timestamp',
         default: () => 'CURRENT_TIMESTAMP'
     }),
     __metadata("design:type", Date)
-], ChatLogs.prototype, "createdAt", void 0);
-ChatLogs = __decorate([
-    (0, typeorm_1.Entity)('db_chatLogs')
-], ChatLogs);
-exports.ChatLogs = ChatLogs;
-//# sourceMappingURL=chat-logs.intitiy.js.map
+], Game.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        type: 'timestamp',
+        onUpdate: 'CURRENT_TIMESTAMP',
+        nullable: true
+    }),
+    __metadata("design:type", Date)
+], Game.prototype, "modifiedAt", void 0);
+Game = __decorate([
+    (0, typeorm_1.Entity)('db_game')
+], Game);
+exports.Game = Game;
+//# sourceMappingURL=games.entity.js.map

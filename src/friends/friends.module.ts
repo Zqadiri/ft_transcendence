@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { Friend } from './friend.entity';
+import { Friend } from './entities/friend.entity';
 import { FriendsController } from './friends.controller';
 import { FriendsService } from './friends.service';
 import { relationRepository } from './relation.repository';
-import { UserRepository } from 'src/users/repositories/user.repository';
+import { UserRepository } from 'src/users/user.repository';
 
 @Module({
   imports:[

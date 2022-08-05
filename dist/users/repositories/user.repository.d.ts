@@ -1,4 +1,5 @@
-import { User } from "../user.entity";
+import { User } from "../users.entity";
 import { Repository } from "typeorm";
-export declare class UserRepository extends Repository<User> {
+declare class UserRepository extends Repository<User> {
 }
+export { UserRepository };

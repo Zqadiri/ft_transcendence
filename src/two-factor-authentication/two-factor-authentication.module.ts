@@ -4,7 +4,7 @@ import { TwoFactorAuthenticationService } from './two-factor-authentication.serv
 import { UsersService } from '../users/users.service'
 import { UsersModule } from 'src/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/users/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';

@@ -4,8 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { GameModule } from './games/games.module';
-import { User } from './users/user.entity'
-import { Game } from './games/game.entity'
+import { User } from './users/entities/user.entity'
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { AppLoggerMiddleware } from './logger.middleware';
@@ -16,15 +15,13 @@ import { UsersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
 import { ChatModule } from './chats/chats.module';
 import { FriendsModule } from './friends/friends.module';
-import { Friend } from './friends/friend.entity';
-import { Chat } from './chats/chat.entity';
+import { Friend } from './friends/entities/friend.entity';
 import { TwoFactorAuthenticationModule } from './two-factor-authentication/two-factor-authentication.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './auth/jwt.stategy';
 import { ChatLogsModule } from './chat-logs/chat-logs.module';
-import { ChatLogs } from './chat-logs/chat-logs.entity';
 import { FriendsService } from './friends/friends.service';
-import { UserRepository } from './users/repositories/user.repository';
+import { UserRepository } from './users/user.repository';
 import { relationRepository } from './friends/relation.repository';
 
 require('dotenv').config();
@@ -45,7 +42,9 @@ require('dotenv').config();
 				username: process.env.POSTGRES_USER,
 				password: process.env.POSTGRES_PASSWORD,
 				database: process.env.POSTGRES_DATABASE,
-				entities: [User, Game, Friend, Chat, ChatLogs],
+				entities: [
+					__dirname + "/entities/*.js"
+				],
 				synchronize: true,
 			}),
 			JwtModule,

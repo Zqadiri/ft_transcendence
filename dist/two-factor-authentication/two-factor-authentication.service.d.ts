@@ -1,5 +1,5 @@
 import { UsersService } from '../users/users.service';
-import { User } from 'src/users/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 export declare class TwoFactorAuthenticationService {
