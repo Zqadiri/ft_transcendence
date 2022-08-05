@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { BadRequestException } from '@nestjs/common';
 import { UserRepository } from './repositories/user.repository';
 import { AvatarDto } from './dto/upload.dto';
-import { CreateRelation } from './interfaces/relations.interface';
-import { Friend } from 'src/friends/friend.intity';
 
 @Injectable()
 export class UsersService {

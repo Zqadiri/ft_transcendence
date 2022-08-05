@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Game } from "src/games/game.entity";
 import { BaseEntity } from "typeorm";
-import { Friend } from "src/friends/friend.intity";
+import { Friend } from "src/friends/friend.entity";
 
 /*
 	Marks your model as an entity. Entity is a class which is 
@@ -59,7 +59,7 @@ export class User extends BaseEntity {
 	})
 	updatedAt: Date
 
-	@OneToMany(() => Friend, (friend) => friend.user)
+	@OneToMany(() => Friend, (friend: Friend) => friend.user)
 	friends: Friend[];
 
 	@Column({nullable: true})

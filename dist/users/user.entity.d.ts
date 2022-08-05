@@ -1,5 +1,5 @@
 import { BaseEntity } from "typeorm";
-import { Friend } from "src/friends/friend.intity";
+import { Friend } from "src/friends/friend.entity";
 export declare class User extends BaseEntity {
     id: number;
     username: string;

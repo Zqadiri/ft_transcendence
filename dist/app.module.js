@@ -25,7 +25,7 @@ const users_controller_1 = require("./users/users.controller");
 const auth_controller_1 = require("./auth/auth.controller");
 const chats_module_1 = require("./chats/chats.module");
 const friends_module_1 = require("./friends/friends.module");
-const friend_intity_1 = require("./friends/friend.intity");
+const friend_entity_1 = require("./friends/friend.entity");
 const chat_entity_1 = require("./chats/chat.entity");
 const two_factor_authentication_module_1 = require("./two-factor-authentication/two-factor-authentication.module");
 const passport_1 = require("@nestjs/passport");
@@ -57,7 +57,7 @@ AppModule = __decorate([
                 username: process.env.POSTGRES_USER,
                 password: process.env.POSTGRES_PASSWORD,
                 database: process.env.POSTGRES_DATABASE,
-                entities: [user_entity_1.User, game_entity_1.Game, friend_intity_1.Friend, chat_entity_1.Chat, chat_logs_entity_1.ChatLogs],
+                entities: [user_entity_1.User, game_entity_1.Game, friend_entity_1.Friend, chat_entity_1.Chat, chat_logs_entity_1.ChatLogs],
                 synchronize: true,
             }),
             jwt_1.JwtModule,

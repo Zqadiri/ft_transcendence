@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("typeorm");
-const friend_intity_1 = require("../friends/friend.intity");
+const friend_entity_1 = require("../friends/friend.entity");
 let User = class User extends typeorm_2.BaseEntity {
 };
 __decorate([
@@ -78,7 +78,7 @@ __decorate([
     __metadata("design:type", Date)
 ], User.prototype, "updatedAt", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => friend_intity_1.Friend, (friend) => friend.user),
+    (0, typeorm_1.OneToMany)(() => friend_entity_1.Friend, (friend) => friend.user),
     __metadata("design:type", Array)
 ], User.prototype, "friends", void 0);
 __decorate([

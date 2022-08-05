@@ -8,11 +8,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.relationRepository = void 0;
 const typeorm_1 = require("typeorm");
-const friend_intity_1 = require("./friend.intity");
+const friend_entity_1 = require("./friend.entity");
 let relationRepository = class relationRepository extends typeorm_1.Repository {
 };
 relationRepository = __decorate([
-    (0, typeorm_1.EntityRepository)(friend_intity_1.Friend)
+    (0, typeorm_1.EntityRepository)(friend_entity_1.Friend)
 ], relationRepository);
 exports.relationRepository = relationRepository;
 //# sourceMappingURL=relation.repository.js.map

@@ -16,7 +16,7 @@ import { UsersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
 import { ChatModule } from './chats/chats.module';
 import { FriendsModule } from './friends/friends.module';
-import { Friend } from './friends/friend.intity';
+import { Friend } from './friends/friend.entity';
 import { Chat } from './chats/chat.entity';
 import { TwoFactorAuthenticationModule } from './two-factor-authentication/two-factor-authentication.module';
 import { PassportModule } from '@nestjs/passport';

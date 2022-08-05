@@ -15,6 +15,6 @@ export class Friend extends BaseEntity{
     stat: string;
 
     // User have multiple friends
-    @ManyToOne(() => User, (user) => user.friends)
+    @ManyToOne(() => User, (user: User) => user.friends)
     user: User;
 }

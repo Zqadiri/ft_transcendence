@@ -50,6 +50,13 @@ let UsersController = class UsersController {
     }
     async AddFriend(userID, req, res) {
         try {
+            const secondUser = await this.usersService.getUserById(userID);
+            this.FriendService.createFriend({
+                FirstUser: req.user,
+                SecondUser: secondUser,
+                isFriend: false,
+                blocked: false
+            }, req.user);
         }
         catch (err) {
             throw new common_1.UnauthorizedException('Can\'t add friend');

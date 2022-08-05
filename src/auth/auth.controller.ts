@@ -43,7 +43,7 @@ export class AuthController
 		else if (playerExists && playerExists.is2FacAuth === false ){
 			await this.authService.sendJWTtoken(playerExists, response);
 			console.log('Player exists and 2FA is enabled');
-			response.redirect('/2fa', );
+			// response.redirect('/2fa', );
 		}
 		// else if (playerExists && playerExists.is2FacAuth === false ){
 		// 	console.log('Player exists and Not 2FA is enabled');

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { Friend } from './friend.intity';
+import { Friend } from './friend.entity';
 import { FriendsController } from './friends.controller';
 import { FriendsService } from './friends.service';
 import { relationRepository } from './relation.repository';

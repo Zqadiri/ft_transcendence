@@ -11,7 +11,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_entity_1 = require("../users/user.entity");
 const users_service_1 = require("../users/users.service");
-const friend_intity_1 = require("./friend.intity");
+const friend_entity_1 = require("./friend.entity");
 const friends_controller_1 = require("./friends.controller");
 const friends_service_1 = require("./friends.service");
 const relation_repository_1 = require("./relation.repository");
@@ -21,7 +21,7 @@ let FriendsModule = class FriendsModule {
 FriendsModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, friend_intity_1.Friend, relation_repository_1.relationRepository, user_repository_1.UserRepository])
+            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, friend_entity_1.Friend, relation_repository_1.relationRepository, user_repository_1.UserRepository])
         ],
         controllers: [friends_controller_1.FriendsController],
         providers: [users_service_1.UsersService, friends_service_1.FriendsService]
