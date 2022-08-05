@@ -22,7 +22,6 @@ export class TwoFactorAuthenticationService {
 			URL with the otpauth:// protocol. It is used by 
 			applications such as Google Authenticator.
 		*/
-		// console.log(`user tfa : ${user}`);
 		const urlPath = authenticator.keyuri(user.email, 
 		process.env.TWO_FACTOR_AUTHENTICATION_APP_NAME, secret);
 		// save the secret in the database

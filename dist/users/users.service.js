@@ -29,6 +29,9 @@ let UsersService = class UsersService {
         });
         return player;
     }
+    async getUser(id) {
+        console.log(id);
+    }
     async create(createUserDto) {
         const player = this.userRepository.create(createUserDto);
         return this.userRepository.save(player);

@@ -18,7 +18,9 @@ import { User } from 'src/users/entities/user.entity';
 @Injectable()
 export class AuthService {
 
-	constructor (private readonly jwtService: JwtService){}
+	constructor (
+		private readonly jwtService: JwtService
+	){}
 	async getAccessToken(code : string) : Promise<string> {
 		let ret : string;
 		const  payload = {
@@ -80,7 +82,7 @@ export class AuthService {
 
 	async sendJWTtoken(user: User, @Res() response: Response){
 		let {access_token} = await this.loginWithCredentials(user);
-		console.log(`access token :  ` + JSON.stringify(access_token));
+		console.log(`access token :  ` + access_token);
 		response.cookie('_token', access_token,{
 			maxAge: 1000 * 60 * 15, // would expire after 15 minutes
 			httpOnly: true, // The cookie only accessible by the web server
@@ -103,8 +105,8 @@ export class AuthService {
 
 	async loginWithCredentials(user: User) {
 		const payload = {username: user.username, id: user.id}; //add iS2fa 
-		return {
-			access_token: await this.jwtService.signAsync(payload, { secret: process.env.SECRET }),
+		return { access_token : await this.jwtService.signAsync(payload, {
+			secret: String(process.env.JWT_SECRET_KEY)}) 
 		};
 	}
 }

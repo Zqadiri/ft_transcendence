@@ -6,6 +6,7 @@ export declare class UsersService {
     private readonly userRepository;
     constructor(userRepository: UserRepository);
     getUserById(id: number): Promise<User>;
+    getUser(id: number): Promise<void>;
     create(createUserDto: CreateUserDto): Promise<User>;
     setTwoFactorAuthenticationSecret(secret: string, userId: number): Promise<import("typeorm").UpdateResult>;
     uploadAvatar(id: number, avatarDto: AvatarDto): Promise<User>;

@@ -21,6 +21,10 @@ export class UsersService {
 			return player;
 		}
 
+		async getUser(id: number){
+			console.log(id);
+		}
+
 		async create(createUserDto: CreateUserDto) : Promise<User>{
 			const player = this.userRepository.create(createUserDto);
 			return this.userRepository.save(player);
