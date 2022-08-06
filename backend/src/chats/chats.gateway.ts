@@ -1,4 +1,4 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, WsResponse } from '@nestjs/websockets';
 import { ChatsService } from './chats.service';
 import { Server, Socket } from 'socket.io';
 import { Bind, Logger } from '@nestjs/common';
@@ -29,11 +29,13 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   }
 
   handleDisconnect(client: Socket) {
-    // notify users upon disconnection
-   
-    client.broadcast.emit("user disconnected", client.id);
-    
     console.log(` client Disconnected: ${client.id}`);
+  }
+
+  @SubscribeMessage('msgToServer')
+  handleMessage(client: Socket, text: string): void
+  {
+    client.emit('msgToClient', text); 
   }
 
   // @SubscribeMessage('createChat')
@@ -53,36 +55,22 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
 
    // identify the user who join the chat
    
-   @SubscribeMessage('join') // listinig to an event named join
-    joinRoom(
-      @MessageBody('name') name: string,
-      @ConnectedSocket() client: Socket)
-    {
-      const users = [];
-      const username = this.chatsService.identify(name, client.id);
-      users.push({
-        userID: client.id,
-        username: username
-      });
+  //  @SubscribeMessage('join') // listinig to an event named join
+  //   joinRoom(
+  //     @MessageBody('name') name: string,
+  //     @ConnectedSocket() client: Socket)
+  //   {
+  //     const username = this.chatsService.identify(name, client.id);
+  //     return username;
+  //   }
 
-      client.emit("users", users);
-
-        // notify existing users
-      client.broadcast.emit("user connected", {
-        userID: client.id,
-        username: username,
-      });
-
-      return username;
-    }
-
-   //type a message and informe other users who is typing
-    @SubscribeMessage('typing') 
-    async typing(
-      @MessageBody('isTyping') isTyping: string,
-      @ConnectedSocket() client: Socket)
-      {
-        const name = await this.chatsService.getClientName(client.id);
-        client.broadcast.emit('typing', {name, isTyping});
-      }
+  //  //type a message and informe other users who is typing
+  //   @SubscribeMessage('typing') 
+  //   async typing(
+  //     @MessageBody('isTyping') isTyping: string,
+  //     @ConnectedSocket() client: Socket)
+  //     {
+  //       const name = await this.chatsService.getClientName(client.id);
+  //       client.broadcast.emit('typing', {name, isTyping});
+  //     }
 }
