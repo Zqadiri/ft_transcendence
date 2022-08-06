@@ -1,18 +1,17 @@
-import { User } from "src/users/user.entity";
-import { Message } from "./message.entity";
 export declare class Chat {
     id: number;
     name: string;
+    uuid: string;
+    isPLaying: Boolean;
     password: string;
+    ownerID: string;
     isActive: boolean;
     type: string;
     status: string;
-    usersID: User[];
-    owner: User;
-    AdminsID: User[];
-    mutedID: User[];
-    banedID: User[];
-    messages: Message[];
-    created_at: Date;
-    updated_at: Date;
+    userID: string[];
+    AdminsID: string[];
+    mutedID: string[];
+    createdAt: Date;
+    updatedAt: Date;
+    hashPassword(): Promise<void>;
 }

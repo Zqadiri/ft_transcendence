@@ -6,13 +6,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlayerRepository = void 0;
-const user_entity_1 = require("./user.entity");
+exports.UserRepository = void 0;
+const user_entity_1 = require("./entities/user.entity");
 const typeorm_1 = require("typeorm");
-let PlayerRepository = class PlayerRepository extends typeorm_1.Repository {
+let UserRepository = class UserRepository extends typeorm_1.Repository {
 };
-PlayerRepository = __decorate([
+UserRepository = __decorate([
     (0, typeorm_1.EntityRepository)(user_entity_1.User)
-], PlayerRepository);
-exports.PlayerRepository = PlayerRepository;
+], UserRepository);
+exports.UserRepository = UserRepository;
 //# sourceMappingURL=user.repository.js.map

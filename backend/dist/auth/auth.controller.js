@@ -17,39 +17,75 @@ const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const common_2 = require("@nestjs/common");
 const users_service_1 = require("../users/users.service");
+const swagger_1 = require("@nestjs/swagger");
+const jwt_auth_guard_1 = require("./jwt-auth.guard");
 let AuthController = class AuthController {
     constructor(authService, playerService) {
         this.authService = authService;
         this.playerService = playerService;
     }
-    async access_token(query) {
+    async access_token(query, response) {
+        console.log(response.statusCode);
         let obj;
         let playerExists;
         obj = await this.authService.getUserData(query.code);
         if (!obj)
             throw new common_2.BadRequestException('Bad Request');
-        console.log({ obj });
         playerExists = await this.playerService.getUserById(obj.id);
+        console.log(`player ${JSON.stringify(playerExists)}`);
         if (!playerExists) {
-            console.log('does not Exists');
+            console.log('does not Exists create user and add cookie');
             this.playerService.create(obj);
+            return await this.authService.sendJWTtoken(playerExists, response);
         }
-        else
-            console.log(` user is : ${{ obj }}`);
-        return await this.authService.sendJWTtoken(playerExists);
+        else if (playerExists && playerExists.is2FacAuth === false) {
+            await this.authService.sendJWTtoken(playerExists, response);
+            console.log('Player exists and 2FA is enabled');
+        }
+    }
+    logout(res) {
+        res.clearCookie('token');
+        res.end();
+    }
+    getProfile(req) {
+        return req.user;
     }
 };
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'log the user in with the intra and set the cookie' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'the route responsible of fetching the authenticated user data from the intra API',
+    }),
     (0, common_1.Get)('/login'),
     __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "access_token", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'log out and clear cookie' }),
+    (0, common_1.Delete)('/log-out'),
+    __param(0, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "logout", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'get user profile' }),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
+    (0, common_1.Get)('/profile'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "getProfile", null);
 AuthController = __decorate([
+    (0, swagger_1.ApiTags)('auth'),
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
-        users_service_1.PlayersService])
+        users_service_1.UsersService])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth.controller.js.map

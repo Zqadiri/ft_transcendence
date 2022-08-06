@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Message = void 0;
 const typeorm_1 = require("typeorm");
-const chat_entity_1 = require("./chat.entity");
 const user_entity_1 = require("../../users/user.entity");
 let Message = class Message {
 };
@@ -19,10 +18,6 @@ __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], Message.prototype, "id", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => chat_entity_1.Chat, (chat) => chat.messages),
-    __metadata("design:type", chat_entity_1.Chat)
-], Message.prototype, "chat", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.messages),
     __metadata("design:type", user_entity_1.User)

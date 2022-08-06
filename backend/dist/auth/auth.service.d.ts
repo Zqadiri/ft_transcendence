@@ -1,13 +1,14 @@
+import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { CreatePlayerDto } from 'src/users/dto/create-player.dto';
-import { User } from 'src/users/user.entity';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from 'src/users/entities/user.entity';
 export declare class AuthService {
     private readonly jwtService;
     constructor(jwtService: JwtService);
     getAccessToken(code: string): Promise<string>;
-    getUserData(code: string): Promise<CreatePlayerDto>;
-    sendJWTtoken(player: User): Promise<void>;
-    loginWithCredentials(player: User): Promise<{
+    getUserData(code: string): Promise<CreateUserDto>;
+    sendJWTtoken(user: User, response: Response): Promise<Response<any, Record<string, any>>>;
+    loginWithCredentials(user: User): Promise<{
         access_token: string;
     }>;
 }

@@ -12,32 +12,55 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PlayersService = void 0;
+exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
-const user_entity_1 = require("./user.entity");
+const user_entity_1 = require("./entities/user.entity");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_repository_1 = require("./user.repository");
-let PlayersService = class PlayersService {
-    constructor(playerRepository) {
-        this.playerRepository = playerRepository;
+let UsersService = class UsersService {
+    constructor(userRepository) {
+        this.userRepository = userRepository;
     }
     async getUserById(id) {
-        const player = await this.playerRepository.findOne({
+        const player = await this.userRepository.findOne({
             where: {
                 id: id,
             }
         });
         return player;
     }
-    async create(createPlayerDto) {
-        const player = this.playerRepository.create(createPlayerDto);
-        return this.playerRepository.save(player);
+    async getUser(id) {
+        console.log(id);
+    }
+    async create(createUserDto) {
+        const player = this.userRepository.create(createUserDto);
+        return this.userRepository.save(player);
+    }
+    async setTwoFactorAuthenticationSecret(secret, userId) {
+        return this.userRepository.update(userId, {
+            twoFacAuthSecret: secret
+        });
+    }
+    async uploadAvatar(id, avatarDto) {
+        const newPath = avatarDto.path;
+        const user = await this.userRepository.preload({
+            id: id,
+            avatar: newPath,
+        });
+        return await this.userRepository.save(user);
+    }
+    async updateUsername(id, newUsername) {
+        const user = await this.userRepository.preload({
+            id: id,
+            username: newUsername
+        });
+        await this.userRepository.save(user);
     }
 };
-PlayersService = __decorate([
+UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
-    __metadata("design:paramtypes", [user_repository_1.PlayerRepository])
-], PlayersService);
-exports.PlayersService = PlayersService;
+    __metadata("design:paramtypes", [user_repository_1.UserRepository])
+], UsersService);
+exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

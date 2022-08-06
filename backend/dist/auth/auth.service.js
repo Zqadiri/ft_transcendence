@@ -8,17 +8,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("axios");
 const jwt_1 = require("@nestjs/jwt");
+const user_entity_1 = require("../users/entities/user.entity");
 let AuthService = class AuthService {
     constructor(jwtService) {
         this.jwtService = jwtService;
     }
     async getAccessToken(code) {
-        console.log('--- Acces Token ---');
         let ret;
         const payload = {
             grant_type: 'authorization_code',
@@ -46,7 +49,6 @@ let AuthService = class AuthService {
         return ret;
     }
     async getUserData(code) {
-        console.log("---  Get User Data ---");
         let access_token;
         let data;
         try {
@@ -65,31 +67,47 @@ let AuthService = class AuthService {
                 const email = res.data.email;
                 const id = res.data.id;
                 const avatar = `https://avatars.dicebear.com/api/croodles/${username}.svg`;
-                data = { id, username, email, avatar };
+                const TwoFA = res.data.is2FacAuth;
+                data = { id, username, email, avatar, TwoFA };
                 return data;
             })
                 .catch((err) => {
-                console.log(err);
             });
         }
         catch (err) {
-            console.log(err);
         }
         return data;
     }
-    async sendJWTtoken(player) {
-        console.log('sendJWTtoken');
-        let access_token = await this.loginWithCredentials(player);
-        console.log(`access token :  ` + JSON.stringify(access_token));
+    async sendJWTtoken(user, response) {
+        let { access_token } = await this.loginWithCredentials(user);
+        console.log(`access token :  ` + access_token);
+        response.cookie('_token', access_token, {
+            maxAge: 1000 * 60 * 15,
+            httpOnly: true,
+            domain: 'localhost',
+            path: '/'
+        });
+        return response.send({
+            id: user.id,
+            name: user.username,
+            avatar: user.avatar,
+            email: user.email
+        });
     }
-    async loginWithCredentials(player) {
-        console.log('in login method');
-        const payload = { username: player.username, sub: player.id };
-        return {
-            access_token: await this.jwtService.signAsync(payload, { secret: process.env.SECRET }),
+    async loginWithCredentials(user) {
+        const payload = { username: user.username, id: user.id };
+        return { access_token: await this.jwtService.signAsync(payload, {
+                secret: String(process.env.JWT_SECRET_KEY)
+            })
         };
     }
 };
+__decorate([
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_entity_1.User, Object]),
+    __metadata("design:returntype", Promise)
+], AuthService.prototype, "sendJWTtoken", null);
 AuthService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [jwt_1.JwtService])

@@ -11,23 +11,45 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chat = void 0;
 const typeorm_1 = require("typeorm");
-const user_entity_1 = require("../../users/user.entity");
-const message_entity_1 = require("./message.entity");
+const bcrypt = require("bcrypt");
+const common_1 = require("@nestjs/common");
 let Chat = class Chat {
-    ;
+    async hashPassword() {
+        try {
+            this.password = await bcrypt.hash(this.password, process.env.SALT);
+        }
+        catch (err) {
+            throw common_1.InternalServerErrorException;
+        }
+    }
 };
 __decorate([
-    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    (0, typeorm_1.Column)({ primary: true }),
     __metadata("design:type", Number)
 ], Chat.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({
+        default: 'untitled'
+    }),
     __metadata("design:type", String)
 ], Chat.prototype, "name", void 0);
 __decorate([
+    (0, typeorm_1.Generated)('uuid'),
+    (0, typeorm_1.Column)({ type: "uuid" }),
+    __metadata("design:type", String)
+], Chat.prototype, "uuid", void 0);
+__decorate([
     (0, typeorm_1.Column)(),
+    __metadata("design:type", Boolean)
+], Chat.prototype, "isPLaying", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Chat.prototype, "password", void 0);
+__decorate([
+    (0, typeorm_1.Column)('varchar'),
+    __metadata("design:type", String)
+], Chat.prototype, "ownerID", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: true }),
     __metadata("design:type", Boolean)
@@ -47,43 +69,49 @@ __decorate([
     __metadata("design:type", String)
 ], Chat.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => user_entity_1.User, user => user.chats),
-    (0, typeorm_1.JoinTable)(),
+    (0, typeorm_1.Column)('varchar', {
+        array: true,
+        nullable: false
+    }),
     __metadata("design:type", Array)
-], Chat.prototype, "usersID", void 0);
+], Chat.prototype, "userID", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, user => user.rooms),
-    __metadata("design:type", user_entity_1.User)
-], Chat.prototype, "owner", void 0);
-__decorate([
-    (0, typeorm_1.ManyToMany)(() => user_entity_1.User, user => user.admins),
-    (0, typeorm_1.JoinTable)(),
+    (0, typeorm_1.Column)('varchar', {
+        array: true,
+        nullable: false
+    }),
     __metadata("design:type", Array)
 ], Chat.prototype, "AdminsID", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => user_entity_1.User, user => user.muted),
-    (0, typeorm_1.JoinTable)(),
+    (0, typeorm_1.Column)('varchar', {
+        array: true,
+        nullable: false
+    }),
     __metadata("design:type", Array)
 ], Chat.prototype, "mutedID", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => user_entity_1.User, user => user.baned),
-    (0, typeorm_1.JoinTable)(),
-    __metadata("design:type", Array)
-], Chat.prototype, "banedID", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => message_entity_1.Message, (message) => message.chat),
-    __metadata("design:type", Array)
-], Chat.prototype, "messages", void 0);
-__decorate([
-    (0, typeorm_1.CreateDateColumn)(),
+    (0, typeorm_1.Column)({
+        type: 'timestamp',
+        default: () => 'CURRENT_TIMESTAMP'
+    }),
     __metadata("design:type", Date)
-], Chat.prototype, "created_at", void 0);
+], Chat.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.UpdateDateColumn)(),
+    (0, typeorm_1.Column)({
+        type: 'timestamp',
+        onUpdate: 'CURRENT_TIMESTAMP',
+        nullable: true
+    }),
     __metadata("design:type", Date)
-], Chat.prototype, "updated_at", void 0);
+], Chat.prototype, "updatedAt", void 0);
+__decorate([
+    (0, typeorm_1.BeforeInsert)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], Chat.prototype, "hashPassword", null);
 Chat = __decorate([
-    (0, typeorm_1.Entity)()
+    (0, typeorm_1.Entity)('db_chat')
 ], Chat);
 exports.Chat = Chat;
 //# sourceMappingURL=chat.entity.js.map

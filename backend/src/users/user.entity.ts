@@ -60,7 +60,8 @@ export class User extends BaseEntity {
     // Relations
 
     // user can have multiple chat rooms
-    @ManyToMany(() => Chat, (chat) => chat.usersID)
+    @ManyToMany(() => Chat, (chat) => chat.
+    userID)
     chats: Chat[];
 
     // user can be admin on multiple chat rooms
@@ -68,7 +69,7 @@ export class User extends BaseEntity {
     admins: Chat[];
 
     // user can have multiple chat rooms
-    @OneToMany(() => Chat, (chat) => chat.owner)
+    @OneToMany(() => Chat, (chat) => chat.ownerID)
     rooms: Chat[];
 
     // user can be muted on multiple chat rooms
@@ -76,7 +77,7 @@ export class User extends BaseEntity {
     muted: Chat[];
 
     // user can be banned on multiple chat rooms
-    @ManyToMany(() => Chat, (chat) => chat.banedID)
+    @ManyToMany(() => Chat, (chat) => chat.mutedID)
     baned: Chat[];
 
     // user can send multiple messages

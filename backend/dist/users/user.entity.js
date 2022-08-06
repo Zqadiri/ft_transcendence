@@ -75,7 +75,8 @@ __decorate([
     __metadata("design:type", Date)
 ], User.prototype, "updatedAt", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => chat_entity_1.Chat, (chat) => chat.usersID),
+    (0, typeorm_1.ManyToMany)(() => chat_entity_1.Chat, (chat) => chat.
+        userID),
     __metadata("design:type", Array)
 ], User.prototype, "chats", void 0);
 __decorate([
@@ -83,7 +84,7 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "admins", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => chat_entity_1.Chat, (chat) => chat.owner),
+    (0, typeorm_1.OneToMany)(() => chat_entity_1.Chat, (chat) => chat.ownerID),
     __metadata("design:type", Array)
 ], User.prototype, "rooms", void 0);
 __decorate([
@@ -91,7 +92,7 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "muted", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => chat_entity_1.Chat, (chat) => chat.banedID),
+    (0, typeorm_1.ManyToMany)(() => chat_entity_1.Chat, (chat) => chat.mutedID),
     __metadata("design:type", Array)
 ], User.prototype, "baned", void 0);
 __decorate([

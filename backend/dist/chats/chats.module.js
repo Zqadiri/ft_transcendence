@@ -21,9 +21,9 @@ let ChatsModule = class ChatsModule {
 };
 ChatsModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule, users_module_1.PlayersModule, typeorm_1.TypeOrmModule.forFeature([dm_entitiy_1.Dm, chat_entity_1.Chat, message_entity_1.Message])],
+        imports: [auth_module_1.AuthModule, users_module_1.UsersModule, typeorm_1.TypeOrmModule.forFeature([dm_entitiy_1.Dm, chat_entity_1.Chat, message_entity_1.Message])],
         providers: [chats_gateway_1.ChatsGateway, chats_service_1.ChatsService],
-        controllers: [chats_controller_1.ChatsController]
+        controllers: [chats_controller_1.ChatController]
     })
 ], ChatsModule);
 exports.ChatsModule = ChatsModule;
