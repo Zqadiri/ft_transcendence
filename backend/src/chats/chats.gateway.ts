@@ -1,10 +1,7 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { ChatsService } from './chats.service';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
 import { Server, Socket } from 'socket.io';
 import { Bind, Logger } from '@nestjs/common';
-import { Dm } from './entities/dm.entitiy';
 
 @WebSocketGateway(
   {
@@ -39,22 +36,23 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     console.log(` client Disconnected: ${client.id}`);
   }
 
-  @SubscribeMessage('createChat')
-  async create(
-    @MessageBody() createChatDto: CreateChatDto,
-    @ConnectedSocket() client: Socket) {
-    const message = await this.chatsService.create(createChatDto, client.id);
-    client.emit('message', message);
-    client.broadcast.emit('message', message);
-    return message;
-  }
+  // @SubscribeMessage('createChat')
+  // async create(
+  //   @MessageBody() createChatDto: CreateChatDto,
+  //   @ConnectedSocket() client: Socket) {
+  //   const message = await this.chatsService.create(createChatDto, client.id);
+  //   client.emit('message', message);
+  //   client.broadcast.emit('message', message);
+  //   return message;
+  // }
 
-  @SubscribeMessage('findAllChats')
-  async findAll() {
-    return this.chatsService.findAll_Dm_messages();
-  }
+  // @SubscribeMessage('findAllChats')
+  // async findAll() {
+  //   return this.chatsService.findAll_Dm_messages();
+  // }
 
    // identify the user who join the chat
+   
    @SubscribeMessage('join') // listinig to an event named join
     joinRoom(
       @MessageBody('name') name: string,

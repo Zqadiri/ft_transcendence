@@ -52,11 +52,7 @@ AppModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, friend_entity_1.Friend, user_repository_1.UserRepository, relation_repository_1.relationRepository]),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
-                host: process.env.POSTGRES_HOST,
-                port: parseInt(process.env.POSTGRES_PORT),
-                username: process.env.POSTGRES_USER,
-                password: process.env.POSTGRES_PASSWORD,
-                database: process.env.POSTGRES_DATABASE,
+                url: process.env.DATABASE_URL,
                 autoLoadEntities: true,
                 entities: [
                     user_entity_1.User, friend_entity_1.Friend, chat_entity_1.Chat, chat_log_entity_1.ChatLogs, auth_entity_1.Auth

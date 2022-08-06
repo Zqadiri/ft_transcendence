@@ -1,6 +1,6 @@
 import { LargeNumberLike } from "crypto";
 import { BaseEntity, BeforeInsert, Column, Entity, Generated } from "typeorm";
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { InternalServerErrorException } from "@nestjs/common";
 
 /*

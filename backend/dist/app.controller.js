@@ -46,7 +46,7 @@ __decorate([
     (0, common_1.Redirect)(),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Response]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "getAuthPage", null);
 __decorate([

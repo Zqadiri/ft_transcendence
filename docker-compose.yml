@@ -29,20 +29,20 @@ services:
       - 3000:3000
       - 9229:9229
 
-  frontend:
-    build:
-      dockerfile: Dockerfile
-      context: ./frontend
-      target: dev
-    command: npm run serve
-    volumes:
-      - ./frontend:/usr/frontend/src/app
-      - /usr/frontend/src/app/node-modules
-    ports:
-      - 8080:8080
-    # link to chat backend 
-    links:
-      - backend
+  # frontend:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./frontend
+  #     target: dev
+  #   command: npm run serve
+  #   volumes:
+  #     - ./frontend:/usr/frontend/src/app
+  #     - /usr/frontend/src/app/node-modules
+  #   ports:
+  #     - 8080:8080
+  #   # link to chat backend 
+  #   links:
+  #     - backend
 
   postgres:
     #use postgres image from dockerhub

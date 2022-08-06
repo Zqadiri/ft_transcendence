@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatsGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
 const chats_service_1 = require("./chats.service");
-const create_chat_dto_1 = require("./dto/create-chat.dto");
 const socket_io_1 = require("socket.io");
 const common_1 = require("@nestjs/common");
 let ChatsGateway = class ChatsGateway {
@@ -32,15 +31,6 @@ let ChatsGateway = class ChatsGateway {
     handleDisconnect(client) {
         client.broadcast.emit("user disconnected", client.id);
         console.log(` client Disconnected: ${client.id}`);
-    }
-    async create(createChatDto, client) {
-        const message = await this.chatsService.create(createChatDto, client.id);
-        client.emit('message', message);
-        client.broadcast.emit('message', message);
-        return message;
-    }
-    async findAll() {
-        return this.chatsService.findAll_Dm_messages();
     }
     joinRoom(name, client) {
         const users = [];
@@ -65,21 +55,6 @@ __decorate([
     (0, websockets_1.WebSocketServer)(),
     __metadata("design:type", socket_io_1.Server)
 ], ChatsGateway.prototype, "server", void 0);
-__decorate([
-    (0, websockets_1.SubscribeMessage)('createChat'),
-    __param(0, (0, websockets_1.MessageBody)()),
-    __param(1, (0, websockets_1.ConnectedSocket)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_chat_dto_1.CreateChatDto,
-        socket_io_1.Socket]),
-    __metadata("design:returntype", Promise)
-], ChatsGateway.prototype, "create", null);
-__decorate([
-    (0, websockets_1.SubscribeMessage)('findAllChats'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], ChatsGateway.prototype, "findAll", null);
 __decorate([
     (0, websockets_1.SubscribeMessage)('join'),
     __param(0, (0, websockets_1.MessageBody)('name')),

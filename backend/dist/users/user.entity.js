@@ -13,7 +13,6 @@ exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const typeorm_2 = require("typeorm");
 const chat_entity_1 = require("../chats/entities/chat.entity");
-const message_entity_1 = require("../chats/entities/message.entity");
 let User = class User extends typeorm_2.BaseEntity {
 };
 __decorate([
@@ -96,7 +95,7 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "baned", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => message_entity_1.Message, (message) => message.owner),
+    (0, typeorm_1.OneToMany)(() => Message, (message) => message.owner),
     __metadata("design:type", Array)
 ], User.prototype, "messages", void 0);
 User = __decorate([

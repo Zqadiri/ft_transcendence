@@ -6,7 +6,9 @@ import requestWithUser from  './requestWithUser.interface';
 import { TwoFacAuthCodeDto } from './dto/twoFactorAuthenticationCode.dto';
 import RequestWithUser from './requestWithUser.interface';
 import { AuthService } from 'src/auth/auth.service';
+// import { Response } from 'e≈xpress÷';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+
 
 // ! learn more about interceptors
 @ApiTags('two-factor-authentication')
@@ -27,7 +29,7 @@ export class TwoFactorAuthenticationController {
 	@Post('generate')
 	// @UseGuards(jwtAuthGuard)
 	async register(
-		@Res() response: Response,
+		@Res() response,
 		@Req() request: requestWithUser
 	){
 		console.log(`request data ${JSON.stringify(request.body.user)}`);
