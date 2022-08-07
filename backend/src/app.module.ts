@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { GameModule } from './games/games.module';
-import { User } from './users/entities/user.entity'
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { AppLoggerMiddleware } from './logger.middleware';
@@ -26,6 +25,7 @@ import { relationRepository } from './friends/relation.repository';
 import { Chat } from './chats/entities/chat.entity';
 import { ChatLogs } from './chat-logs/entities/chat-log.entity';
 import { Auth } from './auth/auth.entity';
+import { User } from './users/entities/user.entity';
 
 require('dotenv').config();
 

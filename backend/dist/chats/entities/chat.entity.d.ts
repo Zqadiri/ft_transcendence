@@ -13,5 +13,4 @@ export declare class Chat {
     mutedID: string[];
     createdAt: Date;
     updatedAt: Date;
-    hashPassword(): Promise<void>;
 }

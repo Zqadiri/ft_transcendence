@@ -87,13 +87,13 @@ export class Chat{
 		Entities can have methods with custom logic that listen to specific entity events
 	*/
 
-	@BeforeInsert()
-	async hashPassword(){
-		try{
-			this.password = await bcrypt.hash(this.password, process.env.SALT);
-		}
-		catch(err){
-			throw InternalServerErrorException;
-		}
-	}
+	// @BeforeInsert()
+	// async hashPassword(){
+	// 	try{
+	// 		this.password = await bcrypt.hash(this.password, process.env.SALT);
+	// 	}
+	// 	catch(err){
+	// 		throw InternalServerErrorException;
+	// 	}
+	// }
 }

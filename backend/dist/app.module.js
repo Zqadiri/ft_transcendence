@@ -13,7 +13,6 @@ const app_service_1 = require("./app.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const users_module_1 = require("./users/users.module");
 const games_module_1 = require("./games/games.module");
-const user_entity_1 = require("./users/entities/user.entity");
 const config_1 = require("@nestjs/config");
 const auth_module_1 = require("./auth/auth.module");
 const logger_middleware_1 = require("./logger.middleware");
@@ -35,6 +34,7 @@ const relation_repository_1 = require("./friends/relation.repository");
 const chat_entity_1 = require("./chats/entities/chat.entity");
 const chat_log_entity_1 = require("./chat-logs/entities/chat-log.entity");
 const auth_entity_1 = require("./auth/auth.entity");
+const user_entity_1 = require("./users/entities/user.entity");
 require('dotenv').config();
 let AppModule = class AppModule {
     configure(consumer) {

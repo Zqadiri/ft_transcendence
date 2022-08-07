@@ -11,17 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chat = void 0;
 const typeorm_1 = require("typeorm");
-const bcrypt = require("bcryptjs");
-const common_1 = require("@nestjs/common");
 let Chat = class Chat {
-    async hashPassword() {
-        try {
-            this.password = await bcrypt.hash(this.password, process.env.SALT);
-        }
-        catch (err) {
-            throw common_1.InternalServerErrorException;
-        }
-    }
 };
 __decorate([
     (0, typeorm_1.Column)({ primary: true }),
@@ -104,12 +94,6 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], Chat.prototype, "updatedAt", void 0);
-__decorate([
-    (0, typeorm_1.BeforeInsert)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], Chat.prototype, "hashPassword", null);
 Chat = __decorate([
     (0, typeorm_1.Entity)('db_chat')
 ], Chat);

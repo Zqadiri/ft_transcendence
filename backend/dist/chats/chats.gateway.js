@@ -8,9 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatsGateway = void 0;
 const websockets_1 = require("@nestjs/websockets");
@@ -29,26 +26,10 @@ let ChatsGateway = class ChatsGateway {
         console.log(` client Connected ${client.id}`);
     }
     handleDisconnect(client) {
-        client.broadcast.emit("user disconnected", client.id);
         console.log(` client Disconnected: ${client.id}`);
     }
-    joinRoom(name, client) {
-        const users = [];
-        const username = this.chatsService.identify(name, client.id);
-        users.push({
-            userID: client.id,
-            username: username
-        });
-        client.emit("users", users);
-        client.broadcast.emit("user connected", {
-            userID: client.id,
-            username: username,
-        });
-        return username;
-    }
-    async typing(isTyping, client) {
-        const name = await this.chatsService.getClientName(client.id);
-        client.broadcast.emit('typing', { name, isTyping });
+    handleMessage(client, text) {
+        client.emit('msgToClient', text);
     }
 };
 __decorate([
@@ -56,21 +37,11 @@ __decorate([
     __metadata("design:type", socket_io_1.Server)
 ], ChatsGateway.prototype, "server", void 0);
 __decorate([
-    (0, websockets_1.SubscribeMessage)('join'),
-    __param(0, (0, websockets_1.MessageBody)('name')),
-    __param(1, (0, websockets_1.ConnectedSocket)()),
+    (0, websockets_1.SubscribeMessage)('msgToServer'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, socket_io_1.Socket]),
+    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
     __metadata("design:returntype", void 0)
-], ChatsGateway.prototype, "joinRoom", null);
-__decorate([
-    (0, websockets_1.SubscribeMessage)('typing'),
-    __param(0, (0, websockets_1.MessageBody)('isTyping')),
-    __param(1, (0, websockets_1.ConnectedSocket)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, socket_io_1.Socket]),
-    __metadata("design:returntype", Promise)
-], ChatsGateway.prototype, "typing", null);
+], ChatsGateway.prototype, "handleMessage", null);
 ChatsGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm';
@@ -20,9 +20,22 @@ export class ChatsService {
 
   /** Create ROOM */
 
-  async createRoom(room: CreateRoomDto)
+  async createRoom(room: Chat)
   {
-     //TODO
+     //TODO: check if the room already exist in the database if not create a new instance of it
+    const roomName = room.name;
+    // findOneBy - Finds the first entity that matches given FindOptionsWhere.
+    const name = await this.Chatrepository.findOneBy({ name: roomName });
+
+    if (name){
+      throw new ConflictException({code: 'room.conflict', message: `Room with '${name}' already exists`})
+    }
+    console.log(` newRoom ${room.name}`);
+
+    const newRoom = this.Chatrepository.create(room);
+    await this.Chatrepository.save(newRoom);
+
+    return newRoom;
   }
 
   // clientToUser = {};
