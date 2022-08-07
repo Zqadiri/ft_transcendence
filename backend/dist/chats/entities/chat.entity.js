@@ -14,7 +14,7 @@ const typeorm_1 = require("typeorm");
 let Chat = class Chat {
 };
 __decorate([
-    (0, typeorm_1.Column)({ primary: true }),
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
 ], Chat.prototype, "id", void 0);
 __decorate([
@@ -29,7 +29,7 @@ __decorate([
     __metadata("design:type", String)
 ], Chat.prototype, "uuid", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], Chat.prototype, "isPLaying", void 0);
 __decorate([
@@ -47,7 +47,6 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({
         enum: ['dm', 'chatRoom'],
-        nullable: false
     }),
     __metadata("design:type", String)
 ], Chat.prototype, "type", void 0);
@@ -75,7 +74,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)('varchar', {
         array: true,
-        nullable: false
+        nullable: true
     }),
     __metadata("design:type", Array)
 ], Chat.prototype, "mutedID", void 0);

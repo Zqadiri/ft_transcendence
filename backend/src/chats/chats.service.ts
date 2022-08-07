@@ -10,6 +10,8 @@ export class ChatsService {
   @InjectRepository(Chat)
   private readonly Chatrepository: Repository<Chat>;
 
+  users : string[] = [];
+  admins : string[] = [];
 
   /** Create DM */
 
@@ -20,7 +22,7 @@ export class ChatsService {
 
   /** Create ROOM */
 
-  async createRoom(room: Chat)
+  async createRoom(room: CreateRoomDto, creator: string)
   {
      //TODO: check if the room already exist in the database if not create a new instance of it
     const roomName = room.name;
@@ -28,15 +30,25 @@ export class ChatsService {
     const name = await this.Chatrepository.findOneBy({ name: roomName });
 
     if (name){
-      throw new ConflictException({code: 'room.conflict', message: `Room with '${name}' already exists`})
+      throw new ConflictException({code: 'room.conflict', message: `Room with '${roomName}' already exists`})
     }
-    console.log(` newRoom ${room.name}`);
+    this.users.push(creator);
+    this.admins.push(creator);
+    const newRoom = this.Chatrepository.create({
+      ownerID: creator,
+      userID: this.users,
+      AdminsID: this.admins,
+      name: room.name,
+      type: room.type,
+      status: room.status,
+      password: room.password
 
-    const newRoom = this.Chatrepository.create(room);
+    });
     await this.Chatrepository.save(newRoom);
 
     return newRoom;
   }
+
 
   // clientToUser = {};
 

@@ -21,10 +21,11 @@ let ChatController = class ChatController {
     constructor(chatService) {
         this.chatService = chatService;
     }
-    async createRoom(roomDto) {
+    async createRoom(roomDto, creator) {
         console.log("Creating chat room...", roomDto);
+        creator = "sara";
         try {
-            const newRoom = await this.chatService.createRoom(roomDto);
+            const newRoom = await this.chatService.createRoom(roomDto, creator);
             return newRoom;
         }
         catch (e) {
@@ -38,7 +39,7 @@ __decorate([
     (0, common_1.HttpCode)(201),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_chat_dto_1.CreateRoomDto]),
+    __metadata("design:paramtypes", [create_chat_dto_1.CreateRoomDto, String]),
     __metadata("design:returntype", Promise)
 ], ChatController.prototype, "createRoom", null);
 ChatController = __decorate([

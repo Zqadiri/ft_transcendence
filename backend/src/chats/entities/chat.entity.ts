@@ -1,5 +1,5 @@
 import { LargeNumberLike } from "crypto";
-import { BaseEntity, BeforeInsert, Column, Entity, Generated } from "typeorm";
+import { BaseEntity, BeforeInsert, Column, Entity, Generated, PrimaryGeneratedColumn } from "typeorm";
 import * as bcrypt from 'bcryptjs';
 import { InternalServerErrorException } from "@nestjs/common";
 
@@ -15,7 +15,7 @@ import { InternalServerErrorException } from "@nestjs/common";
 @Entity('db_chat')
 export class Chat{
 
-	@Column({primary: true})
+	@PrimaryGeneratedColumn()
 	id: number;
 
 	@Column({
@@ -27,7 +27,7 @@ export class Chat{
 	@Column({type: "uuid"})
 	uuid: string;
 
-	@Column()
+	@Column({default: false})
 	isPLaying: Boolean;
 
 	@Column({nullable: true})
@@ -41,7 +41,7 @@ export class Chat{
 
 	@Column({
 		enum: ['dm', 'chatRoom'],
-		nullable: false
+		//nullable: false
 	})
 	type: string;
 
@@ -65,7 +65,7 @@ export class Chat{
 
 	@Column('varchar',{
 		array: true,
-		nullable: false
+		nullable: true
 	})
 	mutedID: string[];
 

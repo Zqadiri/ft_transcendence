@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateRoomDto = exports.CreateDmDto = exports.ChatTypes = exports.RoomStatus = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
-const typeorm_1 = require("typeorm");
 var RoomStatus;
 (function (RoomStatus) {
     RoomStatus["PUBLIC"] = "public";
@@ -35,37 +34,9 @@ exports.CreateDmDto = CreateDmDto;
 class CreateRoomDto {
 }
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: "Chat Room id" }),
-    __metadata("design:type", Number)
-], CreateRoomDto.prototype, "id", void 0);
-__decorate([
     (0, swagger_1.ApiProperty)({ description: "Chat Room name" }),
     __metadata("design:type", String)
 ], CreateRoomDto.prototype, "name", void 0);
-__decorate([
-    (0, typeorm_1.Generated)('uuid'),
-    __metadata("design:type", String)
-], CreateRoomDto.prototype, "uuid", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: "is Playing" }),
-    __metadata("design:type", Boolean)
-], CreateRoomDto.prototype, "isPLaying", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: "array of users in this room", nullable: false }),
-    __metadata("design:type", Array)
-], CreateRoomDto.prototype, "userID", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: "array of admins in this room", nullable: false }),
-    __metadata("design:type", Array)
-], CreateRoomDto.prototype, "AdminsID", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: "array of muted in this room", nullable: false }),
-    __metadata("design:type", Array)
-], CreateRoomDto.prototype, "mutedID", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: "Owner name" }),
-    __metadata("design:type", String)
-], CreateRoomDto.prototype, "ownerID", void 0);
 __decorate([
     (0, class_validator_1.IsEnum)(ChatTypes),
     (0, class_validator_1.Equals)(ChatTypes[ChatTypes.CHATROOM]),

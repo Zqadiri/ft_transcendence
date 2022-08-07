@@ -25,32 +25,8 @@ export class CreateDmDto
 
 export class CreateRoomDto
 {
-	@ApiProperty({ description: "Chat Room id" })
-	id: number;
-
 	@ApiProperty({ description: "Chat Room name" })
 	name: string;
-
-	@Generated('uuid')
-	uuid: string;
-
-	@ApiProperty({ description: "is Playing" })
-	isPLaying: Boolean;
-	
-	isActive: boolean;
-	@ApiProperty({ description: "array of users in this room" , nullable:false})
-	userID: string[];
-	@ApiProperty({ description: "array of admins in this room" , nullable:false })
-	AdminsID: string[];
-	@ApiProperty({ description: "array of muted in this room" , nullable:false })
-	mutedID: string[];
-
-	createdAt: Date;
-
-	updatedAt: Date;
-
-	@ApiProperty({ description: "Owner name" })
-	ownerID: string;
 
 	@IsEnum(ChatTypes)
 	@Equals(ChatTypes[ChatTypes.CHATROOM])

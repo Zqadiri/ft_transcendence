@@ -20,10 +20,11 @@ export class ChatController {
 	@Post()
 	@HttpCode(201)
 	//@UseGuards(jwtAuthGuard)
-	async createRoom(@Body() roomDto: CreateRoomDto) {
+	async createRoom(@Body() roomDto: CreateRoomDto, creator: string) {
         console.log("Creating chat room...", roomDto);
+        creator = "sara";
         try {
-			const newRoom = await this.chatService.createRoom(roomDto);
+			const newRoom = await this.chatService.createRoom(roomDto, creator);
 			return newRoom;
         } catch (e) {
             console.error('Failed to initiate room', e);

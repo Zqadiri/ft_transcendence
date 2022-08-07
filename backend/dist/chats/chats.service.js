@@ -15,16 +15,29 @@ const typeorm_1 = require("@nestjs/typeorm");
 const chat_entity_1 = require("./entities/chat.entity");
 const typeorm_2 = require("typeorm");
 let ChatsService = class ChatsService {
+    constructor() {
+        this.users = [];
+        this.admins = [];
+    }
     async CreateDm(dm, userid1, userid2) {
     }
-    async createRoom(room) {
+    async createRoom(room, creator) {
         const roomName = room.name;
         const name = await this.Chatrepository.findOneBy({ name: roomName });
         if (name) {
-            throw new common_1.ConflictException({ code: 'room.conflict', message: `Room with '${name}' already exists` });
+            throw new common_1.ConflictException({ code: 'room.conflict', message: `Room with '${roomName}' already exists` });
         }
-        console.log(` newRoom ${room.name}`);
-        const newRoom = this.Chatrepository.create(room);
+        this.users.push(creator);
+        this.admins.push(creator);
+        const newRoom = this.Chatrepository.create({
+            ownerID: creator,
+            userID: this.users,
+            AdminsID: this.admins,
+            name: room.name,
+            type: room.type,
+            status: room.status,
+            password: room.password
+        });
         await this.Chatrepository.save(newRoom);
         return newRoom;
     }

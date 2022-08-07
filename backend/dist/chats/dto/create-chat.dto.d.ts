@@ -12,17 +12,7 @@ export declare class CreateDmDto {
     type: string;
 }
 export declare class CreateRoomDto {
-    id: number;
     name: string;
-    uuid: string;
-    isPLaying: Boolean;
-    isActive: boolean;
-    userID: string[];
-    AdminsID: string[];
-    mutedID: string[];
-    createdAt: Date;
-    updatedAt: Date;
-    ownerID: string;
     type: string;
     status: string;
     password: string;
