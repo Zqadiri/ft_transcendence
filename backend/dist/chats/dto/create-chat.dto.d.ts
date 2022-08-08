@@ -4,8 +4,8 @@ export declare enum RoomStatus {
     PROTECTED = "protected"
 }
 export declare enum ChatTypes {
-    DM = "dm",
-    CHATROOM = "chatRoom"
+    CHATROOM = "chatRoom",
+    DM = "dm"
 }
 export declare class CreateDmDto {
     name: string;

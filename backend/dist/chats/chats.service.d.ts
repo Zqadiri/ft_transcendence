@@ -6,4 +6,5 @@ export declare class ChatsService {
     admins: string[];
     CreateDm(dm: CreateDmDto, userid1: number, userid2: number): Promise<void>;
     createRoom(room: CreateRoomDto, creator: string): Promise<Chat>;
+    SetPasswordToRoom(room: CreateRoomDto, owner: string): Promise<void>;
 }

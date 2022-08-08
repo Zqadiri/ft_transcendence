@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const chat_entity_1 = require("./entities/chat.entity");
 const typeorm_2 = require("typeorm");
+const create_chat_dto_1 = require("./dto/create-chat.dto");
 let ChatsService = class ChatsService {
     constructor() {
         this.users = [];
@@ -28,11 +29,9 @@ let ChatsService = class ChatsService {
             throw new common_1.ConflictException({ code: 'room.conflict', message: `Room with '${roomName}' already exists` });
         }
         this.users.push(creator);
-        this.admins.push(creator);
         const newRoom = this.Chatrepository.create({
             ownerID: creator,
             userID: this.users,
-            AdminsID: this.admins,
             name: room.name,
             type: room.type,
             status: room.status,
@@ -40,6 +39,21 @@ let ChatsService = class ChatsService {
         });
         await this.Chatrepository.save(newRoom);
         return newRoom;
+    }
+    async SetPasswordToRoom(room, owner) {
+        const roomName = room.name;
+        const name = await this.Chatrepository.findOneBy({ name: roomName });
+        if (name) {
+            if (room.status == create_chat_dto_1.RoomStatus.PUBLIC || room.status == create_chat_dto_1.RoomStatus.PRIVATE) {
+                console.log("dkhaal hnaya");
+                await this.Chatrepository
+                    .createQueryBuilder()
+                    .update(chat_entity_1.Chat)
+                    .set({ password: room.password })
+                    .where("ownerID = :ownerID", { ownerID: owner })
+                    .execute();
+            }
+        }
     }
 };
 __decorate([

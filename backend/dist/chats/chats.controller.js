@@ -33,6 +33,15 @@ let ChatController = class ChatController {
             throw e;
         }
     }
+    async SetPasswordToRoom(ownerId, roomDto) {
+        try {
+            return this.chatService.SetPasswordToRoom(roomDto, ownerId);
+        }
+        catch (e) {
+            console.error('Failed to set password to the room', e);
+            throw e;
+        }
+    }
 };
 __decorate([
     (0, common_1.Post)(),
@@ -42,6 +51,14 @@ __decorate([
     __metadata("design:paramtypes", [create_chat_dto_1.CreateRoomDto, String]),
     __metadata("design:returntype", Promise)
 ], ChatController.prototype, "createRoom", null);
+__decorate([
+    (0, common_1.Patch)(':ownerId'),
+    __param(0, (0, common_1.Param)('ownerID')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_chat_dto_1.CreateRoomDto]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "SetPasswordToRoom", null);
 ChatController = __decorate([
     (0, swagger_1.ApiTags)('Chats'),
     (0, common_1.Controller)('chat'),

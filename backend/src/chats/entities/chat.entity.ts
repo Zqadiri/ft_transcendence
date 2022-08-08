@@ -59,7 +59,7 @@ export class Chat{
 
 	@Column('varchar',{
 		array: true,
-		nullable: false
+		nullable: true
 	})
 	AdminsID: string[];
 
@@ -86,6 +86,12 @@ export class Chat{
 		TODO: Entity Listener
 		Entities can have methods with custom logic that listen to specific entity events
 	*/
+
+	@BeforeInsert() 
+	
+	async hashPassword() {
+        this.password = await bcrypt.hash(this.password, 10);  
+    }
 
 	// @BeforeInsert()
 	// async hashPassword(){

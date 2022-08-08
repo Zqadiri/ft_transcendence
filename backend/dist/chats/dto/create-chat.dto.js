@@ -20,8 +20,8 @@ var RoomStatus;
 })(RoomStatus = exports.RoomStatus || (exports.RoomStatus = {}));
 var ChatTypes;
 (function (ChatTypes) {
-    ChatTypes["DM"] = "dm";
     ChatTypes["CHATROOM"] = "chatRoom";
+    ChatTypes["DM"] = "dm";
 })(ChatTypes = exports.ChatTypes || (exports.ChatTypes = {}));
 class CreateDmDto {
 }
@@ -40,16 +40,17 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsEnum)(ChatTypes),
     (0, class_validator_1.Equals)(ChatTypes[ChatTypes.CHATROOM]),
-    (0, swagger_1.ApiProperty)({ description: "chat type" }),
+    (0, swagger_1.ApiProperty)({ description: "chat type", enum: ChatTypes }),
     __metadata("design:type", String)
 ], CreateRoomDto.prototype, "type", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: "Chat Room status" }),
     (0, class_validator_1.IsEnum)(RoomStatus),
+    (0, swagger_1.ApiProperty)({ description: "Chat Room status", enum: RoomStatus }),
     __metadata("design:type", String)
 ], CreateRoomDto.prototype, "status", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: "Chat Room password" }),
+    (0, class_validator_1.Length)(8, 24),
     __metadata("design:type", String)
 ], CreateRoomDto.prototype, "password", void 0);
 exports.CreateRoomDto = CreateRoomDto;

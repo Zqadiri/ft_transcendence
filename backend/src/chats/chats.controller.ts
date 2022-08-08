@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Res, Post, HttpCode, Body } from '@nestjs/common';
+import { Controller, UseGuards, Get, Res, Post, HttpCode, Body, Patch, Param } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-chat.dto';
 import { ChatsService } from './chats.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -30,5 +30,17 @@ export class ChatController {
             console.error('Failed to initiate room', e);
             throw e;
         }
+    }
+
+    @Patch(':ownerId')
+    async SetPasswordToRoom(@Param('ownerID') ownerId: string, @Body() roomDto: CreateRoomDto)
+    {
+        try {
+            return this.chatService.SetPasswordToRoom(roomDto, ownerId);
+        } catch (e) {
+            console.error('Failed to set password to the room', e);
+            throw e;
+        }
+       
     }
 }

@@ -11,7 +11,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Chat = void 0;
 const typeorm_1 = require("typeorm");
+const bcrypt = require("bcryptjs");
 let Chat = class Chat {
+    async hashPassword() {
+        this.password = await bcrypt.hash(this.password, 10);
+    }
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
@@ -67,7 +71,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)('varchar', {
         array: true,
-        nullable: false
+        nullable: true
     }),
     __metadata("design:type", Array)
 ], Chat.prototype, "AdminsID", void 0);
@@ -93,6 +97,12 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], Chat.prototype, "updatedAt", void 0);
+__decorate([
+    (0, typeorm_1.BeforeInsert)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], Chat.prototype, "hashPassword", null);
 Chat = __decorate([
     (0, typeorm_1.Entity)('db_chat')
 ], Chat);

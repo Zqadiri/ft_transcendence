@@ -2,7 +2,7 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm';
-import { CreateDmDto, CreateRoomDto } from './dto/create-chat.dto';
+import { CreateDmDto, CreateRoomDto, RoomStatus } from './dto/create-chat.dto';
 
 @Injectable()
 export class ChatsService {
@@ -33,11 +33,9 @@ export class ChatsService {
       throw new ConflictException({code: 'room.conflict', message: `Room with '${roomName}' already exists`})
     }
     this.users.push(creator);
-    this.admins.push(creator);
     const newRoom = this.Chatrepository.create({
       ownerID: creator,
       userID: this.users,
-      AdminsID: this.admins,
       name: room.name,
       type: room.type,
       status: room.status,
@@ -47,6 +45,31 @@ export class ChatsService {
     await this.Chatrepository.save(newRoom);
 
     return newRoom;
+  }
+
+  /** Change visibility */
+
+  //     The channel owner can set a password required to access the channel, change
+  //     it, and also remove it.
+
+  async SetPasswordToRoom(room: CreateRoomDto, owner: string)
+  {
+    const roomName = room.name;
+    const name = await this.Chatrepository.findOneBy({ name: roomName });
+    if (name)
+    {
+      if (room.status == RoomStatus.PUBLIC || room.status == RoomStatus.PRIVATE)
+      {
+        console.log("dkhaal hnaya");
+         await this.Chatrepository
+            .createQueryBuilder()
+            .update(Chat)
+            .set({password: room.password})
+            .where("ownerID = :ownerID", { ownerID: owner})
+            .execute()
+        }
+
+    }
   }
 
 

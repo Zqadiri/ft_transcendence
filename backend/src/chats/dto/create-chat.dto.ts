@@ -1,4 +1,4 @@
-import { IsEnum, Equals } from "class-validator";
+import { IsEnum, Equals, Length } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Chat } from "../entities/chat.entity";
 import { Generated } from "typeorm";
@@ -10,8 +10,8 @@ export enum RoomStatus {
 }
 
 export enum ChatTypes {
-	DM = 'dm',
-	CHATROOM = 'chatRoom'
+	CHATROOM = 'chatRoom',
+	DM = 'dm'
 }
 
 export class CreateDmDto
@@ -30,14 +30,15 @@ export class CreateRoomDto
 
 	@IsEnum(ChatTypes)
 	@Equals(ChatTypes[ChatTypes.CHATROOM])
-	@ApiProperty({ description: "chat type"})
+	@ApiProperty({ description: "chat type", enum: ChatTypes})
 	type: string;
 
-	@ApiProperty({ description: "Chat Room status"})
 	@IsEnum(RoomStatus)
+	@ApiProperty({ description: "Chat Room status", enum:RoomStatus})
 	status: string;
 
 	@ApiProperty({ description: "Chat Room password"})
+	@Length(8, 24)
 	password: string;
 
 }
