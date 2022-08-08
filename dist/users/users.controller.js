@@ -29,17 +29,6 @@ let UsersController = class UsersController {
         this.usersService = usersService;
         this.FriendService = FriendService;
     }
-    getUserData(id) {
-        return this.usersService.getUserById(id);
-    }
-    async updateUsername(req, newUsername) {
-        try {
-            const result = await this.usersService.updateUsername(req.user.id, newUsername);
-        }
-        catch (err) {
-            throw new common_1.UnauthorizedException('failed to update the username');
-        }
-    }
     async uploadFile(req, file, res) {
         const user = await this.usersService.uploadAvatar(req.user.id, {
             filename: file.filename,
@@ -49,10 +38,11 @@ let UsersController = class UsersController {
         res.send({ avatar: user.avatar });
     }
     async AddFriend(userID, req, res) {
+        console.log(`${JSON.stringify(req.body.user)}`);
         try {
             const firstUser = await this.usersService.getUserById(58526);
             const secondUser = await this.usersService.getUserById(req.body.user.id);
-            this.FriendService.createFriend({
+            this.FriendService.createFriendRelation({
                 FirstUser: firstUser,
                 SecondUser: secondUser,
                 isFriend: false,
@@ -65,32 +55,23 @@ let UsersController = class UsersController {
         res.send('done');
     }
     async getAllFriend() {
-        return this.FriendService.getFriendById();
+        return this.FriendService.getAllFriends();
+    }
+    getUserFriends(id) {
+        return this.usersService.getUserById(id);
+    }
+    getUserData(id) {
+        return this.usersService.getUserById(id);
+    }
+    async updateUsername(req, newUsername) {
+        try {
+            const result = await this.usersService.updateUsername(req.user.id, newUsername);
+        }
+        catch (err) {
+            throw new common_1.UnauthorizedException('failed to update the username');
+        }
     }
 };
-__decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Get user data by id' }),
-    (0, swagger_1.ApiResponse)({
-        status: 200,
-        description: 'The found record',
-        type: user_entity_1.User,
-    }),
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "getUserData", null);
-__decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Change a user\'s username' }),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
-    (0, common_4.Post)('/update_username'),
-    __param(0, (0, common_4.Req)()),
-    __param(1, (0, common_1.Body)('username')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "updateUsername", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Change a user\'s avatar' }),
     (0, swagger_1.ApiResponse)({
@@ -128,11 +109,47 @@ __decorate([
 ], UsersController.prototype, "AddFriend", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Add a friend to a user' }),
-    (0, common_4.Post)('/all_friend'),
+    (0, common_1.Get)('/all_friend'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getAllFriend", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Get user data by id' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'The found record',
+        type: user_entity_1.User,
+    }),
+    (0, common_1.Get)('/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getUserFriends", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Get user data by id' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'The found record',
+        type: user_entity_1.User,
+    }),
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getUserData", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Change a user\'s username' }),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
+    (0, common_4.Post)('/update_username'),
+    __param(0, (0, common_4.Req)()),
+    __param(1, (0, common_1.Body)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateUsername", null);
 UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, common_1.Controller)('users'),

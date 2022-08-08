@@ -27,29 +27,7 @@ export class UsersController {
 		private readonly FriendService: FriendsService
 	){}
 
-	@ApiOperation({ summary: 'Get user data by id' })
-	@ApiResponse({
-		status: 200,
-		description: 'The found record',
-		type: User,
-	})
-	@Get(':id')
-	getUserData(@Param('id') id : number){
-		return this.usersService.getUserById(id);
-	}
-
-
-	@ApiOperation({ summary: 'Change a user\'s username' })
-	@UseGuards(jwtAuthGuard)
-	@Post('/update_username')
-	async updateUsername(@Req() req, @Body('username') newUsername: string){
-		try{
-			const result = await this.usersService.updateUsername(req.user.id, newUsername);
-		}
-		catch (err){
-			throw new UnauthorizedException('failed to update the username');
-		}
-	}
+	
 
 	@ApiOperation({ summary: 'Change a user\'s avatar' })
 	@ApiResponse({
@@ -82,11 +60,11 @@ export class UsersController {
 	// @UseGuards(jwtAuthGuard)
 	@Post('/add_friend')
 	async AddFriend(@Body('id') userID : number, @Req() req, @Res() res){
-		// console.log(`${JSON.stringify(req.body.user)}`);
+		console.log(`${JSON.stringify(req.body.user)}`);
 		try {
 			const firstUser  = await this.usersService.getUserById(58526);
 			const secondUser = await this.usersService.getUserById(req.body.user.id);
-			this.FriendService.createFriend({
+			this.FriendService.createFriendRelation({
 				FirstUser: firstUser,
 				SecondUser: secondUser,
 				isFriend: false,
@@ -101,9 +79,43 @@ export class UsersController {
 
 	@ApiOperation({ summary: 'Add a friend to a user' })
 	// @UseGuards(jwtAuthGuard)
-	@Post('/all_friend')
+	@Get('/all_friend')
 	async getAllFriend(){
-		return this.FriendService.getFriendById();
+		return this.FriendService.getAllFriends();
+	}
+	
+	@ApiOperation({ summary: 'Get user data by id' })
+	@ApiResponse({
+		status: 200,
+		description: 'The found record',
+		type: User,
+	})
+	@Get('/:id')
+	getUserFriends(@Param('id') id : number){
+		return this.usersService.getUserById(id);
+	}
+
+	@ApiOperation({ summary: 'Get user data by id' })
+	@ApiResponse({
+		status: 200,
+		description: 'The found record',
+		type: User,
+	})
+	@Get(':id')
+	getUserData(@Param('id') id : number){
+		return this.usersService.getUserById(id);
+	}
+
+	@ApiOperation({ summary: 'Change a user\'s username' })
+	@UseGuards(jwtAuthGuard)
+	@Post('/update_username')
+	async updateUsername(@Req() req, @Body('username') newUsername: string){
+		try{
+			const result = await this.usersService.updateUsername(req.user.id, newUsername);
+		}
+		catch (err){
+			throw new UnauthorizedException('failed to update the username');
+		}
 	}
 
 }

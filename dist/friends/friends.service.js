@@ -24,26 +24,46 @@ let FriendsService = class FriendsService {
         this.userService = userService;
         this.relationRepo = relationRepo;
     }
-    async createFriendRelation(createRelation) {
-        const newFriend = new friend_entity_1.Friend();
-        newFriend.user = await this.userService.getUserById(createRelation.SecondUser.id);
-        const relationExist = this.relationRepo.findOne({
-            where: {},
-        });
-        if (relationExist)
-            return relationExist;
-        const errors = await (0, class_validator_1.validate)(relationExist);
-        if (errors.length > 0) {
-            throw new Error(`Validation failed!`);
+    async createFriendRelation(createRelation, user) {
+        try {
+            const newRela = new friend_entity_1.Friend();
+            newRela.follower = createRelation.FirstUser;
+            newRela.following = createRelation.SecondUser;
+            console.log(`${newRela.follower.id} : ${newRela.following.id}`);
+            const existFollow = await this.relationRepo.findOne({
+                where: {
+                    follower: newRela.follower,
+                    following: newRela.following,
+                },
+            });
+            console.log(`Rela Exists: ${JSON.stringify(existFollow)}`);
+            if (existFollow)
+                throw new common_1.UnauthorizedException('Relation already exists');
+            const validated = await (0, class_validator_1.validate)(newRela);
+            if (validated.length > 0) {
+                throw new common_1.UnauthorizedException('Validation Failed');
+            }
+            return await this.relationRepo.save(newRela);
+        }
+        catch (err) {
+            console.log(`Error : ${err}`);
         }
     }
-    async createFriend(createRelation, user) {
-        const newFriend = this.relationRepo.create(Object.assign(Object.assign({}, createRelation), { user: user }));
-        await this.relationRepo.save(newFriend);
-        return newFriend;
+    async getAllFriends() {
+        const friend = this.relationRepo
+            .createQueryBuilder('friend')
+            .leftJoinAndSelect('friend.following', 'followinguser')
+            .leftJoinAndSelect('friend.follower', 'followeruser')
+            .getMany();
+        return friend;
     }
-    async getFriendById() {
-        return this.relationRepo.find({ relations: ['author'] });
+    async findFollowers({ index: index }) {
+        const friends = await this.relationRepo
+            .createQueryBuilder('friend')
+            .where('friend.followingIndex = :id', { id: index })
+            .leftJoinAndSelect('friend.follower', 'followeruser')
+            .getMany();
+        return friends;
     }
 };
 FriendsService = __decorate([

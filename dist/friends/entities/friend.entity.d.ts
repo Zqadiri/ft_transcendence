@@ -1,8 +1,8 @@
 import { User } from "src/users/entities/user.entity";
-import { BaseEntity } from "typeorm";
-export declare class Friend extends BaseEntity {
+export declare class Friend {
     id: number;
     blocked: boolean;
     stat: string;
-    user: User | null;
+    following: User;
+    follower: User;
 }

@@ -11,9 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
-const typeorm_2 = require("typeorm");
 const friend_entity_1 = require("../../friends/entities/friend.entity");
-let User = class User extends typeorm_2.BaseEntity {
+let User = class User {
 };
 __decorate([
     (0, typeorm_1.Column)({ primary: true }),
@@ -78,9 +77,13 @@ __decorate([
     __metadata("design:type", Date)
 ], User.prototype, "updatedAt", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => friend_entity_1.Friend, (friend) => friend.user),
+    (0, typeorm_1.OneToMany)(() => friend_entity_1.Friend, (friend) => friend.following),
     __metadata("design:type", Array)
-], User.prototype, "friends", void 0);
+], User.prototype, "followings", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => friend_entity_1.Friend, (friend) => friend.follower),
+    __metadata("design:type", Array)
+], User.prototype, "followers", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)

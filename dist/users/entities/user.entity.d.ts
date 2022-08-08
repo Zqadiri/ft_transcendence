@@ -1,6 +1,5 @@
-import { BaseEntity } from "typeorm";
 import { Friend } from "src/friends/entities/friend.entity";
-export declare class User extends BaseEntity {
+export declare class User {
     id: number;
     username: string;
     avatar: string;
@@ -14,6 +13,7 @@ export declare class User extends BaseEntity {
     rank: string;
     createdAt: Date;
     updatedAt: Date;
-    friends: Friend[];
+    followings: Friend[];
+    followers: Friend[];
     twoFacAuthSecret: string;
 }

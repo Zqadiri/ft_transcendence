@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Friend = void 0;
 const user_entity_1 = require("../../users/entities/user.entity");
 const typeorm_1 = require("typeorm");
-let Friend = class Friend extends typeorm_1.BaseEntity {
+let Friend = class Friend {
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
@@ -27,9 +27,13 @@ __decorate([
     __metadata("design:type", String)
 ], Friend.prototype, "stat", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.friends),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.followings),
     __metadata("design:type", user_entity_1.User)
-], Friend.prototype, "user", void 0);
+], Friend.prototype, "following", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.followers),
+    __metadata("design:type", user_entity_1.User)
+], Friend.prototype, "follower", void 0);
 Friend = __decorate([
     (0, typeorm_1.Entity)('db_friend')
 ], Friend);
