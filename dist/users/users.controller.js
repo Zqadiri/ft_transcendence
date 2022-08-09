@@ -54,12 +54,6 @@ let UsersController = class UsersController {
         }
         res.send('done');
     }
-    async getAllFriend() {
-        return this.FriendService.getAllFriends();
-    }
-    getUserFriends(id) {
-        return this.usersService.getUserById(id);
-    }
     getUserData(id) {
         return this.usersService.getUserById(id);
     }
@@ -107,26 +101,6 @@ __decorate([
     __metadata("design:paramtypes", [Number, Object, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "AddFriend", null);
-__decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Add a friend to a user' }),
-    (0, common_1.Get)('/all_friend'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "getAllFriend", null);
-__decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Get user data by id' }),
-    (0, swagger_1.ApiResponse)({
-        status: 200,
-        description: 'The found record',
-        type: user_entity_1.User,
-    }),
-    (0, common_1.Get)('/:id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
-], UsersController.prototype, "getUserFriends", null);
 __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Get user data by id' }),
     (0, swagger_1.ApiResponse)({

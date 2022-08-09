@@ -15,10 +15,10 @@ import { User } from './entities/user.entity';
 import { AvatarDto } from './dto/upload.dto';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FriendsService } from 'src/friends/friends.service';
-import { setFlagsFromString } from 'v8';
 
 @ApiTags('users')
 @Controller('users')
+// @UseGuards(jwtAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
 
@@ -27,11 +27,9 @@ export class UsersController {
 		private readonly FriendService: FriendsService
 	){}
 
-	
-
 	@ApiOperation({ summary: 'Change a user\'s avatar' })
 	@ApiResponse({
-		status: 200,
+		status: 200, 
 		description: 'The uploaded avatar Details',
 		type: AvatarDto,
 	})
@@ -57,7 +55,6 @@ export class UsersController {
 
 
 	@ApiOperation({ summary: 'Add a friend to a user' })
-	// @UseGuards(jwtAuthGuard)
 	@Post('/add_friend')
 	async AddFriend(@Body('id') userID : number, @Req() req, @Res() res){
 		console.log(`${JSON.stringify(req.body.user)}`);
@@ -77,30 +74,13 @@ export class UsersController {
 		res.send('done');
 	}
 
-	@ApiOperation({ summary: 'Add a friend to a user' })
-	// @UseGuards(jwtAuthGuard)
-	@Get('/all_friend')
-	async getAllFriend(){
-		return this.FriendService.getAllFriends();
-	}
-	
 	@ApiOperation({ summary: 'Get user data by id' })
 	@ApiResponse({
 		status: 200,
 		description: 'The found record',
 		type: User,
 	})
-	@Get('/:id')
-	getUserFriends(@Param('id') id : number){
-		return this.usersService.getUserById(id);
-	}
 
-	@ApiOperation({ summary: 'Get user data by id' })
-	@ApiResponse({
-		status: 200,
-		description: 'The found record',
-		type: User,
-	})
 	@Get(':id')
 	getUserData(@Param('id') id : number){
 		return this.usersService.getUserById(id);

@@ -8,8 +8,6 @@ export declare class UsersController {
     constructor(usersService: UsersService, FriendService: FriendsService);
     uploadFile(req: any, file: Express.Multer.File, res: any): Promise<void>;
     AddFriend(userID: number, req: any, res: any): Promise<void>;
-    getAllFriend(): Promise<import("../friends/entities/friend.entity").Friend[]>;
-    getUserFriends(id: number): Promise<User>;
     getUserData(id: number): Promise<User>;
     updateUsername(req: any, newUsername: string): Promise<void>;
 }

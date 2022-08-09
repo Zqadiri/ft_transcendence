@@ -7,9 +7,9 @@ export declare class FriendsService {
     private readonly userService;
     private readonly relationRepo;
     constructor(userService: UsersService, relationRepo: relationRepository);
+    isFollowing(createRelation: CreateRelation): Promise<boolean>;
     createFriendRelation(createRelation: CreateRelation, user: User): Promise<Friend>;
     getAllFriends(): Promise<Friend[]>;
-    findFollowers({ index: index }: {
-        index: any;
-    }): Promise<Friend[]>;
+    findFollowers(index: number): Promise<Friend[]>;
+    findFollowings(index: number): Promise<Friend[]>;
 }

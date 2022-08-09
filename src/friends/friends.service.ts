@@ -4,9 +4,8 @@ import { CreateRelation } from 'src/users/interfaces/relations.interface';
 import { Friend } from './entities/friend.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { relationRepository } from 'src/friends/relation.repository';
-import { validate, Validate } from 'class-validator';
+import { validate } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
-import { DataSource } from 'typeorm';
 
 @Injectable()
 export class FriendsService {
@@ -15,19 +14,29 @@ export class FriendsService {
 		@InjectRepository(Friend)
 		private readonly relationRepo : relationRepository
 		){}
+	/*
+		Follower id is the user id {extract it from the cookie }
+		following is the friend id
+	*/
+
+	async isFollowing(createRelation : CreateRelation) {
+		console.log(`${createRelation.FirstUser.id} : ${createRelation.SecondUser.id}`)
+		const isFollowing = await this.relationRepo.findOne({
+		  where: {
+			follower: createRelation.FirstUser.followers,
+			following: createRelation.FirstUser.followings,
+		  },
+		});
+		return Boolean(isFollowing);
+	}
 
 	async createFriendRelation(createRelation : CreateRelation, user:  User){
 		try{
 			const newRela = new Friend();
 			newRela.follower = createRelation.FirstUser;
 			newRela.following = createRelation.SecondUser;
-			console.log(`${newRela.follower.id} : ${newRela.following.id}`)
-			const existFollow = await this.relationRepo.findOne({
-				where: {
-					follower: newRela.follower,
-					following: newRela.following,
-				},
-			});
+			// console.log(`${newRela.follower.id} : ${newRela.following.id}`)
+			const existFollow = await this.isFollowing(createRelation)
 			console.log(`Rela Exists: ${JSON.stringify(existFollow)}`);
 			if (existFollow)
 				throw new UnauthorizedException('Relation already exists');
@@ -42,7 +51,7 @@ export class FriendsService {
 	}
 
 	async getAllFriends() {
-		const friend = this.relationRepo
+		const friend = await this.relationRepo
 				.createQueryBuilder('friend')
 				.leftJoinAndSelect('friend.following', 'followinguser')
 				.leftJoinAndSelect('friend.follower', 'followeruser')
@@ -50,13 +59,26 @@ export class FriendsService {
 		return friend;
 	}
 
-	async findFollowers({ index: index }) {
+	async findFollowers( index: number ) {
+		console.log(`findFollower ${index}`);
 		const friends = await this.relationRepo
 		  .createQueryBuilder('friend')
-		  .where('friend.followingIndex = :id', { id: index })
 		  .leftJoinAndSelect('friend.follower', 'followeruser')
+		  .where('friend.following = :id', { id: index })
 		  .getMany();
 		return friends;
-	  }
+	}
+
+	async findFollowings( index: number ) {
+		console.log(`findFollowing ${index}`);
+		const friends = await this.relationRepo
+		  .createQueryBuilder('friend')
+		  .leftJoinAndSelect('friend.following', 'followinguser')
+		  .where('friend.follower = :id', { id:  index})
+		  .getMany();
+		return friends;
+	}
+
+
 }
 

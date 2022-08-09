@@ -24,18 +24,22 @@ let FriendsService = class FriendsService {
         this.userService = userService;
         this.relationRepo = relationRepo;
     }
+    async isFollowing(createRelation) {
+        console.log(`${createRelation.FirstUser.id} : ${createRelation.SecondUser.id}`);
+        const isFollowing = await this.relationRepo.findOne({
+            where: {
+                follower: createRelation.FirstUser.followers,
+                following: createRelation.FirstUser.followings,
+            },
+        });
+        return Boolean(isFollowing);
+    }
     async createFriendRelation(createRelation, user) {
         try {
             const newRela = new friend_entity_1.Friend();
             newRela.follower = createRelation.FirstUser;
             newRela.following = createRelation.SecondUser;
-            console.log(`${newRela.follower.id} : ${newRela.following.id}`);
-            const existFollow = await this.relationRepo.findOne({
-                where: {
-                    follower: newRela.follower,
-                    following: newRela.following,
-                },
-            });
+            const existFollow = await this.isFollowing(createRelation);
             console.log(`Rela Exists: ${JSON.stringify(existFollow)}`);
             if (existFollow)
                 throw new common_1.UnauthorizedException('Relation already exists');
@@ -50,18 +54,28 @@ let FriendsService = class FriendsService {
         }
     }
     async getAllFriends() {
-        const friend = this.relationRepo
+        const friend = await this.relationRepo
             .createQueryBuilder('friend')
             .leftJoinAndSelect('friend.following', 'followinguser')
             .leftJoinAndSelect('friend.follower', 'followeruser')
             .getMany();
         return friend;
     }
-    async findFollowers({ index: index }) {
+    async findFollowers(index) {
+        console.log(`findFollower ${index}`);
         const friends = await this.relationRepo
             .createQueryBuilder('friend')
-            .where('friend.followingIndex = :id', { id: index })
             .leftJoinAndSelect('friend.follower', 'followeruser')
+            .where('friend.following = :id', { id: index })
+            .getMany();
+        return friends;
+    }
+    async findFollowings(index) {
+        console.log(`findFollowing ${index}`);
+        const friends = await this.relationRepo
+            .createQueryBuilder('friend')
+            .leftJoinAndSelect('friend.following', 'followinguser')
+            .where('friend.follower = :id', { id: index })
             .getMany();
         return friends;
     }

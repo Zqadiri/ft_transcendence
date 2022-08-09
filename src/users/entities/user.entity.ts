@@ -59,15 +59,10 @@ export class User{
 	})
 	updatedAt: Date
 
-	// @OneToMany(() => Friend, (friend: Friend) => friend.user)
-	// friends: Friend[];
-
 	@OneToMany(() => Friend, (friend: Friend) => friend.following)
-	// @Column({ nullable: true })
 	followings: Friend[];
 
 	@OneToMany(() => Friend, (friend: Friend) => friend.follower)
-	// @Column({ nullable: true })
 	followers: Friend[];
 
 	@Column({nullable: true})
