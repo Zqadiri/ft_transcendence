@@ -10,4 +10,7 @@ export interface DeleteRelation {
     SecondUser: User;
 }
 export interface UpdateRelation {
+    FirstUser: User;
+    SecondUser: User;
+    blocked: boolean;
 }

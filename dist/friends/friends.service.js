@@ -24,6 +24,13 @@ let FriendsService = class FriendsService {
         this.userService = userService;
         this.relationRepo = relationRepo;
     }
+    async findOneFriend(id) {
+        return await this.relationRepo.findOne({
+            where: {
+                id: id
+            }
+        });
+    }
     async isFollowing(createRelation) {
         console.log(`${createRelation.FirstUser.id} : ${createRelation.SecondUser.id}`);
         const isFollowing = await this.relationRepo.findOne({
@@ -61,23 +68,58 @@ let FriendsService = class FriendsService {
             .getMany();
         return friend;
     }
-    async findFollowers(index) {
-        console.log(`findFollower ${index}`);
+    async findFollowers(id) {
+        console.log(`findFollower ${id}`);
         const friends = await this.relationRepo
             .createQueryBuilder('friend')
             .leftJoinAndSelect('friend.follower', 'followeruser')
-            .where('friend.following = :id', { id: index })
+            .where('friend.following = :id', { id: id })
             .getMany();
         return friends;
     }
-    async findFollowings(index) {
-        console.log(`findFollowing ${index}`);
+    async findFollowings(id) {
+        console.log(`findFollowing ${id}`);
         const friends = await this.relationRepo
             .createQueryBuilder('friend')
             .leftJoinAndSelect('friend.following', 'followinguser')
-            .where('friend.follower = :id', { id: index })
+            .where('friend.follower = :id', { id: id })
             .getMany();
         return friends;
+    }
+    async findAllBlockedUsers(id) {
+        const friends = await this.relationRepo
+            .createQueryBuilder('friend')
+            .where('friend.follower = :id', { id: id })
+            .andWhere('friend.blocked = :blocked', { blocked: true })
+            .select('friend.following')
+            .getMany();
+        return friends;
+    }
+    async update(id, updateRela) {
+        const friend = await this.relationRepo.findOne({
+            where: {
+                id: id
+            }
+        });
+        friend.blocked = updateRela.blocked;
+        const _error = await (0, class_validator_1.validate)(friend);
+        if (_error.length > 0) {
+            throw new common_1.HttpException({ message: 'Data validation failed', _error }, common_1.HttpStatus.BAD_REQUEST);
+        }
+        else {
+            return await this.relationRepo.save(friend);
+        }
+    }
+    async remove(id) {
+        const friend = await this.relationRepo.findOne({
+            where: {
+                id: id
+            }
+        });
+        if (!friend) {
+            throw new common_1.HttpException({ message: 'Wrong index' }, common_1.HttpStatus.BAD_REQUEST);
+        }
+        return await this.relationRepo.remove(friend);
     }
 };
 FriendsService = __decorate([

@@ -1,6 +1,6 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, HttpStatus, HttpException} from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import { CreateRelation } from 'src/users/interfaces/relations.interface';
+import { CreateRelation, UpdateRelation, DeleteRelation } from 'src/users/interfaces/relations.interface';
 import { Friend } from './entities/friend.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { relationRepository } from 'src/friends/relation.repository';
@@ -14,6 +14,14 @@ export class FriendsService {
 		@InjectRepository(Friend)
 		private readonly relationRepo : relationRepository
 		){}
+
+	async findOneFriend(id :number){
+		return await this.relationRepo.findOne({
+			where:{
+				id: id
+			}
+		});
+	}
 	/*
 		Follower id is the user id {extract it from the cookie }
 		following is the friend id
@@ -52,33 +60,69 @@ export class FriendsService {
 
 	async getAllFriends() {
 		const friend = await this.relationRepo
-				.createQueryBuilder('friend')
-				.leftJoinAndSelect('friend.following', 'followinguser')
-				.leftJoinAndSelect('friend.follower', 'followeruser')
-				.getMany();
+			.createQueryBuilder('friend')
+			.leftJoinAndSelect('friend.following', 'followinguser')
+			.leftJoinAndSelect('friend.follower', 'followeruser')
+			.getMany();
 		return friend;
 	}
 
-	async findFollowers( index: number ) {
-		console.log(`findFollower ${index}`);
+	async findFollowers( id: number ) {
+		console.log(`findFollower ${id}`);
 		const friends = await this.relationRepo
 		  .createQueryBuilder('friend')
 		  .leftJoinAndSelect('friend.follower', 'followeruser')
-		  .where('friend.following = :id', { id: index })
+		  .where('friend.following = :id', { id: id })
 		  .getMany();
 		return friends;
 	}
 
-	async findFollowings( index: number ) {
-		console.log(`findFollowing ${index}`);
+	async findFollowings( id: number ) {
+		console.log(`findFollowing ${id}`);
 		const friends = await this.relationRepo
 		  .createQueryBuilder('friend')
 		  .leftJoinAndSelect('friend.following', 'followinguser')
-		  .where('friend.follower = :id', { id:  index})
+		  .where('friend.follower = :id', { id:  id})
 		  .getMany();
 		return friends;
 	}
 
+	async findAllBlockedUsers(id: number){
+		const friends = await this.relationRepo
+		.createQueryBuilder('friend')
+		.where('friend.follower = :id', { id:  id})
+		.andWhere('friend.blocked = :blocked', { blocked: true })
+		.select('friend.following')
+		.getMany();
+	  return friends;
+	}
+
+	async update( id: number, updateRela : UpdateRelation){
+		const friend = await this.relationRepo.findOne({ 
+			where:{
+				id: id
+			}
+		});
+		friend.blocked = updateRela.blocked;
+		const _error = await validate(friend);
+		if (_error.length > 0) {
+		  throw new HttpException({ message: 'Data validation failed', _error }, HttpStatus.BAD_REQUEST);
+		} else {
+		  return await this.relationRepo.save(friend);
+		}
+	}
+
+	async remove(id : number) {
+		const friend = await this.relationRepo.findOne({ 
+			where:{
+				id: id
+			}
+		});
+		if (!friend) {
+		  throw new HttpException({ message: 'Wrong index' }, HttpStatus.BAD_REQUEST);
+		}
+		return await this.relationRepo.remove(friend);
+	}
 
 }
 
