@@ -1,17 +1,18 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
-import { Repository } from 'typeorm';
-import { CreateDmDto, CreateRoomDto, RoomStatus } from './dto/create-chat.dto';
-
+import { Repository, createQueryBuilder } from 'typeorm';
+import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes } from './dto/create-chat.dto';
+import { User } from 'src/users/entities/user.entity';
+import * as bcrypt from 'bcryptjs';
 @Injectable()
 export class ChatsService {
 
   @InjectRepository(Chat)
   private readonly Chatrepository: Repository<Chat>;
 
-  users : string[] = [];
-  admins : string[] = [];
+  @InjectRepository(User)
+  private readonly Userrepository: Repository<User>;
 
   /** Create DM */
 
@@ -32,12 +33,12 @@ export class ChatsService {
     if (name){
       throw new ConflictException({code: 'room.conflict', message: `Room with '${roomName}' already exists`})
     }
-    this.users.push(creator);
+
     const newRoom = this.Chatrepository.create({
       ownerID: creator,
-      userID: this.users,
+      userID: [creator],
       name: room.name,
-      type: room.type,
+      type: ChatTypes.CHATROOM,
       status: room.status,
       password: room.password
 
@@ -45,6 +46,74 @@ export class ChatsService {
     await this.Chatrepository.save(newRoom);
 
     return newRoom;
+  }
+
+  /** join User to public chat room */
+
+  async JointoChatRoom(room: CreateRoomDto, username: string)
+  {
+    // check if the current user already in userID array if not add it
+    
+    const roomName = room.name;
+    // findOneBy - Finds the first entity that matches given FindOptionsWhere.
+    const name = await this.Chatrepository.findOneBy({ name: roomName });
+
+    if (!name){
+      throw new BadRequestException({code: 'invalid chat room name', message: `Room with '${roomName}' does not exist`})
+    }
+
+    // check the user who want to join exist in table user
+
+    // const user = await this.Userrepository.findOneBy({ username: username });
+
+    // if (!user){
+    //   throw new BadRequestException({code: 'invalid username', message: `User with '${username}' does not exist`})
+    // }
+
+    // if (!name.userID.includes(user.username))
+    // {
+    //   name.userID.push(user.username);
+    //   await this.Chatrepository.save(name);
+    // }
+
+    if (!name.userID.includes(username))
+    {
+      if (room.status == RoomStatus.PUBLIC)
+      {
+        name.userID.push(username);
+        await this.Chatrepository.save(name);
+      }
+      else if (room.status == RoomStatus.PROTECTED)
+      {
+        const isMatch = await bcrypt.compare(room.password, name.password);
+        if (!isMatch)
+          throw new UnauthorizedException({code: 'Unauthorized', message: `Wrong password to join '${roomName}'`})
+        else
+        {
+          name.userID.push(username);
+          await this.Chatrepository.save(name);
+        }
+      }
+      
+    }
+  }
+
+  async getUsersFromRoom(roomName: string)
+  {
+    // check if the room already exist
+    const name = await this.Chatrepository.findOneBy({ name: roomName });
+
+    if (!name){
+      throw new BadRequestException({code: 'invalid chat room name', message: `Room with '${roomName}' does not exist`})
+    }
+    
+    const user = await this.Chatrepository
+    .createQueryBuilder("db_chat")
+    .select(['db_chat.userID']) // added selection
+    .where("db_chat.name = :name", { name: roomName })
+    .getOne();
+
+    return user;
   }
 
   /** Change visibility */

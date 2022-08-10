@@ -14,7 +14,8 @@ const typeorm_1 = require("typeorm");
 const bcrypt = require("bcryptjs");
 let Chat = class Chat {
     async hashPassword() {
-        this.password = await bcrypt.hash(this.password, 10);
+        if (this.password)
+            this.password = await bcrypt.hash(this.password, 10);
     }
 };
 __decorate([

@@ -38,12 +38,6 @@ __decorate([
     __metadata("design:type", String)
 ], CreateRoomDto.prototype, "name", void 0);
 __decorate([
-    (0, class_validator_1.IsEnum)(ChatTypes),
-    (0, class_validator_1.Equals)(ChatTypes[ChatTypes.CHATROOM]),
-    (0, swagger_1.ApiProperty)({ description: "chat type", enum: ChatTypes }),
-    __metadata("design:type", String)
-], CreateRoomDto.prototype, "type", void 0);
-__decorate([
     (0, class_validator_1.IsEnum)(RoomStatus),
     (0, swagger_1.ApiProperty)({ description: "Chat Room status", enum: RoomStatus }),
     __metadata("design:type", String)
@@ -51,6 +45,7 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({ description: "Chat Room password" }),
     (0, class_validator_1.Length)(8, 24),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateRoomDto.prototype, "password", void 0);
 exports.CreateRoomDto = CreateRoomDto;

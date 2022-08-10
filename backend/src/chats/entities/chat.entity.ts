@@ -90,7 +90,8 @@ export class Chat{
 	@BeforeInsert() 
 	
 	async hashPassword() {
-        this.password = await bcrypt.hash(this.password, 10);  
+		if (this.password)
+        	this.password = await bcrypt.hash(this.password, 10);  
     }
 
 	// @BeforeInsert()

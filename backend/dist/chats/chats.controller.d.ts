@@ -3,6 +3,7 @@ import { ChatsService } from './chats.service';
 export declare class ChatController {
     private readonly chatService;
     constructor(chatService: ChatsService);
-    createRoom(roomDto: CreateRoomDto, creator: string): Promise<import("./entities/chat.entity").Chat>;
-    SetPasswordToRoom(ownerId: string, roomDto: CreateRoomDto): Promise<void>;
+    createRoom(ownerID: string, roomDto: CreateRoomDto): Promise<import("./entities/chat.entity").Chat>;
+    joinRoom(user: string, roomDto: CreateRoomDto): Promise<void>;
+    getUsersFromRoom(RoomId: string): Promise<import("./entities/chat.entity").Chat>;
 }

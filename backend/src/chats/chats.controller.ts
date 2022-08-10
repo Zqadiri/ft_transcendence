@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Res, Post, HttpCode, Body, Patch, Param } from '@nestjs/common';
+import { Controller, UseGuards, Get, Res, Post, HttpCode, Body, Param } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-chat.dto';
 import { ChatsService } from './chats.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -17,14 +17,13 @@ export class ChatController {
     //     res.json(DM_messages);
 	// }
 	
-	@Post()
+	@Post(':ownerID')
 	@HttpCode(201)
 	//@UseGuards(jwtAuthGuard)
-	async createRoom(@Body() roomDto: CreateRoomDto, creator: string) {
+	async createRoom(@Param('ownerID') ownerID: string, @Body() roomDto: CreateRoomDto) {
         console.log("Creating chat room...", roomDto);
-        creator = "sara";
         try {
-			const newRoom = await this.chatService.createRoom(roomDto, creator);
+			const newRoom = await this.chatService.createRoom(roomDto, ownerID);
 			return newRoom;
         } catch (e) {
             console.error('Failed to initiate room', e);
@@ -32,15 +31,27 @@ export class ChatController {
         }
     }
 
-    @Patch(':ownerId')
-    async SetPasswordToRoom(@Param('ownerID') ownerId: string, @Body() roomDto: CreateRoomDto)
+    @Post('/join/:user')
+    async joinRoom(@Param('user') user: string, @Body() roomDto: CreateRoomDto)
     {
         try {
-            return this.chatService.SetPasswordToRoom(roomDto, ownerId);
+           await this.chatService.JointoChatRoom(roomDto, user);
+            console.log("join to room...", roomDto);
         } catch (e) {
-            console.error('Failed to set password to the room', e);
+            console.error('Failed to join room', e);
             throw e;
         }
-       
+    }
+
+    @Get('/joinedUsers/:RoomId')
+    async getUsersFromRoom(@Param('RoomId') RoomId: string)
+    {
+        try {
+            console.log("get users from room...", RoomId);
+            return await this.chatService.getUsersFromRoom(RoomId);
+         } catch (e) {
+             console.error('Failed to get users from room', e);
+             throw e;
+         }
     }
 }

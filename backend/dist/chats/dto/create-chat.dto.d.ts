@@ -13,7 +13,6 @@ export declare class CreateDmDto {
 }
 export declare class CreateRoomDto {
     name: string;
-    type: string;
     status: string;
     password: string;
 }

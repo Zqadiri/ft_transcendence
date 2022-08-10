@@ -21,11 +21,10 @@ let ChatController = class ChatController {
     constructor(chatService) {
         this.chatService = chatService;
     }
-    async createRoom(roomDto, creator) {
+    async createRoom(ownerID, roomDto) {
         console.log("Creating chat room...", roomDto);
-        creator = "sara";
         try {
-            const newRoom = await this.chatService.createRoom(roomDto, creator);
+            const newRoom = await this.chatService.createRoom(roomDto, ownerID);
             return newRoom;
         }
         catch (e) {
@@ -33,32 +32,51 @@ let ChatController = class ChatController {
             throw e;
         }
     }
-    async SetPasswordToRoom(ownerId, roomDto) {
+    async joinRoom(user, roomDto) {
         try {
-            return this.chatService.SetPasswordToRoom(roomDto, ownerId);
+            await this.chatService.JointoChatRoom(roomDto, user);
+            console.log("join to room...", roomDto);
         }
         catch (e) {
-            console.error('Failed to set password to the room', e);
+            console.error('Failed to join room', e);
+            throw e;
+        }
+    }
+    async getUsersFromRoom(RoomId) {
+        try {
+            console.log("get users from room...", RoomId);
+            return await this.chatService.getUsersFromRoom(RoomId);
+        }
+        catch (e) {
+            console.error('Failed to get users from room', e);
             throw e;
         }
     }
 };
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Post)(':ownerID'),
     (0, common_1.HttpCode)(201),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_chat_dto_1.CreateRoomDto, String]),
-    __metadata("design:returntype", Promise)
-], ChatController.prototype, "createRoom", null);
-__decorate([
-    (0, common_1.Patch)(':ownerId'),
     __param(0, (0, common_1.Param)('ownerID')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, create_chat_dto_1.CreateRoomDto]),
     __metadata("design:returntype", Promise)
-], ChatController.prototype, "SetPasswordToRoom", null);
+], ChatController.prototype, "createRoom", null);
+__decorate([
+    (0, common_1.Post)('/join/:user'),
+    __param(0, (0, common_1.Param)('user')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_chat_dto_1.CreateRoomDto]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "joinRoom", null);
+__decorate([
+    (0, common_1.Get)('/joinedUsers/:RoomId'),
+    __param(0, (0, common_1.Param)('RoomId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "getUsersFromRoom", null);
 ChatController = __decorate([
     (0, swagger_1.ApiTags)('Chats'),
     (0, common_1.Controller)('chat'),
