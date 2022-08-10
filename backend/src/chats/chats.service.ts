@@ -94,7 +94,6 @@ export class ChatsService {
           await this.Chatrepository.save(name);
         }
       }
-      
     }
   }
 
@@ -125,7 +124,12 @@ export class ChatsService {
   {
     const roomName = room.name;
     const name = await this.Chatrepository.findOneBy({ name: roomName });
-    if (name)
+
+    if (!name)
+      throw new BadRequestException({code: 'invalid chat room name', message: `Room with '${roomName}' does not exist`})
+
+    const isOwner = await this.Chatrepository.findOneBy({ ownerID: owner });
+    if (name && isOwner)
     {
       if (room.status == RoomStatus.PUBLIC || room.status == RoomStatus.PRIVATE)
       {
@@ -137,8 +141,10 @@ export class ChatsService {
             .where("ownerID = :ownerID", { ownerID: owner})
             .execute()
         }
-
     }
+    else
+      throw new UnauthorizedException({code: 'Unauthorized', message: `can not set password to '${roomName}' chat room`})
+
   }
 
 

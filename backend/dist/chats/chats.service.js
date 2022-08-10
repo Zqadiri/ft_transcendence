@@ -74,7 +74,10 @@ let ChatsService = class ChatsService {
     async SetPasswordToRoom(room, owner) {
         const roomName = room.name;
         const name = await this.Chatrepository.findOneBy({ name: roomName });
-        if (name) {
+        if (!name)
+            throw new common_1.BadRequestException({ code: 'invalid chat room name', message: `Room with '${roomName}' does not exist` });
+        const isOwner = await this.Chatrepository.findOneBy({ ownerID: owner });
+        if (name && isOwner) {
             if (room.status == create_chat_dto_1.RoomStatus.PUBLIC || room.status == create_chat_dto_1.RoomStatus.PRIVATE) {
                 console.log("dkhaal hnaya");
                 await this.Chatrepository
@@ -85,6 +88,8 @@ let ChatsService = class ChatsService {
                     .execute();
             }
         }
+        else
+            throw new common_1.UnauthorizedException({ code: 'Unauthorized', message: `can not set password to '${roomName}' chat room` });
     }
 };
 __decorate([

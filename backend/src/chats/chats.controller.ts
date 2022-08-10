@@ -54,4 +54,19 @@ export class ChatController {
              throw e;
          }
     }
+
+    @Post('/setPassword/:ownerID')
+    async SetPasswordToRoom(@Param('ownerID') ownerID: string, @Body() roomDto: CreateRoomDto)
+    {
+        try {
+            console.log("set password to this room...", roomDto.name);
+            await this.chatService.SetPasswordToRoom(roomDto, ownerID);
+         } catch (e) {
+             console.error('Failed to get users from room', e);
+             throw e;
+         }
+    }
+
+
+
 }
