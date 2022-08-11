@@ -11,6 +11,7 @@ export declare class User {
     losses: number;
     level: number;
     rank: string;
+    Matched: boolean;
     createdAt: Date;
     updatedAt: Date;
     followings: Friend[];

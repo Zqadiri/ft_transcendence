@@ -127,6 +127,7 @@ __decorate([
 UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, common_1.Controller)('users'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
     (0, common_2.UseInterceptors)(common_1.ClassSerializerInterceptor),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         friends_service_1.FriendsService])

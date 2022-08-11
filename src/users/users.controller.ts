@@ -18,7 +18,7 @@ import { FriendsService } from 'src/friends/friends.service';
 
 @ApiTags('users')
 @Controller('users')
-// @UseGuards(jwtAuthGuard)
+@UseGuards(jwtAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
 

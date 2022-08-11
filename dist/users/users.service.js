@@ -17,9 +17,69 @@ const common_1 = require("@nestjs/common");
 const user_entity_1 = require("./entities/user.entity");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_repository_1 = require("./user.repository");
+const class_validator_1 = require("class-validator");
 let UsersService = class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository;
+    }
+    async create(createUserDto) {
+        const newUser = new user_entity_1.User();
+        newUser.id = createUserDto.id;
+        newUser.username = createUserDto.username;
+        newUser.avatar = createUserDto.avatar;
+        newUser.email = createUserDto.email;
+        const _error = (0, class_validator_1.validate)(newUser);
+        if ((await _error).length)
+            throw new common_1.HttpException({ message: 'User Data Validation Failed', _error }, common_1.HttpStatus.BAD_REQUEST);
+        return this.userRepository.save(newUser);
+    }
+    async update(userID, updateUserDto) {
+        const updatedUser = new user_entity_1.User();
+        updatedUser.username = updateUserDto.username;
+        updatedUser.email = updateUserDto.email;
+        updatedUser.is2FacAuth = updateUserDto.is2FacAuth;
+        updatedUser.Matched = updateUserDto.matched;
+        updatedUser.status = updateUserDto.status;
+        updatedUser.updatedAt = updateUserDto.updatedAt;
+        const _error = (0, class_validator_1.validate)(updatedUser);
+        if ((await _error).length)
+            throw new common_1.HttpException({ message: 'User Data Validation Failed', _error }, common_1.HttpStatus.BAD_REQUEST);
+        return this.userRepository.update(userID, updatedUser);
+    }
+    async updateAfterGame(userID, updateAfterGame) {
+        const updatedUser = new user_entity_1.User();
+        updatedUser.status = updateAfterGame.status;
+        updatedUser.gameCounter = updateAfterGame.gameCounter;
+        updatedUser.wins = updateAfterGame.wins;
+        updatedUser.losses = updateAfterGame.losses;
+        updatedUser.level = updateAfterGame.level;
+        updatedUser.Matched = updateAfterGame.matched;
+        updatedUser.rank = updateAfterGame.rank;
+        updatedUser.updatedAt = updateAfterGame.updatedAt;
+        const _error = (0, class_validator_1.validate)(updatedUser);
+        if ((await _error).length)
+            throw new common_1.HttpException({ message: 'User Data Validation Failed', _error }, common_1.HttpStatus.BAD_REQUEST);
+        return this.userRepository.update(userID, updatedUser);
+    }
+    async isMatched(userID) {
+        const user = new user_entity_1.User();
+        user.Matched = true;
+        user.status = 'ingame';
+        user.gameCounter++;
+        const _error = (0, class_validator_1.validate)(user);
+        if ((await _error).length)
+            throw new common_1.HttpException({ message: 'User Data Validation Failed', _error }, common_1.HttpStatus.BAD_REQUEST);
+        return this.userRepository.update(userID, user);
+    }
+    async removeUser(userID) {
+        const user = await this.userRepository.findOne({
+            where: {
+                id: userID
+            }
+        });
+        if (!user)
+            throw new common_1.HttpException({ message: 'User Not Found' }, common_1.HttpStatus.BAD_REQUEST);
+        return this.userRepository.remove(user);
     }
     async getUserById(id) {
         const player = await this.userRepository.findOne({
@@ -28,13 +88,6 @@ let UsersService = class UsersService {
             }
         });
         return player;
-    }
-    async getUser(id) {
-        console.log(id);
-    }
-    async create(createUserDto) {
-        const player = this.userRepository.create(createUserDto);
-        return this.userRepository.save(player);
     }
     async setTwoFactorAuthenticationSecret(secret, userId) {
         return this.userRepository.update(userId, {

@@ -1,6 +1,4 @@
-import { Entity, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { Game } from "src/games/entities/game.entity";
-import { BaseEntity } from "typeorm";
+import { Entity, Column, OneToMany } from "typeorm";
 import { Friend } from "src/friends/entities/friend.entity";
 
 /*
@@ -26,7 +24,7 @@ export class User{
 	is2FacAuth: boolean;
 
 	@Column({
-		enum:['online', 'offline', 'ongame'],
+		enum:['online', 'offline', 'ingame'],
 		default: 'online'
 	})
 	status: string;
@@ -45,6 +43,9 @@ export class User{
 
 	@Column({default: 'Beginner'})
 	rank: string;
+
+	@Column({default: false})
+	Matched : boolean;
 
 	@Column({ 
 		type: 'timestamp', 

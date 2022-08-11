@@ -22,6 +22,7 @@ export class FriendsService {
 			}
 		});
 	}
+
 	/*
 		Follower id is the user id {extract it from the cookie }
 		following is the friend id
@@ -95,7 +96,7 @@ export class FriendsService {
 		.select('friend.following')
 		.getMany();
 	  return friends;
-	}
+	}                                      
 
 	async update( id: number, updateRela : UpdateRelation){
 		const friend = await this.relationRepo.findOne({ 

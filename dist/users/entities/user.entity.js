@@ -36,7 +36,7 @@ __decorate([
 ], User.prototype, "is2FacAuth", void 0);
 __decorate([
     (0, typeorm_1.Column)({
-        enum: ['online', 'offline', 'ongame'],
+        enum: ['online', 'offline', 'ingame'],
         default: 'online'
     }),
     __metadata("design:type", String)
@@ -61,6 +61,10 @@ __decorate([
     (0, typeorm_1.Column)({ default: 'Beginner' }),
     __metadata("design:type", String)
 ], User.prototype, "rank", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], User.prototype, "Matched", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'timestamp',
