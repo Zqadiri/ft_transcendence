@@ -2,13 +2,13 @@ import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, Conne
 import { ChatsService } from './chats.service';
 import { Server, Socket } from 'socket.io';
 import { Bind, Logger } from '@nestjs/common';
+import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 
 @WebSocketGateway(
   {
-    cors: {
-      origin: '*',
-    }
+    namespace: '/chatNamespace'
   },
+  
 )
 export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGatewayDisconnect{
 
@@ -32,45 +32,60 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     console.log(` client Disconnected: ${client.id}`);
   }
 
-  @SubscribeMessage('msgToServer')
-  handleMessage(client: Socket, text: string): void
+  @SubscribeMessage('chatToServer')
+  handleMessage(client: Socket, message: {sender: string, room: string, message: string})
   {
-    client.emit('msgToClient', text); 
+    // emit the message just to specific room
+    this.server.to(message.room).emit('chatToClient', message);
   }
 
-  // @SubscribeMessage('createChat')
-  // async create(
-  //   @MessageBody() createChatDto: CreateChatDto,
-  //   @ConnectedSocket() client: Socket) {
-  //   const message = await this.chatsService.create(createChatDto, client.id);
-  //   client.emit('message', message);
-  //   client.broadcast.emit('message', message);
-  //   return message;
-  // }
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(client: Socket, room:string)
+  {
+    client.join(room);
+    //emit to specific client
+    client.emit('joinedRoom', room);
+  }
 
-  // @SubscribeMessage('findAllChats')
-  // async findAll() {
-  //   return this.chatsService.findAll_Dm_messages();
-  // }
+  @SubscribeMessage('leaveRoom')
+  handleLeaveRoom(client: Socket, room:string)
+  {
+    client.leave(room);
+    client.emit('leftRoom', room);
+  }
+//   @SubscribeMessage('createChat')
+//   async create(
+//     @MessageBody() createChatDto: ChatLogsDto,
+//     @ConnectedSocket() client: Socket) {
+//     const message = await this.chatsService.create(createChatDto, client.id);
+//     client.emit('message', message);
+//     client.broadcast.emit('message', message);
+//     return message;
+//   }
 
-   // identify the user who join the chat
-   
-  //  @SubscribeMessage('join') // listinig to an event named join
-  //   joinRoom(
-  //     @MessageBody('name') name: string,
-  //     @ConnectedSocket() client: Socket)
-  //   {
-  //     const username = this.chatsService.identify(name, client.id);
-  //     return username;
-  //   }
+//   @SubscribeMessage('findAllChats')
+//   async findAll() {
+//     return this.chatsService.findAll_Dm_messages();
+//   }
 
-  //  //type a message and informe other users who is typing
-  //   @SubscribeMessage('typing') 
-  //   async typing(
-  //     @MessageBody('isTyping') isTyping: string,
-  //     @ConnectedSocket() client: Socket)
-  //     {
-  //       const name = await this.chatsService.getClientName(client.id);
-  //       client.broadcast.emit('typing', {name, isTyping});
-  //     }
-}
+//    // identify the user who join the chat
+  
+//    @SubscribeMessage('join') // listinig to an event named join
+//     joinRoom(
+//       @MessageBody('userID') userID: string,
+//       @ConnectedSocket() client: Socket)
+//     {
+//       const username = this.chatsService.identify(userID, client.id);
+//       return username;
+//     }
+
+//    //type a message and informe other users who is typing
+//     @SubscribeMessage('typing') 
+//     async typing(
+//       @MessageBody('isTyping') isTyping: string,
+//       @ConnectedSocket() client: Socket)
+//       {
+//         const name = await this.chatsService.getClientName(client.id);
+//         client.broadcast.emit('typing', {name, isTyping});
+//       }
+ }

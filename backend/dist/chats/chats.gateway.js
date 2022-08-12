@@ -28,8 +28,16 @@ let ChatsGateway = class ChatsGateway {
     handleDisconnect(client) {
         console.log(` client Disconnected: ${client.id}`);
     }
-    handleMessage(client, text) {
-        client.emit('msgToClient', text);
+    handleMessage(client, message) {
+        this.server.to(message.room).emit('chatToClient', message);
+    }
+    handleJoinRoom(client, room) {
+        client.join(room);
+        client.emit('joinedRoom', room);
+    }
+    handleLeaveRoom(client, room) {
+        client.leave(room);
+        client.emit('leftRoom', room);
     }
 };
 __decorate([
@@ -37,16 +45,26 @@ __decorate([
     __metadata("design:type", socket_io_1.Server)
 ], ChatsGateway.prototype, "server", void 0);
 __decorate([
-    (0, websockets_1.SubscribeMessage)('msgToServer'),
+    (0, websockets_1.SubscribeMessage)('chatToServer'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", void 0)
+], ChatsGateway.prototype, "handleMessage", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('joinRoom'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [socket_io_1.Socket, String]),
     __metadata("design:returntype", void 0)
-], ChatsGateway.prototype, "handleMessage", null);
+], ChatsGateway.prototype, "handleJoinRoom", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('leaveRoom'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, String]),
+    __metadata("design:returntype", void 0)
+], ChatsGateway.prototype, "handleLeaveRoom", null);
 ChatsGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
-        cors: {
-            origin: '*',
-        }
+        namespace: '/chatNamespace'
     }),
     __metadata("design:paramtypes", [chats_service_1.ChatsService])
 ], ChatsGateway);

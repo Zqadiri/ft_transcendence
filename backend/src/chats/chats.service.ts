@@ -5,6 +5,8 @@ import { Repository, createQueryBuilder } from 'typeorm';
 import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes } from './dto/create-chat.dto';
 import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
+import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
+import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 @Injectable()
 export class ChatsService {
 
@@ -13,6 +15,10 @@ export class ChatsService {
 
   @InjectRepository(User)
   private readonly Userrepository: Repository<User>;
+
+  @InjectRepository(ChatLogs)
+  private readonly ChatLogsrepository: Repository<ChatLogs>;
+
 
   /** Create DM */
 
@@ -133,11 +139,12 @@ export class ChatsService {
     {
       if (room.status == RoomStatus.PUBLIC || room.status == RoomStatus.PRIVATE)
       {
+        const hash = await bcrypt.hash(room.password, 10);
         console.log("dkhaal hnaya");
-         await this.Chatrepository
+        await this.Chatrepository
             .createQueryBuilder()
             .update(Chat)
-            .set({password: room.password})
+            .set({password: hash, status: room.status})
             .where("ownerID = :ownerID", { ownerID: owner})
             .execute()
         }
@@ -148,38 +155,39 @@ export class ChatsService {
   }
 
 
-  // clientToUser = {};
+  clientToUser = {};
 
-  // identify(name: string, clientId: string)
-  // {
-  //   this.clientToUser[clientId] = name;
-  //   return Object.values(this.clientToUser);
-  // }
+  identify(name: string, clientId: string)
+  {
+    this.clientToUser[clientId] = name;
+    return Object.values(this.clientToUser);
+  }
 
-  // getClientName(clientId: string)
-  // {
-  //   return this.clientToUser[clientId];
-  // }
+  getClientName(clientId: string)
+  {
+    return this.clientToUser[clientId];
+  }
+
   /** simple real time chat functions */
 
-  // async create(createChatDto: CreateChatDto, clientId: string) : Promise<Dm>
-  // {
-  //   // This action adds a new chat
-  //   const message = {
-  //     sender: this.clientToUser[clientId],
-  //     text: createChatDto.text,
-  //   };
+  async create(chatlogsdto: ChatLogsDto, clientId: string) : Promise<ChatLogs>
+  {
+    // This action adds a new chat
+    const msg = {
+      userID: this.clientToUser[clientId],
+      message: chatlogsdto.message,
+    };
 
-  //   return await this.DMrepository.save(message);
-  //   // this.messages.push(message);
-  //   // return message;
-  // } 
+    return await this.ChatLogsrepository.save(msg);
+    // this.messages.push(message);
+    // return message;
+  }
 
-  // async findAll_Dm_messages() : Promise<Dm[]>
-  // {
-  //   return await this.DMrepository.find();
-  //   // This action returns all chats
-  //  // return this.messages;
-  // }
+  async findAll_Dm_messages() : Promise<ChatLogs[]>
+  {
+    return await this.ChatLogsrepository.find();
+    // This action returns all chats
+   // return this.messages;
+  }
 
 }

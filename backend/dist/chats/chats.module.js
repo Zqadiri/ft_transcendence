@@ -16,11 +16,12 @@ const users_module_1 = require("../users/users.module");
 const auth_module_1 = require("../auth/auth.module");
 const chats_controller_1 = require("./chats.controller");
 const user_entity_1 = require("../users/entities/user.entity");
+const chat_log_entity_1 = require("../chat-logs/entities/chat-log.entity");
 let ChatsModule = class ChatsModule {
 };
 ChatsModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule, users_module_1.UsersModule, typeorm_1.TypeOrmModule.forFeature([chat_entity_1.Chat, user_entity_1.User])],
+        imports: [auth_module_1.AuthModule, users_module_1.UsersModule, typeorm_1.TypeOrmModule.forFeature([chat_entity_1.Chat, user_entity_1.User, chat_log_entity_1.ChatLogs])],
         providers: [chats_gateway_1.ChatsGateway, chats_service_1.ChatsService],
         controllers: [chats_controller_1.ChatController]
     })

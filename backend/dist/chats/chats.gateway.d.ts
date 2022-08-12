@@ -9,5 +9,11 @@ export declare class ChatsGateway implements OnGatewayInit, OnGatewayConnection,
     afterInit(server: Server): void;
     handleConnection(client: Socket, ...args: any[]): void;
     handleDisconnect(client: Socket): void;
-    handleMessage(client: Socket, text: string): void;
+    handleMessage(client: Socket, message: {
+        sender: string;
+        room: string;
+        message: string;
+    }): void;
+    handleJoinRoom(client: Socket, room: string): void;
+    handleLeaveRoom(client: Socket, room: string): void;
 }

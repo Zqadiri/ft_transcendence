@@ -17,7 +17,11 @@ const typeorm_2 = require("typeorm");
 const create_chat_dto_1 = require("./dto/create-chat.dto");
 const user_entity_1 = require("../users/entities/user.entity");
 const bcrypt = require("bcryptjs");
+const chat_log_entity_1 = require("../chat-logs/entities/chat-log.entity");
 let ChatsService = class ChatsService {
+    constructor() {
+        this.clientToUser = {};
+    }
     async CreateDm(dm, userid1, userid2) {
     }
     async createRoom(room, creator) {
@@ -79,17 +83,35 @@ let ChatsService = class ChatsService {
         const isOwner = await this.Chatrepository.findOneBy({ ownerID: owner });
         if (name && isOwner) {
             if (room.status == create_chat_dto_1.RoomStatus.PUBLIC || room.status == create_chat_dto_1.RoomStatus.PRIVATE) {
+                const hash = await bcrypt.hash(room.password, 10);
                 console.log("dkhaal hnaya");
                 await this.Chatrepository
                     .createQueryBuilder()
                     .update(chat_entity_1.Chat)
-                    .set({ password: room.password })
+                    .set({ password: hash, status: room.status })
                     .where("ownerID = :ownerID", { ownerID: owner })
                     .execute();
             }
         }
         else
             throw new common_1.UnauthorizedException({ code: 'Unauthorized', message: `can not set password to '${roomName}' chat room` });
+    }
+    identify(name, clientId) {
+        this.clientToUser[clientId] = name;
+        return Object.values(this.clientToUser);
+    }
+    getClientName(clientId) {
+        return this.clientToUser[clientId];
+    }
+    async create(chatlogsdto, clientId) {
+        const msg = {
+            userID: this.clientToUser[clientId],
+            message: chatlogsdto.message,
+        };
+        return await this.ChatLogsrepository.save(msg);
+    }
+    async findAll_Dm_messages() {
+        return await this.ChatLogsrepository.find();
     }
 };
 __decorate([
@@ -100,6 +122,10 @@ __decorate([
     (0, typeorm_1.InjectRepository)(user_entity_1.User),
     __metadata("design:type", typeorm_2.Repository)
 ], ChatsService.prototype, "Userrepository", void 0);
+__decorate([
+    (0, typeorm_1.InjectRepository)(chat_log_entity_1.ChatLogs),
+    __metadata("design:type", typeorm_2.Repository)
+], ChatsService.prototype, "ChatLogsrepository", void 0);
 ChatsService = __decorate([
     (0, common_1.Injectable)()
 ], ChatsService);

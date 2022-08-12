@@ -55,13 +55,13 @@ onBeforeMount(() => {
 
 
 const join = () => {
-  socket.emit('join', {name: name.value}, () => {
+  socket.emit('join', {userID: name.value}, () => {
     joined.value = true;
   })
 }
 
 const sendMessage = () => {
-  socket.emit('createChat', {text: messageText.value}, () => {
+  socket.emit('createChat', {message: messageText.value}, () => {
     messageText.value = '';
   })
 }
@@ -114,7 +114,7 @@ function emitTyping(){
     <div class= "right-panel"> 
       <div class="messagee-container">
         <div v-for="message in messages" :key = "message">
-          [{{ message.sender }}]: {{ message.text }}
+          [{{ message.userID }}]: {{ message.message }}
         </div>
       </div>
 
