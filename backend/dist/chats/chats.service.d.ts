@@ -11,6 +11,9 @@ export declare class ChatsService {
     JointoChatRoom(room: CreateRoomDto, username: string): Promise<void>;
     getUsersFromRoom(roomName: string): Promise<Chat>;
     SetPasswordToRoom(room: CreateRoomDto, owner: string): Promise<void>;
+    DisplayAllPublicRooms(): Promise<Chat[]>;
+    DisplayAllProtectedRooms(): Promise<Chat[]>;
+    DisplayAllMyRooms(username: string): Promise<void>;
     clientToUser: {};
     identify(name: string, clientId: string): unknown[];
     getClientName(clientId: string): any;

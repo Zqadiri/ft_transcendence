@@ -7,4 +7,6 @@ export declare class ChatController {
     joinRoom(user: string, roomDto: CreateRoomDto): Promise<void>;
     getUsersFromRoom(RoomId: string): Promise<import("./entities/chat.entity").Chat>;
     SetPasswordToRoom(ownerID: string, roomDto: CreateRoomDto): Promise<void>;
+    AllPublicRooms(): Promise<import("./entities/chat.entity").Chat[]>;
+    AllProtectedRooms(): Promise<import("./entities/chat.entity").Chat[]>;
 }

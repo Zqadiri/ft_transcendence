@@ -67,6 +67,29 @@ export class ChatController {
          }
     }
 
+    @Get('/allpublicrooms')
+    async AllPublicRooms()
+    {
+        try {
+            console.log("display all public rooms ...");
+            return await this.chatService.DisplayAllPublicRooms();
+         } catch (e) {
+             console.error('display all public rooms', e);
+             throw e;
+         }
+    }
+
+    @Get('/allprotectedrooms')
+    async AllProtectedRooms()
+    {
+        try {
+            console.log("display all protected rooms ...");
+            return await this.chatService.DisplayAllProtectedRooms();
+        } catch (e) {
+            console.error('display all protected rooms', e);
+            throw e;
+        }
+    }
 
 
 }

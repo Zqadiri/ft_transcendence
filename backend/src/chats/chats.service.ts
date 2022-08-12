@@ -154,6 +154,37 @@ export class ChatsService {
 
   }
 
+  // display all public rooms exist in the database
+  async DisplayAllPublicRooms()
+  {
+    const publicrooms = await this.Chatrepository
+    .createQueryBuilder("db_chat")
+    .select(['db_chat.name', 'db_chat.ownerID'])
+    .where("db_chat.type = :type", { type: ChatTypes.CHATROOM})
+    .andWhere("db_chat.status = :status", {status: RoomStatus.PUBLIC})
+    .getMany();
+
+    return publicrooms;
+  }
+
+  // display all protected rooms exist in the database
+  async DisplayAllProtectedRooms()
+  {
+    const protectedrooms = await this.Chatrepository
+    .createQueryBuilder("db_chat")
+    .select(['db_chat.name', 'db_chat.ownerID'])
+    .where("db_chat.type = :type", { type: ChatTypes.CHATROOM})
+    .andWhere("db_chat.status = :status", {status: RoomStatus.PROTECTED})
+    .getMany();
+
+    return protectedrooms;
+  }
+
+  // display all my rooms exist in the database
+  async DisplayAllMyRooms(username: string)
+  {
+
+  }
 
   clientToUser = {};
 

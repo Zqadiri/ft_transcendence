@@ -82,9 +82,6 @@
                 receiveChatMessage(msg) {
                     this.messages[msg.room].push(msg);
                 },
-                receiveAlertMessage(msg) {
-                    this.alerts.push(msg);
-                },
                 toggleRoomMembership() {
                     if (this.isMemberOfActiveRoom) {
                         this.socket.chat.emit('leaveRoom', this.activeRoom);

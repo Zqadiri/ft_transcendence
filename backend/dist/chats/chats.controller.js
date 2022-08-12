@@ -62,6 +62,26 @@ let ChatController = class ChatController {
             throw e;
         }
     }
+    async AllPublicRooms() {
+        try {
+            console.log("display all public rooms ...");
+            return await this.chatService.DisplayAllPublicRooms();
+        }
+        catch (e) {
+            console.error('display all public rooms', e);
+            throw e;
+        }
+    }
+    async AllProtectedRooms() {
+        try {
+            console.log("display all protected rooms ...");
+            return await this.chatService.DisplayAllProtectedRooms();
+        }
+        catch (e) {
+            console.error('display all protected rooms', e);
+            throw e;
+        }
+    }
 };
 __decorate([
     (0, common_1.Post)(':ownerID'),
@@ -95,6 +115,18 @@ __decorate([
     __metadata("design:paramtypes", [String, create_chat_dto_1.CreateRoomDto]),
     __metadata("design:returntype", Promise)
 ], ChatController.prototype, "SetPasswordToRoom", null);
+__decorate([
+    (0, common_1.Get)('/allpublicrooms'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "AllPublicRooms", null);
+__decorate([
+    (0, common_1.Get)('/allprotectedrooms'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "AllProtectedRooms", null);
 ChatController = __decorate([
     (0, swagger_1.ApiTags)('Chats'),
     (0, common_1.Controller)('chat'),

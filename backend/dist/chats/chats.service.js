@@ -96,6 +96,26 @@ let ChatsService = class ChatsService {
         else
             throw new common_1.UnauthorizedException({ code: 'Unauthorized', message: `can not set password to '${roomName}' chat room` });
     }
+    async DisplayAllPublicRooms() {
+        const publicrooms = await this.Chatrepository
+            .createQueryBuilder("db_chat")
+            .select(['db_chat.name', 'db_chat.ownerID'])
+            .where("db_chat.type = :type", { type: create_chat_dto_1.ChatTypes.CHATROOM })
+            .andWhere("db_chat.status = :status", { status: create_chat_dto_1.RoomStatus.PUBLIC })
+            .getMany();
+        return publicrooms;
+    }
+    async DisplayAllProtectedRooms() {
+        const protectedrooms = await this.Chatrepository
+            .createQueryBuilder("db_chat")
+            .select(['db_chat.name', 'db_chat.ownerID'])
+            .where("db_chat.type = :type", { type: create_chat_dto_1.ChatTypes.CHATROOM })
+            .andWhere("db_chat.status = :status", { status: create_chat_dto_1.RoomStatus.PROTECTED })
+            .getMany();
+        return protectedrooms;
+    }
+    async DisplayAllMyRooms(username) {
+    }
     identify(name, clientId) {
         this.clientToUser[clientId] = name;
         return Object.values(this.clientToUser);

@@ -47,6 +47,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     client.emit('joinedRoom', room);
   }
 
+
   @SubscribeMessage('leaveRoom')
   handleLeaveRoom(client: Socket, room:string)
   {
@@ -88,4 +89,5 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
 //         const name = await this.chatsService.getClientName(client.id);
 //         client.broadcast.emit('typing', {name, isTyping});
 //       }
- }
+
+}
