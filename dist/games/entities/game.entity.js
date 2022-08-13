@@ -14,7 +14,8 @@ const typeorm_1 = require("typeorm");
 let Game = class Game {
 };
 __decorate([
-    (0, typeorm_1.Column)({ primary: true }),
+    (0, typeorm_1.PrimaryGeneratedColumn)(),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Game.prototype, "id", void 0);
 __decorate([
@@ -59,6 +60,14 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], Game.prototype, "modifiedAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        type: 'timestamp',
+        onUpdate: 'CURRENT_TIMESTAMP',
+        nullable: true
+    }),
+    __metadata("design:type", Date)
+], Game.prototype, "finishedAt", void 0);
 Game = __decorate([
     (0, typeorm_1.Entity)('db_game')
 ], Game);

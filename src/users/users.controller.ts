@@ -33,7 +33,6 @@ export class UsersController {
 		description: 'The uploaded avatar Details',
 		type: AvatarDto,
 	})
-	@UseGuards(jwtAuthGuard)
 	@Post('/upload_avatar')
 	@HttpCode(200)
 	@UseInterceptors(uploadInterceptor({
@@ -74,20 +73,8 @@ export class UsersController {
 		res.send('done');
 	}
 
-	@ApiOperation({ summary: 'Get user data by id' })
-	@ApiResponse({
-		status: 200,
-		description: 'The found record',
-		type: User,
-	})
-
-	@Get(':id')
-	getUserData(@Param('id') id : number){
-		return this.usersService.getUserById(id);
-	}
-
+	
 	@ApiOperation({ summary: 'Change a user\'s username' })
-	@UseGuards(jwtAuthGuard)
 	@Post('/update_username')
 	async updateUsername(@Req() req, @Body('username') newUsername: string){
 		try{
@@ -98,4 +85,14 @@ export class UsersController {
 		}
 	}
 
+	@ApiOperation({ summary: 'Get user data by id' })
+	@ApiResponse({
+		status: 200,
+		description: 'The found record',
+		type: User,
+	})
+	@Get(':id')
+	getUserData(@Param('id') id : number){
+		return this.usersService.getUserById(id);
+	}
 }

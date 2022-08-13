@@ -1,4 +1,3 @@
-import { NumberScalarMode } from "@nestjs/graphql";
 import { IsEmail } from "class-validator";
 
 export class UpdateUserDto{

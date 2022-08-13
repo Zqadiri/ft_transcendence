@@ -54,9 +54,6 @@ let UsersController = class UsersController {
         }
         res.send('done');
     }
-    getUserData(id) {
-        return this.usersService.getUserById(id);
-    }
     async updateUsername(req, newUsername) {
         try {
             const result = await this.usersService.updateUsername(req.user.id, newUsername);
@@ -64,6 +61,9 @@ let UsersController = class UsersController {
         catch (err) {
             throw new common_1.UnauthorizedException('failed to update the username');
         }
+    }
+    getUserData(id) {
+        return this.usersService.getUserById(id);
     }
 };
 __decorate([
@@ -73,7 +73,6 @@ __decorate([
         description: 'The uploaded avatar Details',
         type: upload_dto_1.AvatarDto,
     }),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
     (0, common_4.Post)('/upload_avatar'),
     (0, common_1.HttpCode)(200),
     (0, common_2.UseInterceptors)((0, upload_interceptor_1.default)({
@@ -102,6 +101,15 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "AddFriend", null);
 __decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'Change a user\'s username' }),
+    (0, common_4.Post)('/update_username'),
+    __param(0, (0, common_4.Req)()),
+    __param(1, (0, common_1.Body)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateUsername", null);
+__decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Get user data by id' }),
     (0, swagger_1.ApiResponse)({
         status: 200,
@@ -114,16 +122,6 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "getUserData", null);
-__decorate([
-    (0, swagger_1.ApiOperation)({ summary: 'Change a user\'s username' }),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.jwtAuthGuard),
-    (0, common_4.Post)('/update_username'),
-    __param(0, (0, common_4.Req)()),
-    __param(1, (0, common_1.Body)('username')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "updateUsername", null);
 UsersController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, common_1.Controller)('users'),

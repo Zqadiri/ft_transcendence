@@ -1,8 +1,9 @@
-import { Entity, Column } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('db_game')
 export class Game{
-	@Column({primary: true})
+	@PrimaryGeneratedColumn()
+	@Column()
 	id: number;
 
 	@Column({default: false})
@@ -38,4 +39,11 @@ export class Game{
 		nullable: true 
 	})
 	modifiedAt: Date;
+
+	@Column({ 
+		type: 'timestamp',
+		onUpdate: 'CURRENT_TIMESTAMP', 
+		nullable: true 
+	})
+	finishedAt: Date;
 }

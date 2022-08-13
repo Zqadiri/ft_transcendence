@@ -80,12 +80,21 @@ export class UsersService {
 			return this.userRepository.remove(user);
 		}
 
+		async calculateRank(userID: number){
+			const user = await this.getUserById(userID);
+
+			console.log('think about how to calculate the rank');
+			if (!user)
+				throw new HttpException({ message: 'User Not Found'}, HttpStatus.BAD_REQUEST);
+			return user;
+		}
+
 		async getUserById(id: number): Promise<User> {
 			const player = await this.userRepository.findOne({
 					where:{
 						id: id,
 					}
-				});
+			});
 			return player;
 		}
 

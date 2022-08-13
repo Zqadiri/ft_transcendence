@@ -35,6 +35,9 @@ const relation_repository_1 = require("./friends/relation.repository");
 const chat_entity_1 = require("./chats/entities/chat.entity");
 const chat_log_entity_1 = require("./chat-logs/entities/chat-log.entity");
 const auth_entity_1 = require("./auth/auth.entity");
+const game_entity_1 = require("./games/entities/game.entity");
+const game_repository_1 = require("./games/game.repository");
+const games_service_1 = require("./games/games.service");
 require('dotenv').config();
 let AppModule = class AppModule {
     configure(consumer) {
@@ -49,7 +52,8 @@ AppModule = __decorate([
                 envFilePath: '.env',
                 isGlobal: true
             }),
-            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, friend_entity_1.Friend, user_repository_1.UserRepository, relation_repository_1.relationRepository]),
+            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, friend_entity_1.Friend, user_repository_1.UserRepository, relation_repository_1.relationRepository,
+                game_entity_1.Game, game_repository_1.GameRepository]),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
                 host: process.env.POSTGRES_HOST,
@@ -72,7 +76,7 @@ AppModule = __decorate([
             chat_logs_module_1.ChatLogsModule
         ],
         controllers: [auth_controller_1.AuthController, users_controller_1.UsersController, app_controller_1.AppController],
-        providers: [users_service_1.UsersService, friends_service_1.FriendsService, jwt_stategy_1.JwtStrategy, auth_service_1.AuthService, app_service_1.AppService],
+        providers: [users_service_1.UsersService, friends_service_1.FriendsService, jwt_stategy_1.JwtStrategy, auth_service_1.AuthService, app_service_1.AppService, games_service_1.GamesService],
         exports: [
             auth_service_1.AuthService, passport_1.PassportModule
         ],

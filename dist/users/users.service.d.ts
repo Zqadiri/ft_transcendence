@@ -11,6 +11,7 @@ export declare class UsersService {
     updateAfterGame(userID: number, updateAfterGame: UpdateAfterGameDto): Promise<import("typeorm").UpdateResult>;
     isMatched(userID: number): Promise<import("typeorm").UpdateResult>;
     removeUser(userID: number): Promise<User>;
+    calculateRank(userID: number): Promise<User>;
     getUserById(id: number): Promise<User>;
     setTwoFactorAuthenticationSecret(secret: string, userId: number): Promise<import("typeorm").UpdateResult>;
     uploadAvatar(id: number, avatarDto: AvatarDto): Promise<User>;

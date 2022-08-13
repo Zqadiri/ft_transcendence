@@ -81,6 +81,13 @@ let UsersService = class UsersService {
             throw new common_1.HttpException({ message: 'User Not Found' }, common_1.HttpStatus.BAD_REQUEST);
         return this.userRepository.remove(user);
     }
+    async calculateRank(userID) {
+        const user = await this.getUserById(userID);
+        console.log('think about how to calculate the rank');
+        if (!user)
+            throw new common_1.HttpException({ message: 'User Not Found' }, common_1.HttpStatus.BAD_REQUEST);
+        return user;
+    }
     async getUserById(id) {
         const player = await this.userRepository.findOne({
             where: {

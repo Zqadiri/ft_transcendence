@@ -8,4 +8,5 @@ export declare class Game {
     theme: string;
     createdAt: Date;
     modifiedAt: Date;
+    finishedAt: Date;
 }
