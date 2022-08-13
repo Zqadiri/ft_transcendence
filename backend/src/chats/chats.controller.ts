@@ -91,5 +91,19 @@ export class ChatController {
         }
     }
 
+    @Get('/allMyRoom/:username')
+    async AllMyRooms(@Param('username') username: string)
+    {
+        try {
+            console.log("display all my rooms ...");
+            return await this.chatService.DisplayAllMyRooms(username);
+        } catch (e) {
+            console.error('display all my rooms', e);
+            throw e;
+        }
+    }
+
+    
+
 
 }

@@ -112,13 +112,18 @@ export class ChatsService {
       throw new BadRequestException({code: 'invalid chat room name', message: `Room with '${roomName}' does not exist`})
     }
     
-    const user = await this.Chatrepository
+    const users = await this.Chatrepository
     .createQueryBuilder("db_chat")
     .select(['db_chat.userID']) // added selection
     .where("db_chat.name = :name", { name: roomName })
     .getOne();
 
-    return user;
+    const profils = await this.Userrepository
+    .createQueryBuilder("db_user")
+    .where("db_user.username IN (:...users)", { users: users.userID })
+    .getRawMany();
+    
+    return profils;
   }
 
   /** Change visibility */
@@ -137,22 +142,23 @@ export class ChatsService {
     const isOwner = await this.Chatrepository.findOneBy({ ownerID: owner });
     if (name && isOwner)
     {
-      if (room.status == RoomStatus.PUBLIC || room.status == RoomStatus.PRIVATE)
-      {
         const hash = await bcrypt.hash(room.password, 10);
-        console.log("dkhaal hnaya");
-        await this.Chatrepository
+      const exec =  await this.Chatrepository
             .createQueryBuilder()
             .update(Chat)
-            .set({password: hash, status: room.status})
+            .set({password: hash, status: RoomStatus.PROTECTED})
             .where("ownerID = :ownerID", { ownerID: owner})
+            .andWhere("name = :name", {name: roomName})
             .execute()
-        }
+        if (!exec)
+          throw new UnauthorizedException({code: 'Unauthorized', message: `can not set password to '${roomName}' chat room!!`})
+
     }
     else
       throw new UnauthorizedException({code: 'Unauthorized', message: `can not set password to '${roomName}' chat room`})
-
   }
+
+
 
   // display all public rooms exist in the database
   async DisplayAllPublicRooms()
@@ -183,9 +189,37 @@ export class ChatsService {
   // display all my rooms exist in the database
   async DisplayAllMyRooms(username: string)
   {
+    const Myrooms = await this.Chatrepository
+    .createQueryBuilder("db_chat")
+    .select(['db_chat.name', 'db_chat.ownerID'])
+    .where(":username = ANY (db_chat.userID)", { username: username })
+    .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
+    .getMany();
 
+    return Myrooms;
   }
 
+  /** The channel owner is a channel administrator. They can set other users as
+    administrators. */
+
+  async SetUserRoomAsAdmin(RoomID: string, OwnerID: string ,username: string)
+  {
+    // check the user who want to join exist in table user
+
+    const user = await this.Userrepository.findOneBy({ username: username });
+
+    if (!user){
+      throw new BadRequestException({code: 'invalid username', message: `User with '${username}' does not exist`})
+    }
+
+    const isOwner = await this.Chatrepository.findOneBy({ ownerID: OwnerID });
+
+
+
+  }
+  /*-------------------------------------------------------------------------- */
+  
+  
   clientToUser = {};
 
   identify(name: string, clientId: string)

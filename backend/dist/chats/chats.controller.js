@@ -82,6 +82,16 @@ let ChatController = class ChatController {
             throw e;
         }
     }
+    async AllMyRooms(username) {
+        try {
+            console.log("display all my rooms ...");
+            return await this.chatService.DisplayAllMyRooms(username);
+        }
+        catch (e) {
+            console.error('display all my rooms', e);
+            throw e;
+        }
+    }
 };
 __decorate([
     (0, common_1.Post)(':ownerID'),
@@ -127,6 +137,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ChatController.prototype, "AllProtectedRooms", null);
+__decorate([
+    (0, common_1.Get)('/allMyRoom/:username'),
+    __param(0, (0, common_1.Param)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "AllMyRooms", null);
 ChatController = __decorate([
     (0, swagger_1.ApiTags)('Chats'),
     (0, common_1.Controller)('chat'),

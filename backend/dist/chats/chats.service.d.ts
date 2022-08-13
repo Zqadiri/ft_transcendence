@@ -9,11 +9,12 @@ export declare class ChatsService {
     CreateDm(dm: CreateDmDto, userid1: number, userid2: number): Promise<void>;
     createRoom(room: CreateRoomDto, creator: string): Promise<Chat>;
     JointoChatRoom(room: CreateRoomDto, username: string): Promise<void>;
-    getUsersFromRoom(roomName: string): Promise<Chat>;
+    getUsersFromRoom(roomName: string): Promise<any[]>;
     SetPasswordToRoom(room: CreateRoomDto, owner: string): Promise<void>;
     DisplayAllPublicRooms(): Promise<Chat[]>;
     DisplayAllProtectedRooms(): Promise<Chat[]>;
-    DisplayAllMyRooms(username: string): Promise<void>;
+    DisplayAllMyRooms(username: string): Promise<Chat[]>;
+    SetUserRoomAsAdmin(RoomID: string, OwnerID: string, username: string): Promise<void>;
     clientToUser: {};
     identify(name: string, clientId: string): unknown[];
     getClientName(clientId: string): any;
