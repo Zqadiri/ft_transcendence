@@ -22,6 +22,7 @@ const Login = () => {
 				console.log(res.headers['set-cookie']);
 				console.log(cookies.get("_token"));
 				if (cookies.get("_token")) {
+					cookies.setFromObj(res.data, "/");
 					setLoggedIn(true);
 				}
 			}).catch((err) => {

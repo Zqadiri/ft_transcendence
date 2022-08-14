@@ -12,7 +12,18 @@ export function useEffectOnce(effect: React.EffectCallback) {
 	}, []);
 }
 
-export const cookies = new Cookies();
+export class MyCookies extends Cookies {
+	setFromObj: Function = (obj: any, path: string | undefined) => {
+		for (var key in obj) {
+			this.set(key, obj[key], path ? { path } : undefined)
+		}
+	};
+	constructor() {
+		super()
+	}
+}
+
+export const cookies = new MyCookies();
 
 export const globalContext = createContext({loggedIn: false, setLoggedIn: (val: boolean) => {}});
 
