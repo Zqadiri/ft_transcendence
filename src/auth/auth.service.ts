@@ -1,7 +1,6 @@
 import { Injectable, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { Body, HttpException, BadRequestException } from '@nestjs/common';
-import axios, { Axios } from "axios";
+import axios from "axios";
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -44,7 +43,7 @@ export class AuthService {
 			return ret;
 		})
 		.catch((err) => { 
-			console.log(err);
+			console.log('ERROR!');
 		})
 		return ret; 
 	}

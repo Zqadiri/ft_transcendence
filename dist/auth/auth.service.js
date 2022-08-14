@@ -44,7 +44,7 @@ let AuthService = class AuthService {
             return ret;
         })
             .catch((err) => {
-            console.log(err);
+            console.log('ERROR!');
         });
         return ret;
     }
