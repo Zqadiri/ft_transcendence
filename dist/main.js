@@ -16,7 +16,8 @@ async function bootstrap() {
     app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public'));
     app.setBaseViewsDir((0, path_1.join)(__dirname, '..', 'views'));
     app.setViewEngine('hbs');
-    await app.listen(3000);
+    app.enableCors({ origin: "http://localhost:3000", credentials: true });
+    await app.listen(3005);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

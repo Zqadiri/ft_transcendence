@@ -1,4 +1,4 @@
-import { Controller, Get, Res, Query, Delete, UseGuards, Req} from '@nestjs/common';
+import { Controller, Get, Res, Query, Delete, UseGuards, Req, Redirect} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response } from "express";
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
@@ -25,9 +25,16 @@ export class AuthController
 		status: 200,
 		description: 'the route responsible of fetching the authenticated user data from the intra API',
 	})
+	// @Redirect()
+	// async getAuthPage(@Res() response: Response){
+	// 	return { 
+	// 		url: 'http://localhost:3001/login'
+	// 	};	
+	// }
 	@Get('/login')
 	async access_token(@Query() query: {code: string}, @Res() response: Response){
 		console.log(response.statusCode);
+		console.log('test');
 		let obj : CreateUserDto;
 		let playerExists;
 		obj = await this.authService.getUserData(query.code);

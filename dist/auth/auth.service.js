@@ -83,7 +83,7 @@ let AuthService = class AuthService {
         console.log(`access token :  ` + access_token);
         response.cookie('_token', access_token, {
             maxAge: 1000 * 60 * 15,
-            httpOnly: true,
+            httpOnly: false,
             domain: 'localhost',
             path: '/'
         });

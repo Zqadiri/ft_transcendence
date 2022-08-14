@@ -85,7 +85,7 @@ export class AuthService {
 		console.log(`access token :  ` + access_token);
 		response.cookie('_token', access_token,{
 			maxAge: 1000 * 60 * 15, // would expire after 15 minutes
-			httpOnly: true, // The cookie only accessible by the web server
+			httpOnly: false, // The cookie only accessible by the web server
 			domain: 'localhost',
 			path: '/'
 		});

@@ -26,6 +26,7 @@ let AuthController = class AuthController {
     }
     async access_token(query, response) {
         console.log(response.statusCode);
+        console.log('test');
         let obj;
         let playerExists;
         obj = await this.authService.getUserData(query.code);
