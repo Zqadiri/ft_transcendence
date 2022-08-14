@@ -32,7 +32,7 @@ export class AppController {
 	@Get('/2fa')
 	@Render('2fa')
 	profilePage(){
-		return ({message: 'profile'});
+		return ({message: 'profile'}); 
 	}
 }
  
