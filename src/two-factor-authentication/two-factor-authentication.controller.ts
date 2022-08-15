@@ -1,10 +1,9 @@
 import { Post, Res, Req, UseGuards, HttpCode, Body, UnauthorizedException} from '@nestjs/common';
 import { ClassSerializerInterceptor, Controller, UseInterceptors } from '@nestjs/common';
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
-import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import requestWithUser from  './requestWithUser.interface';
+import requestWithUser from  './dto/requestWithUser.interface';
 import { TwoFacAuthCodeDto } from './dto/twoFactorAuthenticationCode.dto';
-import RequestWithUser from './requestWithUser.interface';
+import RequestWithUser from './dto/requestWithUser.interface';
 import { AuthService } from 'src/auth/auth.service';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
