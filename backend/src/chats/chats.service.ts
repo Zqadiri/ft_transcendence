@@ -40,9 +40,15 @@ export class ChatsService {
       throw new ConflictException({code: 'room.conflict', message: `Room with '${roomName}' already exists`})
     }
 
+     const user = await this.Userrepository.findOneBy({ username: creator });
+
+     if (!user){
+       throw new BadRequestException({code: 'invalid username', message: `User with '${creator}' does not exist`})
+     }
+
     const newRoom = this.Chatrepository.create({
-      ownerID: creator,
-      userID: [creator],
+      ownerID: user.username,
+      userID: [user.username],
       name: room.name,
       type: ChatTypes.CHATROOM,
       status: room.status,
@@ -82,7 +88,7 @@ export class ChatsService {
         name.userID.push(user.username);
         await this.Chatrepository.save(name);
       }
-      else if (name.status === RoomStatus.PROTECTED)
+      else if (name.status === RoomStatus.PROTECTED && Roomdata.password)
       {
         const isMatch = await bcrypt.compare(Roomdata.password, name.password);
         if (!isMatch)
@@ -93,6 +99,8 @@ export class ChatsService {
           await this.Chatrepository.save(name);
         }
       }
+      else
+        throw new UnauthorizedException({code: 'Unauthorized', message: `you have to set password to join '${roomName}'`})
     }
   }
 
