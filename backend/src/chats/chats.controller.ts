@@ -1,5 +1,5 @@
-import { Controller, UseGuards, Get, Res, Post, HttpCode, Body, Param } from '@nestjs/common';
-import { CreateRoomDto } from './dto/create-chat.dto';
+import { Controller, UseGuards, Get, Res, Post, HttpCode, Body, Param, Req } from '@nestjs/common';
+import { CreateRoomDto, RoomDto, SetRolestoMembersDto } from './dto/create-chat.dto';
 import { ChatsService } from './chats.service';
 import { ApiTags } from '@nestjs/swagger';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -32,11 +32,11 @@ export class ChatController {
     }
 
     @Post('/join/:user')
-    async joinRoom(@Param('user') user: string, @Body() roomDto: CreateRoomDto)
+    async joinRoom(@Param('user') user: string, @Body() roomdto: RoomDto)
     {
         try {
-           await this.chatService.JointoChatRoom(roomDto, user);
-            console.log("join to room...", roomDto);
+            await this.chatService.JointoChatRoom(roomdto, user);
+            console.log("join to room...", roomdto.name);
         } catch (e) {
             console.error('Failed to join room', e);
             throw e;
@@ -56,11 +56,11 @@ export class ChatController {
     }
 
     @Post('/setPassword/:ownerID')
-    async SetPasswordToRoom(@Param('ownerID') ownerID: string, @Body() roomDto: CreateRoomDto)
+    async SetPasswordToRoom(@Param('ownerID') ownerID: string, @Body() RoomDto: RoomDto)
     {
         try {
-            console.log("set password to this room...", roomDto.name);
-            await this.chatService.SetPasswordToRoom(roomDto, ownerID);
+            console.log("set password to this room...", RoomDto.name);
+            await this.chatService.SetPasswordToRoom(RoomDto, ownerID);
          } catch (e) {
              console.error('Failed to get users from room', e);
              throw e;
@@ -99,6 +99,18 @@ export class ChatController {
             return await this.chatService.DisplayAllMyRooms(username);
         } catch (e) {
             console.error('display all my rooms', e);
+            throw e;
+        }
+    }
+
+    @Post('/setUserRoomAsAdmin/:ownerID')
+    async SetUserRoomAsAdmin(@Param('ownerID') ownerID: string, @Body() setRolesDto: SetRolestoMembersDto)
+    {
+        try {
+            console.log("Set user room as admin ...");
+            return await this.chatService.SetUserRoomAsAdmin(ownerID, setRolesDto);
+        } catch (e) {
+            console.error('Failed to set this user as admin to this room', e);
             throw e;
         }
     }

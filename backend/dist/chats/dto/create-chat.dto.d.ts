@@ -16,3 +16,11 @@ export declare class CreateRoomDto {
     status: string;
     password: string;
 }
+export declare class RoomDto {
+    name: string;
+    password: string;
+}
+export declare class SetRolestoMembersDto {
+    RoomID: string;
+    username: string;
+}

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateRoomDto = exports.CreateDmDto = exports.ChatTypes = exports.RoomStatus = void 0;
+exports.SetRolestoMembersDto = exports.RoomDto = exports.CreateRoomDto = exports.CreateDmDto = exports.ChatTypes = exports.RoomStatus = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
 var RoomStatus;
@@ -49,4 +49,28 @@ __decorate([
     __metadata("design:type", String)
 ], CreateRoomDto.prototype, "password", void 0);
 exports.CreateRoomDto = CreateRoomDto;
+class RoomDto {
+}
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: "Chat Room name" }),
+    __metadata("design:type", String)
+], RoomDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: "Chat Room password" }),
+    (0, class_validator_1.Length)(8, 24),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], RoomDto.prototype, "password", void 0);
+exports.RoomDto = RoomDto;
+class SetRolestoMembersDto {
+}
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: "Chat Room name" }),
+    __metadata("design:type", String)
+], SetRolestoMembersDto.prototype, "RoomID", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: "member of this Chat Room" }),
+    __metadata("design:type", String)
+], SetRolestoMembersDto.prototype, "username", void 0);
+exports.SetRolestoMembersDto = SetRolestoMembersDto;
 //# sourceMappingURL=create-chat.dto.js.map

@@ -1,8 +1,8 @@
-import { Injectable, ConflictException, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository, createQueryBuilder } from 'typeorm';
-import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes } from './dto/create-chat.dto';
+import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes, RoomDto, SetRolestoMembersDto } from './dto/create-chat.dto';
 import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
@@ -56,11 +56,10 @@ export class ChatsService {
 
   /** join User to public chat room */
 
-  async JointoChatRoom(room: CreateRoomDto, username: string)
+  async JointoChatRoom(Roomdata: RoomDto, username: string)
   {
     // check if the current user already in userID array if not add it
-    
-    const roomName = room.name;
+    const roomName = Roomdata.name;
     // findOneBy - Finds the first entity that matches given FindOptionsWhere.
     const name = await this.Chatrepository.findOneBy({ name: roomName });
 
@@ -70,33 +69,27 @@ export class ChatsService {
 
     // check the user who want to join exist in table user
 
-    // const user = await this.Userrepository.findOneBy({ username: username });
+    const user = await this.Userrepository.findOneBy({ username: username });
 
-    // if (!user){
-    //   throw new BadRequestException({code: 'invalid username', message: `User with '${username}' does not exist`})
-    // }
+    if (!user){
+      throw new BadRequestException({code: 'invalid username', message: `User with '${username}' does not exist`})
+    }
 
-    // if (!name.userID.includes(user.username))
-    // {
-    //   name.userID.push(user.username);
-    //   await this.Chatrepository.save(name);
-    // }
-
-    if (!name.userID.includes(username))
+    if (!name.userID.includes(user.username))
     {
-      if (room.status == RoomStatus.PUBLIC)
+      if (name.status === RoomStatus.PUBLIC || name.status === RoomStatus.PRIVATE)
       {
-        name.userID.push(username);
+        name.userID.push(user.username);
         await this.Chatrepository.save(name);
       }
-      else if (room.status == RoomStatus.PROTECTED)
+      else if (name.status === RoomStatus.PROTECTED)
       {
-        const isMatch = await bcrypt.compare(room.password, name.password);
+        const isMatch = await bcrypt.compare(Roomdata.password, name.password);
         if (!isMatch)
           throw new UnauthorizedException({code: 'Unauthorized', message: `Wrong password to join '${roomName}'`})
         else
         {
-          name.userID.push(username);
+          name.userID.push(user.username);
           await this.Chatrepository.save(name);
         }
       }
@@ -131,34 +124,27 @@ export class ChatsService {
   //     The channel owner can set a password required to access the channel, change
   //     it, and also remove it.
 
-  async SetPasswordToRoom(room: CreateRoomDto, owner: string)
+  async SetPasswordToRoom(RoomDto: RoomDto, owner: string)
   {
-    const roomName = room.name;
-    const name = await this.Chatrepository.findOneBy({ name: roomName });
+    const check = await this.Chatrepository.findOneOrFail({
+      where: {
+          name: RoomDto.name,
+          ownerID: owner,
+      },
+      }).catch(() => {
+        throw new UnauthorizedException({code: 'Unauthorized', message: `can not set password to '${RoomDto.name}' chat room!!`})
+      });
 
-    if (!name)
-      throw new BadRequestException({code: 'invalid chat room name', message: `Room with '${roomName}' does not exist`})
+      const hash = await bcrypt.hash(RoomDto.password, 10);
+      await this.Chatrepository
+          .createQueryBuilder()
+          .update(Chat)
+          .set({password: hash, status: RoomStatus.PROTECTED})
+          .where("ownerID = :ownerID", { ownerID: owner})
+          .andWhere("name = :name", {name: RoomDto.name})
+          .execute()
 
-    const isOwner = await this.Chatrepository.findOneBy({ ownerID: owner });
-    if (name && isOwner)
-    {
-        const hash = await bcrypt.hash(room.password, 10);
-      const exec =  await this.Chatrepository
-            .createQueryBuilder()
-            .update(Chat)
-            .set({password: hash, status: RoomStatus.PROTECTED})
-            .where("ownerID = :ownerID", { ownerID: owner})
-            .andWhere("name = :name", {name: roomName})
-            .execute()
-        if (!exec)
-          throw new UnauthorizedException({code: 'Unauthorized', message: `can not set password to '${roomName}' chat room!!`})
-
-    }
-    else
-      throw new UnauthorizedException({code: 'Unauthorized', message: `can not set password to '${roomName}' chat room`})
   }
-
-
 
   // display all public rooms exist in the database
   async DisplayAllPublicRooms()
@@ -202,20 +188,40 @@ export class ChatsService {
   /** The channel owner is a channel administrator. They can set other users as
     administrators. */
 
-  async SetUserRoomAsAdmin(RoomID: string, OwnerID: string ,username: string)
+  async SetUserRoomAsAdmin(ownerID: string, SetRolestoMembersDto: SetRolestoMembersDto)
   {
     // check the user who want to join exist in table user
 
-    const user = await this.Userrepository.findOneBy({ username: username });
+    const user = await this.Userrepository.findOneBy({ username: SetRolestoMembersDto.username });
 
     if (!user){
-      throw new BadRequestException({code: 'invalid username', message: `User with '${username}' does not exist`})
+      throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.username}' does not exist`})
     }
 
-    const isOwner = await this.Chatrepository.findOneBy({ ownerID: OwnerID });
+    const check = await this.Chatrepository.findOneOrFail({
+      where: {
+          name: SetRolestoMembersDto.RoomID,
+          ownerID: ownerID,
+      },
+      }).catch(() => {
+        throw new BadRequestException({code: 'invalid', message: `there is no chat room with name '${SetRolestoMembersDto.RoomID}' and ownerID '${ownerID}'!!`})
+      });
 
-
-
+      if (check.userID.includes(user.username))
+      {
+        if (!check.AdminsID || check.AdminsID.length == 0)
+        {
+          check.AdminsID = [user.username];
+          await this.Chatrepository.save(check);
+        }
+        else if (!check.AdminsID.includes(user.username))
+        {
+          check.AdminsID.push(user.username);
+          await this.Chatrepository.save(check);
+        }
+      }
+      else
+        throw new ForbiddenException({code: 'Forbidden', message: `This user '${SetRolestoMembersDto.username}' is not in this chat room and couldn't be admin!!`})
   }
   /*-------------------------------------------------------------------------- */
   

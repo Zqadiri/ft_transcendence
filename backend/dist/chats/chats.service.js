@@ -41,23 +41,27 @@ let ChatsService = class ChatsService {
         await this.Chatrepository.save(newRoom);
         return newRoom;
     }
-    async JointoChatRoom(room, username) {
-        const roomName = room.name;
+    async JointoChatRoom(Roomdata, username) {
+        const roomName = Roomdata.name;
         const name = await this.Chatrepository.findOneBy({ name: roomName });
         if (!name) {
             throw new common_1.BadRequestException({ code: 'invalid chat room name', message: `Room with '${roomName}' does not exist` });
         }
-        if (!name.userID.includes(username)) {
-            if (room.status == create_chat_dto_1.RoomStatus.PUBLIC) {
-                name.userID.push(username);
+        const user = await this.Userrepository.findOneBy({ username: username });
+        if (!user) {
+            throw new common_1.BadRequestException({ code: 'invalid username', message: `User with '${username}' does not exist` });
+        }
+        if (!name.userID.includes(user.username)) {
+            if (name.status === create_chat_dto_1.RoomStatus.PUBLIC || name.status === create_chat_dto_1.RoomStatus.PRIVATE) {
+                name.userID.push(user.username);
                 await this.Chatrepository.save(name);
             }
-            else if (room.status == create_chat_dto_1.RoomStatus.PROTECTED) {
-                const isMatch = await bcrypt.compare(room.password, name.password);
+            else if (name.status === create_chat_dto_1.RoomStatus.PROTECTED) {
+                const isMatch = await bcrypt.compare(Roomdata.password, name.password);
                 if (!isMatch)
                     throw new common_1.UnauthorizedException({ code: 'Unauthorized', message: `Wrong password to join '${roomName}'` });
                 else {
-                    name.userID.push(username);
+                    name.userID.push(user.username);
                     await this.Chatrepository.save(name);
                 }
             }
@@ -79,26 +83,23 @@ let ChatsService = class ChatsService {
             .getRawMany();
         return profils;
     }
-    async SetPasswordToRoom(room, owner) {
-        const roomName = room.name;
-        const name = await this.Chatrepository.findOneBy({ name: roomName });
-        if (!name)
-            throw new common_1.BadRequestException({ code: 'invalid chat room name', message: `Room with '${roomName}' does not exist` });
-        const isOwner = await this.Chatrepository.findOneBy({ ownerID: owner });
-        if (name && isOwner) {
-            const hash = await bcrypt.hash(room.password, 10);
-            const exec = await this.Chatrepository
-                .createQueryBuilder()
-                .update(chat_entity_1.Chat)
-                .set({ password: hash, status: create_chat_dto_1.RoomStatus.PROTECTED })
-                .where("ownerID = :ownerID", { ownerID: owner })
-                .andWhere("name = :name", { name: roomName })
-                .execute();
-            if (!exec)
-                throw new common_1.UnauthorizedException({ code: 'Unauthorized', message: `can not set password to '${roomName}' chat room!!` });
-        }
-        else
-            throw new common_1.UnauthorizedException({ code: 'Unauthorized', message: `can not set password to '${roomName}' chat room` });
+    async SetPasswordToRoom(RoomDto, owner) {
+        const check = await this.Chatrepository.findOneOrFail({
+            where: {
+                name: RoomDto.name,
+                ownerID: owner,
+            },
+        }).catch(() => {
+            throw new common_1.UnauthorizedException({ code: 'Unauthorized', message: `can not set password to '${RoomDto.name}' chat room!!` });
+        });
+        const hash = await bcrypt.hash(RoomDto.password, 10);
+        await this.Chatrepository
+            .createQueryBuilder()
+            .update(chat_entity_1.Chat)
+            .set({ password: hash, status: create_chat_dto_1.RoomStatus.PROTECTED })
+            .where("ownerID = :ownerID", { ownerID: owner })
+            .andWhere("name = :name", { name: RoomDto.name })
+            .execute();
     }
     async DisplayAllPublicRooms() {
         const publicrooms = await this.Chatrepository
@@ -127,12 +128,31 @@ let ChatsService = class ChatsService {
             .getMany();
         return Myrooms;
     }
-    async SetUserRoomAsAdmin(RoomID, OwnerID, username) {
-        const user = await this.Userrepository.findOneBy({ username: username });
+    async SetUserRoomAsAdmin(ownerID, SetRolestoMembersDto) {
+        const user = await this.Userrepository.findOneBy({ username: SetRolestoMembersDto.username });
         if (!user) {
-            throw new common_1.BadRequestException({ code: 'invalid username', message: `User with '${username}' does not exist` });
+            throw new common_1.BadRequestException({ code: 'invalid username', message: `User with '${SetRolestoMembersDto.username}' does not exist` });
         }
-        const isOwner = await this.Chatrepository.findOneBy({ ownerID: OwnerID });
+        const check = await this.Chatrepository.findOneOrFail({
+            where: {
+                name: SetRolestoMembersDto.RoomID,
+                ownerID: ownerID,
+            },
+        }).catch(() => {
+            throw new common_1.BadRequestException({ code: 'invalid', message: `there is no chat room with name '${SetRolestoMembersDto.RoomID}' and ownerID '${ownerID}'!!` });
+        });
+        if (check.userID.includes(user.username)) {
+            if (!check.AdminsID || check.AdminsID.length == 0) {
+                check.AdminsID = [user.username];
+                await this.Chatrepository.save(check);
+            }
+            else if (!check.AdminsID.includes(user.username)) {
+                check.AdminsID.push(user.username);
+                await this.Chatrepository.save(check);
+            }
+        }
+        else
+            throw new common_1.ForbiddenException({ code: 'Forbidden', message: `This user '${SetRolestoMembersDto.username}' is not in this chat room and couldn't be admin!!` });
     }
     identify(name, clientId) {
         this.clientToUser[clientId] = name;
