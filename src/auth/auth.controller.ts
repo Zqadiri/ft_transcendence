@@ -1,4 +1,4 @@
-import { Controller, Get, Res, Query, Delete, UseGuards, Req, Redirect} from '@nestjs/common';
+import { Controller, Get, Res, Query, Delete, UseGuards, Req, Redirect, Render} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response } from "express";
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
@@ -32,6 +32,7 @@ export class AuthController
 	// 	};	
 	// }
 	@Get('/login')
+	// @Render('index')
 	async access_token(@Query() query: {code: string}, @Res() response: Response){
 		console.log(response.statusCode);
 		console.log('test');
@@ -45,7 +46,7 @@ export class AuthController
 		if (!playerExists){
 			console.log('does not Exists create user and add cookie');
 			this.playerService.create(obj);
-			return await this.authService.sendJWTtoken(playerExists, response);
+			  this.authService.sendJWTtoken(playerExists, response);
 		}
 		else if (playerExists && playerExists.is2FacAuth === false ){
 			await this.authService.sendJWTtoken(playerExists, response);
@@ -56,7 +57,8 @@ export class AuthController
 		// 	console.log('Player exists and Not 2FA is enabled');
 			// return await this.authService.sendJWTtoken(playerExists, response);
 		// }
-		// return response.send('end');
+		// return response.sendFile(__dirname + "/../../frontend/build/index.html");
+		response.redirect('/');
 	}
 
 	@ApiOperation({ summary: 'log out and clear cookie'})

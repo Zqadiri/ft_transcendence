@@ -87,14 +87,40 @@ export class AuthService {
 			maxAge: 1000 * 60 * 15, // would expire after 15 minutes
 			httpOnly: false, // The cookie only accessible by the web server
 			domain: 'localhost',
+			sameSite: "none",
+			secure: true,
 			path: '/'
 		});
-		return response.send({
-			id: user.id,
-			name: user.username,
-			avatar: user.avatar,
-			email: user.email
+		response.cookie('name', user.username,{
+			maxAge: 1000 * 60 * 15, // would expire after 15 minutes
+			httpOnly: false, // The cookie only accessible by the web server
+			domain: 'localhost',
+			sameSite: "none",
+			secure: true,
+			path: '/'
 		});
+		response.cookie('id', user.id,{
+			maxAge: 1000 * 60 * 15, // would expire after 15 minutes
+			httpOnly: false, // The cookie only accessible by the web server
+			domain: 'localhost',
+			sameSite: "none",
+			secure: true,
+			path: '/'
+		});
+		response.cookie('avatar', user.avatar,{
+			maxAge: 1000 * 60 * 15, // would expire after 15 minutes
+			httpOnly: false, // The cookie only accessible by the web server
+			domain: 'localhost',
+			sameSite: "none",
+			secure: true,
+			path: '/'
+		});
+		// return response.send({
+		// 	id: user.id,
+		// 	name: user.username,
+		// 	avatar: user.avatar,
+		// 	email: user.email
+		// });
 	}
 
 	/*

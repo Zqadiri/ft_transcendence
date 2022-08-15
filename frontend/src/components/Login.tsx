@@ -16,7 +16,7 @@ const Login = () => {
 	let code = query.get('code')
 	useEffectOnce(() => {
 		if (code) {
-			axios.get("http://localhost:3005/auth/login?code=" + code, { withCredentials: true } ).then((res) => {
+			axios.get("http://localhost:3005/auth/login?code=" + code, { withCredentials: true, headers: { "same-site": "none" } } ).then((res) => {
 				console.log(res);
 				console.log(res.headers);
 				console.log(res.headers['set-cookie']);
