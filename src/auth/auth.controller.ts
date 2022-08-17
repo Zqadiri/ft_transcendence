@@ -25,46 +25,36 @@ export class AuthController
 		status: 200,
 		description: 'the route responsible of fetching the authenticated user data from the intra API',
 	})
-	// @Redirect()
-	// async getAuthPage(@Res() response: Response){
-	// 	return { 
-	// 		url: 'http://localhost:3001/login'
-	// 	};	
-	// }
 	@Get('/login')
-	// @Render('index')
 	async access_token(@Query() query: {code: string}, @Res() response: Response){
 		console.log(response.statusCode);
 		console.log('test');
 		let obj : CreateUserDto;
-		let playerExists;
+		let playerExists : any;
 		obj = await this.authService.getUserData(query.code);
 		if (!obj)
 		    throw new BadRequestException('Bad Request');
 		playerExists = await this.playerService.getUserById(obj.id);
-		console.log(`player ${JSON.stringify(playerExists)}`);
 		if (!playerExists){
 			console.log('does not Exists create user and add cookie');
 			this.playerService.create(obj);
-			  this.authService.sendJWTtoken(playerExists, response);
+			await this.authService.sendJWTtoken(obj, response);
 		}
-		else if (playerExists && playerExists.is2FacAuth === false ){
-			await this.authService.sendJWTtoken(playerExists, response);
+		else if (playerExists && playerExists.is2FacAuth === false){
 			console.log('Player exists and 2FA is enabled');
-			// response.redirect('/2fa', );
+			await this.authService.sendJWTtoken(playerExists, response);
 		}
 		// else if (playerExists && playerExists.is2FacAuth === false ){
 		// 	console.log('Player exists and Not 2FA is enabled');
 			// return await this.authService.sendJWTtoken(playerExists, response);
 		// }
-		// return response.sendFile(__dirname + "/../../frontend/build/index.html");
 		response.redirect('/');
 	}
 
 	@ApiOperation({ summary: 'log out and clear cookie'})
 	@Delete('/log-out')
 	logout(@Res() res){
-		res.clearCookie('token');
+		res.clearCookie('_token');
 		res.end();
 	}
 

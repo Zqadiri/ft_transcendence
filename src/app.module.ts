@@ -50,7 +50,7 @@ require('dotenv').config();
 				password: process.env.POSTGRES_PASSWORD,
 				database: process.env.POSTGRES_DATABASE,
 				entities: [
-					User, Friend, Chat, ChatLogs, Auth
+					User, Friend, Chat, ChatLogs, Auth, Game
 				],
 				synchronize: true,
 			}),

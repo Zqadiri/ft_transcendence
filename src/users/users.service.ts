@@ -24,7 +24,7 @@ export class UsersService {
 			const _error = validate(newUser);
 			if ((await _error).length)
 				throw new HttpException({ message: 'User Data Validation Failed', _error }, HttpStatus.BAD_REQUEST);
-			return this.userRepository.save(newUser);
+			return await this.userRepository.save(newUser);
 		}
 	
 		async update(userID : number, updateUserDto : UpdateUserDto){
