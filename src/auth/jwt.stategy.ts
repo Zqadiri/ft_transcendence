@@ -12,7 +12,7 @@ function cookieExtractor(req: any) : string {
 		.find((cookie: string) => cookie.startsWith('_token'))
 		.split('=')[1]
 	}
-	console.log(` EXTRACT [${token}]`);
+	console.log(`EXTRACT [${token}]`);
 	return token;
 };
 

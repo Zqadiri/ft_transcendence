@@ -25,8 +25,6 @@ function uploadInterceptor (options: uploadInterceptorOptions): Type<NestInterce
               destination
             })
         }
-        // console.log(`filesDestination : ${filesDestination} , dest: ${destination}`);
- 
       this.fileInterceptor = new (FileInterceptor(options.fieldName, multerOptions));
     }
  

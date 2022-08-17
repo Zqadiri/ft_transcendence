@@ -20,6 +20,7 @@ export class AuthService {
 	constructor (
 		private readonly jwtService: JwtService
 	){}
+
 	async getAccessToken(code : string) : Promise<string> {
 		let ret : string;
 		const  payload = {
@@ -66,7 +67,7 @@ export class AuthService {
 				const username = res.data.login;
 				const email = res.data.email;
 				const id = res.data.id;
-				const avatar = `https://avatars.dicebear.com/api/croodles/${username}.svg`
+				const avatar = `https://avatars.dicebear.com/api/identicon/${username}.svg`
 				const TwoFA  = res.data.is2FacAuth;
 				data = {id, username, email, avatar, TwoFA};
 				return data;
@@ -79,20 +80,40 @@ export class AuthService {
 		return data;
 	}
 
-	async sendJWTtoken(user: User, @Res() response: Response){
+	async sendJWTtoken(user: CreateUserDto, @Res() response: Response){
 		let {access_token} = await this.loginWithCredentials(user);
 		console.log(`access token :  ` + access_token);
 		response.cookie('_token', access_token,{
-			maxAge: 1000 * 60 * 15, // would expire after 15 minutes
-			httpOnly: true, // The cookie only accessible by the web server
+			maxAge: 1000 * 60 * 15,
+			httpOnly: false,
 			domain: 'localhost',
+			sameSite: "none",
+			secure: true,
 			path: '/'
 		});
-		return response.send({
-			id: user.id,
-			name: user.username,
-			avatar: user.avatar,
-			email: user.email
+		response.cookie('name', user.username,{
+			maxAge: 1000 * 60 * 15,
+			httpOnly: false,
+			domain: 'localhost',
+			sameSite: "none",
+			secure: true,
+			path: '/'
+		});
+		response.cookie('id', user.id,{
+			maxAge: 1000 * 60 * 15,
+			httpOnly: false,
+			domain: 'localhost',
+			sameSite: "none",
+			secure: true,
+			path: '/'
+		});
+		response.cookie('avatar', user.avatar,{
+			maxAge: 1000 * 60 * 15,
+			httpOnly: false,
+			domain: 'localhost',
+			sameSite: "none",
+			secure: true,
+			path: '/'
 		});
 	}
 
@@ -102,7 +123,8 @@ export class AuthService {
 		sign function . the sign function generates a JWT.
 	*/
 
-	async loginWithCredentials(user: User) {
+	async loginWithCredentials(user: CreateUserDto) {
+		console.log({user})
 		const payload = {username: user.username, id: user.id}; //add iS2fa 
 		return { access_token : await this.jwtService.signAsync(payload, {
 			secret: String(process.env.JWT_SECRET_KEY)}) 

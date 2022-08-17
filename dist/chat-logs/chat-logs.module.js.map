@@ -1,1 +1,0 @@
-{"version":3,"file":"chat-logs.module.js","sourceRoot":"","sources":["../../src/chat-logs/chat-logs.module.ts"],"names":[],"mappings":";;;;;;;;;AAAA,2CAAwC;AACxC,iEAA4D;AAC5D,2DAAsD;AAMtD,IAAa,cAAc,GAA3B,MAAa,cAAc;CAAG,CAAA;AAAjB,cAAc;IAJ1B,IAAA,eAAM,EAAC;QACN,WAAW,EAAE,CAAC,yCAAkB,CAAC;QACjC,SAAS,EAAE,CAAC,mCAAe,CAAC;KAC7B,CAAC;GACW,cAAc,CAAG;AAAjB,wCAAc"}

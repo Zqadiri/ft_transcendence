@@ -2,8 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('db_game')
 export class Game{
-	@PrimaryGeneratedColumn()
-	@Column()
+	@Column({primary: true})
 	id: number;
 
 	@Column({default: false})
