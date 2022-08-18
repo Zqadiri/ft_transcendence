@@ -47,6 +47,12 @@ export class User{
 	@Column({default: false})
 	Matched : boolean;
 
+	@Column('varchar',{
+		array: true,
+		nullable: true
+	})
+	achievement: string[];
+
 	@Column({ 
 		type: 'timestamp', 
 		default: () => 'CURRENT_TIMESTAMP' 
