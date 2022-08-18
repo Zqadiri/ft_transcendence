@@ -21,7 +21,7 @@ This project is fully coded in Typescript and could be deployed with docker-comp
 
 ## Documention:
 
-If you are more curious, you could find our Notion documentation below.
+If you are more curious about this project , you could find our Notion documentation below.
 
 [Notion Documentation](https://earthy-mandarin-bcd.notion.site/ft_transcendence-4c0eab9f7e3a4a95a6b2f402518c294c)
 

@@ -19,4 +19,10 @@ describe('AppController', () => {
       expect(appController.getHello()).toBe('Hello World!');
     });
   });
+
+  describe('authentication_page', () => {
+    it('should return the auth page', () => {
+      expect(appController.getAuthPage()).
+    });
+  });
 });
