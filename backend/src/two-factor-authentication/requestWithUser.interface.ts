@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { User } from '../../users/entities/user.entity'
+import { User } from '../users/entities/user.entity'
 
 /*
     Interfaces is an abstract type that includes a certain set of fields 

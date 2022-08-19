@@ -10,24 +10,24 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 */
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
-  );
+	const app = await NestFactory.create<NestExpressApplication>(
+		AppModule,
+	);
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('pong pong API')
-    .setDescription('The pong API description')
-    .setVersion('1.0')
-    .build();
+	const swaggerConfig = new DocumentBuilder()
+		.setTitle('pong pong API')
+		.setDescription('The pong API description')
+		.setVersion('1.0')
+		.build();
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-    SwaggerModule.setup('api', app, document);
+	const document = SwaggerModule.createDocument(app, swaggerConfig);
+	SwaggerModule.setup('api', app, document);
 
-  app.set('view engine', 'html');
-  app.useStaticAssets(join(__dirname, '../..', 'frontend/build'));
-  app.setBaseViewsDir(join(__dirname, '../..', 'frontend/build'));
-  app.enableCors({ origin: "http://localhost:3000", credentials: true });
-  await app.listen(3000);
+	// app.useStaticAssets(join(__dirname, '../..', 'frontend/build'));
+	// app.setBaseViewsDir(join(__dirname, '../..', 'frontend/build'));
+	// app.set('view engine', 'html');
+	// app.enableCors({ origin: "http://localhost:3000", credentials: true });
+	await app.listen(3000);
 
 }
 
