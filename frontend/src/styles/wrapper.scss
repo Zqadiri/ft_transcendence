@@ -1,0 +1,70 @@
+@import "./palette.scss";
+
+.c_wrapper {
+	background-color: $pastel_yellow;
+	.navbar {
+		padding: 10px;
+		background-color: $richer_yellow;
+		.navelem {
+			flex-basis: 100px;
+		}
+		.mid {
+			h1 {
+				font-weight: 900;
+				font-size: 300%;
+			}
+		}
+		.right {
+			position: relative;
+			background-color: $red_magenta;
+			padding: 7px;
+			border-radius: 99px;
+			cursor: pointer;
+			.name {
+				user-select: none;
+				font-weight: 600;
+				padding-inline: 10px;
+				color: white;
+			}
+			.icon {
+				.avatar {
+					width: 100%;
+					max-height: 40px;
+					max-width: 40px;
+					border-radius: 99px;
+				}
+			}
+			.dropdown {
+				&.hidden {
+					display: none;
+				}
+				cursor: default;
+				display: flex;
+				flex-direction: column;
+				gap: 5px;
+				background-color: white;
+				width: 100px;
+				padding: 10px;
+				border-radius: 10px;
+				position: absolute;
+				top: 60px;
+				border: 1px solid $red_magenta;
+				.bar {
+					border-top: 1px solid $red_magenta;
+				}
+				.elem {
+					* {
+						color: $red_magenta;
+					}
+					i {
+						font-size: 12px;
+					}
+					span {
+						user-select: none;
+					}
+					cursor: pointer;
+				}
+			}
+		}
+	}
+}

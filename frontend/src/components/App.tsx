@@ -1,16 +1,16 @@
 import '../styles/defaults.scss'
 import { Routes, Route, Navigate, Link } from "react-router-dom";
-import { cookies, ShowConditionally, useEffectOnce } from './util';
+import { cookies, isLoggedIn, ShowConditionally, useEffectOnce } from './util';
 import { useEffect } from 'react';
-import Home from './Home'
+import NavAndChatWrapper from './NavAndChatWrapper'
 import Login from './Login';
 import { globalContext } from './util';
 import { useState } from 'react';
 
 function App() {
-	const [loggedIn, setLoggedIn] = useState(cookies.get("_token"));
+	const [loggedIn, setLoggedIn] = useState(isLoggedIn());
 	useEffectOnce(() => {
-		console.log({cookie: cookies.get("_token")});
+		console.log({cookie: isLoggedIn()});
 	})
 	return (
 		<div className="app w100 h100">
@@ -18,17 +18,17 @@ function App() {
 				loggedIn, setLoggedIn
 			}}>
 				<Routes>
-					<Route path="/"
+					<Route path="*"
 						element={
-							<ShowConditionally cond={cookies.get("_token")} >
-								<Home/>
+							<ShowConditionally cond={isLoggedIn()} >
+								<NavAndChatWrapper/>
 								<Navigate to="/login" replace/>
 							</ShowConditionally>
 						}>
 					</Route>
 					<Route path="/login"
 						element={
-							<ShowConditionally cond={cookies.get("_token")} >
+							<ShowConditionally cond={isLoggedIn()} >
 								<Navigate to="/" replace/> 
 								<Login/>
 							</ShowConditionally>
@@ -36,7 +36,7 @@ function App() {
 					</Route>
 					<Route path="/auth/login"
 						element={
-							<ShowConditionally cond={cookies.get("_token")} >
+							<ShowConditionally cond={isLoggedIn()} >
 								<Navigate to="/" replace/> 
 								<Login/>
 							</ShowConditionally>

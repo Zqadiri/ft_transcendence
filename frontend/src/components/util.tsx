@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import Cookies from 'universal-cookie'
 
 export function useEffectOnce(effect: React.EffectCallback) {
@@ -49,4 +50,13 @@ export function ShowConditionally(props: any) {
 			}
 		</>
 	);
+}
+
+export function isLoggedIn() {
+	// return true;
+	return cookies.get("_token");
+}
+
+export function RRLink(props: any) {
+	return <Link {...{...props, className: "no-underline no-colors " + props.className}}></Link>
 }

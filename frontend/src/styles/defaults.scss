@@ -169,6 +169,10 @@ a.no-underline {
 	text-decoration: none;
 }
 
+a.no-colors {
+	color: inherit;
+}
+
 /* utiliy classes end */
 
 /* default styles start */
@@ -191,10 +195,18 @@ a.no-underline {
 		sans-serif;
 }
 
-html, body, .root {
+html, body, #root {
 	width: 100%;
 	height: 100%;
 }
 
 /* default styles end */
 
+/* fontawesome start */
+
+.fa-solid, .fas {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+/* fontawesome end */
