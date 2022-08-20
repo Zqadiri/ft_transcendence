@@ -72,7 +72,6 @@ export class UsersController {
 		}
 		res.send('done');
 	}
-
 	
 	@ApiOperation({ summary: 'Change a user\'s username' })
 	@Post('/update_username')

@@ -25,7 +25,7 @@ import { UserRepository } from './users/user.repository';
 import { relationRepository } from './friends/relation.repository';
 import { Chat } from './chats/entities/chat.entity';
 import { ChatLogs } from './chat-logs/entities/chat-log.entity';
-import { Auth } from './auth/auth.entity';
+import { Auth } from './auth/entities/auth.entity';
 import { Game } from './games/entities/game.entity';
 import { GameRepository } from './games/game.repository';
 import { GamesService } from './games/games.service';

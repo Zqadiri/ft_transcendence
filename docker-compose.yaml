@@ -63,4 +63,3 @@ services:
       PGADMIN_DEFAULT_PASSWORD: qwerty
     ports:
       - 5050:80
-    

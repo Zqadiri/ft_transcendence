@@ -6,7 +6,7 @@ WORKDIR /usr/frontend/src/app
 COPY package*.json ./
 
 RUN npm install
-RUN npm install -g @vue/cli
+# RUN npm install -g @vue/cli
 # RUN npm install -g @vue/cli@5.0.8
 
 # Bundle App Source

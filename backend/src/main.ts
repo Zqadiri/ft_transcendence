@@ -6,7 +6,6 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 
 /*
   NestFactory exposes a few static methods that allow creating an application instance.
-  
 */
 
 async function bootstrap() {
@@ -28,7 +27,7 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '../..', 'frontend/build'));
   app.enableCors({ origin: "http://localhost:3000", credentials: true });
   await app.listen(3000);
-
 }
 
 bootstrap();
+
