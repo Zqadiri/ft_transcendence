@@ -1,5 +1,5 @@
 import { LargeNumberLike } from "crypto";
-import { BaseEntity, BeforeInsert, BeforeUpdate, Column, Entity, Generated, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, Generated, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import * as bcrypt from 'bcryptjs';
 import { InternalServerErrorException } from "@nestjs/common";
 
@@ -33,8 +33,8 @@ export class Chat{
 	@Column({nullable: true})
 	password: string;
 
-	@Column('varchar')
-	ownerID: string;
+	@Column()
+	ownerID: number;
 
 	@Column({default: true})
 	isActive: boolean
@@ -51,36 +51,29 @@ export class Chat{
 	})
 	status: string;
 	
-	@Column('varchar',{
+	@Column("int",{
 		array: true,
 		nullable: false
 	})
-	userID: string[];
+	userID: number[];
 
-	@Column('varchar',{
+	@Column("int",{
 		array: true,
 		nullable: true
 	})
-	AdminsID: string[];
+	AdminsID: number[];
 
-	@Column('varchar',{
+	@Column("int",{
 		array: true,
 		nullable: true
 	})
-	mutedID: string[];
+	mutedID: number[];
 
-	@Column({ 
-		type: 'timestamp', 
-		default: () => 'CURRENT_TIMESTAMP' 
-	})
-	createdAt: Date;
-
-	@Column({ 
-		type: 'timestamp',
-		onUpdate: 'CURRENT_TIMESTAMP', 
-		nullable: true 
-	})
-	updatedAt: Date
+	@CreateDateColumn()
+	created: Date;
+  
+	@UpdateDateColumn()
+	updated: Date;
 
 	/*
 		TODO: Entity Listener

@@ -59,4 +59,11 @@ export class SetRolestoMembersDto
 	username: string;
 }
 
+export class RoomNamedto
+{
+	@ApiProperty({ description: "Chat Room name" })
+	name: string;
+}
+
+
 
