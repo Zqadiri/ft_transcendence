@@ -22,10 +22,10 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup('api', app, document);
 
-  app.set('view engine', 'html');
-  app.useStaticAssets(join(__dirname, '../..', 'frontend/build'));
-  app.setBaseViewsDir(join(__dirname, '../..', 'frontend/build'));
-  app.enableCors({ origin: "http://localhost:3000", credentials: true });
+  // app.set('view engine', 'html');
+  // app.useStaticAssets(join(__dirname, '../..', 'frontend/build'));
+  // app.setBaseViewsDir(join(__dirname, '../..', 'frontend/build'));
+  // app.enableCors({ origin: "http://localhost:3000", credentials: true });
   await app.listen(3000);
 }
 

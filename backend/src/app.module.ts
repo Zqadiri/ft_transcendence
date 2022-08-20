@@ -29,12 +29,17 @@ import { Auth } from './auth/entities/auth.entity';
 import { Game } from './games/entities/game.entity';
 import { GameRepository } from './games/game.repository';
 import { GamesService } from './games/games.service';
+import { ServeStaticModule } from '@nestjs/serve-static'
+import { join } from 'path';
 
 require('dotenv').config();
 
 @Module({
 	imports: 
 		[
+			ServeStaticModule.forRoot({
+				rootPath: join(__dirname, "../..", "frontend/build"),
+			}),
 			PassportModule.register({ defaultStrategy: 'jwt' }),
 			ConfigModule.forRoot({
 				envFilePath: '.env',
