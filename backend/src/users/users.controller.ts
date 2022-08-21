@@ -58,7 +58,7 @@ export class UsersController {
 	async AddFriend(@Body('id') userID : number, @Req() req, @Res() res){
 		console.log(`${JSON.stringify(req.body.user)}`);
 		try {
-			const firstUser  = await this.usersService.getUserById(58526);
+			const firstUser  = await this.usersService.getUserById(userID);
 			const secondUser = await this.usersService.getUserById(req.body.user.id);
 			this.FriendService.createFriendRelation({
 				FirstUser: firstUser,
