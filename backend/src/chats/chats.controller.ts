@@ -20,7 +20,7 @@ export class ChatController {
 	@Post('/createroom/:ownerID')
 	@HttpCode(201)
 	//@UseGuards(jwtAuthGuard)
-	async createRoom(@Param('ownerID') ownerID: number, @Body() roomDto: CreateRoomDto) {
+	async createRoom(@Param('ownerID') ownerID: string, @Body() roomDto: CreateRoomDto) {
         console.log("Creating chat room...");
         try {
 			const newRoom = await this.chatService.createRoom(roomDto, ownerID);
@@ -32,11 +32,11 @@ export class ChatController {
     }
 
     //@UseGuards(jwtAuthGuard)
-    @Post('/join/:userID')
-    async joinRoom(@Param('userID') userID: number, @Body() roomdto: RoomDto)
+    @Post('/join/:username')
+    async joinRoom(@Param('username') username: string, @Body() roomdto: RoomDto)
     {
         try {
-            await this.chatService.JointoChatRoom(roomdto, userID);
+            await this.chatService.JointoChatRoom(roomdto, username);
             console.log("join to room...", roomdto.name);
         } catch (e) {
             console.error('Failed to join room', e);
@@ -57,7 +57,7 @@ export class ChatController {
     }
 
     @Post('/setPassword/:ownerID')
-    async SetPasswordToRoom(@Param('ownerID') ownerID: number, @Body() RoomDto: RoomDto)
+    async SetPasswordToRoom(@Param('ownerID') ownerID: string, @Body() RoomDto: RoomDto)
     {
         try {
             console.log("set password to this room...", RoomDto.name);
@@ -69,7 +69,7 @@ export class ChatController {
     }
 
     @Post('/RemovePassword/:ownerID')
-    async RemovePasswordToRoom(@Param('ownerID') ownerID: number, @Body() RoomDto: RoomDto)
+    async RemovePasswordToRoom(@Param('ownerID') ownerID: string, @Body() RoomDto: RoomDto)
     {
         try {
             console.log("remove password to this room...", RoomDto.name);
@@ -104,12 +104,12 @@ export class ChatController {
         }
     }
 
-    @Get('/allMyRoom/:userID')
-    async AllMyRooms(@Param('userID') userID: number)
+    @Get('/allMyRoom/:username')
+    async AllMyRooms(@Param('username') username: string)
     {
         try {
             console.log("display all my rooms ...");
-            return await this.chatService.DisplayAllMyRooms(userID);
+            return await this.chatService.DisplayAllMyRooms(username);
         } catch (e) {
             console.error('display all my rooms', e);
             throw e;
@@ -117,7 +117,7 @@ export class ChatController {
     }
 
     @Post('/setUserRoomAsAdmin/:ownerID')
-    async SetUserRoomAsAdmin(@Param('ownerID') ownerID: number, @Body() setRolesDto: SetRolestoMembersDto)
+    async SetUserRoomAsAdmin(@Param('ownerID') ownerID: string, @Body() setRolesDto: SetRolestoMembersDto)
     {
         try {
             console.log("Set user room as admin ...");
@@ -129,7 +129,7 @@ export class ChatController {
     }
 
     @Post('/LeaveOwnerRoom/:ownerID')
-    async LeaveOwnerRoom(@Param('ownerID') ownerID: number, @Body() RoomNamedto: RoomNamedto)
+    async LeaveOwnerRoom(@Param('ownerID') ownerID: string, @Body() RoomNamedto: RoomNamedto)
     {
         try {
             console.log("leave owner room ...", RoomNamedto );
@@ -139,7 +139,4 @@ export class ChatController {
             throw e;
         }
     }
-
-
-
 }

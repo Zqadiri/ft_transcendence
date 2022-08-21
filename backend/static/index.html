@@ -14,10 +14,33 @@
 <body>
     <main id="v-app">
         <section class="chat">
-           
-
+       
             <!-- Tabs -->
             <div class="left-panel">
+                            <!-- Create room test -->
+                <div class="container">
+                    <form action="action_page.php">
+                    
+                        <label>Room Name</label>
+                        <input v-model="name" type="text" placeholder="Chat room name..">
+                    
+                    
+                        <label for="status">Status</label>
+                        <select v-model="status" id="status" name="status">
+                        <option value="public">Public</option>
+                        <option value="protected">Protected</option>
+                        <option value="private">Private</option>
+                        </select>
+
+                        <label>password</label>
+                        <input v-model="password" type="password">
+                    
+                    
+                        <button type="submit" @click.prevent="createchatroom()">Create</button>
+                    
+                    </form>
+                </div>
+
                 <h1>Rooms</h1>
                 <div class="tab-row">
                     <button class="tab-btn" :class="{ active: activeRoom == 'general' }" @click="activeRoom = 'general'">General</button>
@@ -34,7 +57,7 @@
             <div class= "right-panel"> 
                 <div class="messagee-container">
                   <div v-for="msg of messages[activeRoom]">
-                    <strong>{{ msg.sender }}:</strong> {{ msg.message }}
+                    <strong>{{ msg.userID }}:</strong> {{ msg.message }}
                   </div>
             </div>
           
@@ -55,6 +78,9 @@
         var app = new Vue({
             el: '#v-app',
             data: {
+                name: '',
+                status: '',
+                password: '',
                 username: '',
                 text: '',
                 messages: {
@@ -73,20 +99,25 @@
             methods: {
                 sendChatMessage() {
                     if (this.isMemberOfActiveRoom) {
-                        this.socket.chat.emit('chatToServer', { sender: this.username, room: this.activeRoom, message: this.text });
+                        this.socket.chat.emit('chatToServer', { userID: this.username, roomName: this.activeRoom, message: this.text });
                         this.text = "";
                     } else {
                         alert('You must join the room before sending messages!');
                     }
                 },
                 receiveChatMessage(msg) {
-                    this.messages[msg.room].push(msg);
+                    this.messages[msg.roomName].push(msg);
                 },
                 toggleRoomMembership() {
                     if (this.isMemberOfActiveRoom) {
                         this.socket.chat.emit('leaveRoom', this.activeRoom);
                     } else {
                         this.socket.chat.emit('joinRoom', this.activeRoom);
+
+                        this.socket.chat.emit('RoomMessages', this.activeRoom, (response) => {
+                            this.messages[response.roomName] = response;
+                        });
+
                     }
                 }
             },
@@ -95,6 +126,8 @@
                     return this.rooms[this.activeRoom];
                 }
             },
+            
+            
             created() {
                 this.username = prompt('Enter your username:');
 
@@ -105,11 +138,12 @@
                 this.socket.chat.on('connect', () => {
                     this.toggleRoomMembership();
                 });
-                this.socket.chat.on('joinedRoom', (room) => {
-                    this.rooms[room] = true;
+
+                this.socket.chat.on('joinedRoom', (roomName) => {
+                    this.rooms[roomName] = true;
                 });
-                this.socket.chat.on('leftRoom', (room) => {
-                    this.rooms[room] = false;
+                this.socket.chat.on('leftRoom', (roomName) => {
+                    this.rooms[roomName] = false;
                 });
 
             }

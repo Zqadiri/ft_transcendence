@@ -16,8 +16,10 @@ export class ChatLogs extends BaseEntity {
     @Column()
     userID: string;
 
-    @Column({type: "uuid", nullable: true})
-    chatUUId: string;
+    // @Column({type: "uuid", nullable: true})
+    // chatUUId: string;
+    @Column()
+    roomName: string;
 
     @Column()
     message: string;

@@ -9,11 +9,12 @@ import { ChatController } from './chats.controller';
 import { User } from 'src/users/entities/user.entity';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
+import { ChatLogsService } from 'src/chat-logs/chat-logs.service';
 
 
 @Module({
   imports: [AuthModule, UsersModule, TypeOrmModule.forFeature([Chat, User, ChatLogs])],
-  providers: [ChatsGateway, ChatsService],
+  providers: [ChatsGateway, ChatsService, ChatLogsService],
   controllers: [ChatController]
 })
 export class ChatsModule {}

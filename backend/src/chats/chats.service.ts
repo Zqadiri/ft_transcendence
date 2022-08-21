@@ -16,8 +16,6 @@ export class ChatsService {
   @InjectRepository(User)
   private readonly Userrepository: Repository<User>;
 
-  @InjectRepository(ChatLogs)
-  private readonly ChatLogsrepository: Repository<ChatLogs>;
 
 
   /** Create DM */
@@ -29,7 +27,7 @@ export class ChatsService {
 
   /** Create ROOM */
 
-  async createRoom(room: CreateRoomDto, creator: number)
+  async createRoom(room: CreateRoomDto, creator: string)
   {
      //TODO: check if the room already exist in the database if not create a new instance of it
     const roomName = room.name;
@@ -40,16 +38,15 @@ export class ChatsService {
       throw new ConflictException({code: 'room.conflict', message: `Room with '${roomName}' already exists`})
     }
 
-    const user = await this.Userrepository.findOneBy({id: creator});
-    // const user = await this.Userrepository.findOneBy({ username: creator });
+    const user = await this.Userrepository.findOneBy({ username: creator });
 
-     if (!user){
-       throw new BadRequestException({code: 'invalid user id', message: `User with '${user.id}' does not exist`})
-     }
+    if (!user){
+      throw new BadRequestException({code: 'invalid username', message: `User with '${creator}' does not exist`})
+    }
 
     const newRoom = this.Chatrepository.create({
-      ownerID: user.id,
-      userID: [user.id],
+      ownerID: user.username,
+      userID: [user.username],
       AdminsID: [],
       mutedID: [],
       name: room.name,
@@ -58,6 +55,7 @@ export class ChatsService {
       password: room.password
 
     });
+
     await this.Chatrepository.save(newRoom);
 
     return newRoom;
@@ -65,7 +63,7 @@ export class ChatsService {
 
   /** join User to public chat room */
 
-  async JointoChatRoom(Roomdata: RoomDto, userID: number)
+  async JointoChatRoom(Roomdata: RoomDto, username: string)
   {
     // check if the current user already in userID array if not add it
     const roomName = Roomdata.name;
@@ -78,17 +76,17 @@ export class ChatsService {
 
     // check the user who want to join exist in table user
 
-    const user = await this.Userrepository.findOneBy({ id: userID });
+    const user = await this.Userrepository.findOneBy({ username: username });
 
     if (!user){
-      throw new BadRequestException({code: 'invalid userID', message: `User with '${userID}' does not exist`})
+      throw new BadRequestException({code: 'invalid username', message: `User with '${username}' does not exist`})
     }
 
-    if (!name.userID.includes(user.id))
+    if (!name.userID.includes(user.username))
     {
       if (name.status === RoomStatus.PUBLIC || name.status === RoomStatus.PRIVATE)
       {
-        name.userID.push(user.id);
+        name.userID.push(user.username);
         await this.Chatrepository.save(name);
       }
       else if (name.status === RoomStatus.PROTECTED && Roomdata.password)
@@ -98,7 +96,7 @@ export class ChatsService {
           throw new UnauthorizedException({code: 'Unauthorized', message: `Wrong password to join '${roomName}'`})
         else
         {
-          name.userID.push(user.id);
+          name.userID.push(user.username);
           await this.Chatrepository.save(name);
         }
       }
@@ -124,23 +122,24 @@ export class ChatsService {
 
     const profils = await this.Userrepository
     .createQueryBuilder("db_user")
-    .where("db_user.id IN (:...users)", { users: users.userID })
+    .where("db_user.username IN (:...users)", { users: users.userID })
     .getRawMany();
     
     return profils;
   }
+
 
   /** Change visibility */
 
   //     The channel owner can set a password required to access the channel, change
   //     it, and also remove it.
 
-  async SetPasswordToRoom(RoomDto: RoomDto, ownerID: number)
+  async SetPasswordToRoom(RoomDto: RoomDto, owner: string)
   {
     const check = await this.Chatrepository.findOneOrFail({
       where: {
           name: RoomDto.name,
-          ownerID: ownerID,
+          ownerID: owner,
       },
       }).catch(() => {
         throw new UnauthorizedException({code: 'Unauthorized', message: `can not set password to '${RoomDto.name}' chat room!!`})
@@ -151,18 +150,18 @@ export class ChatsService {
           .createQueryBuilder()
           .update(Chat)
           .set({password: hash, status: RoomStatus.PROTECTED})
-          .where("ownerID = :ownerID", { ownerID: ownerID})
+          .where("ownerID = :ownerID", { ownerID: owner})
           .andWhere("name = :name", {name: RoomDto.name})
           .execute()
 
   }
 
-  async RemovePasswordToRoom(RoomDto: RoomDto, ownerID: number)
+  async RemovePasswordToRoom(RoomDto: RoomDto, owner: string)
   {
     const check = await this.Chatrepository.findOneOrFail({
       where: {
           name: RoomDto.name,
-          ownerID: ownerID,
+          ownerID: owner,
       },
       }).catch(() => {
         throw new UnauthorizedException({code: 'Unauthorized', message: `can not remove password to '${RoomDto.name}' chat room!!`})
@@ -172,7 +171,7 @@ export class ChatsService {
           .createQueryBuilder()
           .update(Chat)
           .set({password: null, status: RoomStatus.PUBLIC})
-          .where("ownerID = :ownerID", { ownerID: ownerID})
+          .where("ownerID = :ownerID", { ownerID: owner})
           .andWhere("name = :name", {name: RoomDto.name})
           .execute()
 
@@ -184,7 +183,7 @@ export class ChatsService {
   {
     const publicrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
-    .select(['db_chat.name', 'db_chat.id'])
+    .select(['db_chat.name', 'db_chat.ownerID' ,'db_chat.id'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
     .where("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .andWhere("db_chat.status = :status", {status: RoomStatus.PUBLIC})
@@ -200,7 +199,7 @@ export class ChatsService {
   {
     const protectedrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
-    .select(['db_chat.name', 'db_chat.id'])
+    .select(['db_chat.name', 'db_chat.ownerID' ,'db_chat.id'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
     .where("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .andWhere("db_chat.status = :status", {status: RoomStatus.PROTECTED})
@@ -212,13 +211,13 @@ export class ChatsService {
   }
 
   // display all my rooms exist in the database
-  async DisplayAllMyRooms(userid: number)
+  async DisplayAllMyRooms(username: string)
   {
     const Myrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
-    .select(['db_chat.name', 'db_chat.id'])
+    .select(['db_chat.name','db_chat.ownerID', 'db_chat.id'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
-    .where(":userid = ANY (db_chat.userID)", { userid: userid })
+    .where(":username = ANY (db_chat.userID)", { username: username })
     .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .groupBy("db_chat.id")
     .addGroupBy("db_chat.name")
@@ -231,7 +230,7 @@ export class ChatsService {
   /** The channel owner is a channel administrator. They can set other users as
     administrators. */
 
-  async SetUserRoomAsAdmin(ownerID: number, SetRolestoMembersDto: SetRolestoMembersDto)
+  async SetUserRoomAsAdmin(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
   {
     // check the user who want to join exist in table user
 
@@ -244,24 +243,25 @@ export class ChatsService {
     const check = await this.Chatrepository.findOneOrFail({
       where: {
           name: SetRolestoMembersDto.RoomID,
-          ownerID: ownerID,
+          ownerID: owner,
       },
       }).catch(() => {
-        throw new BadRequestException({code: 'invalid', message: `there is no chat room with name '${SetRolestoMembersDto.RoomID}' and ownerID '${ownerID}'!!`})
+        throw new BadRequestException({code: 'invalid', message: `there is no chat room with name '${SetRolestoMembersDto.RoomID}' and owner '${owner}'!!`})
       });
-      console.log("user id", user.id);
+      console.log("user name", user.username);
       console.log("check ", check);
-      console.log("ret ", check.userID.includes(user.id));
-      if (check.userID.includes(user.id))
+      console.log("ret ", check.userID.includes(user.username));
+
+      if (check.userID.includes(user.username))
       {
         if (!check.AdminsID || check.AdminsID.length == 0)
         {
-          check.AdminsID = [user.id];
+          check.AdminsID = [user.username];
           await this.Chatrepository.save(check);
         }
-        else if (!check.AdminsID.includes(user.id))
+        else if (!check.AdminsID.includes(user.username))
         {
-          check.AdminsID.push(user.id);
+          check.AdminsID.push(user.username);
           await this.Chatrepository.save(check);
         }
       }
@@ -276,13 +276,13 @@ export class ChatsService {
         
     }
 
-    async LeaveOwnerRoom(ownerid: number, RoomName: string)
+    async LeaveOwnerRoom(owner: string, RoomName: string)
     {
        const isOwner = await this.Chatrepository.findOneOrFail({
         where: 
           {
               name: RoomName,
-              ownerID: ownerid
+              ownerID: owner
           },
        }).catch(() => {
         throw new ForbiddenException({code: 'Forbidden', message: `cannot execute this operation {LeaveOwnerRoom}`})
@@ -340,46 +340,10 @@ export class ChatsService {
         throw new ForbiddenException({code: 'Forbidden', message: `cannot execute this operation {LeaveOwnerRoom}`})
     }
 
-    
-
+    /** The administrators of a channel can ban or mute users for a limited time */
 
 
   /*-------------------------------------------------------------------------- */
   
-  
-  clientToUser = {};
-
-  identify(name: string, clientId: string)
-  {
-    this.clientToUser[clientId] = name;
-    return Object.values(this.clientToUser);
-  }
-
-  getClientName(clientId: string)
-  {
-    return this.clientToUser[clientId];
-  }
-
-  /** simple real time chat functions */
-
-  async create(chatlogsdto: ChatLogsDto, clientId: string) : Promise<ChatLogs>
-  {
-    // This action adds a new chat
-    const msg = {
-      userID: this.clientToUser[clientId],
-      message: chatlogsdto.message,
-    };
-
-    return await this.ChatLogsrepository.save(msg);
-    // this.messages.push(message);
-    // return message;
-  }
-
-  async findAll_Dm_messages() : Promise<ChatLogs[]>
-  {
-    return await this.ChatLogsrepository.find();
-    // This action returns all chats
-   // return this.messages;
-  }
 
 }

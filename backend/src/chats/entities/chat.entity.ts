@@ -33,8 +33,8 @@ export class Chat{
 	@Column({nullable: true})
 	password: string;
 
-	@Column()
-	ownerID: number;
+	@Column('varchar')
+	ownerID: string;
 
 	@Column({default: true})
 	isActive: boolean
@@ -51,23 +51,29 @@ export class Chat{
 	})
 	status: string;
 	
-	@Column("int",{
+	@Column('varchar',{
 		array: true,
 		nullable: false
 	})
-	userID: number[];
+	userID: string[];
 
-	@Column("int",{
+	@Column('varchar',{
 		array: true,
 		nullable: true
 	})
-	AdminsID: number[];
+	AdminsID: string[];
 
-	@Column("int",{
+	@Column('varchar',{
 		array: true,
 		nullable: true
 	})
-	mutedID: number[];
+	mutedID: string[];
+
+	@Column('varchar',{
+		array: true,
+		nullable: true
+	})
+	bannedID: string[];
 
 	@CreateDateColumn()
 	created: Date;
