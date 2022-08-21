@@ -1,6 +1,6 @@
 import { LargeNumberLike } from "crypto";
 import { BaseEntity, BeforeInsert, Column, Entity, Generated } from "typeorm";
-import * as bcrypt from 'bcrypt';
+// import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from "@nestjs/common";
 
 /*
@@ -87,13 +87,13 @@ export class Chat{
 		Entities can have methods with custom logic that listen to specific entity events
 	*/
 
-	@BeforeInsert()
-	async hashPassword(){
-		try{
-			this.password = await bcrypt.hash(this.password, process.env.SALT);
-		}
-		catch(err){
-			throw InternalServerErrorException;
-		}
-	}
+	// @BeforeInsert()
+	// async hashPassword(){
+	// 	try{
+	// 		this.password = await bcrypt.hash(this.password, process.env.SALT);
+	// 	}
+	// 	catch(err){
+	// 		throw InternalServerErrorException;
+	// 	}
+	// }
 }

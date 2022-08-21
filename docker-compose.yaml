@@ -1,3 +1,4 @@
+#! run with : docker compose --env-file .env up 
 version: "3.9" 
 
 services:
@@ -22,7 +23,7 @@ services:
     depends_on: 
       - postgres
     environment:
-      DATABASE_URL: postgres://qwerty:qwerty@postgres:5432/db
+      DATABASE_URL: "${DATABASE_URL}"
       NODE_ENV: dev
       PORT: 3000
     ports:
@@ -48,9 +49,9 @@ services:
     #use postgres image from dockerhub
     image: postgres:14.4
     environment:
-      POSTGRES_USER: qwerty
-      POSTGRES_PASSWORD: qwerty
-      POSTGRES_DB: db
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DATABASE}"
     ports:
       - 5432:5432
 
@@ -59,7 +60,7 @@ services:
     depends_on: 
       - postgres
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: qwerty
+      PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL}"
+      PGADMIN_DEFAULT_PASSWORD: "${PGADMIN_DEFAULT_PASSWORD}"
     ports:
       - 5050:80
