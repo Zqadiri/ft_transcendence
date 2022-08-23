@@ -1,5 +1,5 @@
 import { Controller, UseGuards, Get, Res, Post, HttpCode, Body, Param, Req } from '@nestjs/common';
-import { CreateRoomDto, RoomDto, SetRolestoMembersDto, RoomNamedto } from './dto/create-chat.dto';
+import { CreateRoomDto, RoomDto, SetRolestoMembersDto, RoomNamedto, BanOrMuteMembersDto } from './dto/create-chat.dto';
 import { ChatsService } from './chats.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
@@ -139,4 +139,96 @@ export class ChatController {
             throw e;
         }
     }
+
+    @Post('/MuteUser/:administrator')
+    async MuteUser(@Param('administrator') administrator: string, @Body() setRolesDto: BanOrMuteMembersDto)
+    {
+        try {
+            console.log("mute user room ...");
+            return await this.chatService.BanOrMuteUser(administrator, setRolesDto);
+        } catch (e) {
+            console.error('Failed to mute this user in this chat room', e);
+            throw e;
+        }
+    }
+
+    @Get('/ListMutedID/:RoomName')
+    async ListMutedID(@Param('RoomName') RoomName: string)
+    {
+        try {
+            console.log("get MutedID list...", RoomName);
+            return await this.chatService.ListMutedID(RoomName);
+         } catch (e) {
+             console.error('Failed to get muted ids list', e);
+             throw e;
+         }
+    }
+
+    @Get('/ListBannedID/:RoomName')
+    async ListBannedID(@Param('RoomName') RoomName: string)
+    {
+        try {
+            console.log("get BannedID list...", RoomName);
+            return await this.chatService.ListBannedID(RoomName);
+         } catch (e) {
+             console.error('Failed to get banned ids list', e);
+             throw e;
+         }
+    }
+
+
+
+    // @Post('/MuteUser/:administrator')
+    // async MuteUser(@Param('administrator') administrator: string, @Body() setRolesDto: SetRolestoMembersDto)
+    // {
+    //     try {
+    //         console.log("mute user room ...");
+    //         return await this.chatService.MuteUser(administrator, setRolesDto);
+    //     } catch (e) {
+    //         console.error('Failed to mute this user in this chat room', e);
+    //         throw e;
+    //     }
+    // }
+
+    // @Post('/unMuteUser/:administrator')
+    // async unMuteUser(@Param('administrator') administrator: string, @Body() setRolesDto: SetRolestoMembersDto)
+    // {
+    //     try {
+    //         console.log("unmute user room ...");
+    //         return await this.chatService.UnMuteUser(administrator, setRolesDto);
+    //     } catch (e) {
+    //         console.error('Failed to unmute this user in this chat room', e);
+    //         throw e;
+    //     }
+    // }
+
+    // @Post('/BanUser/:administrator')
+    // async BanUser(@Param('administrator') administrator: string, @Body() setRolesDto: SetRolestoMembersDto)
+    // {
+    //     try {
+    //         console.log("ban user room ...");
+    //         return await this.chatService.BanUser(administrator, setRolesDto);
+    //     } catch (e) {
+    //         console.error('Failed to ban this user in this chat room', e);
+    //         throw e;
+    //     }
+    // }
+
+    // @Post('/unBanUser/:administrator')
+    // async unBanUser(@Param('administrator') administrator: string, @Body() setRolesDto: SetRolestoMembersDto)
+    // {
+    //     try {
+    //         console.log("unban user room ...");
+    //         return await this.chatService.UnBanUser(administrator, setRolesDto);
+    //     } catch (e) {
+    //         console.error('Failed to unban this user in this chat room', e);
+    //         throw e;
+    //     }
+    // }
+
+
+
+
+
+    
 }

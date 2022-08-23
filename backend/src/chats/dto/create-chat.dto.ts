@@ -14,6 +14,11 @@ export enum ChatTypes {
 	DM = 'dm'
 }
 
+export enum Action {
+	BAN = 'ban',
+	MUTE = 'mute'
+}
+
 export class CreateDmDto
 {
 	name: string;
@@ -66,4 +71,20 @@ export class RoomNamedto
 }
 
 
+export class BanOrMuteMembersDto
+{
+	@ApiProperty({ description: "Chat Room name" })
+	RoomID: string;
+
+	@ApiProperty({ description: "member of this Chat Room" })
+	username: string;
+
+	@ApiProperty({ description: "duration of execute mute/ban member" })
+	duration: number;
+
+	@IsEnum(Action)
+	@ApiProperty({ description: "mute/ban member", enum:Action})
+	action: string;
+
+}
 

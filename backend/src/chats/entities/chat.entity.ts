@@ -63,17 +63,13 @@ export class Chat{
 	})
 	AdminsID: string[];
 
-	@Column('varchar',{
-		array: true,
-		nullable: true
-	})
-	mutedID: string[];
-
-	@Column('varchar',{
-		array: true,
-		nullable: true
-	})
-	bannedID: string[];
+	@Column({ type: "simple-json", nullable: true })
+    arrayofobject: {
+		action: string;
+        username: string;
+		current_time: number;
+        duration: number;
+    }[];
 
 	@CreateDateColumn()
 	created: Date;

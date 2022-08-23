@@ -1,12 +1,13 @@
 import { Injectable, ConflictException, BadRequestException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
-import { Repository, createQueryBuilder } from 'typeorm';
-import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes, RoomDto, SetRolestoMembersDto, RoomNamedto } from './dto/create-chat.dto';
+import { Repository, createQueryBuilder, In } from 'typeorm';
+import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes, RoomDto, SetRolestoMembersDto, BanOrMuteMembersDto, RoomNamedto, Action } from './dto/create-chat.dto';
 import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
+import { delay } from 'rxjs';
 @Injectable()
 export class ChatsService {
 
@@ -57,8 +58,7 @@ export class ChatsService {
       ownerID: user.username,
       userID: [user.username],
       AdminsID: [],
-      mutedID: [],
-      bannedID: [],
+      arrayofobject:[],
       name: room.name,
       type: ChatTypes.CHATROOM,
       status: room.status,
@@ -351,235 +351,131 @@ export class ChatsService {
 
     /** The administrators of a channel can ban or mute users for a limited time */
 
-    async UnMuteUser(administrator: string, SetRolestoMembersDto: SetRolestoMembersDto)
+    async BanOrMuteUser(administrator: string, BanOrMuteMembersDto: BanOrMuteMembersDto)
     {
-      const user = await this.findUser(SetRolestoMembersDto.username);
+      const user = await this.findUser(BanOrMuteMembersDto.username);
 
       if (!user){
-        throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.username}' does not exist`})
+        throw new BadRequestException({code: 'invalid username', message: `User with '${BanOrMuteMembersDto.username}' does not exist`})
       }
 
       const check = await this.Chatrepository.findOne({
         where: {
-            name: SetRolestoMembersDto.RoomID,
+            name: BanOrMuteMembersDto.RoomID,
             ownerID: administrator,
           },
         });
 
-        if (check && check.userID.includes(user.username))
-        {
-            if (check.mutedID.includes(user.username) && check.mutedID.length)
-            {
-              check.mutedID = check.mutedID.filter(item => item !== user.username);
-    
-              console.log("filter user ",  user.username, " from mutedID array ", check.mutedID);
-    
-              const ret_query = await this.Chatrepository
-              .createQueryBuilder()
-              .update(Chat)
-              .set({mutedID: check.mutedID})
-              .where("name = :name", {name: SetRolestoMembersDto.RoomID})
-              .execute()
-    
-              console.log("updated mutedID array", ret_query);
-            }
-            else
-              throw new ForbiddenException({code: 'Forbidden', message: `This user '${SetRolestoMembersDto.username}' is not muted for execute unmute operation!!`})
-        }
-        else if (!check && check.userID.includes(user.username))
-        {
-          if (check.AdminsID.includes(administrator))
-          {
-            if (check.mutedID.includes(user.username) && check.mutedID.length)
-            {
-              check.mutedID = check.mutedID.filter(item => item !== user.username);
-    
-              console.log("filter user ",  user.username, " from mutedID array ", check.mutedID);
-    
-              const ret_query = await this.Chatrepository
-              .createQueryBuilder()
-              .update(Chat)
-              .set({mutedID: check.mutedID})
-              .where("name = :name", {name: SetRolestoMembersDto.RoomID})
-              .execute()
-    
-              console.log("updated mutedID array", ret_query);
-            }
-            else
-              throw new ForbiddenException({code: 'Forbidden', message: `This user '${SetRolestoMembersDto.username}' is not muted for execute unmute operation!!`})
-          }
-          else
-            throw new ForbiddenException({code: 'Forbidden', message: `This administrator '${administrator}' is not in this chat room!!`})
-        }
-        else
-          throw new ForbiddenException({code: 'Forbidden', message: `This user '${SetRolestoMembersDto.username}' is not in this chat room and couldn't be muted!!`})
-      }
-
-
-    async MuteUser(administrator: string, SetRolestoMembersDto: SetRolestoMembersDto)
-    {
-      const user = await this.findUser(SetRolestoMembersDto.username);
-
-      if (!user){
-        throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.username}' does not exist`})
-      }
-
-      const check = await this.Chatrepository.findOne({
+      const checkadmin = await this.Chatrepository.findOne({
         where: {
-            name: SetRolestoMembersDto.RoomID,
-            ownerID: administrator,
+            name: BanOrMuteMembersDto.RoomID
           },
         });
+        
+        if (check && check.userID.includes(user.username) && !check.AdminsID.includes(user.username))
+        {
+          /** 
+           * You could use Array.find() method to check if the array includes the object as 
+           * "Array.includes checks for '===' in the array" which doesn't work for objects
+           */
 
-        if (check && check.userID.includes(user.username))
-        {
-          if (!check.mutedID || check.mutedID.length == 0)
+          if (!check.arrayofobject.find(element => element.username === user.username))
           {
-            check.mutedID = [user.username];
+            check.arrayofobject.push({action: BanOrMuteMembersDto.action, username: user.username, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
             await this.Chatrepository.save(check);
-          }
-          else if (!check.mutedID.includes(user.username))
-          {
-            check.mutedID.push(user.username);
-            await this.Chatrepository.save(check);
-          }
-        }
-        else if (!check && check.userID.includes(user.username) && check.name === SetRolestoMembersDto.RoomID)
-        {
-          if (check.AdminsID.includes(administrator))
-          {
-            if (!check.mutedID || check.mutedID.length == 0)
-            {
-              check.mutedID = [user.username];
-              await this.Chatrepository.save(check);
-            }
-            else if (!check.mutedID.includes(user.username))
-            {
-              check.mutedID.push(user.username);
-              await this.Chatrepository.save(check);
-            }
           }
           else
-            throw new ForbiddenException({code: 'Forbidden', message: `This administrator '${administrator}' is not in this chat room!!`})
+            throw new ForbiddenException({code: 'Forbidden', message: `this user is already muted/banned for a specific time!!`})
+            console.log("owner", administrator);
+        }
+        else if (checkadmin && checkadmin.userID.includes(user.username) && checkadmin.ownerID !== user.username)
+        {
+          if (checkadmin.AdminsID.includes(administrator))
+          {
+            if (!checkadmin.arrayofobject.find(element => element.username === user.username))
+            {
+              checkadmin.arrayofobject.push({action: BanOrMuteMembersDto.action, username: user.username, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
+              await this.Chatrepository.save(checkadmin);
+            }
+            else
+              throw new ForbiddenException({code: 'Forbidden', message: `this user is already muted/banned for a specific time!!`})
+        
+            console.log("administrator", administrator);
+          }
+          else
+            throw new ForbiddenException({code: 'Forbidden', message: `you can't mute/ban this user in this chat room!!`})
         }
         else
-          throw new ForbiddenException({code: 'Forbidden', message: `This user '${SetRolestoMembersDto.username}' is not in this chat room and couldn't be muted!!`})
+          throw new ForbiddenException({code: 'Forbidden', message: `Failed to mute/ban this user in this chat room!!`})
     }
 
-    async BanUser(administrator: string, SetRolestoMembersDto: SetRolestoMembersDto)
+    async ListMutedID(roomName: string)
     {
-      const user = await this.findUser(SetRolestoMembersDto.username);
+      const listMuted = [];
+      
+      const mutedIds = await this.Chatrepository
+      .createQueryBuilder("db_chat")
+      .select(['db_chat.arrayofobject']) // added selection
+      .where("db_chat.name = :name", { name: roomName })
+      .getOne();
 
-      if (!user){
-        throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.username}' does not exist`})
-      }
-
-      const check = await this.Chatrepository.findOne({
-        where: {
-            name: SetRolestoMembersDto.RoomID,
-            ownerID: administrator,
-          },
-        });
-
-        if (check && check.userID.includes(user.username))
+      for (let i = 0; i < mutedIds.arrayofobject.length; i++)
+      {
+        if ((mutedIds.arrayofobject[i].current_time + mutedIds.arrayofobject[i].duration * 1000 ) > Date.now())
         {
-          if (!check.bannedID || check.bannedID.length == 0)
-          {
-            check.bannedID = [user.username];
-            await this.Chatrepository.save(check);
-          }
-          else if (!check.bannedID.includes(user.username))
-          {
-            check.bannedID.push(user.username);
-            await this.Chatrepository.save(check);
-          }
-        }
-        else if (!check && check.userID.includes(user.username) && check.name === SetRolestoMembersDto.RoomID)
-        {
-          if (check.AdminsID.includes(administrator))
-          {
-            if (!check.bannedID || check.bannedID.length == 0)
-            {
-              check.bannedID = [user.username];
-              await this.Chatrepository.save(check);
-            }
-            else if (!check.bannedID.includes(user.username))
-            {
-              check.bannedID.push(user.username);
-              await this.Chatrepository.save(check);
-            }
-          }
-          else
-            throw new ForbiddenException({code: 'Forbidden', message: `This administrator '${administrator}' is not in this chat room!!`})
+          if (mutedIds.arrayofobject[i].action === Action.MUTE)
+            listMuted.push(mutedIds.arrayofobject[i].username);
         }
         else
-          throw new ForbiddenException({code: 'Forbidden', message: `This user '${SetRolestoMembersDto.username}' is not in this chat room and couldn't be banned!!`})
+        {
+          mutedIds.arrayofobject = mutedIds.arrayofobject.filter(item => item.username !== mutedIds.arrayofobject[i].username);
+  
+            console.log("filter user, from mutedID array ",mutedIds.arrayofobject);
+  
+            const ret_query = await this.Chatrepository
+            .createQueryBuilder()
+            .update(Chat)
+            .set({arrayofobject: mutedIds.arrayofobject})
+            .where("name = :name", { name: roomName})
+            .execute()
+        }
       }
+      return listMuted;
+    }
 
-      async UnBanUser(administrator: string, SetRolestoMembersDto: SetRolestoMembersDto)
+    async ListBannedID(roomName: string)
+    {
+      const listBaned = [];
+      
+      const bannedIds = await this.Chatrepository
+      .createQueryBuilder("db_chat")
+      .select(['db_chat.arrayofobject']) // added selection
+      .where("db_chat.name = :name", { name: roomName })
+      .getOne();
+
+      for (let i = 0; i < bannedIds.arrayofobject.length; i++)
       {
-        const user = await this.findUser(SetRolestoMembersDto.username);
-  
-        if (!user){
-          throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.username}' does not exist`})
+        if ((bannedIds.arrayofobject[i].current_time + bannedIds.arrayofobject[i].duration * 1000 ) > Date.now())
+        {
+          if (bannedIds.arrayofobject[i].action === Action.BAN)
+            listBaned.push(bannedIds.arrayofobject[i].username);
         }
+        else
+        {
+          bannedIds.arrayofobject = bannedIds.arrayofobject.filter(item => item.username !== bannedIds.arrayofobject[i].username);
   
-        const check = await this.Chatrepository.findOne({
-          where: {
-              name: SetRolestoMembersDto.RoomID,
-              ownerID: administrator,
-            },
-          });
+            console.log("filter user, from bannedID array ",bannedIds.arrayofobject);
   
-          if (check && check.userID.includes(user.username))
-          {
-              if (check.bannedID.includes(user.username) && check.bannedID.length)
-              {
-                check.bannedID = check.mutedID.filter(item => item !== user.username);
-      
-                console.log("filter user ",  user.username, " from bannedID array ", check.bannedID);
-      
-                const ret_query = await this.Chatrepository
-                .createQueryBuilder()
-                .update(Chat)
-                .set({bannedID: check.bannedID})
-                .where("name = :name", {name: SetRolestoMembersDto.RoomID})
-                .execute()
-      
-                console.log("updated bannedID array", ret_query);
-              }
-              else
-                throw new ForbiddenException({code: 'Forbidden', message: `This user '${SetRolestoMembersDto.username}' is not banned for execute unban operation!!`})
-          }
-          else if (!check && check.userID.includes(user.username) && check.name === SetRolestoMembersDto.RoomID)
-          {
-            if (check.AdminsID.includes(administrator))
-            {
-              if (check.bannedID.includes(user.username) && check.bannedID.length)
-              {
-                check.bannedID = check.bannedID.filter(item => item !== user.username);
-      
-                console.log("filter user ",  user.username, " from bannedID array ", check.bannedID);
-      
-                const ret_query = await this.Chatrepository
-                .createQueryBuilder()
-                .update(Chat)
-                .set({bannedID: check.bannedID})
-                .where("name = :name", {name: SetRolestoMembersDto.RoomID})
-                .execute()
-      
-                console.log("updated bannedID array", ret_query);
-              }
-              else
-                throw new ForbiddenException({code: 'Forbidden', message: `This user '${SetRolestoMembersDto.username}' is not banned for execute unban operation!!`})
-            }
-            else
-              throw new ForbiddenException({code: 'Forbidden', message: `This administrator '${administrator}' is not in this chat room!!`})
-          }
-          else
-            throw new ForbiddenException({code: 'Forbidden', message: `This user '${SetRolestoMembersDto.username}' is not in this chat room and couldn't be banned!!`})
+            const ret_query = await this.Chatrepository
+            .createQueryBuilder()
+            .update(Chat)
+            .set({arrayofobject: bannedIds.arrayofobject})
+            .where("name = :name", { name: roomName})
+            .execute()
         }
-
+      }
+      return listBaned;
+    }
 
   /*-------------------------------------------------------------------------- */
   
