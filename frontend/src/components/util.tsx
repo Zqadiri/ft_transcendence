@@ -60,3 +60,9 @@ export function isLoggedIn() {
 export function RRLink(props: any) {
 	return <Link {...{...props, className: "no-underline no-colors " + props.className}}></Link>
 }
+
+export function valDef(obj: any, def: any) {
+	if (obj == null || obj == undefined)
+		return def;
+	return obj;
+}

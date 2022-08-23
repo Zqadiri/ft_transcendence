@@ -2,11 +2,11 @@
 
 .c_button {
 	padding: 10px 15px;
-	background-color: $rich_yellow;
+	background-color: $pastel_dark_blue;
 	border: none;
 	border-radius: 7px;
 	cursor: pointer;
 	&:active {
-		background-color: $richer_yellow;
+		background-color: $dark_blue;
 	}
 }

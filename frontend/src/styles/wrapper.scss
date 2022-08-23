@@ -1,12 +1,12 @@
 @import "./palette.scss";
 
 .c_wrapper {
-	background-color: $pastel_yellow;
+	background-color: $pastel_white;
 	.navbar {
 		padding: 10px;
-		background-color: $richer_yellow;
+		background-color: $rich_orange;
 		.navelem {
-			flex-basis: 100px;
+			flex-basis: 114px;
 		}
 		.mid {
 			h1 {
@@ -16,7 +16,7 @@
 		}
 		.right {
 			position: relative;
-			background-color: $red_magenta;
+			background-color: $darker_blue;
 			padding: 7px;
 			border-radius: 99px;
 			cursor: pointer;
@@ -48,13 +48,13 @@
 				border-radius: 10px;
 				position: absolute;
 				top: 60px;
-				border: 1px solid $red_magenta;
+				border: 1px solid $darker_blue;
 				.bar {
-					border-top: 1px solid $red_magenta;
+					border-top: 1px solid $darker_blue;
 				}
 				.elem {
 					* {
-						color: $red_magenta;
+						color: $darker_blue;
 					}
 					i {
 						font-size: 12px;
@@ -68,3 +68,68 @@
 		}
 	}
 }
+
+.c_wrapper {
+	position: relative;
+	#chat-container {
+		pointer-events: none;
+		overflow: hidden;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		// max-height: fit-content;
+		// max-width: fit-content;
+		max-height: 500px;
+		max-width: 800px;
+		// transition: width 0.4s ease;
+		// transition: height 0.4s ease;
+		#chat {
+			pointer-events: all;
+			$pad: 5px;
+			transition: transform 0.2s ease;
+			box-sizing: border-box;
+			width: 100%;
+			height: 100%;
+			min-width: fit-content;
+			padding: $pad;
+			border-top-right-radius: 9px;
+			background-color: $less_pastel_white;
+			.top_section {
+				gap: $pad;
+				.c_button {
+					background-color: $darker_blue;
+					&:active {
+						background-color: $dark_blue;
+						color: $less_pastel_white;
+							* {
+							color: $less_pastel_white;
+						}
+					}
+					color: $pastel_dark_blue;
+					* {
+						color: $pastel_dark_blue;
+					}
+					height: 40px;
+				}
+				.controller {
+					font-size: 16px;
+					width: 40px;
+					height: 40px;
+				}
+				.chatnav {
+					flex-grow: 5;
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					gap: $pad;
+					.c_button {
+						flex-grow: 1;
+					}
+				}
+			}
+		}
+	}
+}
+

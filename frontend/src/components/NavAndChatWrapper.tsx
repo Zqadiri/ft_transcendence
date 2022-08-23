@@ -1,12 +1,24 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import "../styles/wrapper.scss"
-import { cookies, globalContext, RRLink } from "./util";
+import Button from "./Button";
+import FourOFour from "./FourOFour";
+import Home from "./Home";
+import Profile from "./Profile";
+import Settings from "./Settings";
+import UserProfile from "./UserProfile";
+import { cookies, globalContext, RRLink, valDef } from "./util";
 
 const NavAndChatWrapper = () => {
 	const { setLoggedIn } = useContext(globalContext);
 	const [userIconDropdown, setUserIconDropdown] = useState(false);
+	const [chatIsOpen, setChatIsOpen] = useState(false);
+	const chatRef = useRef<HTMLDivElement>(null);
+	const [activeTab, setActiveTab] = useState("friends");
+	useEffect(() => {
+
+	}, [chatRef.current?.clientHeight])
 	return (
 		<div className="c_wrapper d100">
 			{/* <img src={cookies.get("avatar")} alt="avatar" className="avatar" />
@@ -50,15 +62,58 @@ const NavAndChatWrapper = () => {
 			</nav>
 			<Routes>
 				<Route path="/" element={
-					<h1>home</h1>
+					<Home/>
 				}/>
 				<Route path="/settings" element={
-					<h1>settings</h1>
+					<Settings/>
+				}/>
+				<Route path="/profile/:userId" element={
+					<UserProfile/>
 				}/>
 				<Route path="/profile" element={
-					<h1>profile</h1>
+					<Profile/>
+				}/>
+				<Route path="*" element={
+					<FourOFour/>
 				}/>
 			</Routes>
+			<div id="chat-container" style={
+				{
+					// width: chatIsOpen ? "800px" : "44px",
+					// height: chatIsOpen ? "500px" : "44px"
+				}
+			}>
+				<div id="chat" ref={chatRef} style={
+					{
+						transform: chatIsOpen ? "translate(0px, 0px)" :
+						`translate(calc(-100% + 50px), calc(100% - 50px))`
+					}
+				}>
+					<div className="container top_section flex-jc-sb flex-ai-cr">
+						<nav className="chatnav">
+							<Button onClick={() => { setActiveTab("friends"); }}>Friends</Button>
+							<Button onClick={() => { setActiveTab("chat"); }}>Chat</Button>
+							<Button onClick={() => { setActiveTab("rooms"); }}>Rooms</Button>
+						</nav>
+						<Button className="controller flex-center" onClick={() => {
+							setChatIsOpen(!chatIsOpen);
+						}}>
+							<i className="fa-solid fa-message"></i>
+						</Button>
+					</div>
+					<div className="body">
+						<div className="friends" style={{display: activeTab === "friends" ? "block" : "none"}}>
+							friends
+						</div>
+						<div className="chat" style={{display: activeTab === "chat" ? "block" : "none"}}>
+							chat
+						</div>
+						<div className="rooms" style={{display: activeTab === "rooms" ? "block" : "none"}}>
+							rooms
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 }
