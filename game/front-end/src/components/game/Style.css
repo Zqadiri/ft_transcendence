@@ -1,0 +1,82 @@
+.test {
+	background-color: #112B3C;
+	background-color: #205375;
+	background-color: #F66B0E;
+	background-color: #EFEFEF;
+}
+
+.react-tabs__tab-list {
+	margin-top: 7%;
+	text-align: center;
+}
+
+.react-tabs__tab {
+	text-decoration: none;
+	color: #fff;
+	font-size: 25px;
+	background-color: #205375;
+	display: inline-block;
+	padding: 20px 80px;
+	font-weight: bold;
+	transition: 0.3s;
+	cursor:pointer
+}
+
+.react-tabs__tab:hover {
+	background-color: #F66B0E;
+}
+
+.react-tabs__tab:last-child {
+
+	border-left: 1px solid #fff;
+}
+
+.react-tabs__tab--selected {
+	background-color: #F66B0E;
+}
+
+.matching-container {
+	text-align: center;
+	margin-top: 5% ;
+}
+
+.matching-container button {
+	border: none;
+	width: 400px;
+	height: 300px;
+	background-color: #EFEFEF;
+	font-size: 18px;
+	transition: 0.3s;
+	cursor: pointer;
+}
+
+.matching-container button:last-child {
+	margin-left: 40px
+}
+
+.matching-container .active-theme {
+	background-color: #205375;
+	color: #fff
+}
+
+.match-me {
+	text-align: center;
+	margin-top: 3%;
+}
+
+.match-me button {
+	border: 4px solid #F66B0E;
+	color: #F66B0E;
+	padding: 20px 35px;
+	background-color: #fff;
+	font-size: 20px;
+	font-weight: bold;
+	border-radius: 20px;
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+.match-me button:hover {
+	background-color: #F66B0E;
+	color: #fff
+}

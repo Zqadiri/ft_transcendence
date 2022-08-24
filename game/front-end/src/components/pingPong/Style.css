@@ -1,0 +1,18 @@
+.container {
+	text-align: center;
+	/* margin: 0;
+	position: absolute;
+	top: 50%;
+	-ms-transform: translateY(-50%);
+	transform: translateY(-50%);
+	text-align: center; */
+}
+
+.container h1 {
+	color: #0fce6f;
+	padding: 0;
+	margin: 10px 0;
+	width: 50%;
+	float: left;
+	font-size: -webkit-xxx-large;
+}

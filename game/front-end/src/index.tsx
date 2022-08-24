@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import PingPong from './components/PingPong';
+import Game from './components/game/Game';
 
 const root: ReactDOM.Root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -9,6 +9,6 @@ const root: ReactDOM.Root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <PingPong />
+    <Game />
   </React.StrictMode>
 );

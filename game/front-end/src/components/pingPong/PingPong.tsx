@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import '../App.css';
+import './Style.css';
 import Canvas from './Canvas';
 import Score from './Score';
-import { canvas, ball, user1, user2, net, Users, Directions } from '../data/PingPong.d'; 
+import { canvas, ball, user1, user2, net, Users, Directions } from './data/PingPong.d'; 
 
 export let g_setScore1: React.Dispatch<React.SetStateAction<number>>;
 export let g_setScore2: React.Dispatch<React.SetStateAction<number>>;
