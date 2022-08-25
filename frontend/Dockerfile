@@ -1,4 +1,3 @@
-
 FROM node:18 as dev
 
 
@@ -17,4 +16,3 @@ COPY . .
 RUN npm run build
 
 EXPOSE 8080
-
