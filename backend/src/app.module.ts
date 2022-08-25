@@ -26,12 +26,17 @@ import { Chat } from './chats/entities/chat.entity';
 import { ChatLogs } from './chat-logs/entities/chat-log.entity';
 import { Auth } from './auth/auth.entity';
 import { User } from './users/entities/user.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 require('dotenv').config();
 
 @Module({
 	imports: 
 		[
+			ServeStaticModule.forRoot({
+				rootPath: join(__dirname, "../..", "frontend/build"),
+			}),
 			PassportModule.register({ defaultStrategy: 'jwt' }),
 			ConfigModule.forRoot({
 				envFilePath: '.env',
