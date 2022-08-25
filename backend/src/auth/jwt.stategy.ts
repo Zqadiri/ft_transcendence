@@ -3,7 +3,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { UsersService } from "src/users/users.service";
 
-function cookieExtractor(req) : string {
+function cookieExtractor(req: any) : string {
 	var token = null;
 	console.log(` return ${req.headers.cookie}`);
 	if (req && req.headers.cookie){
@@ -12,7 +12,7 @@ function cookieExtractor(req) : string {
 		.find((cookie: string) => cookie.startsWith('_token'))
 		.split('=')[1]
 	}
-	console.log(` EXTRACT [${token}]`);
+	console.log(`EXTRACT [${token}]`);
 	return token;
 };
 
