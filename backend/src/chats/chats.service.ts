@@ -285,18 +285,17 @@ export class ChatsService {
         
     }
 
-    async LeaveOwnerRoom(owner: string, RoomName: string)
+    async LeaveRoom(username: string, RoomName: string)
     {
-      const isOwner = await this.Chatrepository.findOneOrFail({
+      const isOwner = await this.Chatrepository.findOne({
         where: 
           {
               name: RoomName,
-              ownerID: owner
+              ownerID: username
           },
-      }).catch(() => {
-        throw new ForbiddenException({code: 'Forbidden', message: `cannot execute this operation {LeaveOwnerRoom}`})
       });
 
+      const isUserRoom = await this.findRoom(RoomName);
       if (isOwner)
       {
         if (isOwner.AdminsID.length)
@@ -319,7 +318,8 @@ export class ChatsService {
 
           console.log("Leave the channel and give ownership to a random admin ", isOwner);
 
-        } else if (!(isOwner.userID.length === 1))
+        }
+        else if (!(isOwner.userID.length === 1))
         {
           isOwner.userID = isOwner.userID.filter(item => item !== isOwner.ownerID);
 
@@ -344,6 +344,28 @@ export class ChatsService {
           .execute()
           console.log("the Room is deleted ");
         }
+      }
+      else if (isUserRoom)
+      {
+        if (isUserRoom.userID.includes(username))
+        {
+          if (isUserRoom.AdminsID.includes(username))
+          {
+            isUserRoom.AdminsID = isUserRoom.AdminsID.filter(item => item !== username);
+            console.log("Simple Admin Leaving this room");
+          }
+          isUserRoom.userID = isUserRoom.userID.filter(item => item !== username);
+       
+          const ret_query = await this.Chatrepository
+          .createQueryBuilder()
+          .update(Chat)
+          .set({userID: isUserRoom.userID, AdminsID: isUserRoom.AdminsID})
+          .where("name = :name", {name: RoomName})
+          .execute()
+          console.log("Simple user Leaving this room", isUserRoom);
+        }
+        else
+          throw new ForbiddenException({code: 'Forbidden', message: `cannot execute this operation {LeaveUserRoom}`})
       }
       else
         throw new ForbiddenException({code: 'Forbidden', message: `cannot execute this operation {LeaveOwnerRoom}`})

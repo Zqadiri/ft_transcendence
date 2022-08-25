@@ -128,12 +128,12 @@ export class ChatController {
         }
     }
 
-    @Post('/LeaveOwnerRoom/:ownerID')
-    async LeaveOwnerRoom(@Param('ownerID') ownerID: string, @Body() RoomNamedto: RoomNamedto)
+    @Post('/LeaveRoom/:ownerID')
+    async LeaveRoom(@Param('ownerID') ownerID: string, @Body() RoomNamedto: RoomNamedto)
     {
         try {
-            console.log("leave owner room ...", RoomNamedto );
-            return await this.chatService.LeaveOwnerRoom(ownerID, RoomNamedto.name);
+            console.log("leave room ...", RoomNamedto );
+            return await this.chatService.LeaveRoom(ownerID, RoomNamedto.name);
         } catch (e) {
             console.error('Failed to leave room', e);
             throw e;
@@ -175,60 +175,5 @@ export class ChatController {
              throw e;
          }
     }
-
-
-
-    // @Post('/MuteUser/:administrator')
-    // async MuteUser(@Param('administrator') administrator: string, @Body() setRolesDto: SetRolestoMembersDto)
-    // {
-    //     try {
-    //         console.log("mute user room ...");
-    //         return await this.chatService.MuteUser(administrator, setRolesDto);
-    //     } catch (e) {
-    //         console.error('Failed to mute this user in this chat room', e);
-    //         throw e;
-    //     }
-    // }
-
-    // @Post('/unMuteUser/:administrator')
-    // async unMuteUser(@Param('administrator') administrator: string, @Body() setRolesDto: SetRolestoMembersDto)
-    // {
-    //     try {
-    //         console.log("unmute user room ...");
-    //         return await this.chatService.UnMuteUser(administrator, setRolesDto);
-    //     } catch (e) {
-    //         console.error('Failed to unmute this user in this chat room', e);
-    //         throw e;
-    //     }
-    // }
-
-    // @Post('/BanUser/:administrator')
-    // async BanUser(@Param('administrator') administrator: string, @Body() setRolesDto: SetRolestoMembersDto)
-    // {
-    //     try {
-    //         console.log("ban user room ...");
-    //         return await this.chatService.BanUser(administrator, setRolesDto);
-    //     } catch (e) {
-    //         console.error('Failed to ban this user in this chat room', e);
-    //         throw e;
-    //     }
-    // }
-
-    // @Post('/unBanUser/:administrator')
-    // async unBanUser(@Param('administrator') administrator: string, @Body() setRolesDto: SetRolestoMembersDto)
-    // {
-    //     try {
-    //         console.log("unban user room ...");
-    //         return await this.chatService.UnBanUser(administrator, setRolesDto);
-    //     } catch (e) {
-    //         console.error('Failed to unban this user in this chat room', e);
-    //         throw e;
-    //     }
-    // }
-
-
-
-
-
     
 }
