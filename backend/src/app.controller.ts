@@ -14,12 +14,12 @@ export class AppController {
 			private readonly appService: AppService,
 		) {}
  
-	@ApiOperation({ summary: 'Get the main page' })
-	@Get()
-	@Render('index')
-	root(){
-		return ({message: 'hehe'});
-	}
+	// @ApiOperation({ summary: 'Get the main page' })
+	// @Get()
+	// @Render('index')
+	// root(){
+	// 	return ({message: 'hehe'});
+	// }
 
 	@ApiOperation({ summary: 'Redirect to the authorization page of the intra Api' })
 	@Get('/authentication_page')
@@ -31,11 +31,11 @@ export class AppController {
 		};	
 	}
 
-	@ApiOperation({ summary: 'Get the profile page' })
-	@Get('/2fa')
-	@Render('2fa')
-	profilePage(){
-		return ({message: 'profile'});
-	}
+	// @ApiOperation({ summary: 'Get the profile page' })
+	// @Get('/2fa')
+	// @Render('2fa')
+	// profilePage(){
+	// 	return ({message: 'profile'});
+	// }
 }
  
