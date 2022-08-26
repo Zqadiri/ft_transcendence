@@ -80,8 +80,8 @@ function	Game(): JSX.Element
 		<>
 			<Tabs className="Tabs">
 				<TabList>
-					<Tab>Play Game</Tab>
-					<Tab>Watch Game</Tab>
+					<Tab>Play a Game</Tab>
+					<Tab>Live Games</Tab>
 				</TabList>
 				<TabPanel>
 					<Matching />
