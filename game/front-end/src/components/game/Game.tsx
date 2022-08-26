@@ -14,6 +14,7 @@ const	GamesData = [
 
 function	LiveGames(): JSX.Element
 {
+	let imgsrc = "https://i.pinimg.com/originals/3f/2c/97/3f2c979b214d06e9caab8ba8326864f3.gif";
 	return (
 		<>
 			<ul className="live-games">
@@ -25,9 +26,13 @@ function	LiveGames(): JSX.Element
 									<img src={current.avatar1} alt="user avatar"/>
 									<h3>{current.user1}</h3>
 								</div>
-								<div>
+								<div className="scoreplusloader">
 									<h3>{current.score1}</h3>
-									<h3>-</h3>
+									<h3 style={{width: "100px"}}>
+										<div className="animation-container">
+											<div className="bar"></div>
+										</div>
+									</h3>	
 									<h3>{current.score2}</h3>
 								</div>
 								<div>
