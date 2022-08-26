@@ -2,6 +2,7 @@
 version: "3.9" 
 
 services:
+
 #nestjs backend
   backend:
   # build from Dockerfile
@@ -20,6 +21,8 @@ services:
     # RUN in debug mode: npm run start:debug --> Also start your vscode debugger
     # RUN in dev mode: npm run start:dev
     command: npm run start:dev
+    env_file: .
+    
     depends_on: 
       - postgres
     environment:
@@ -36,6 +39,7 @@ services:
       context: ./frontend
       target: dev
     command: npm run serve
+    env_file: .env
     volumes:
       - ./frontend:/usr/frontend/src/app
       - /usr/frontend/src/app/node-modules
@@ -48,6 +52,7 @@ services:
   postgres:
     #use postgres image from dockerhub
     image: postgres:14.4
+    env_file: .env
     environment:
       POSTGRES_USER: "${POSTGRES_USER}"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -57,6 +62,7 @@ services:
 
   postgres_admin:
     image: dpage/pgadmin4:6.11
+    env_file: .env
     depends_on: 
       - postgres
     environment:

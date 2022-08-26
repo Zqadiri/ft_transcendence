@@ -40,7 +40,7 @@ fi
 unlink ~/Library/Containers/com.docker.docker &>/dev/null ;:
 unlink ~/Library/Containers/com.docker.helper &>/dev/null ;:
 unlink ~/.docker &>/dev/null ;:
-
+z
 # Delete directories if they were not symlinks
 rm -rf ~/Library/Containers/com.docker.{docker,helper} ~/.docker &>/dev/null ;:
 
