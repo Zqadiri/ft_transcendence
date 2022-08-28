@@ -18,7 +18,7 @@
             <!-- Tabs -->
             <div class="left-panel">
                             <!-- Create room test -->
-                <div class="container">
+                <!-- <div class="container">
                     <form action="action_page.php">
                     
                         <label>Room Name</label>
@@ -39,7 +39,7 @@
                         <button type="submit" @click.prevent="createchatroom()">Create</button>
                     
                     </form>
-                </div>
+                </div> -->
 
                 <h1>Rooms</h1>
                 <div class="tab-row">
@@ -89,7 +89,7 @@
                     food: []
                 },
                 socket: { chat: null },
-                activeRoom: 'general',
+                activeRoom: '',
                 rooms: {
                     general: false,
                     random: false,
@@ -99,7 +99,7 @@
             methods: {
                 sendChatMessage() {
                     if (this.isMemberOfActiveRoom) {
-                        this.socket.chat.emit('chatToServer', { userID: this.username, roomName: this.activeRoom, message: this.text });
+                        this.socket.chat.emit('saveChatRoom', { userID: this.username, roomName: this.activeRoom, message: this.text });
                         this.text = "";
                     } else {
                         alert('You must join the room before sending messages!');
@@ -110,9 +110,12 @@
                 },
                 toggleRoomMembership() {
                     if (this.isMemberOfActiveRoom) {
-                        this.socket.chat.emit('leaveRoom', this.activeRoom);
+                        // this.socket.chat.emit('leaveRoom', this.activeRoom);
+                        this.socket.chat.emit('leaveRoom', {RoomID: this.activeRoom, username: this.username });
                     } else {
-                        this.socket.chat.emit('joinRoom', this.activeRoom);
+                        this.socket.chat.emit('joinRoom', { name: this.activeRoom, password: null, username: this.username });
+                        console.log(this.activeRoom);
+                        //this.socket.chat.emit('joinRoom', this.activeRoom);
 
                         this.socket.chat.emit('RoomMessages', this.activeRoom, (response) => {
                             this.messages[response.roomName] = response;
@@ -132,11 +135,11 @@
                 this.username = prompt('Enter your username:');
 
                 this.socket.chat = io('http://localhost:3000/chatNamespace');
-                this.socket.chat.on('chatToClient', (msg) => {
+                this.socket.chat.on('messageToRoom', (msg) => {
                     this.receiveChatMessage(msg);
                 });
                 this.socket.chat.on('connect', () => {
-                    this.toggleRoomMembership();
+                    //this.toggleRoomMembership();
                 });
 
                 this.socket.chat.on('joinedRoom', (roomName) => {

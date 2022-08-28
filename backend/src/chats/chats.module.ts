@@ -10,10 +10,11 @@ import { User } from 'src/users/entities/user.entity';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 import { ChatLogsService } from 'src/chat-logs/chat-logs.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 
 @Module({
-  imports: [AuthModule, UsersModule, TypeOrmModule.forFeature([Chat, User, ChatLogs])],
+  imports: [AuthModule, UsersModule, TypeOrmModule.forFeature([Chat, User, ChatLogs]), ScheduleModule.forRoot()],
   providers: [ChatsGateway, ChatsService, ChatLogsService],
   controllers: [ChatController]
 })

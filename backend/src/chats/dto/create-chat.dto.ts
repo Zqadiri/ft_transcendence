@@ -53,6 +53,10 @@ export class RoomDto
 	@Length(8, 24)
 	@IsOptional()
 	password: string;
+
+	@ApiProperty({ description: "username who want to join the chat Room" })
+	username: string;
+
 }
 
 export class SetRolestoMembersDto

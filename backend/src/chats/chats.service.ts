@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, BadRequestException, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException, UnauthorizedException, ForbiddenException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository, createQueryBuilder, In } from 'typeorm';
@@ -8,6 +8,7 @@ import * as bcrypt from 'bcryptjs';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 import { delay } from 'rxjs';
+import { Cron, CronExpression } from '@nestjs/schedule';
 @Injectable()
 export class ChatsService {
 
@@ -16,6 +17,8 @@ export class ChatsService {
 
   @InjectRepository(User)
   private readonly Userrepository: Repository<User>;
+
+  private readonly logger = new Logger(ChatsService.name);
 
 
   /** Create DM */
@@ -73,7 +76,7 @@ export class ChatsService {
 
   /** join User to public chat room */
 
-  async JointoChatRoom(Roomdata: RoomDto, username: string)
+  async JointoChatRoom(Roomdata: RoomDto)
   {
     // check if the current user already in userID array if not add it
     
@@ -86,9 +89,9 @@ export class ChatsService {
 
     // check the user who want to join exist in table user
 
-    const user = await this.findUser(username);
+    const user = await this.findUser(Roomdata.username);
     if (!user){
-      throw new BadRequestException({code: 'invalid username', message: `User with '${username}' does not exist`})
+      throw new BadRequestException({code: 'invalid username', message: `User with '${Roomdata.username}' does not exist`})
     }
 
     if (!name.userID.includes(user.username))
@@ -165,15 +168,15 @@ export class ChatsService {
           .execute()
   }
 
-  async RemovePasswordToRoom(RoomDto: RoomDto, owner: string)
+  async RemovePasswordToRoom(RoomName: string, owner: string)
   {
     await this.Chatrepository.findOneOrFail({
       where: {
-          name: RoomDto.name,
+          name: RoomName,
           ownerID: owner,
       },
       }).catch(() => {
-        throw new UnauthorizedException({code: 'Unauthorized', message: `can not remove password to '${RoomDto.name}' chat room!!`})
+        throw new UnauthorizedException({code: 'Unauthorized', message: `can not remove password to '${RoomName}' chat room!!`})
       });
 
       await this.Chatrepository
@@ -181,7 +184,7 @@ export class ChatsService {
           .update(Chat)
           .set({password: null, status: RoomStatus.PUBLIC})
           .where("ownerID = :ownerID", { ownerID: owner})
-          .andWhere("name = :name", {name: RoomDto.name})
+          .andWhere("name = :name", {name: RoomName})
           .execute()
 
 
@@ -285,17 +288,17 @@ export class ChatsService {
         
     }
 
-    async LeaveRoom(username: string, RoomName: string)
+    async LeaveRoom(SetRolestoMembersDto: SetRolestoMembersDto)
     {
       const isOwner = await this.Chatrepository.findOne({
         where: 
           {
-              name: RoomName,
-              ownerID: username
+              name: SetRolestoMembersDto.RoomID,
+              ownerID: SetRolestoMembersDto.username
           },
       });
 
-      const isUserRoom = await this.findRoom(RoomName);
+      const isUserRoom = await this.findRoom(SetRolestoMembersDto.RoomID);
       if (isOwner)
       {
         if (isOwner.AdminsID.length)
@@ -312,7 +315,7 @@ export class ChatsService {
           .createQueryBuilder()
           .update(Chat)
           .set({ownerID: randomadmin, userID: isOwner.userID, AdminsID: isOwner.AdminsID})
-          .where("name = :name", {name: RoomName})
+          .where("name = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
 
 
@@ -329,7 +332,7 @@ export class ChatsService {
           .createQueryBuilder()
           .update(Chat)
           .set({ownerID: randomuser, userID: isOwner.userID})
-          .andWhere("name = :name", {name: RoomName})
+          .andWhere("name = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
 
           console.log("Leave the channel and give ownership to a random user ");
@@ -340,27 +343,27 @@ export class ChatsService {
           .createQueryBuilder()
           .delete()
           .from(Chat)
-          .andWhere("name = :name", {name: RoomName})
+          .andWhere("name = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
           console.log("the Room is deleted ");
         }
       }
       else if (isUserRoom)
       {
-        if (isUserRoom.userID.includes(username))
+        if (isUserRoom.userID.includes(SetRolestoMembersDto.username))
         {
-          if (isUserRoom.AdminsID.includes(username))
+          if (isUserRoom.AdminsID.includes(SetRolestoMembersDto.username))
           {
-            isUserRoom.AdminsID = isUserRoom.AdminsID.filter(item => item !== username);
+            isUserRoom.AdminsID = isUserRoom.AdminsID.filter(item => item !== SetRolestoMembersDto.username);
             console.log("Simple Admin Leaving this room");
           }
-          isUserRoom.userID = isUserRoom.userID.filter(item => item !== username);
+          isUserRoom.userID = isUserRoom.userID.filter(item => item !== SetRolestoMembersDto.username);
        
           const ret_query = await this.Chatrepository
           .createQueryBuilder()
           .update(Chat)
           .set({userID: isUserRoom.userID, AdminsID: isUserRoom.AdminsID})
-          .where("name = :name", {name: RoomName})
+          .where("name = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
           console.log("Simple user Leaving this room", isUserRoom);
         }
@@ -430,9 +433,14 @@ export class ChatsService {
         else
           throw new ForbiddenException({code: 'Forbidden', message: `Failed to mute/ban this user in this chat room!!`})
     }
+    // @Cron(CronExpression.EVERY_30_SECONDS)
+    // handleCron() {
+    //   this.logger.debug('Called every 30 seconds');
+    // }
 
     async ListMutedID(roomName: string)
     {
+      this.logger.debug('Called every 30 seconds !!');
       const listMuted = [];
       
       const mutedIds = await this.Chatrepository
@@ -441,6 +449,8 @@ export class ChatsService {
       .where("db_chat.name = :name", { name: roomName })
       .getOne();
 
+      //if ( mutedIds.arrayofobject)
+       // this.handleCron();
       for (let i = 0; i < mutedIds.arrayofobject.length; i++)
       {
         if ((mutedIds.arrayofobject[i].current_time + mutedIds.arrayofobject[i].duration * 1000 ) > Date.now())
@@ -467,6 +477,7 @@ export class ChatsService {
 
     async ListBannedID(roomName: string)
     {
+      this.logger.debug('Called every 30 seconds !');
       const listBaned = [];
       
       const bannedIds = await this.Chatrepository
@@ -474,6 +485,9 @@ export class ChatsService {
       .select(['db_chat.arrayofobject']) // added selection
       .where("db_chat.name = :name", { name: roomName })
       .getOne();
+
+     // if (bannedIds.arrayofobject)
+       // this.handleCron();
 
       for (let i = 0; i < bannedIds.arrayofobject.length; i++)
       {

@@ -1,10 +1,12 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, WsResponse } from '@nestjs/websockets';
 import { ChatsService } from './chats.service';
 import { Server, Socket } from 'socket.io';
-import { Bind, Logger } from '@nestjs/common';
+import { Bind, Logger, Req, UseGuards } from '@nestjs/common';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogsService } from 'src/chat-logs/chat-logs.service';
-import { CreateRoomDto } from './dto/create-chat.dto';
+import { CreateRoomDto , RoomDto, SetRolestoMembersDto, RoomNamedto} from './dto/create-chat.dto';
+import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
+
 
 @WebSocketGateway(
   {
@@ -34,28 +36,47 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     console.log(` client Disconnected: ${client.id}`);
   }
 
-  @SubscribeMessage('chatToServer')
+  @SubscribeMessage('saveChatRoom')
   async create(client: Socket, @MessageBody() createChatDto: ChatLogsDto) {
 
     await this.chatLogsService.savechat(createChatDto);
     // emit the message just to specific room
-    this.server.to(createChatDto.roomName).emit('chatToClient', createChatDto);
+    this.server.to(createChatDto.roomName).emit('messageToRoom', createChatDto);
   }
 
   @SubscribeMessage('joinRoom')
-  handleJoinRoom(client: Socket, roomName:string)
+  async handleJoinRoom(@ConnectedSocket() client: Socket,  @MessageBody() Roomdata: RoomDto)
   {
-    client.join(roomName);
+    try
+    {
+      await this.chatsService.JointoChatRoom(Roomdata);
+      console.log("join to room...", Roomdata.name);
+    } 
+    catch (e)
+    {
+        console.error('Failed to join room', e);
+        throw e;
+    }
+
+    client.join(Roomdata.name);
     //emit to specific client
-    client.emit('joinedRoom', roomName);
+    client.emit('joinedRoom', Roomdata.name);
   }
 
 
   @SubscribeMessage('leaveRoom')
-  handleLeaveRoom(client: Socket, roomName:string)
+  async handleLeaveRoom(@ConnectedSocket() client: Socket,  @MessageBody() SetRolestoMembersDto: SetRolestoMembersDto)
   {
-    client.leave(roomName);
-    client.emit('leftRoom', roomName);
+      try {
+          console.log("leave room ...", SetRolestoMembersDto.RoomID);
+          await this.chatsService.LeaveRoom(SetRolestoMembersDto);
+      } catch (e) {
+          console.error('Failed to leave room', e);
+          throw e;
+      }
+
+    client.leave(SetRolestoMembersDto.RoomID);
+    client.emit('leftRoom', SetRolestoMembersDto.RoomID);
   }
 
   @SubscribeMessage('RoomMessages')
