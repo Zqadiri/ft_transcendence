@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import "../styles/wrapper.scss"
@@ -8,7 +9,7 @@ import Home from "./Home";
 import Profile from "./Profile";
 import Settings from "./Settings";
 import UserProfile from "./UserProfile";
-import { cookies, globalContext, RRLink, valDef } from "./util";
+import { cookies, globalContext, RRLink, useEffectOnce, valDef } from "./util";
 
 const NavAndChatWrapper = () => {
 	const { setLoggedIn } = useContext(globalContext);
@@ -19,6 +20,21 @@ const NavAndChatWrapper = () => {
 	useEffect(() => {
 
 	}, [chatRef.current?.clientHeight])
+
+	const [friends, setFriends] = useState([]);
+
+	useEffectOnce(() => {
+		axios.get("/users/all_friend", {
+			headers: {
+				cookie: "_token=" + cookies.get("_token") + ";"
+			}
+		}).then(res => {
+			console.log({res})
+
+		}).catch(err => {
+			console.log({err})
+		})
+	})
 	return (
 		<div className="c_wrapper d100">
 			{/* <img src={cookies.get("avatar")} alt="avatar" className="avatar" />
