@@ -14,22 +14,22 @@ const Login = () => {
 	const [query, setQuery] = useSearchParams();
 	const { loggedIn, setLoggedIn } = useContext(globalContext);
 	let code = query.get('code')
-	useEffectOnce(() => {
-		if (code) {
-			axios.get("http://localhost:3005/auth/login?code=" + code, { withCredentials: true, headers: { "same-site": "none" } } ).then((res) => {
-				console.log(res);
-				console.log(res.headers);
-				console.log(res.headers['set-cookie']);
-				console.log(cookies.get("_token"));
-				if (cookies.get("_token")) {
-					cookies.setFromObj(res.data, "/");
-					setLoggedIn(true);
-				}
-			}).catch((err) => {
-				console.log(err);
-			})
-		}
-	});
+	// useEffectOnce(() => {
+	// 	if (code) {
+	// 		axios.get("http://localhost:3005/auth/login?code=" + code, { withCredentials: true, headers: { "same-site": "none" } } ).then((res) => {
+	// 			console.log(res);
+	// 			console.log(res.headers);
+	// 			console.log(res.headers['set-cookie']);
+	// 			console.log(cookies.get("_token"));
+	// 			if (cookies.get("_token")) {
+	// 				cookies.setFromObj(res.data, "/");
+	// 				setLoggedIn(true);
+	// 			}
+	// 		}).catch((err) => {
+	// 			console.log(err);
+	// 		})
+	// 	}
+	// });
 	return (
 		<div className="c_login flex-center">
 			<div className="background d100">

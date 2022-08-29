@@ -178,6 +178,7 @@ a.no-colors {
 /* default styles start */
 
 * {
+	// max-width: 100%;
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
@@ -219,3 +220,40 @@ body {
 /* fontawesome start */
 
 /* fontawesome end */
+
+* {
+	&::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+	  }
+	  &::-webkit-scrollbar-button {
+		width: 43px;
+		height: 43px;
+	  }
+	  &::-webkit-scrollbar-thumb {
+		background: #f66b0e;
+		border: 11px none #ffffff;
+		border-radius: 50px;
+	  }
+	  &::-webkit-scrollbar-thumb:hover {
+		background: #f66b0e;
+	  }
+	  &::-webkit-scrollbar-thumb:active {
+		background: #f66b0e;
+	  }
+	  &::-webkit-scrollbar-track {
+		background: #112b3c;
+		border: 15px none #ffffff;
+		border-radius: 0px;
+	  }
+	  &::-webkit-scrollbar-track:hover {
+		background: #112b3c;
+	  }
+	  &::-webkit-scrollbar-track:active {
+		background: #112b3c;
+	  }
+	  &::-webkit-scrollbar-corner {
+		background: transparent;
+	  }
+	scrollbar-color: $rich_orange $darker_blue;
+}
