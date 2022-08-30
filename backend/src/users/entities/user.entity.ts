@@ -1,6 +1,4 @@
-import { Entity, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { Game } from "src/games/entities/game.entity";
-import { BaseEntity } from "typeorm";
+import { Entity, Column, OneToMany } from "typeorm";
 import { Friend } from "src/friends/entities/friend.entity";
 
 /*
@@ -9,7 +7,7 @@ import { Friend } from "src/friends/entities/friend.entity";
 */
 
 @Entity('db_user')
-export class User extends BaseEntity {
+export class User{
 	@Column({primary: true})
 	id: number;
 
@@ -26,7 +24,7 @@ export class User extends BaseEntity {
 	is2FacAuth: boolean;
 
 	@Column({
-		enum:['online', 'offline', 'ongame'],
+		enum:['online', 'offline', 'ingame'],
 		default: 'online'
 	})
 	status: string;
@@ -46,6 +44,15 @@ export class User extends BaseEntity {
 	@Column({default: 'Beginner'})
 	rank: string;
 
+	@Column({default: false})
+	Matched : boolean;
+
+	@Column('varchar',{
+		array: true,
+		nullable: true
+	})
+	achievement: string[];
+
 	@Column({ 
 		type: 'timestamp', 
 		default: () => 'CURRENT_TIMESTAMP' 
@@ -59,8 +66,11 @@ export class User extends BaseEntity {
 	})
 	updatedAt: Date
 
-	@OneToMany(() => Friend, (friend: Friend) => friend.user)
-	friends: Friend[];
+	@OneToMany(() => Friend, (friend: Friend) => friend.following)
+	followings: Friend[];
+
+	@OneToMany(() => Friend, (friend: Friend) => friend.follower)
+	followers: Friend[];
 
 	@Column({nullable: true})
 	twoFacAuthSecret : string;

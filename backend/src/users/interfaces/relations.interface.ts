@@ -10,10 +10,11 @@ export interface CreateRelation{
 export interface DeleteRelation{
     FirstUser: User;
     SecondUser: User;
-    
 }
 
 export interface UpdateRelation{
-
+    FirstUser: User;
+    SecondUser: User;
+    blocked: boolean;
 }
 

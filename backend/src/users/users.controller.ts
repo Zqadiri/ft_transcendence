@@ -15,10 +15,10 @@ import { User } from './entities/user.entity';
 import { AvatarDto } from './dto/upload.dto';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { FriendsService } from 'src/friends/friends.service';
-import { setFlagsFromString } from 'v8';
 
 @ApiTags('users')
 @Controller('users')
+@UseGuards(jwtAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
 
@@ -27,37 +27,12 @@ export class UsersController {
 		private readonly FriendService: FriendsService
 	){}
 
-	@ApiOperation({ summary: 'Get user data by id' })
-	@ApiResponse({
-		status: 200,
-		description: 'The found record',
-		type: User,
-	})
-	@Get(':id')
-	getUserData(@Param('id') id : number){
-		return this.usersService.getUserById(id);
-	}
-
-
-	@ApiOperation({ summary: 'Change a user\'s username' })
-	@UseGuards(jwtAuthGuard)
-	@Post('/update_username')
-	async updateUsername(@Req() req, @Body('username') newUsername: string){
-		try{
-			const result = await this.usersService.updateUsername(req.user.id, newUsername);
-		}
-		catch (err){
-			throw new UnauthorizedException('failed to update the username');
-		}
-	}
-
 	@ApiOperation({ summary: 'Change a user\'s avatar' })
 	@ApiResponse({
-		status: 200,
+		status: 200, 
 		description: 'The uploaded avatar Details',
 		type: AvatarDto,
 	})
-	@UseGuards(jwtAuthGuard)
 	@Post('/upload_avatar')
 	@HttpCode(200)
 	@UseInterceptors(uploadInterceptor({
@@ -79,14 +54,13 @@ export class UsersController {
 
 
 	@ApiOperation({ summary: 'Add a friend to a user' })
-	// @UseGuards(jwtAuthGuard)
 	@Post('/add_friend')
 	async AddFriend(@Body('id') userID : number, @Req() req, @Res() res){
-		// console.log(`${JSON.stringify(req.body.user)}`);
+		console.log(`${JSON.stringify(req.body.user)}`);
 		try {
 			const firstUser  = await this.usersService.getUserById(58526);
 			const secondUser = await this.usersService.getUserById(req.body.user.id);
-			this.FriendService.createFriend({
+			this.FriendService.createFriendRelation({
 				FirstUser: firstUser,
 				SecondUser: secondUser,
 				isFriend: false,
@@ -98,12 +72,26 @@ export class UsersController {
 		}
 		res.send('done');
 	}
-
-	@ApiOperation({ summary: 'Add a friend to a user' })
-	// @UseGuards(jwtAuthGuard)
-	@Post('/all_friend')
-	async getAllFriend(){
-		return this.FriendService.getFriendById();
+	
+	@ApiOperation({ summary: 'Change a user\'s username' })
+	@Post('/update_username')
+	async updateUsername(@Req() req, @Body('username') newUsername: string){
+		try{
+			const result = await this.usersService.updateUsername(req.user.id, newUsername);
+		}
+		catch (err){
+			throw new UnauthorizedException('failed to update the username');
+		}
 	}
 
+	@ApiOperation({ summary: 'Get user data by id' })
+	@ApiResponse({
+		status: 200,
+		description: 'The found record',
+		type: User,
+	})
+	@Get(':id')
+	getUserData(@Param('id') id : number){
+		return this.usersService.getUserById(id);
+	}
 }

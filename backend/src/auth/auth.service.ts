@@ -72,8 +72,7 @@ export class AuthService {
 				data = {id, username, email, avatar, TwoFA};
 				return data;
 			})
-			.catch((err) => {
-				console.log(err);
+			.catch((err) => { 
 			})
 		}
 		catch(err){
@@ -89,7 +88,7 @@ export class AuthService {
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "none",
-			secure: false,
+			secure: true,
 			path: '/'
 		});
 		response.cookie('name', user.username,{
@@ -97,7 +96,7 @@ export class AuthService {
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "none",
-			secure: false,
+			secure: true,
 			path: '/'
 		});
 		response.cookie('id', user.id,{
@@ -105,7 +104,7 @@ export class AuthService {
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "none",
-			secure: false,
+			secure: true,
 			path: '/'
 		});
 		response.cookie('avatar', user.avatar,{
@@ -113,7 +112,7 @@ export class AuthService {
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "none",
-			secure: false,
+			secure: true,
 			path: '/'
 		});
 	}

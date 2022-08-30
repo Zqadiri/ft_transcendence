@@ -5,7 +5,6 @@ import { Bind, Logger, Req, UseGuards } from '@nestjs/common';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogsService } from 'src/chat-logs/chat-logs.service';
 import { CreateRoomDto , RoomDto, SetRolestoMembersDto, RoomNamedto} from './dto/create-chat.dto';
-import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 
 @WebSocketGateway(
@@ -79,11 +78,12 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     client.emit('leftRoom', SetRolestoMembersDto.RoomID);
   }
 
-  @SubscribeMessage('RoomMessages')
-  async displayRoomMessages(client: Socket, roomName:string) {
-   const messages = await this.chatLogsService.DisplayRoomMessages(roomName);
-   console.log("messages", messages);
-    return messages;
+  @SubscribeMessage('GetRoomMessages')
+  async displayRoomMessages(client: Socket, roomName: string) {
+    const messages = await this.chatLogsService.DisplayRoomMessages(roomName);
+    console.log("messages", messages);
+    client.emit("RoomMessages", messages);
+   // return messages;
   }
 
    // identify the user who join the chat

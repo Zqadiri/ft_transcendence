@@ -26,6 +26,19 @@ export class ChatController {
     }
 
     @UseGuards(jwtAuthGuard)
+    @Post('/Invite')
+    async InviteUser(@Req() req, @Body() invite: SetRolestoMembersDto)
+    {
+        try {
+            console.log("inviting to join private chat room...");
+           return await this.chatService.InviteUser(req.user.username, invite);
+         } catch (e) {
+             console.error('Failed to inviting to join private chat room', e);
+             throw e;
+         }
+    }
+    
+    @UseGuards(jwtAuthGuard)
     @Get('/users/:RoomName')
     async getUsersFromRoom(@Param('RoomName') RoomName: string)
     {

@@ -7,7 +7,9 @@ import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
-import { delay } from 'rxjs';
+import { FriendsService } from 'src/friends/friends.service';
+
+
 // import { Cron, CronExpression } from '@nestjs/schedule';
 @Injectable()
 export class ChatsService {
@@ -20,7 +22,7 @@ export class ChatsService {
 
   private readonly logger = new Logger(ChatsService.name);
 
-
+  constructor(private readonly friendsService : FriendsService) {}
 
   async findUser(username: string)
   {
@@ -74,6 +76,47 @@ export class ChatsService {
 
     return newRoom;
   }
+
+async isFriend(owner: any, username: any)
+{
+  // const isfrirnd = await this.friendsService.isFollowing({FirstUser: owner, SecondUser: username});
+  // console.log(`Rela Exists: ${JSON.stringify(isfrirnd)}`);
+  // if (!isfrirnd)
+  //   throw new UnauthorizedException('this user is not my friend');
+  return (true);
+}
+
+/** invite user to join private chat room */
+async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
+{
+  const user = await this.findUser(SetRolestoMembersDto.username);
+
+  if (!user){
+    throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.username}' does not exist`})
+  }
+
+  const check = await this.Chatrepository.findOneOrFail({
+    where: {
+        name: SetRolestoMembersDto.RoomID,
+        ownerID: owner,
+    },
+    }).catch(() => {
+      throw new BadRequestException({code: 'invalid', message: `there is no chat room with name '${SetRolestoMembersDto.RoomID}' and owner '${owner}'!!`})
+    });
+
+    const isfriend = this.isFriend(check.ownerID, user.username);
+    
+    if (isfriend)
+    {
+      if (!check.InvitedUserID.includes(user.username) && check.status === RoomStatus.PRIVATE)
+      {
+        check.InvitedUserID.push(user.username);
+        await this.Chatrepository.save(check);
+      }
+    }
+    else
+      throw new ForbiddenException({code: 'Forbidden', message: `Failed to invite this users to this chat room!!`})
+}
 
   /** join User to public chat room */
 

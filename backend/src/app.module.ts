@@ -4,11 +4,12 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { GameModule } from './games/games.module';
+import { User } from './users/entities/user.entity'
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { AppLoggerMiddleware } from './logger.middleware';
 import { AuthService } from './auth/auth.service';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
 import { UsersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
@@ -24,9 +25,11 @@ import { UserRepository } from './users/user.repository';
 import { relationRepository } from './friends/relation.repository';
 import { Chat } from './chats/entities/chat.entity';
 import { ChatLogs } from './chat-logs/entities/chat-log.entity';
-import { Auth } from './auth/auth.entity';
-import { User } from './users/entities/user.entity';
-import { ServeStaticModule } from '@nestjs/serve-static';
+import { Auth } from './auth/entities/auth.entity';
+import { Game } from './games/entities/game.entity';
+import { GameRepository } from './games/game.repository';
+import { GamesService } from './games/games.service';
+import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path';
 
 require('dotenv').config();
@@ -42,18 +45,14 @@ require('dotenv').config();
 				envFilePath: '.env',
 				isGlobal: true
 			}),
-			TypeOrmModule.forFeature([User, Friend, UserRepository, relationRepository]),
+			TypeOrmModule.forFeature([User, Friend, UserRepository, relationRepository,
+							Game, GameRepository]),
 			TypeOrmModule.forRoot({
 				type: 'postgres',
-				 url: process.env.DATABASE_URL,
-				// host: process.env.POSTGRES_HOST,
-				// port: parseInt(process.env.POSTGRES_PORT),
-				// username: process.env.POSTGRES_USER,
-				// password: process.env.POSTGRES_PASSWORD,
-				// database: process.env.POSTGRES_DATABASE,
+				url: process.env.DATABASE_URL,
 				autoLoadEntities: true,
 				entities: [
-					User, Friend, Chat, ChatLogs, Auth
+					User, Friend, Chat, ChatLogs, Auth, Game
 				],
 				synchronize: true,
 			}),
@@ -67,7 +66,7 @@ require('dotenv').config();
 			ChatLogsModule
 		],
 		controllers: [AuthController, UsersController, AppController],
-		providers: [UsersService, FriendsService , JwtStrategy, AuthService,  AppService],
+		providers: [UsersService, FriendsService , JwtStrategy, AuthService,  AppService, GamesService],
 		exports: [
 			AuthService, PassportModule 
 		  ],

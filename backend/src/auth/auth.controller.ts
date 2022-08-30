@@ -32,7 +32,6 @@ export class AuthController
 		let obj : CreateUserDto;
 		let playerExists : any;
 		obj = await this.authService.getUserData(query.code);
-		console.log(` obj : ${obj} ${JSON.stringify(query)}`);
 		if (!obj)
 		    throw new BadRequestException('Bad Request');
 		playerExists = await this.playerService.getUserById(obj.id);
