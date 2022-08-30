@@ -10,3 +10,15 @@
 		background-color: $dark_blue;
 	}
 }
+
+.c_button_2 {
+	padding: 10px 15px;
+	color: $pastel_white;
+	background-color: $darker_blue;
+	border: none;
+	border-radius: 7px;
+	cursor: pointer;
+	&:active {
+		background-color: $dark_blue;
+	}
+}
