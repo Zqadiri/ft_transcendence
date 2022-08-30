@@ -17,6 +17,7 @@ const NavAndChatWrapper = () => {
 	const [chatIsOpen, setChatIsOpen] = useState(false);
 	const chatRef = useRef<HTMLDivElement>(null);
 	const [activeTab, setActiveTab] = useState("friends");
+	const [roomActiveTab, setRoomActiveTab] = useState("public");
 	useEffect(() => {
 
 	}, [chatRef.current?.clientHeight])
@@ -24,7 +25,12 @@ const NavAndChatWrapper = () => {
 	const messagesRef = useRef<HTMLDivElement>(null);
 	const submitRef = useRef<HTMLDivElement>(null);
 	const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
+	const [createRoomType, setCreateRoomType] = useState<string | null>("public");
+	const [createRoomPassword, setCreateRoomPassword] = useState("");
+	useEffect(() => {
+		if (createRoomType !== "protected")
+			setCreateRoomPassword("");
+	}, [createRoomType])
 	const [textMessage, setTextMessage] = useState("");
 	const [activeChat, setActiveChat] = useState(null);
 	const [chatRooms, setChatRooms] = useState([
@@ -171,10 +177,10 @@ const NavAndChatWrapper = () => {
 					}
 				}>
 					<div className="container top_section flex-jc-sb flex-ai-cr">
-						<nav className="chatnav">
-							<Button onClick={() => { setActiveTab("friends"); }} className={activeTab === "friends" ? "active" : "notactive"}>Friends</Button>
-							<Button onClick={() => { setActiveTab("chat"); }}className={activeTab === "chat" ? "active" : "notactive"}>Chat</Button>
-							<Button onClick={() => { setActiveTab("rooms"); }}className={activeTab === "rooms" ? "active" : "notactive"}>Rooms</Button>
+						<nav className="nav">
+							<Button onClick={() => { setActiveTab("friends"); }} className={activeTab.startsWith("friends") ? "active" : "notactive"}>Friends</Button>
+							<Button onClick={() => { setActiveTab("chat"); }} className={activeTab.startsWith("chat") ? "active" : "notactive"}>Chat</Button>
+							<Button onClick={() => { setActiveTab("rooms"); }} className={activeTab.startsWith("rooms") ? "active" : "notactive"}>Rooms</Button>
 						</nav>
 						<Button className="controller flex-center" onClick={() => {
 							setChatIsOpen(!chatIsOpen);
@@ -207,8 +213,39 @@ const NavAndChatWrapper = () => {
 								})
 							}
 						</div>
-						<div className="rooms" style={{display: activeTab === "rooms" ? "block" : "none"}}>
-							rooms
+						<div className="rooms d100 flex-column" style={{display: activeTab === "rooms" ? "flex" : "none"}}>
+							<section className="top_section flex w100">
+								<nav className="nav flex">
+									<Button onClick={() => { setRoomActiveTab("public"); }} className={"public " + (roomActiveTab.startsWith("public") ? "active" : "notactive")}>Public</Button>
+									<Button onClick={() => { setRoomActiveTab("protected"); }} className={"protected " + (roomActiveTab.startsWith("protected") ? "active" : "notactive")}>Protected</Button>
+									<Button onClick={() => { setRoomActiveTab("private"); }} className={"private " + (roomActiveTab.startsWith("private") ? "active" : "notactive")}>Private</Button>
+								</nav>
+								<Button onClick={() => { setRoomActiveTab("create"); }} className={"createnewroom controller flex-center " + (roomActiveTab.startsWith("create") ? "active" : "notactive")}>
+									<i className="fa-solid fa-plus"></i>
+								</Button>
+							</section>
+							<section className="roomsbody" style={{display: roomActiveTab === "create" ? "flex" : "none"}}>
+								<form action="">
+									<div>
+										<label htmlFor="name">Room Name:</label>
+										<input type="text" name="name" />
+									</div>
+									<div>
+										<label htmlFor="type">Type:</label>
+										<label htmlFor="radio_public">Public</label>
+										<input onChange={(e) => { setCreateRoomType(e.target.value); } }type="radio" name="type" id="radio_public" value="public" checked={createRoomType === "public"} />
+										<label htmlFor="radio_protected">Protected</label>
+										<input onChange={(e) => { setCreateRoomType(e.target.value); } }type="radio" name="type" id="radio_protected" value="protected" checked={createRoomType === "protected"} />
+										<label htmlFor="radio_private">Private</label>
+										<input onChange={(e) => { setCreateRoomType(e.target.value); } }type="radio" name="type" id="radio_private" value="private" checked={createRoomType === "private"} />
+									</div>
+									<div style={{display: createRoomType === "protected" ? "block" : "none"}}>
+										<label htmlFor="room_password">Password:</label>
+										<input type="text" id="room_password" value={createRoomPassword} onChange={(e) => { setCreateRoomPassword(e.target.value); }}/>
+									</div>
+									<input type="submit" value="Create Room" />
+								</form>
+							</section>
 						</div>
 						<div className="chatinterface d100 flex-column" style={{display: activeTab === "chatinterface" ? "flex" : "none"}}>
 							<div className="header flex-jc-sb flex-ai-cr">
@@ -253,24 +290,22 @@ const NavAndChatWrapper = () => {
 								if (submitRef.current)
 									submitRef.current.click();
 							}}>
-								{/* <input type="text" value={textMessage} onChange={(e) => {
-									setTextMessage(e.target.value);
-								}}/> */}
 								<textarea className="text_input" value={textMessage} ref={textAreaRef} onChange={(e) => {
 									setTextMessage(e.target.value);
 								}}></textarea>
 								<input type="submit" hidden />
 								<div className="submit flex-center" ref={submitRef} onClick={() => {
-									if (textMessage != "") {
+									if (textMessage.trim() != "") {
 										setActiveChatMessages((x: any) => [...x, {
 											user: {
 												userID: cookies.get("name"),
 												avatar: cookies.get("avatar")
 											},
-											content: textMessage
-										}])
-										setTextMessage("")
+											content: textMessage.trim()
+										}]);
+										setTextMessage("");
 									}
+									textAreaRef.current?.focus();
 								}}>
 									<i className="fa-solid fa-paper-plane"></i>
 								</div>
