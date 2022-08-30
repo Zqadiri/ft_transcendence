@@ -121,7 +121,7 @@
 					width: 40px;
 					height: 40px;
 				}
-				.chatnav {
+				.nav {
 					flex-grow: 5;
 					display: flex;
 					justify-content: space-between;
@@ -129,19 +129,21 @@
 					// gap: $pad;
 					.c_button {
 						border-radius: 0px;
+						flex-basis: 0px;
 						flex-grow: 1;
 					}
+					$button_border_radius: 99px;
 					.c_button:first-child {
-						border-top-left-radius: 7px;
-						border-bottom-left-radius: 7px;
+						border-top-left-radius: $button_border_radius;
+						border-bottom-left-radius: $button_border_radius;
 					}
 					.c_button:last-child {
-						border-top-right-radius: 7px;
-						border-bottom-right-radius: 7px;
+						border-top-right-radius: $button_border_radius;
+						border-bottom-right-radius: $button_border_radius;
 					}
-					.c_button.active {
-						background-color: $dark_blue;
-					}
+				}
+				.c_button.active {
+					background-color: $dark_blue;
 				}
 			}
 			.body {
@@ -267,6 +269,7 @@
 						padding-block: 10px;
 						align-items: stretch;
 						.text_input {
+							outline: 0;
 							padding-top: 5px;
 							resize: none;
 							width: 90%;
@@ -285,6 +288,20 @@
 							width: 10%;
 							background-color: $pastel_dark_blue;
 						}
+					}
+				}
+				.rooms {
+					.top_section {
+						.roomnav {
+							flex-grow: 5;
+							.c_button {
+								flex-grow: 1;
+								flex-basis: 0px;
+							}
+						}
+					}
+					.roomsbody {
+						flex-grow: 1;
 					}
 				}
 			}
