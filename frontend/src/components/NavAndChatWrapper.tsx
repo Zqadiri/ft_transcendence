@@ -243,6 +243,7 @@ const NavAndChatWrapper = () => {
 										<label htmlFor="room_password">Password:</label>
 										<input type="text" id="room_password" value={createRoomPassword} onChange={(e) => { setCreateRoomPassword(e.target.value); }}/>
 									</div>
+									<input type="submit" value="Create Room" />
 								</form>
 							</section>
 						</div>
