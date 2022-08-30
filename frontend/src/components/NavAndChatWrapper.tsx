@@ -81,20 +81,11 @@ const NavAndChatWrapper = () => {
 	}, [activeChatMessages])
 
 	useEffectOnce(() => {
-		// console.log("test");
 		if (textAreaRef.current) {
 			textAreaRef.current.addEventListener("keydown", function (e) {
-				const keyCode = e.key || e.which;
-
-				// console.log("test");
-				// console.log({ekey: e.key, keyCode, ewhich: e.which, eshift: e.shiftKey});
-				// 13 represents the Enter key
-				if (keyCode === "Enter" && !e.shiftKey) {
-					// Don't generate a new line
+				if (e.key === "Enter" && !e.shiftKey) {
 					e.preventDefault();
 					submitRef.current?.click();
-					// Do something else such as send the message to back-end
-					// ...
 				}
 			})
 		}
