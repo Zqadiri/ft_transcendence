@@ -14,10 +14,19 @@ import { cookies, getCookieHeader, globalContext, RRLink, useEffectOnce, valDef 
 const NavAndChatWrapper = () => {
 	const { setLoggedIn } = useContext(globalContext);
 	const [userIconDropdown, setUserIconDropdown] = useState(false);
-	const [chatIsOpen, setChatIsOpen] = useState(false);
+	const [chatIsOpen, setChatIsOpen] = useState(
+		// false
+		true
+	);
 	const chatRef = useRef<HTMLDivElement>(null);
-	const [activeTab, setActiveTab] = useState("friends");
-	const [roomActiveTab, setRoomActiveTab] = useState("public");
+	const [activeTab, setActiveTab] = useState(
+		// "friends"
+		"rooms"
+	);
+	const [roomActiveTab, setRoomActiveTab] = useState(
+		// "public"
+		"create"
+	);
 	useEffect(() => {
 
 	}, [chatRef.current?.clientHeight])
@@ -27,6 +36,7 @@ const NavAndChatWrapper = () => {
 	const textAreaRef = useRef<HTMLTextAreaElement>(null);
 	const [createRoomType, setCreateRoomType] = useState<string | null>("public");
 	const [createRoomPassword, setCreateRoomPassword] = useState("");
+	const [createRoomName, setCreateRoomName] = useState("");
 	useEffect(() => {
 		if (createRoomType !== "protected")
 			setCreateRoomPassword("");
@@ -114,7 +124,7 @@ const NavAndChatWrapper = () => {
 				<div className="navelem left"></div>
 				<RRLink to="/" onClick={() => { setUserIconDropdown(false) }}>
 					<div className="navelem mid">
-						<h1>PONG</h1>
+						<h1 className="flex-center"><span>P</span><span className="circle">⬤</span><span>NG!</span></h1>
 					</div>
 				</RRLink>
 				<div className="navelem right flex-center" onClick={() => { setUserIconDropdown(x => !x) }}>
@@ -224,26 +234,41 @@ const NavAndChatWrapper = () => {
 									<i className="fa-solid fa-plus"></i>
 								</Button>
 							</section>
-							<section className="roomsbody" style={{display: roomActiveTab === "create" ? "flex" : "none"}}>
-								<form action="">
-									<div>
-										<label htmlFor="name">Room Name:</label>
-										<input type="text" name="name" />
+							<section className="roomsbody flex-center-column" style={{display: roomActiveTab === "create" ? "flex" : "none"}}>
+								<form action="" className="create-room-form h100 flex-column flex-jc-cr flex-gap10" onSubmit={e => {
+									e.preventDefault();
+									console.log({createRoomName, createRoomType, createRoomPassword});
+								}}>
+									<div className="room_name flex-gap10">
+										<div className="flex-center">
+											<label htmlFor="name">Room Name:</label>
+										</div>
+										<input type="text" name="name" value={createRoomName} onChange={e => setCreateRoomName(e.target.value)}/>
 									</div>
-									<div>
+									<div className="type_container flex-gap10">
 										<label htmlFor="type">Type:</label>
-										<label htmlFor="radio_public">Public</label>
-										<input onChange={(e) => { setCreateRoomType(e.target.value); } }type="radio" name="type" id="radio_public" value="public" checked={createRoomType === "public"} />
-										<label htmlFor="radio_protected">Protected</label>
-										<input onChange={(e) => { setCreateRoomType(e.target.value); } }type="radio" name="type" id="radio_protected" value="protected" checked={createRoomType === "protected"} />
-										<label htmlFor="radio_private">Private</label>
-										<input onChange={(e) => { setCreateRoomType(e.target.value); } }type="radio" name="type" id="radio_private" value="private" checked={createRoomType === "private"} />
+										<div className="type_radios">
+											<div className="type_subcontainer flex-jc-sb flex-ai-cr">
+												<label htmlFor="radio_public">Public</label>
+												<input onChange={(e) => { setCreateRoomType(e.target.value); }} type="radio" name="type" id="radio_public" value="public" checked={createRoomType === "public"} />
+											</div>
+											<div className="type_subcontainer flex-jc-sb flex-ai-cr">
+												<label htmlFor="radio_protected">Protected</label>
+												<input onChange={(e) => { setCreateRoomType(e.target.value); }} type="radio" name="type" id="radio_protected" value="protected" checked={createRoomType === "protected"} />
+											</div>
+											<div className="type_subcontainer flex-jc-sb flex-ai-cr">
+												<label htmlFor="radio_private">Private</label>
+												<input onChange={(e) => { setCreateRoomType(e.target.value); }} type="radio" name="type" id="radio_private" value="private" checked={createRoomType === "private"} />
+											</div>
+										</div>
 									</div>
-									<div style={{display: createRoomType === "protected" ? "block" : "none"}}>
-										<label htmlFor="room_password">Password:</label>
-										<input type="text" id="room_password" value={createRoomPassword} onChange={(e) => { setCreateRoomPassword(e.target.value); }}/>
+									<div className="room_password_container flex-gap10" style={{visibility: createRoomType === "protected" ? "visible" : "hidden"}}>
+										<div className="flex-center">
+											<label htmlFor="room_password">Password:</label>
+										</div>
+										<input type="password" id="room_password" value={createRoomPassword} onChange={(e) => { setCreateRoomPassword(e.target.value); }}/>
 									</div>
-									<input type="submit" value="Create Room" />
+									<input type="submit" className="submit_button c_button_2" value="Create Room"/>
 								</form>
 							</section>
 						</div>

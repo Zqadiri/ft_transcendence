@@ -10,8 +10,14 @@
 		}
 		.mid {
 			h1 {
+				user-select: none;
 				font-weight: 900;
 				font-size: 300%;
+				color: white;
+				.circle {
+					padding-bottom: 5px;
+					font-size: 70%;
+				}
 			}
 		}
 		.right {
@@ -29,6 +35,7 @@
 			.icon {
 				width: 40px;
 				.avatar {
+					background-color: white;
 					width: 100%;
 					max-height: 40px;
 					max-width: 40px;
@@ -246,6 +253,7 @@
 									align-self: flex-start;
 									.message_text {
 										background-color: white;
+										filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
 									}
 								}
 								&.mine {
@@ -291,6 +299,7 @@
 					}
 				}
 				.rooms {
+					gap: 10px;
 					.top_section {
 						.roomnav {
 							flex-grow: 5;
@@ -302,6 +311,27 @@
 					}
 					.roomsbody {
 						flex-grow: 1;
+						.create-room-form {
+							label {
+								min-width: 100px;
+							}
+							.type_radios {
+								flex-grow: 1;
+							}
+							.type_subcontainer {
+								label {
+									flex-grow: 1;
+								}
+							}
+
+						}
+						input[type="text"], input[type="password"] {
+							background-color: white;
+							border: 2px solid $darker_blue;
+							font-weight: 600;
+							border-radius: 7px;
+							padding: 5px;
+						}
 					}
 				}
 			}
