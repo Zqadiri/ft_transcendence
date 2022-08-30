@@ -72,7 +72,8 @@ export class AuthService {
 				data = {id, username, email, avatar, TwoFA};
 				return data;
 			})
-			.catch((err) => { 
+			.catch((err) => {
+				console.log(err);
 			})
 		}
 		catch(err){
