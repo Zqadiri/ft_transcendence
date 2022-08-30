@@ -9,7 +9,7 @@ import Home from "./Home";
 import Profile from "./Profile";
 import Settings from "./Settings";
 import UserProfile from "./UserProfile";
-import { cookies, globalContext, RRLink, useEffectOnce, valDef } from "./util";
+import { cookies, getCookieHeader, globalContext, RRLink, useEffectOnce, valDef } from "./util";
 
 const NavAndChatWrapper = () => {
 	const { setLoggedIn } = useContext(globalContext);
@@ -23,37 +23,66 @@ const NavAndChatWrapper = () => {
 
 	const messagesRef = useRef<HTMLDivElement>(null);
 	const submitRef = useRef<HTMLDivElement>(null);
+	const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
 	const [textMessage, setTextMessage] = useState("");
 	const [activeChat, setActiveChat] = useState(null);
 	const [chatRooms, setChatRooms] = useState([
 		{
 			db_chat_name: "testroom",
-			db_chat_ownerID: "isaadi",
-			"number of users": 1
+			db_chat_ownerID: cookies.get("name"),
+			"number of users": 1,
+			db_chat_owner_avatar: ""
 		}
 	]);
 	const [activeChatMessages, setActiveChatMessages] = useState([
 		{
 			user: {
 				userID: "test",
-				avatar: "https://via.placeholder.com/40x40"
+				avatar: "https://picsum.photos/40/40?grayscale"
 			},
 			content: "hellooo\nasdfasdf\ndsfgsdfg\nasdfasdfa\nasdfasdfasd"
 		},
 		{
 			user: {
-				userID: "isaadi",
+				userID: cookies.get("name"),
 				avatar: cookies.get("avatar")
 			},
 			content: "salam cv?"
 		}
 	]);
 
+	useEffectOnce(() => {
+		console.log({getcookie: getCookieHeader() });
+		axios.get("/chat/allpublicrooms", { headers: { cookie: getCookieHeader() } }).then((res) => {
+			console.log({res});
+		})
+	})
+
 	useEffect(() => {
 		if (messagesRef.current)
 			messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
 	}, [activeChatMessages])
+
+	useEffectOnce(() => {
+		// console.log("test");
+		if (textAreaRef.current) {
+			textAreaRef.current.addEventListener("keydown", function (e) {
+				const keyCode = e.key || e.which;
+
+				// console.log("test");
+				// console.log({ekey: e.key, keyCode, ewhich: e.which, eshift: e.shiftKey});
+				// 13 represents the Enter key
+				if (keyCode === "Enter" && !e.shiftKey) {
+					// Don't generate a new line
+					e.preventDefault();
+					submitRef.current?.click();
+					// Do something else such as send the message to back-end
+					// ...
+				}
+			})
+		}
+	})
 
 	const [friends, setFriends] = useState([
 	]);
@@ -143,9 +172,9 @@ const NavAndChatWrapper = () => {
 				}>
 					<div className="container top_section flex-jc-sb flex-ai-cr">
 						<nav className="chatnav">
-							<Button onClick={() => { setActiveTab("friends"); }}>Friends</Button>
-							<Button onClick={() => { setActiveTab("chat"); }}>Chat</Button>
-							<Button onClick={() => { setActiveTab("rooms"); }}>Rooms</Button>
+							<Button onClick={() => { setActiveTab("friends"); }} className={activeTab === "friends" ? "active" : "notactive"}>Friends</Button>
+							<Button onClick={() => { setActiveTab("chat"); }}className={activeTab === "chat" ? "active" : "notactive"}>Chat</Button>
+							<Button onClick={() => { setActiveTab("rooms"); }}className={activeTab === "rooms" ? "active" : "notactive"}>Rooms</Button>
 						</nav>
 						<Button className="controller flex-center" onClick={() => {
 							setChatIsOpen(!chatIsOpen);
@@ -193,8 +222,8 @@ const NavAndChatWrapper = () => {
 								<div className="msgcontainer flex-column flex-jc-fe">
 								{
 									activeChatMessages.map((msg: any) => {
-										console.log({msg})
-										console.log({other: msg.user.userID, ana: cookies.get("name"), ft: msg.user.userID == cookies.get("name")})
+										// console.log({msg})
+										// console.log({other: msg.user.userID, ana: cookies.get("name"), ft: msg.user.userID == cookies.get("name")})
 										return (
 											<div className={"message " + (msg.user.userID != cookies.get("name") ? "notmine" : "mine")}>
 												{
@@ -224,9 +253,12 @@ const NavAndChatWrapper = () => {
 								if (submitRef.current)
 									submitRef.current.click();
 							}}>
-								<input type="text" value={textMessage} onChange={(e) => {
+								{/* <input type="text" value={textMessage} onChange={(e) => {
 									setTextMessage(e.target.value);
-								}}/>
+								}}/> */}
+								<textarea className="text_input" value={textMessage} ref={textAreaRef} onChange={(e) => {
+									setTextMessage(e.target.value);
+								}}></textarea>
 								<input type="submit" hidden />
 								<div className="submit flex-center" ref={submitRef} onClick={() => {
 									if (textMessage != "") {
