@@ -66,3 +66,11 @@ export function valDef(obj: any, def: any) {
 		return def;
 	return obj;
 }
+
+export function generateCookie(key: string, value: string) {
+	return key + '=' + value + ';';
+}
+
+export function getCookieHeader() {
+	return generateCookie("_token", cookies.get("_token"));
+}

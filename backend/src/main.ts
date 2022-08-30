@@ -1,3 +1,4 @@
+import * as cookieParser from 'cookie-parser'
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -22,7 +23,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup('api', app, document);
-
+  app.use(cookieParser());
 //   app.useStaticAssets(join(__dirname, '..', 'static'));
 //   app.setBaseViewsDir(join(__dirname, '..', 'views'));
 //   app.setViewEngine('hbs');

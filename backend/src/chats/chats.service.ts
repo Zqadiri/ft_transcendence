@@ -21,12 +21,6 @@ export class ChatsService {
   private readonly logger = new Logger(ChatsService.name);
 
 
-  /** Create DM */
-
-  async CreateDm(dm: CreateDmDto, userid1: number, userid2: number)
-  {
-    //TODO
-  }
 
   async findUser(username: string)
   {
@@ -37,6 +31,13 @@ export class ChatsService {
   async findRoom(roomName: string)
   {
     return await this.Chatrepository.findOneBy({ name: roomName });
+  }
+  
+  /** Create DM */
+
+  async CreateDm(dm: CreateDmDto, userid1: number, userid2: number)
+  {
+    //TODO
   }
 
   /** Create ROOM */
