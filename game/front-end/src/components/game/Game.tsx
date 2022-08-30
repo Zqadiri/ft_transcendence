@@ -14,14 +14,13 @@ const	GamesData = [
 
 function	LiveGames(): JSX.Element
 {
-	let imgsrc = "https://i.pinimg.com/originals/3f/2c/97/3f2c979b214d06e9caab8ba8326864f3.gif";
 	return (
 		<>
 			<ul className="live-games">
 				{
 					GamesData.map((current) => {
 						return (
-							<li>
+							<li key={current.id}>
 								<div>
 									<img src={current.avatar1} alt="user avatar"/>
 									<h3>{current.user1}</h3>
