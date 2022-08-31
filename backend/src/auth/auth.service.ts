@@ -88,7 +88,7 @@ export class AuthService {
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "none",
-			secure: true,
+			secure: false,
 			path: '/'
 		});
 		response.cookie('name', user.username,{
@@ -96,7 +96,7 @@ export class AuthService {
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "none",
-			secure: true,
+			secure: false,
 			path: '/'
 		});
 		response.cookie('id', user.id,{
@@ -104,7 +104,7 @@ export class AuthService {
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "none",
-			secure: true,
+			secure: false,
 			path: '/'
 		});
 		response.cookie('avatar', user.avatar,{
@@ -112,7 +112,7 @@ export class AuthService {
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "none",
-			secure: true,
+			secure: false,
 			path: '/'
 		});
 	}
