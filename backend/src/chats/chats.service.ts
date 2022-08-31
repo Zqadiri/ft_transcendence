@@ -79,10 +79,10 @@ export class ChatsService {
 
 async isFriend(owner: any, username: any)
 {
-  // const isfrirnd = await this.friendsService.isFollowing({FirstUser: owner, SecondUser: username});
-  // console.log(`Rela Exists: ${JSON.stringify(isfrirnd)}`);
-  // if (!isfrirnd)
-  //   throw new UnauthorizedException('this user is not my friend');
+  const isfrirnd = await this.friendsService.isFollowing({FirstUser: owner, SecondUser: username, isFriend: false, blocked: false});
+  console.log(`Rela Exists: ${JSON.stringify(isfrirnd)}`);
+  if (!isfrirnd)
+    throw new UnauthorizedException('this user is not my friend');
   return (true);
 }
 
@@ -115,7 +115,7 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
       }
     }
     else
-      throw new ForbiddenException({code: 'Forbidden', message: `Failed to invite this users to this chat room!!`})
+      throw new ForbiddenException({code: 'Forbidden', message: `Failed to invite this user to this chat room!!`})
 }
 
   /** join User to public chat room */
@@ -140,10 +140,33 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
 
     if (!name.userID.includes(user.username))
     {
-      if (name.status === RoomStatus.PUBLIC || name.status === RoomStatus.PRIVATE)
+      if (name.status === RoomStatus.PUBLIC)
       {
         name.userID.push(user.username);
         await this.Chatrepository.save(name);
+      }
+      else if (name.status === RoomStatus.PRIVATE)
+      {
+        if (name.InvitedUserID.includes(user.username))
+        {
+          name.InvitedUserID = name.InvitedUserID.filter(item => item !== user.username);
+
+          const ret_query = await this.Chatrepository
+          .createQueryBuilder()
+          .update(Chat)
+          .set({InvitedUserID: name.InvitedUserID})
+          .where("name = :name", {name: name.name})
+          .andWhere("status = :status", {status: RoomStatus.PRIVATE})
+          .execute()
+
+          if (ret_query)
+          {
+            name.userID.push(user.username);
+            await this.Chatrepository.save(name);
+          }
+        }
+        else
+          throw new UnauthorizedException({code: 'Unauthorized', message: `can not join this private rooom '${roomName}'`})
       }
       else if (name.status === RoomStatus.PROTECTED && Roomdata.password)
       {
@@ -160,6 +183,7 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
         throw new UnauthorizedException({code: 'Unauthorized', message: `you have to set password to join '${roomName}'`})
     }
   }
+
 
   async getUsersFromRoom(roomName: string)
   {
@@ -234,40 +258,27 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
 
   }
 
-  // display all public rooms exist in the database
-  async DisplayAllPublicRooms()
+  async AllRoom(username: string)
   {
-    const publicrooms = await this.Chatrepository
+    const user = this.findUser(username);
+    if (!user){
+      throw new BadRequestException({code: 'invalid username', message: `User with '${username}' does not exist`})
+    }
+    const allrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
     .select(['db_chat.name', 'db_chat.ownerID' ,'db_chat.id'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
-    .where("db_chat.type = :type", { type: ChatTypes.CHATROOM})
-    .andWhere("db_chat.status = :status", {status: RoomStatus.PUBLIC})
+    .where(":username != ANY (db_chat.userID)", { username: username })
+    .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .groupBy("db_chat.id")
     .addGroupBy("db_chat.name")
     .getRawMany()
 
-    return publicrooms;
-  }
-
-  // display all protected rooms exist in the database
-  async DisplayAllProtectedRooms()
-  {
-    const protectedrooms = await this.Chatrepository
-    .createQueryBuilder("db_chat")
-    .select(['db_chat.name', 'db_chat.ownerID' ,'db_chat.id'])
-    .addSelect("array_length (db_chat.userID, 1)", "number of users")
-    .where("db_chat.type = :type", { type: ChatTypes.CHATROOM})
-    .andWhere("db_chat.status = :status", {status: RoomStatus.PROTECTED})
-    .groupBy("db_chat.id")
-    .addGroupBy("db_chat.name")
-    .getRawMany()
-
-    return protectedrooms;
+    return allrooms; 
   }
 
   // display all my rooms exist in the database
-  async DisplayAllMyRooms(username: string)
+  async AllMyRooms(username: string)
   {
     const user = this.findUser(username);
     if (!user){

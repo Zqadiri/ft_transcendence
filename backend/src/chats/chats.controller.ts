@@ -110,29 +110,16 @@ export class ChatController {
     }
     
     @UseGuards(jwtAuthGuard)
-    @Get('/allpublicrooms')
-    async AllPublicRooms()
+    @Get('/allRooms')
+    async AllRooms(@Req() req)
     {
         try {
-            console.log("display all public rooms ...");
-            return await this.chatService.DisplayAllPublicRooms();
+            console.log("display all rooms ...");
+            return await this.chatService.AllRoom(req.user.username);
          } catch (e) {
-             console.error('display all public rooms', e);
+             console.error('display all rooms', e);
              throw e;
          }
-    }
-    
-    @UseGuards(jwtAuthGuard)
-    @Get('/allprotectedrooms')
-    async AllProtectedRooms()
-    {
-        try {
-            console.log("display all protected rooms ...");
-            return await this.chatService.DisplayAllProtectedRooms();
-        } catch (e) {
-            console.error('display all protected rooms', e);
-            throw e;
-        }
     }
 
     @UseGuards(jwtAuthGuard)
@@ -141,7 +128,7 @@ export class ChatController {
     {
         try {
             console.log("display all my rooms ...");
-            return await this.chatService.DisplayAllMyRooms(req.user.username);
+            return await this.chatService.AllMyRooms(req.user.username);
         } catch (e) {
             console.error('display all my rooms', e);
             throw e;

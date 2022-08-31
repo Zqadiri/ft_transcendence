@@ -87,7 +87,7 @@ export class AuthService {
 			maxAge: 1000 * 60 * 15,
 			httpOnly: false,
 			domain: 'localhost',
-			sameSite: "none",
+			sameSite: "lax",
 			secure: false,
 			path: '/'
 		});
@@ -95,7 +95,7 @@ export class AuthService {
 			maxAge: 1000 * 60 * 15,
 			httpOnly: false,
 			domain: 'localhost',
-			sameSite: "none",
+			sameSite: "lax",
 			secure: false,
 			path: '/'
 		});
@@ -103,7 +103,7 @@ export class AuthService {
 			maxAge: 1000 * 60 * 15,
 			httpOnly: false,
 			domain: 'localhost',
-			sameSite: "none",
+			sameSite: "lax",
 			secure: false,
 			path: '/'
 		});
@@ -111,7 +111,7 @@ export class AuthService {
 			maxAge: 1000 * 60 * 15,
 			httpOnly: false,
 			domain: 'localhost',
-			sameSite: "none",
+			sameSite: "lax",
 			secure: false,
 			path: '/'
 		});
