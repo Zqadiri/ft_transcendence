@@ -10,6 +10,13 @@ import Profile from "./Profile";
 import Settings from "./Settings";
 import UserProfile from "./UserProfile";
 import { cookies, getCookieHeader, globalContext, RRLink, useEffectOnce, valDef } from "./util";
+import io from 'socket.io-client';
+
+const chatSocket = io("/chatNamespace");
+
+interface ChatMessage {
+	userID: string, avatar: string | null | undefined, message: string
+}
 
 const NavAndChatWrapper = () => {
 	const { setLoggedIn } = useContext(globalContext);
@@ -27,9 +34,6 @@ const NavAndChatWrapper = () => {
 		// "public"
 		"create"
 	);
-	useEffect(() => {
-
-	}, [chatRef.current?.clientHeight])
 
 	const messagesRef = useRef<HTMLDivElement>(null);
 	const submitRef = useRef<HTMLDivElement>(null);
@@ -51,20 +55,26 @@ const NavAndChatWrapper = () => {
 			db_chat_owner_avatar: ""
 		}
 	]);
-	const [activeChatMessages, setActiveChatMessages] = useState([
+	const setActiveChatMessages = (x: any) => {
+		console.log(x);
+		return _setActiveChatMessages(x);
+	}
+	const [activeChatMessages, _setActiveChatMessages] = useState<ChatMessage[]>([
 		{
-			user: {
+			// user: {
 				userID: "test",
 				avatar: "https://picsum.photos/40/40?grayscale"
-			},
-			content: "hellooo\nasdfasdf\ndsfgsdfg\nasdfasdfa\nasdfasdfasd"
+			// }
+			,
+			message: "hellooo\nasdfasdf\ndsfgsdfg\nasdfasdfa\nasdfasdfasd"
 		},
 		{
-			user: {
+			// user: {
 				userID: cookies.get("name"),
 				avatar: cookies.get("avatar")
-			},
-			content: "salam cv?"
+			// }
+			,
+			message: "salam cv?"
 		}
 	]);
 
@@ -91,21 +101,61 @@ const NavAndChatWrapper = () => {
 		}
 	})
 
+	useEffectOnce(() => {
+		chatSocket.on('connect', () => {
+			console.log("connected");
+		});
+
+		chatSocket.on('disconnect', () => {
+			console.log("disconnected");
+		});
+
+		chatSocket.on('RoomMessages', (_msgs) => {
+			setActiveChatMessages(_msgs);
+		})
+
+		console.log("listening to messageToRoom");
+		chatSocket.on('messageToRoom', (_msg) => {
+			console.log("messageToRoom caught");
+			setActiveChatMessages((x: any) => [...x, _msg
+			/*{
+				user: {
+					userID: cookies.get("name"),
+					avatar: cookies.get("avatar")
+				},
+				content: textMessage.trim()
+			} */
+			]);
+		})
+
+		return () => {
+			chatSocket.off('connect');
+			chatSocket.off('disconnect');
+		};
+	});
+
+	useEffect(() => {
+		setActiveChatMessages([]);
+		chatSocket.emit("GetRoomMessages", activeChat);
+	}, [activeChat])
+
 	const [friends, setFriends] = useState([
 	]);
 
 	useEffectOnce(() => {
-		// axios.get("/chat/allMyRoom", {
-		// 	headers: {
-		// 		cookie: "_token=" + cookies.get("_token") + ";"
-		// 	}
-		// }).then(res => {
-		// 	console.log({res})
-		// 	setChatRooms(res.data);
-		// }).catch(err => {
-		// 	console.log({err})
-		// })
-
+		axios.get("/chat/allMyRoom", {
+			headers: {
+				cookie: getCookieHeader()
+			}
+		}).then(res => {
+			console.log({res})
+			setChatRooms(res.data);
+			res.data.forEach((room: any) => {
+				chatSocket.emit("joinRoom", { name: room.db_chat_name, username: cookies.get("name") });
+			});
+		}).catch(err => {
+			console.log({err})
+		})
 	})
 	return (
 		<div className="c_wrapper d100">
@@ -193,11 +243,12 @@ const NavAndChatWrapper = () => {
 						<div className="friends" style={{display: activeTab === "friends" ? "block" : "none"}}>
 							friends
 						</div>
-						<div className="chat" style={{display: activeTab === "chat" ? "block" : "none"}}>
+						<div className="chat d100 flex-column flex-gap10" style={{display: activeTab === "chat" ? "flex" : "none"}}>
 							{
 								chatRooms.map((room: any) => {
 									return (
 										<div className="room flex-jc-sb flex-ai-cr" onClick={() => {
+											setActiveChatMessages([]);
 											setActiveTab("chatinterface");
 											setActiveChat(room.db_chat_name);
 										}}>
@@ -228,7 +279,14 @@ const NavAndChatWrapper = () => {
 							<section className="roomsbody flex-center-column" style={{display: roomActiveTab === "create" ? "flex" : "none"}}>
 								<form action="" className="create-room-form h100 flex-column flex-jc-cr flex-gap10" onSubmit={e => {
 									e.preventDefault();
-									console.log({createRoomName, createRoomType, createRoomPassword});
+									axios.post("/chat/CreateRoom/", {
+										name: createRoomName,
+										status: createRoomType,
+										...(createRoomType === "protected" && { password: createRoomPassword })
+									}, { headers: {cookie: getCookieHeader() }}).then(res => {
+										console.log({res})
+									})
+									// console.log({createRoomName, createRoomType, createRoomPassword});
 								}}>
 									<div className="room_name flex-gap10">
 										<div className="flex-center">
@@ -274,23 +332,23 @@ const NavAndChatWrapper = () => {
 							<div className="messages" ref={messagesRef}>
 								<div className="msgcontainer flex-column flex-jc-fe">
 								{
-									activeChatMessages.map((msg: any) => {
+									activeChatMessages.map((msg: ChatMessage) => {
 										// console.log({msg})
 										// console.log({other: msg.user.userID, ana: cookies.get("name"), ft: msg.user.userID == cookies.get("name")})
 										return (
-											<div className={"message " + (msg.user.userID != cookies.get("name") ? "notmine" : "mine")}>
+											<div className={"message " + (msg.userID != cookies.get("name") ? "notmine" : "mine")}>
 												{
 													<div className={"container flex flex-ai-fs flex-gap10"}>
 														{
-															msg.user.userID != cookies.get("name") ?
+															msg.userID != cookies.get("name") ?
 																<div className="profilepic flex-center">
-																	<img src={msg.user.avatar} alt="user avatar" />
+																	<img src={msg.avatar ? msg.avatar : ""} alt="user avatar" />
 																</div>
 															: <></>
 														}
 														<div className="message_text">
 															{
-																msg.content
+																msg.message
 															}
 														</div>
 													</div>
@@ -312,13 +370,7 @@ const NavAndChatWrapper = () => {
 								<input type="submit" hidden />
 								<div className="submit flex-center" ref={submitRef} onClick={() => {
 									if (textMessage.trim() != "") {
-										setActiveChatMessages((x: any) => [...x, {
-											user: {
-												userID: cookies.get("name"),
-												avatar: cookies.get("avatar")
-											},
-											content: textMessage.trim()
-										}]);
+										chatSocket.emit("saveChatRoom", { userID: cookies.get("name"), roomName: activeChat, message: textMessage})
 										setTextMessage("");
 									}
 									textAreaRef.current?.focus();

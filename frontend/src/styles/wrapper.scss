@@ -160,10 +160,9 @@
 				height: 100%;
 				// box-sizing: border-box;
 				.chat {
-					box-sizing: border-box;
+					overflow-y: auto;
 					.room {
 						cursor: pointer;
-						box-sizing: border-box;
 						padding: 10px;
 						background-color: $darker_blue;
 						border-radius: 7px;

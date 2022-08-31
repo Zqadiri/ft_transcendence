@@ -33,7 +33,7 @@ export class ChatLogsService {
     .select("ChatLogs.userID", "userID")
     .addSelect("ChatLogs.roomName", "roomName")
     .addSelect("ChatLogs.message", "message")
-    .orderBy({'ChatLogs.createdAt': 'DESC'})
+    .orderBy({'ChatLogs.createdAt': 'ASC'})
     .where ("ChatLogs.roomName = :roomName", {roomName: roomName})
     .getRawMany()
 
