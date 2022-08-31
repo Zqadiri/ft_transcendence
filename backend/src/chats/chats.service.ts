@@ -266,7 +266,7 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
     }
     const allrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
-    .select(['db_chat.name', 'db_chat.ownerID' ,'db_chat.id'])
+    .select(['db_chat.name', 'db_chat.ownerID' ,'db_chat.id', 'db_chat.status'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
     .where(":username != ANY (db_chat.userID)", { username: username })
     .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
