@@ -77,6 +77,7 @@ function	Game(): JSX.Element
 {
 	return (
 		<>
+			{/* <PingPong /> */}
 			<Tabs className="Tabs">
 				<TabList>
 					<Tab>Play a Game</Tab>

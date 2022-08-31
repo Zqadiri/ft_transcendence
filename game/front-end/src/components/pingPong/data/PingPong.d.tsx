@@ -47,7 +47,7 @@ export const ball:
 	speed: 12,
 	velocityX: 11,
 	velocityY: 11,
-	radius: 20,
+	radius: 15,
 	color: "WHITE"
 }
 
