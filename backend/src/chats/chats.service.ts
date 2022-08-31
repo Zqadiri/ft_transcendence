@@ -350,7 +350,7 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
           isOwner.userID = isOwner.userID.filter(item => item !==  isOwner.ownerID);
 
           var randomadmin = this.random_item(isOwner.AdminsID);
-          
+        
           isOwner.AdminsID = isOwner.AdminsID.filter(item => item !== randomadmin);
 
           console.log("random admin ", randomadmin);

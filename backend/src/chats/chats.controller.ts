@@ -1,8 +1,9 @@
 import { Controller, UseGuards, Get, Res, Post, HttpCode, Body, Param, Req } from '@nestjs/common';
-import { CreateRoomDto, RoomDto, SetRolestoMembersDto, RoomNamedto, BanOrMuteMembersDto } from './dto/create-chat.dto';
+import { CreateRoomDto, RoomDto, SetRolestoMembersDto, RoomNamedto, BanOrMuteMembersDto, RoomWoUserDto } from './dto/create-chat.dto';
 import { ChatsService } from './chats.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import RequestWithUser from 'src/two-factor-authentication/dto/requestWithUser.interface';
 
 @ApiTags('Chats') // <---- Separate section in Swagger for all controller methods   
 @Controller('chat')
@@ -24,6 +25,37 @@ export class ChatController {
             throw e;
         }
     }
+
+    @UseGuards(jwtAuthGuard)
+    @Post('/JoinRoom')
+    async JoinRoom(@Body() Roomdata: RoomWoUserDto , @Req() req: RequestWithUser)
+    {
+        try
+        {
+            await this.chatService.JointoChatRoom({username: req.user.username, ...Roomdata});
+            console.log("join to room...", Roomdata.name);
+        } 
+        catch (e)
+        {
+            console.error('Failed to join room', e);
+            throw e;
+        }
+    }
+    
+
+    @UseGuards(jwtAuthGuard)
+    @Post('/LeaveRoom')
+    async LeaveRoom(@Body() RoomID: string, @Req() req: RequestWithUser)
+    {
+        try {
+            console.log("leave room ...", RoomID);
+            await this.chatService.LeaveRoom({RoomID, username: req.user.username});
+        } catch (e) {
+            console.error('Failed to leave room', e);
+            throw e;
+        }
+    }
+
 
     @UseGuards(jwtAuthGuard)
     @Post('/Invite')

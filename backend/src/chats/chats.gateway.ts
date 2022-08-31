@@ -43,39 +43,20 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     this.server.to(createChatDto.roomName).emit('messageToRoom', createChatDto);
   }
 
-  @SubscribeMessage('joinRoom')
-  async handleJoinRoom(@ConnectedSocket() client: Socket,  @MessageBody() Roomdata: RoomDto)
+  @SubscribeMessage('socketJoinRoom')
+  async handleJoinRoom(@ConnectedSocket() client: Socket, roomName: string)
   {
-    try
-    {
-      await this.chatsService.JointoChatRoom(Roomdata);
-      console.log("join to room...", Roomdata.name);
-    } 
-    catch (e)
-    {
-        console.error('Failed to join room', e);
-        throw e;
-    }
-
-    client.join(Roomdata.name);
+    client.join(roomName);
     //emit to specific client
-    client.emit('joinedRoom', Roomdata.name);
+    client.emit('joinedRoom', roomName);
   }
 
 
-  @SubscribeMessage('leaveRoom')
-  async handleLeaveRoom(@ConnectedSocket() client: Socket,  @MessageBody() SetRolestoMembersDto: SetRolestoMembersDto)
+  @SubscribeMessage('socketleaveRoom')
+  async handleLeaveRoom(@ConnectedSocket() client: Socket, roomName: string)
   {
-      try {
-          console.log("leave room ...", SetRolestoMembersDto.RoomID);
-          await this.chatsService.LeaveRoom(SetRolestoMembersDto);
-      } catch (e) {
-          console.error('Failed to leave room', e);
-          throw e;
-      }
-
-    client.leave(SetRolestoMembersDto.RoomID);
-    client.emit('leftRoom', SetRolestoMembersDto.RoomID);
+    client.leave(roomName);
+    client.emit('leftRoom', roomName);
   }
 
   @SubscribeMessage('GetRoomMessages')
