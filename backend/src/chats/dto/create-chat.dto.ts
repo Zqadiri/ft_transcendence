@@ -56,7 +56,17 @@ export class RoomDto
 
 	@ApiProperty({ description: "username who want to join the chat Room" })
 	username: string;
+}
 
+export class RoomWoUserDto
+{
+	@ApiProperty({ description: "Chat Room name" })
+	name: string;
+
+	@ApiProperty({ description: "Chat Room password"})
+	@Length(8, 24)
+	@IsOptional()
+	password: string;
 }
 
 export class SetRolestoMembersDto
