@@ -160,10 +160,9 @@
 				height: 100%;
 				// box-sizing: border-box;
 				.chat {
-					box-sizing: border-box;
+					overflow-y: auto;
 					.room {
 						cursor: pointer;
-						box-sizing: border-box;
 						padding: 10px;
 						background-color: $darker_blue;
 						border-radius: 7px;
@@ -232,6 +231,9 @@
 									.profilepic {
 										width: fit-content;
 										img {
+											width: 40px;
+											height: 40px;
+											background-color: white;
 											border-radius: 999px;
 										}
 									}
@@ -331,6 +333,39 @@
 							font-weight: 600;
 							border-radius: 7px;
 							padding: 5px;
+						}
+						.publicrooms {
+							overflow-y: auto;
+							.room {
+								cursor: pointer;
+								padding: 10px;
+								background-color: $darker_blue;
+								border-radius: 7px;
+								min-height: 50px;
+						
+								.name {
+									color: $less_pastel_white;
+									font-size: 24px;
+									font-weight: 600;
+								}
+						
+								.owner {
+									color: $less_pastel_white;
+									font-size: 12px;
+								}
+						
+								.icon {
+									color: $less_pastel_white;
+									width: 20px;
+									height: 20px;
+								}
+						
+								.num {
+									color: $less_pastel_white;
+									font-weight: 600;
+									font-size: 16px;
+								}
+							}
 						}
 					}
 				}

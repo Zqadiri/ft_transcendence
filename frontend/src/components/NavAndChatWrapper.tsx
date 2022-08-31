@@ -10,6 +10,13 @@ import Profile from "./Profile";
 import Settings from "./Settings";
 import UserProfile from "./UserProfile";
 import { cookies, getCookieHeader, globalContext, RRLink, useEffectOnce, valDef } from "./util";
+import io from 'socket.io-client';
+
+const chatSocket = io("/chatNamespace");
+
+interface ChatMessage {
+	userID: string, avatar: string | null | undefined, message: string
+}
 
 const NavAndChatWrapper = () => {
 	const { setLoggedIn } = useContext(globalContext);
@@ -27,9 +34,6 @@ const NavAndChatWrapper = () => {
 		// "public"
 		"create"
 	);
-	useEffect(() => {
-
-	}, [chatRef.current?.clientHeight])
 
 	const messagesRef = useRef<HTMLDivElement>(null);
 	const submitRef = useRef<HTMLDivElement>(null);
@@ -42,37 +46,69 @@ const NavAndChatWrapper = () => {
 			setCreateRoomPassword("");
 	}, [createRoomType])
 	const [textMessage, setTextMessage] = useState("");
-	const [activeChat, setActiveChat] = useState(null);
+	const [activeChat, _setActiveChat] = useState<string | null>(null);
+	const setActiveChat = (newActiveChat: string) => {
+		if (newActiveChat) {
+			// setActiveChatMessages([]);
+			chatSocket.emit("GetRoomMessages", newActiveChat);
+			axios.get("/chat/users/" + newActiveChat).then(res => {
+				let users: any = {};
+				res.data.forEach((el: any) => {
+					users[el.db_user_username] = el.db_user_avatar;
+				});
+				setActiveChatUsers(users);
+			}).catch((err) => {
+	
+			})
+		}
+		return _setActiveChat(newActiveChat);
+	}
 	const [chatRooms, setChatRooms] = useState([
-		{
-			db_chat_name: "testroom",
-			db_chat_ownerID: cookies.get("name"),
-			"number of users": 1,
-			db_chat_owner_avatar: ""
-		}
+		// {
+		// 	db_chat_name: "testroom",
+		// 	db_chat_ownerID: cookies.get("name"),
+		// 	"number of users": 1,
+		// 	db_chat_owner_avatar: ""
+		// }
 	]);
-	const [activeChatMessages, setActiveChatMessages] = useState([
-		{
-			user: {
-				userID: "test",
-				avatar: "https://picsum.photos/40/40?grayscale"
-			},
-			content: "hellooo\nasdfasdf\ndsfgsdfg\nasdfasdfa\nasdfasdfasd"
-		},
-		{
-			user: {
-				userID: cookies.get("name"),
-				avatar: cookies.get("avatar")
-			},
-			content: "salam cv?"
-		}
+	const [allRooms, setAllRooms] = useState([]);
+	const getAllRooms = () => {
+		axios.get("/chat/allRooms", { headers: { cookie: getCookieHeader() } }).then((res) => {
+			console.log({res});
+			setAllRooms(res.data);
+		})
+	}
+	const setActiveChatMessages = (x: any) => {
+		console.log(x);
+		return _setActiveChatMessages(x);
+	}
+	const [activeChatUsers, setActiveChatUsers] = useState<any>([]);
+	const [activeChatMessages, _setActiveChatMessages] = useState<ChatMessage[]>([
+		// {
+		// 	// user: {
+		// 		userID: "test",
+		// 		avatar: "https://picsum.photos/40/40?grayscale"
+		// 	// }
+		// 	,
+		// 	message: "hellooo\nasdfasdf\ndsfgsdfg\nasdfasdfa\nasdfasdfasd"
+		// },
+		// {
+		// 	// user: {
+		// 		userID: cookies.get("name"),
+		// 		avatar: cookies.get("avatar")
+		// 	// }
+		// 	,
+		// 	message: "salam cv?"
+		// }
 	]);
+
+	useEffect(() => {
+		console.log(activeChatUsers);
+	}, [activeChatUsers])
 
 	useEffectOnce(() => {
 		console.log({getcookie: getCookieHeader() });
-		axios.get("/chat/allpublicrooms", { headers: { cookie: getCookieHeader() } }).then((res) => {
-			console.log({res});
-		})
+		getAllRooms();
 	})
 
 	useEffect(() => {
@@ -91,21 +127,69 @@ const NavAndChatWrapper = () => {
 		}
 	})
 
+	useEffectOnce(() => {
+		chatSocket.on('connect', () => {
+			console.log("connected");
+		});
+
+		chatSocket.on('disconnect', () => {
+			console.log("disconnected");
+		});
+
+		chatSocket.on('RoomMessages', (_msgs) => {
+			setActiveChatMessages(_msgs);
+		})
+
+		console.log("listening to joinedRoom");
+		chatSocket.on("joinedRoom", (data) => {
+			console.log("joined room...")
+			console.log({data})
+		})
+
+		console.log("listening to messageToRoom");
+		chatSocket.on('messageToRoom', (_msg) => {
+			console.log("messageToRoom caught");
+			setActiveChatMessages((x: any) => [...x, _msg
+			/*{
+				user: {
+					userID: cookies.get("name"),
+					avatar: cookies.get("avatar")
+				},
+				content: textMessage.trim()
+			} */
+			]);
+		})
+
+		return () => {
+			chatSocket.off('connect');
+			chatSocket.off('disconnect');
+		};
+	});
+
+
+	useEffect(() => {
+
+	}, [activeChat])
+
 	const [friends, setFriends] = useState([
 	]);
 
 	useEffectOnce(() => {
-		// axios.get("/chat/allMyRoom", {
-		// 	headers: {
-		// 		cookie: "_token=" + cookies.get("_token") + ";"
-		// 	}
-		// }).then(res => {
-		// 	console.log({res})
-		// 	setChatRooms(res.data);
-		// }).catch(err => {
-		// 	console.log({err})
-		// })
-
+		axios.get("/chat/allMyRoom", {
+			headers: {
+				cookie: getCookieHeader()
+			}
+		}).then(res => {
+			console.log({res})
+			setChatRooms(res.data);
+			res.data.forEach((room: any) => {
+				let roomName: string = room.db_chat_name;
+				console.log(`joining room, roomName: ${roomName}`);
+				chatSocket.emit("socketJoinRoom", roomName);
+			});
+		}).catch(err => {
+			console.log({err})
+		})
 	})
 	return (
 		<div className="c_wrapper d100">
@@ -193,11 +277,12 @@ const NavAndChatWrapper = () => {
 						<div className="friends" style={{display: activeTab === "friends" ? "block" : "none"}}>
 							friends
 						</div>
-						<div className="chat" style={{display: activeTab === "chat" ? "block" : "none"}}>
+						<div className="chat d100 flex-column flex-gap10" style={{display: activeTab === "chat" ? "flex" : "none"}}>
 							{
 								chatRooms.map((room: any) => {
 									return (
 										<div className="room flex-jc-sb flex-ai-cr" onClick={() => {
+											// setActiveChatMessages([]);
 											setActiveTab("chatinterface");
 											setActiveChat(room.db_chat_name);
 										}}>
@@ -225,42 +310,78 @@ const NavAndChatWrapper = () => {
 									<i className="fa-solid fa-plus"></i>
 								</Button>
 							</section>
-							<section className="roomsbody flex-center-column" style={{display: roomActiveTab === "create" ? "flex" : "none"}}>
-								<form action="" className="create-room-form h100 flex-column flex-jc-cr flex-gap10" onSubmit={e => {
-									e.preventDefault();
-									console.log({createRoomName, createRoomType, createRoomPassword});
-								}}>
-									<div className="room_name flex-gap10">
-										<div className="flex-center">
-											<label htmlFor="name">Room Name:</label>
-										</div>
-										<input type="text" name="name" value={createRoomName} onChange={e => setCreateRoomName(e.target.value)}/>
-									</div>
-									<div className="type_container flex-gap10">
-										<label htmlFor="type">Type:</label>
-										<div className="type_radios">
-											<div className="type_subcontainer flex-jc-sb flex-ai-cr">
-												<label htmlFor="radio_public">Public</label>
-												<input onChange={(e) => { setCreateRoomType(e.target.value); }} type="radio" name="type" id="radio_public" value="public" checked={createRoomType === "public"} />
+							<section className="roomsbody">
+								<div className="container d100 flex-center-column" style={{display: roomActiveTab === "create" ? "flex" : "none"}}>
+									<form action="" className="create-room-form h100 flex-column flex-jc-cr flex-gap10" onSubmit={e => {
+										e.preventDefault();
+										axios.post("/chat/CreateRoom/", {
+											name: createRoomName,
+											status: createRoomType,
+											...(createRoomType === "protected" && { password: createRoomPassword })
+										}, { headers: {cookie: getCookieHeader() }}).then(res => {
+											console.log({res})
+										})
+										// console.log({createRoomName, createRoomType, createRoomPassword});
+									}}>
+										<div className="room_name flex-gap10">
+											<div className="flex-center">
+												<label htmlFor="name">Room Name:</label>
 											</div>
-											<div className="type_subcontainer flex-jc-sb flex-ai-cr">
-												<label htmlFor="radio_protected">Protected</label>
-												<input onChange={(e) => { setCreateRoomType(e.target.value); }} type="radio" name="type" id="radio_protected" value="protected" checked={createRoomType === "protected"} />
-											</div>
-											<div className="type_subcontainer flex-jc-sb flex-ai-cr">
-												<label htmlFor="radio_private">Private</label>
-												<input onChange={(e) => { setCreateRoomType(e.target.value); }} type="radio" name="type" id="radio_private" value="private" checked={createRoomType === "private"} />
+											<input type="text" name="name" value={createRoomName} onChange={e => setCreateRoomName(e.target.value)}/>
+										</div>
+										<div className="type_container flex-gap10">
+											<label htmlFor="type">Type:</label>
+											<div className="type_radios">
+												<div className="type_subcontainer flex-jc-sb flex-ai-cr">
+													<label htmlFor="radio_public">Public</label>
+													<input onChange={(e) => { setCreateRoomType(e.target.value); }} type="radio" name="type" id="radio_public" value="public" checked={createRoomType === "public"} />
+												</div>
+												<div className="type_subcontainer flex-jc-sb flex-ai-cr">
+													<label htmlFor="radio_protected">Protected</label>
+													<input onChange={(e) => { setCreateRoomType(e.target.value); }} type="radio" name="type" id="radio_protected" value="protected" checked={createRoomType === "protected"} />
+												</div>
+												<div className="type_subcontainer flex-jc-sb flex-ai-cr">
+													<label htmlFor="radio_private">Private</label>
+													<input onChange={(e) => { setCreateRoomType(e.target.value); }} type="radio" name="type" id="radio_private" value="private" checked={createRoomType === "private"} />
+												</div>
 											</div>
 										</div>
-									</div>
-									<div className="room_password_container flex-gap10" style={{visibility: createRoomType === "protected" ? "visible" : "hidden"}}>
-										<div className="flex-center">
-											<label htmlFor="room_password">Password:</label>
+										<div className="room_password_container flex-gap10" style={{visibility: createRoomType === "protected" ? "visible" : "hidden"}}>
+											<div className="flex-center">
+												<label htmlFor="room_password">Password:</label>
+											</div>
+											<input type="password" id="room_password" value={createRoomPassword} onChange={(e) => { setCreateRoomPassword(e.target.value); }}/>
 										</div>
-										<input type="password" id="room_password" value={createRoomPassword} onChange={(e) => { setCreateRoomPassword(e.target.value); }}/>
-									</div>
-									<input type="submit" className="submit_button c_button_2" value="Create Room"/>
-								</form>
+										<input type="submit" className="submit_button c_button_2" value="Create Room"/>
+									</form>
+								</div>
+								<div className="d100 publicrooms flex-column" style={{display: roomActiveTab === "public" ? "flex" : "none"}}>
+									{
+										allRooms.filter((room: any) => room.db_chat_status === "public").map((room: any) => {
+											return (
+												<div className="room w100">
+													<div className="left flex-column">
+														<div className="name">{room.db_chat_name}</div>
+														<div className="owner">{room.db_chat_ownerID}</div>
+													</div>
+													<div className="mid flex-center">
+														<i className="icon fa-solid fa-user"></i>
+														<div className="num">{room["number of users"]}</div>
+													</div>
+													<Button onClick={(e: any) => {
+														e.preventDefault();
+														axios.post("/chat/joinRoom",
+															{ name: room.db_chat_name },
+															{ headers: { cookie: getCookieHeader() } }
+														).then((res: any) => {
+															getAllRooms();
+														});
+													}}>Join</Button>
+												</div>
+											);
+										})
+									}
+								</div>
 							</section>
 						</div>
 						<div className="chatinterface d100 flex-column" style={{display: activeTab === "chatinterface" ? "flex" : "none"}}>
@@ -274,23 +395,23 @@ const NavAndChatWrapper = () => {
 							<div className="messages" ref={messagesRef}>
 								<div className="msgcontainer flex-column flex-jc-fe">
 								{
-									activeChatMessages.map((msg: any) => {
+									activeChatMessages.map((msg: ChatMessage) => {
 										// console.log({msg})
 										// console.log({other: msg.user.userID, ana: cookies.get("name"), ft: msg.user.userID == cookies.get("name")})
 										return (
-											<div className={"message " + (msg.user.userID != cookies.get("name") ? "notmine" : "mine")}>
+											<div className={"message " + (msg.userID != cookies.get("name") ? "notmine" : "mine")}>
 												{
 													<div className={"container flex flex-ai-fs flex-gap10"}>
 														{
-															msg.user.userID != cookies.get("name") ?
+															msg.userID != cookies.get("name") ?
 																<div className="profilepic flex-center">
-																	<img src={msg.user.avatar} alt="user avatar" />
+																	<img src={activeChatUsers[msg.userID] ? activeChatUsers[msg.userID] : ""} alt="user avatar" />
 																</div>
 															: <></>
 														}
 														<div className="message_text">
 															{
-																msg.content
+																msg.message
 															}
 														</div>
 													</div>
@@ -312,13 +433,7 @@ const NavAndChatWrapper = () => {
 								<input type="submit" hidden />
 								<div className="submit flex-center" ref={submitRef} onClick={() => {
 									if (textMessage.trim() != "") {
-										setActiveChatMessages((x: any) => [...x, {
-											user: {
-												userID: cookies.get("name"),
-												avatar: cookies.get("avatar")
-											},
-											content: textMessage.trim()
-										}]);
+										chatSocket.emit("saveChatRoom", { userID: cookies.get("name"), roomName: activeChat, message: textMessage})
 										setTextMessage("");
 									}
 									textAreaRef.current?.focus();
