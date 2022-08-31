@@ -59,24 +59,29 @@ const NavAndChatWrapper = () => {
 		console.log(x);
 		return _setActiveChatMessages(x);
 	}
+	const [activeChatUsers, setActiveChatUsers] = useState<any>([]);
 	const [activeChatMessages, _setActiveChatMessages] = useState<ChatMessage[]>([
-		{
-			// user: {
-				userID: "test",
-				avatar: "https://picsum.photos/40/40?grayscale"
-			// }
-			,
-			message: "hellooo\nasdfasdf\ndsfgsdfg\nasdfasdfa\nasdfasdfasd"
-		},
-		{
-			// user: {
-				userID: cookies.get("name"),
-				avatar: cookies.get("avatar")
-			// }
-			,
-			message: "salam cv?"
-		}
+		// {
+		// 	// user: {
+		// 		userID: "test",
+		// 		avatar: "https://picsum.photos/40/40?grayscale"
+		// 	// }
+		// 	,
+		// 	message: "hellooo\nasdfasdf\ndsfgsdfg\nasdfasdfa\nasdfasdfasd"
+		// },
+		// {
+		// 	// user: {
+		// 		userID: cookies.get("name"),
+		// 		avatar: cookies.get("avatar")
+		// 	// }
+		// 	,
+		// 	message: "salam cv?"
+		// }
 	]);
+
+	useEffect(() => {
+		console.log(activeChatUsers);
+	}, [activeChatUsers])
 
 	useEffectOnce(() => {
 		console.log({getcookie: getCookieHeader() });
@@ -134,9 +139,19 @@ const NavAndChatWrapper = () => {
 		};
 	});
 
+
 	useEffect(() => {
 		setActiveChatMessages([]);
 		chatSocket.emit("GetRoomMessages", activeChat);
+		axios.get("/chat/users/" + activeChat).then(res => {
+			let users: any = {};
+			res.data.forEach((el: any) => {
+				users[el.db_user_username] = el.db_user_avatar;
+			});
+			setActiveChatUsers(users);
+		}).catch((err) => {
+
+		})
 	}, [activeChat])
 
 	const [friends, setFriends] = useState([
@@ -342,7 +357,7 @@ const NavAndChatWrapper = () => {
 														{
 															msg.userID != cookies.get("name") ?
 																<div className="profilepic flex-center">
-																	<img src={msg.avatar ? msg.avatar : ""} alt="user avatar" />
+																	<img src={activeChatUsers[msg.userID] ? activeChatUsers[msg.userID] : ""} alt="user avatar" />
 																</div>
 															: <></>
 														}
