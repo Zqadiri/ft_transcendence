@@ -34,7 +34,7 @@ export class GameGateway {
 			this.userCounter1 = 0;
 			this.roomCounter1 = (this.roomCounter1 + 1) % 1000000000;
 		}
-		client.emit("joinedTheme1", roomName);
+		client.emit("joinedRoom", roomName);
 	}
 
 	@SubscribeMessage("joinTheme2")
@@ -50,7 +50,7 @@ export class GameGateway {
 			if (this.roomCounter2 > 2000000000)
 				this.roomCounter2 = 1000000000;
 		}
-		client.emit("joinedTheme2", roomName);
+		client.emit("joinedRoom", roomName);
 	}
 
 }
