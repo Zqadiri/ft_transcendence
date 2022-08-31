@@ -166,7 +166,7 @@ const NavAndChatWrapper = () => {
 			console.log({res})
 			setChatRooms(res.data);
 			res.data.forEach((room: any) => {
-				chatSocket.emit("socketJoinRoom", { name: room.db_chat_name, username: cookies.get("name") });
+				chatSocket.emit("socketJoinRoom", room.db_chat_name);
 			});
 		}).catch(err => {
 			console.log({err})
