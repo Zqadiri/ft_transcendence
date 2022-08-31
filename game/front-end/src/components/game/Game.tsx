@@ -4,6 +4,7 @@ import "./Style.css";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { SyntheticEvent, useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
+import Matching from "./Matching"
 
 export const	socket = io("http://localhost:3001/game");
 export let		roomName: string = "none";
@@ -16,7 +17,7 @@ const	GamesData = [
 	{user1: "Sara", user2: "Sesco", score1: 0, score2: 0, avatar1: "https://cdn.intra.42.fr/users/small_sbensarg.jpg", avatar2: "https://cdn.intra.42.fr/users/small_aamzouar.jpg", id: 5},
 ];	
 
-function useEffectOnce(callback: any): any {
+export function useEffectOnce(callback: any): any {
 	const ref = useRef(true);
 	return useEffect(() => {
 		if (ref.current) {
@@ -24,6 +25,11 @@ function useEffectOnce(callback: any): any {
 			return callback();
 		}
 	});
+}
+
+export function setRoomName(name: string): void
+{
+	roomName = name;
 }
 
 function	LiveGames(): JSX.Element
@@ -57,47 +63,6 @@ function	LiveGames(): JSX.Element
 					})
 				}
 			</ul>
-		</>
-	);
-}
-
-function	Matching(): JSX.Element
-{
-	const [activeTheme, setActiveTheme] = useState("none");
-	const joinRoom = ():void =>
-	{
-		if (activeTheme === "theme1")
-			socket.emit("joinTheme1");
-		else if (activeTheme === "theme2")
-			socket.emit("joinTheme2");
-	}
-	useEffectOnce(() => {
-		socket.on("joinedRoom", (data) => {
-			roomName = data;
-		});
-	});
-	return (
-		<>
-			<div className="matching-container" >
-				<button
-					onClick={() => {
-						setActiveTheme(activeTheme === "theme1" ? "none" : "theme1");
-					}}
-					className={`${activeTheme === "theme1" ? "active-theme" : ""}`}
-				>Theme #01</button>
-				<button
-					onClick={() => {
-						setActiveTheme(activeTheme === "theme2" ? "none" : "theme2");
-					}}
-					className={`${activeTheme === "theme2" ? "active-theme" : ""}`}
-				>Theme #02</button>
-			</div>
-			<div className="matching">
-
-			</div>
-			<div className="match-me">
-				<button onClick={joinRoom}>Match Me</button>
-			</div>
 		</>
 	);
 }

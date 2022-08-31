@@ -177,3 +177,33 @@
 	animation-duration: 1.1s;
 	animation-direction: alternate;
 }
+
+.spinner-container {
+	width: 33px;
+	margin: 10% auto 0;
+}
+
+.cancel-button {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 15px;
+	color: #112B3C;
+}
+
+.cancel-button button {
+	border: none;
+	background-color: white;
+	border-bottom: 2px solid #F66B0E;
+	font-size: 15px;
+	padding-bottom: 5px;
+	width: 55px;
+	font-weight: bold;
+	color: #112B3C;
+	margin-top: 30px;
+}
+
+.cancel-button button:hover {
+	cursor: pointer;
+	border: none;
+}
