@@ -23,21 +23,11 @@ export class Chat{
 	})
 	name: string;
 
-	@Generated('uuid')
-	@Column({type: "uuid"})
-	uuid: string;
-
-	@Column({default: false})
-	isPLaying: Boolean;
-
 	@Column({nullable: true})
 	password: string;
 
 	@Column('varchar')
 	ownerID: string;
-
-	@Column({default: true})
-	isActive: boolean
 
 	@Column({
 		enum: ['dm', 'chatRoom'],
@@ -70,7 +60,7 @@ export class Chat{
     InvitedUserID: string[];
 	
 	@Column({ type: "simple-json", nullable: true })
-    arrayofobject: {
+    MutedAndBannedID: {
 		action: string;
         username: string;
 		current_time: number;

@@ -64,7 +64,8 @@ export class ChatsService {
       ownerID: user.username,
       userID: [user.username],
       AdminsID: [],
-      arrayofobject:[],
+	  InvitedUserID: [],
+      MutedAndBannedID:[],
       name: room.name,
       type: ChatTypes.CHATROOM,
       status: room.status,
@@ -268,7 +269,7 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
     .createQueryBuilder("db_chat")
     .select(['db_chat.name', 'db_chat.ownerID' ,'db_chat.id', 'db_chat.status'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
-    .where(":username != ANY (db_chat.userID)", { username: username })
+    .where("NOT (:username = ANY (db_chat.userID)) OR (:username = ANY (db_chat.InvitedUserID)) ", { username: username })
     .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .groupBy("db_chat.id")
     .addGroupBy("db_chat.name")
@@ -288,7 +289,7 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
     .createQueryBuilder("db_chat")
     .select(['db_chat.name','db_chat.ownerID', 'db_chat.id'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
-    .where(":username = ANY (db_chat.userID)", { username: username })
+    .where("(:username = ANY (db_chat.userID))", { username: username })
     .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .groupBy("db_chat.id")
     .addGroupBy("db_chat.name")
@@ -459,9 +460,9 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
            * "Array.includes checks for '===' in the array" which doesn't work for objects
            */
 
-          if (!check.arrayofobject.find(element => element.username === user.username))
+          if (!check.MutedAndBannedID.find(element => element.username === user.username))
           {
-            check.arrayofobject.push({action: BanOrMuteMembersDto.action, username: user.username, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
+            check.MutedAndBannedID.push({action: BanOrMuteMembersDto.action, username: user.username, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
             await this.Chatrepository.save(check);
           }
           else
@@ -472,9 +473,9 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
         {
           if (checkadmin.AdminsID.includes(administrator))
           {
-            if (!checkadmin.arrayofobject.find(element => element.username === user.username))
+            if (!checkadmin.MutedAndBannedID.find(element => element.username === user.username))
             {
-              checkadmin.arrayofobject.push({action: BanOrMuteMembersDto.action, username: user.username, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
+              checkadmin.MutedAndBannedID.push({action: BanOrMuteMembersDto.action, username: user.username, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
               await this.Chatrepository.save(checkadmin);
             }
             else
@@ -500,29 +501,29 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
       
       const mutedIds = await this.Chatrepository
       .createQueryBuilder("db_chat")
-      .select(['db_chat.arrayofobject']) // added selection
+      .select(['db_chat.MutedAndBannedID']) // added selection
       .where("db_chat.name = :name", { name: roomName })
       .getOne();
 
-      //if ( mutedIds.arrayofobject)
+      //if ( mutedIds.MutedAndBannedID)
        // this.handleCron();
-      for (let i = 0; i < mutedIds.arrayofobject.length; i++)
+      for (let i = 0; i < mutedIds.MutedAndBannedID.length; i++)
       {
-        if ((mutedIds.arrayofobject[i].current_time + mutedIds.arrayofobject[i].duration * 1000 ) > Date.now())
+        if ((mutedIds.MutedAndBannedID[i].current_time + mutedIds.MutedAndBannedID[i].duration * 1000 ) > Date.now())
         {
-          if (mutedIds.arrayofobject[i].action === Action.MUTE)
-            listMuted.push(mutedIds.arrayofobject[i].username);
+          if (mutedIds.MutedAndBannedID[i].action === Action.MUTE)
+            listMuted.push(mutedIds.MutedAndBannedID[i].username);
         }
         else
         {
-          mutedIds.arrayofobject = mutedIds.arrayofobject.filter(item => item.username !== mutedIds.arrayofobject[i].username);
+          mutedIds.MutedAndBannedID = mutedIds.MutedAndBannedID.filter(item => item.username !== mutedIds.MutedAndBannedID[i].username);
   
-            console.log("filter user, from mutedID array ",mutedIds.arrayofobject);
+            console.log("filter user, from mutedID array ",mutedIds.MutedAndBannedID);
   
             const ret_query = await this.Chatrepository
             .createQueryBuilder()
             .update(Chat)
-            .set({arrayofobject: mutedIds.arrayofobject})
+            .set({MutedAndBannedID: mutedIds.MutedAndBannedID})
             .where("name = :name", { name: roomName})
             .execute()
         }
@@ -537,30 +538,30 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
       
       const bannedIds = await this.Chatrepository
       .createQueryBuilder("db_chat")
-      .select(['db_chat.arrayofobject']) // added selection
+      .select(['db_chat.MutedAndBannedID']) // added selection
       .where("db_chat.name = :name", { name: roomName })
       .getOne();
 
-     // if (bannedIds.arrayofobject)
+     // if (bannedIds.MutedAndBannedID)
        // this.handleCron();
 
-      for (let i = 0; i < bannedIds.arrayofobject.length; i++)
+      for (let i = 0; i < bannedIds.MutedAndBannedID.length; i++)
       {
-        if ((bannedIds.arrayofobject[i].current_time + bannedIds.arrayofobject[i].duration * 1000 ) > Date.now())
+        if ((bannedIds.MutedAndBannedID[i].current_time + bannedIds.MutedAndBannedID[i].duration * 1000 ) > Date.now())
         {
-          if (bannedIds.arrayofobject[i].action === Action.BAN)
-            listBaned.push(bannedIds.arrayofobject[i].username);
+          if (bannedIds.MutedAndBannedID[i].action === Action.BAN)
+            listBaned.push(bannedIds.MutedAndBannedID[i].username);
         }
         else
         {
-          bannedIds.arrayofobject = bannedIds.arrayofobject.filter(item => item.username !== bannedIds.arrayofobject[i].username);
+          bannedIds.MutedAndBannedID = bannedIds.MutedAndBannedID.filter(item => item.username !== bannedIds.MutedAndBannedID[i].username);
   
-            console.log("filter user, from bannedID array ",bannedIds.arrayofobject);
+            console.log("filter user, from bannedID array ",bannedIds.MutedAndBannedID);
   
             const ret_query = await this.Chatrepository
             .createQueryBuilder()
             .update(Chat)
-            .set({arrayofobject: bannedIds.arrayofobject})
+            .set({MutedAndBannedID: bannedIds.MutedAndBannedID})
             .where("name = :name", { name: roomName})
             .execute()
         }
