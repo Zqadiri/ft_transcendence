@@ -281,13 +281,17 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
       throw new BadRequestException({code: 'invalid id', message: `User with '${id}' does not exist`})
     }
     
+
     const allrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
-    .select(['db_chat.name', 'db_chat.ownerID' ,'db_chat.id', 'db_chat.status'])
+    .select(['db_chat.name','db_chat.id', 'db_chat.status'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
+    .leftJoin(User, 'db_user', 'db_user.id = db_chat.ownerID')
+    .addSelect('db_user.username', 'ownerName')
     .where("NOT (:id = ANY (db_chat.userID)) OR (:id = ANY (db_chat.InvitedUserID)) ", { id })
     .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .groupBy("db_chat.id")
+    .addGroupBy("db_user.id")
     .addGroupBy("db_chat.name")
     .getRawMany()
     return allrooms; 
@@ -302,11 +306,14 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     }
     const Myrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
-    .select(['db_chat.name','db_chat.ownerID', 'db_chat.id'])
+    .select(['db_chat.name', 'db_chat.id'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
+    .leftJoin(User, 'db_user', 'db_user.id = db_chat.ownerID')
+    .addSelect('db_user.username', 'ownerName')
     .where("(:id = ANY (db_chat.userID))", { id })
     .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .groupBy("db_chat.id")
+    .addGroupBy("db_user.id")
     .addGroupBy("db_chat.name")
     .getRawMany()
 
