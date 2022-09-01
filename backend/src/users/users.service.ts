@@ -69,16 +69,26 @@ export class UsersService {
 			return this.userRepository.update(userID, user);
 		}
 
-		async removeUser(userID: number){
-			const user = await this.userRepository.findOne({
-				where: {
-					id: userID
-				}
-			});
-			if (!user)
-				throw new HttpException({ message: 'User Not Found'}, HttpStatus.BAD_REQUEST);
-			return this.userRepository.remove(user);
+		async removeFriend(user: User){
+			const block = this.userRepository
+			.createQueryBuilder()
+			.update(User)
+			.set({
+				FriendsID: () => `array_remove("FriendsID", ${user.username})`
+			})
+			.execute();
 		}
+
+		// async removeUser(userID: number){
+		// 	const user = await this.userRepository.findOne({
+		// 		where: {
+		// 			id: userID
+		// 		}
+		// 	});
+		// 	if (!user)
+		// 		throw new HttpException({ message: 'User Not Found'}, HttpStatus.BAD_REQUEST);
+		// 	return this.userRepository.remove(user);
+		// }
 
 		async calculateRank(userID: number){
 			const user = await this.getUserById(userID);
