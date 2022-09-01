@@ -11,6 +11,7 @@ import Settings from "./Settings";
 import UserProfile from "./UserProfile";
 import { cookies, getCookieHeader, globalContext, RRLink, useEffectOnce, valDef } from "./util";
 import io from 'socket.io-client';
+import ProtectedRoom from "./ProtectedRoom";
 
 const chatSocket = io("/chatNamespace");
 
@@ -72,6 +73,9 @@ const NavAndChatWrapper = () => {
 		// }
 	]);
 	const [allRooms, setAllRooms] = useState([]);
+	useEffect(() => {
+		console.log({allRooms});
+	}, [allRooms])
 	const getAllRooms = () => {
 		axios.get("/chat/allRooms", { headers: { cookie: getCookieHeader() } }).then((res) => {
 			console.log({res});
@@ -355,29 +359,40 @@ const NavAndChatWrapper = () => {
 										<input type="submit" className="submit_button c_button_2" value="Create Room"/>
 									</form>
 								</div>
-								<div className="d100 publicrooms flex-column" style={{display: roomActiveTab === "public" ? "flex" : "none"}}>
+								<div className="d100 publicrooms flex-column flex-gap10" style={{display: roomActiveTab === "public" ? "flex" : "none"}}>
 									{
 										allRooms.filter((room: any) => room.db_chat_status === "public").map((room: any) => {
 											return (
-												<div className="room w100">
+												<div className="room w100 flex-jc-sb flex-ai-cr">
 													<div className="left flex-column">
 														<div className="name">{room.db_chat_name}</div>
 														<div className="owner">{room.db_chat_ownerID}</div>
 													</div>
-													<div className="mid flex-center">
-														<i className="icon fa-solid fa-user"></i>
-														<div className="num">{room["number of users"]}</div>
+													<div className="container flex-center flex-gap10">
+														<div className="mid flex-center">
+															<i className="icon fa-solid fa-user"></i>
+															<div className="num">{room["number of users"]}</div>
+														</div>
+														<Button onClick={(e: any) => {
+															e.preventDefault();
+															axios.post("/chat/joinRoom",
+																{ name: room.db_chat_name },
+																{ headers: { cookie: getCookieHeader() } }
+															).then((res: any) => {
+																getAllRooms();
+															});
+														}}>Join</Button>
 													</div>
-													<Button onClick={(e: any) => {
-														e.preventDefault();
-														axios.post("/chat/joinRoom",
-															{ name: room.db_chat_name },
-															{ headers: { cookie: getCookieHeader() } }
-														).then((res: any) => {
-															getAllRooms();
-														});
-													}}>Join</Button>
 												</div>
+											);
+										})
+									}
+								</div>
+								<div className="d100 publicrooms flex-column flex-gap10" style={{display: roomActiveTab === "protected" ? "flex" : "none"}}>
+									{
+										allRooms.filter((room: any) => room.db_chat_status === "protected").map((room: any) => {
+											return (
+												<ProtectedRoom {...{room, getAllRooms}}></ProtectedRoom>
 											);
 										})
 									}
