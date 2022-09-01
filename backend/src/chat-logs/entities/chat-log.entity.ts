@@ -1,7 +1,6 @@
 import { Entity, Column, OneToMany, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Game } from "src/games/entities/game.entity";
 import { BaseEntity } from "typeorm";
-import { Friend } from "src/friends/entities/friend.entity";
 
 /*
 	Marks your model as an entity. Entity is a class which is 

@@ -14,7 +14,6 @@ import {
 import { User } from './entities/user.entity';
 import { AvatarDto } from './dto/upload.dto';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { FriendsService } from 'src/friends/friends.service';
 
 @ApiTags('users')
 @Controller('users')
@@ -24,7 +23,6 @@ export class UsersController {
 
 	constructor(
 		private readonly usersService: UsersService,
-		private readonly FriendService: FriendsService
 	){}
 
 	@ApiOperation({ summary: 'Change a user\'s avatar' })
@@ -51,27 +49,6 @@ export class UsersController {
 		});
 		res.send({avatar: user.avatar});
 	}
-
-
-	@ApiOperation({ summary: 'Add a friend to a user' })
-	@Post('/add_friend')
-	async AddFriend(@Body('id') userID : number, @Req() req, @Res() res){
-		console.log(`${JSON.stringify(req.body.user)}`);
-		try {
-			const firstUser  = await this.usersService.getUserById(58526);
-			const secondUser = await this.usersService.getUserById(req.body.user.id);
-			this.FriendService.createFriendRelation({
-				FirstUser: firstUser,
-				SecondUser: secondUser,
-				isFriend: false,
-				blocked: false
-			}, req.body.user);
-		}
-		catch(err){
-			 throw new UnauthorizedException('Can\'t add friend');
-		}
-		res.send('done');
-	}
 	
 	@ApiOperation({ summary: 'Change a user\'s username' })
 	@Post('/update_username')
@@ -93,5 +70,23 @@ export class UsersController {
 	@Get(':id')
 	getUserData(@Param('id') id : number){
 		return this.usersService.getUserById(id);
+	}
+
+	/*
+		Friensd Services
+	*/
+
+	// TODO:
+	// add user
+	// block user
+	// get friends
+	// get blocked users
+	// is friend 
+	// find friend data
+
+	@ApiOperation({ summary: 'Add a friend to a user' })
+	@Post('/add_friend')
+	async AddFriend(@Body('id') userID : number, @Req() req, @Res() res){
+			
 	}
 }

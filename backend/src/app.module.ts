@@ -14,15 +14,11 @@ import { UsersService } from './users/users.service';
 import { UsersController } from './users/users.controller';
 import { AuthController } from './auth/auth.controller';
 import { ChatModule } from './chats/chats.module';
-import { FriendsModule } from './friends/friends.module';
-import { Friend } from './friends/entities/friend.entity';
 import { TwoFactorAuthenticationModule } from './two-factor-authentication/two-factor-authentication.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './auth/jwt.stategy';
 import { ChatLogsModule } from './chat-logs/chat-logs.module';
-import { FriendsService } from './friends/friends.service';
 import { UserRepository } from './users/user.repository';
-import { relationRepository } from './friends/relation.repository';
 import { Chat } from './chats/entities/chat.entity';
 import { ChatLogs } from './chat-logs/entities/chat-log.entity';
 import { Auth } from './auth/entities/auth.entity';
@@ -45,14 +41,14 @@ require('dotenv').config();
 				envFilePath: '.env',
 				isGlobal: true
 			}),
-			TypeOrmModule.forFeature([User, Friend, UserRepository, relationRepository,
+			TypeOrmModule.forFeature([User, UserRepository,
 							Game, GameRepository]),
 			TypeOrmModule.forRoot({
 				type: 'postgres',
 				url: process.env.DATABASE_URL,
 				autoLoadEntities: true,
 				entities: [
-					User, Friend, Chat, ChatLogs, Auth, Game
+					User, Chat, ChatLogs, Auth, Game
 				],
 				synchronize: true,
 			}),
@@ -61,12 +57,11 @@ require('dotenv').config();
 			GameModule,
 			AuthModule,
 			ChatModule,
-			FriendsModule,
 			TwoFactorAuthenticationModule,
 			ChatLogsModule
 		],
 		controllers: [AuthController, UsersController, AppController],
-		providers: [UsersService, FriendsService , JwtStrategy, AuthService,  AppService, GamesService],
+		providers: [UsersService, JwtStrategy, AuthService,  AppService, GamesService],
 		exports: [
 			AuthService, PassportModule 
 		  ],
