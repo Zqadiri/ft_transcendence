@@ -35,6 +35,22 @@ export class ChatsService {
     return await this.Chatrepository.findOneBy({ name: roomName });
   }
   
+  private checkName(name: string)
+  {
+    // check if room name contains only white space or is empty
+    if (!name || name.trim().length === 0)
+      throw new BadRequestException({code: 'invalid name', message: `Room name must not be empty`})
+    return (name);
+  }
+
+  private checkPassword(password: string, status: string)
+  {
+    if ((status === RoomStatus.PUBLIC || status === RoomStatus.PRIVATE) && password)
+      throw new BadRequestException({code: 'invalid data', message: `you can not set password to public/private rooms`})
+    if (password === '' || password === undefined)
+      throw new BadRequestException({code: 'invalid password', message: `Room password name must not be empty`})
+    return (password);
+  }
   /** Create DM */
 
   async CreateDm(dm: CreateDmDto, userid1: number, userid2: number)
@@ -64,13 +80,12 @@ export class ChatsService {
       ownerID: user.username,
       userID: [user.username],
       AdminsID: [],
-	  InvitedUserID: [],
+      InvitedUserID: [],
       MutedAndBannedID:[],
-      name: room.name,
+      name: this.checkName(room.name),
       type: ChatTypes.CHATROOM,
       status: room.status,
-      password: room.password
-
+      password: this.checkPassword(room.password, status)
     });
 
     await this.Chatrepository.save(newRoom);
