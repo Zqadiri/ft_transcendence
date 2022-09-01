@@ -33,6 +33,7 @@ export class GameGateway {
 		{
 			this.userCounter1 = 0;
 			this.roomCounter1 = (this.roomCounter1 + 1) % 1000000000;
+			this.server.to(roomName).emit("secondPlayerJoined");
 		}
 		client.emit("joinedRoom", roomName);
 	}
@@ -49,6 +50,7 @@ export class GameGateway {
 			this.roomCounter2++;
 			if (this.roomCounter2 > 2000000000)
 				this.roomCounter2 = 1000000000;
+			this.server.to(roomName).emit("secondPlayerJoined");
 		}
 		client.emit("joinedRoom", roomName);
 	}

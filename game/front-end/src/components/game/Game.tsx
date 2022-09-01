@@ -67,11 +67,10 @@ function	LiveGames(): JSX.Element
 	);
 }
 
-function	Game(): JSX.Element
+function	GameTabs(): JSX.Element
 {
 	return (
 		<>
-			{/* <PingPong /> */}
 			<Tabs className="Tabs">
 				<TabList>
 					<Tab>Play a Game</Tab>
@@ -84,6 +83,20 @@ function	Game(): JSX.Element
 					<LiveGames />
 				</TabPanel>
 			</Tabs>
+		</>
+	);
+}
+
+function	Game(): JSX.Element
+{
+	return (
+		<>
+			<Router>
+				<Routes>
+					<Route path="/" element={<GameTabs />}></Route>
+					<Route path="/play" element={<PingPong />}></Route>
+				</Routes>
+			</Router>
 		</>
 	);
 }

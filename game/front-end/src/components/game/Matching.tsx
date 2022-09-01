@@ -1,5 +1,5 @@
-
 import { socket, useEffectOnce, roomName, setRoomName } from "./Game";
+import { useNavigate } from 'react-router-dom';
 import PropTypes, { InferProps } from "prop-types";
 import { useState } from "react";
 import MoonLoader from 'react-spinners/MoonLoader';
@@ -62,9 +62,13 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 function	Matching(): JSX.Element
 {
 	const	[switchContent, setSwitchContent] = useState(true);
+	const 	navigate = useNavigate();
 	useEffectOnce(() => {
 		socket.on("joinedRoom", (data) => {
 			setRoomName(data);
+		});
+		socket.on("secondPlayerJoind", () => {
+			navigate("/play");
 		});
 	});
 	return (
