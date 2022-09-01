@@ -40,7 +40,7 @@ export class ChatsService {
     // check if room name contains only white space or is empty
     if (!name || name.trim().length === 0)
       throw new BadRequestException({code: 'invalid name', message: `Room name must not be empty`})
-    return (name);
+    return (name.trim());
   }
 
   private checkPassword(password: string, status: string)
