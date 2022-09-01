@@ -27,10 +27,14 @@ const NavAndChatWrapper = () => {
 		true
 	);
 	const chatRef = useRef<HTMLDivElement>(null);
-	const [activeTab, setActiveTab] = useState(
+	const [activeTab, _setActiveTab] = useState(
 		// "friends"
 		"rooms"
 	);
+	const setActiveTab = (x: any) => {
+		getAllMyRooms();
+		return _setActiveTab(x);
+	}
 	const [roomActiveTab, setRoomActiveTab] = useState(
 		// "public"
 		"create"
@@ -42,6 +46,13 @@ const NavAndChatWrapper = () => {
 	const [createRoomType, setCreateRoomType] = useState<string | null>("public");
 	const [createRoomPassword, setCreateRoomPassword] = useState("");
 	const [createRoomName, setCreateRoomName] = useState("");
+	const [createRoomResponseMessage, _setCreateRoomResponseMessage] = useState("");
+	const setCreateRoomResponseMessage = (x: any) => {
+		setTimeout(() => {
+			_setCreateRoomResponseMessage("");
+		}, 2000);
+		return _setCreateRoomResponseMessage(x);
+	}
 	useEffect(() => {
 		if (createRoomType !== "protected")
 			setCreateRoomPassword("");
@@ -327,8 +338,14 @@ const NavAndChatWrapper = () => {
 											name: createRoomName,
 											status: createRoomType,
 											...(createRoomType === "protected" && { password: createRoomPassword })
-										}, { headers: {cookie: getCookieHeader() }}).then(res => {
+										}, { headers: {cookie: getCookieHeader() }})
+										.then(res => {
 											console.log({res})
+											setCreateRoomResponseMessage("Created!");
+										})
+										.catch((err: any) => {
+											console.log({err});
+											setCreateRoomResponseMessage(err.response.data.message);
 										})
 										// console.log({createRoomName, createRoomType, createRoomPassword});
 									}}>
@@ -362,6 +379,7 @@ const NavAndChatWrapper = () => {
 											<input type="password" id="room_password" value={createRoomPassword} onChange={(e) => { setCreateRoomPassword(e.target.value); }}/>
 										</div>
 										<input type="submit" className="submit_button c_button_2" value="Create Room"/>
+										<div className="message align-text-center">{createRoomResponseMessage}</div>
 									</form>
 								</div>
 								<div className="d100 publicrooms flex-column flex-gap10" style={{display: roomActiveTab === "public" ? "flex" : "none"}}>
