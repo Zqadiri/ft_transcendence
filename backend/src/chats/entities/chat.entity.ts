@@ -26,8 +26,8 @@ export class Chat{
 	@Column({nullable: true})
 	password: string;
 
-	@Column('varchar')
-	ownerID: string;
+	@Column('int')
+	ownerID: number;
 
 	@Column({
 		enum: ['dm', 'chatRoom'],
@@ -41,28 +41,28 @@ export class Chat{
 	})
 	status: string;
 	
-	@Column('varchar',{
+	@Column('int',{
 		array: true,
 		nullable: false
 	})
-	userID: string[];
+	userID: number[];
 
 	@Column('varchar',{
 		array: true,
 		nullable: true
 	})
-	AdminsID: string[];
+	AdminsID: number[];
 
 	@Column('varchar',{
         array: true,
         nullable: true
     })
-    InvitedUserID: string[];
+    InvitedUserID: number[];
 	
 	@Column({ type: "simple-json", nullable: true })
     MutedAndBannedID: {
 		action: string;
-        username: string;
+        userID: number;
 		current_time: number;
         duration: number;
     }[];

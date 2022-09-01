@@ -55,7 +55,7 @@ export class RoomDto
 	password: string;
 
 	@ApiProperty({ description: "username who want to join the chat Room" })
-	username: string;
+	userID: number;
 }
 
 export class RoomWoUserDto
@@ -75,7 +75,7 @@ export class SetRolestoMembersDto
 	RoomID: string;
 
 	@ApiProperty({ description: "member of this Chat Room" })
-	username: string;
+	userID: number;
 }
 
 export class RoomNamedto
@@ -91,7 +91,7 @@ export class BanOrMuteMembersDto
 	RoomID: string;
 
 	@ApiProperty({ description: "member of this Chat Room" })
-	username: string;
+	userID: number;
 
 	@ApiProperty({ description: "duration of execute mute/ban member" })
 	duration: number;

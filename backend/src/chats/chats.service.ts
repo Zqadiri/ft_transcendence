@@ -24,10 +24,10 @@ export class ChatsService {
 
   constructor(private readonly friendsService : FriendsService) {}
 
-  async findUser(username: string)
+  async findUser(userID: number)
   {
     // findOneBy - Finds the first entity that matches given FindOptionsWhere.
-    return await this.Userrepository.findOneBy({ username: username });
+    return await this.Userrepository.findOneBy({ id: userID });
   }
 
   async findRoom(roomName: string)
@@ -45,9 +45,9 @@ export class ChatsService {
 
   private checkPassword(password: string, status: string)
   {
-    if ((status === RoomStatus.PUBLIC || status === RoomStatus.PRIVATE) && password)
+    if ((status !== RoomStatus.PROTECTED) && password)
       throw new BadRequestException({code: 'invalid data', message: `you can not set password to public/private rooms`})
-    if (password === '' || password === undefined)
+    if ((password === '' || password === undefined) && status === RoomStatus.PROTECTED)
       throw new BadRequestException({code: 'invalid password', message: `Room password name must not be empty`})
     return (password);
   }
@@ -60,7 +60,7 @@ export class ChatsService {
 
   /** Create ROOM */
 
-  async createRoom(room: CreateRoomDto, creator: string)
+  async createRoom(room: CreateRoomDto, creator: number)
   {
      //TODO: check if the room already exist in the database if not create a new instance of it
 
@@ -77,15 +77,15 @@ export class ChatsService {
     }
 
     const newRoom = this.Chatrepository.create({
-      ownerID: user.username,
-      userID: [user.username],
+      ownerID: user.id,
+      userID: [user.id],
       AdminsID: [],
       InvitedUserID: [],
       MutedAndBannedID:[],
       name: this.checkName(room.name),
       type: ChatTypes.CHATROOM,
       status: room.status,
-      password: this.checkPassword(room.password, status)
+      password: this.checkPassword(room.password, room.status)
     });
 
     await this.Chatrepository.save(newRoom);
@@ -103,12 +103,12 @@ async isFriend(owner: any, username: any)
 }
 
 /** invite user to join private chat room */
-async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
+async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
 {
-  const user = await this.findUser(SetRolestoMembersDto.username);
+  const user = await this.findUser(SetRolestoMembersDto.userID);
 
   if (!user){
-    throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.username}' does not exist`})
+    throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.userID}' does not exist`})
   }
 
   const check = await this.Chatrepository.findOneOrFail({
@@ -124,9 +124,9 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
     
     if (isfriend)
     {
-      if (!check.InvitedUserID.includes(user.username) && check.status === RoomStatus.PRIVATE)
+      if (!check.InvitedUserID.includes(user.id) && check.status === RoomStatus.PRIVATE)
       {
-        check.InvitedUserID.push(user.username);
+        check.InvitedUserID.push(user.id);
         await this.Chatrepository.save(check);
       }
     }
@@ -149,23 +149,23 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
 
     // check the user who want to join exist in table user
 
-    const user = await this.findUser(Roomdata.username);
+    const user = await this.findUser(Roomdata.userID);
     if (!user){
-      throw new BadRequestException({code: 'invalid username', message: `User with '${Roomdata.username}' does not exist`})
+      throw new BadRequestException({code: 'invalid username', message: `User with '${Roomdata.userID}' does not exist`})
     }
 
-    if (!name.userID.includes(user.username))
+    if (!name.userID.includes(user.id))
     {
       if (name.status === RoomStatus.PUBLIC)
       {
-        name.userID.push(user.username);
+        name.userID.push(user.id);
         await this.Chatrepository.save(name);
       }
       else if (name.status === RoomStatus.PRIVATE)
       {
-        if (name.InvitedUserID.includes(user.username))
+        if (name.InvitedUserID.includes(user.id))
         {
-          name.InvitedUserID = name.InvitedUserID.filter(item => item !== user.username);
+          name.InvitedUserID = name.InvitedUserID.filter(item => item !== user.id);
 
           const ret_query = await this.Chatrepository
           .createQueryBuilder()
@@ -177,7 +177,7 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
 
           if (ret_query)
           {
-            name.userID.push(user.username);
+            name.userID.push(user.id);
             await this.Chatrepository.save(name);
           }
         }
@@ -191,7 +191,7 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
           throw new UnauthorizedException({code: 'Unauthorized', message: `Wrong password to join '${roomName}'`})
         else
         {
-          name.userID.push(user.username);
+          name.userID.push(user.id);
           await this.Chatrepository.save(name);
         }
       }
@@ -231,7 +231,7 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
   //     it, and also remove it.
 
 
-  async SetPasswordToRoom(RoomDto: RoomDto, owner: string)
+  async SetPasswordToRoom(RoomDto: RoomDto, owner: number)
   {
     await this.Chatrepository.findOneOrFail({
       where: {
@@ -252,7 +252,7 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
           .execute()
   }
 
-  async RemovePasswordToRoom(RoomName: string, owner: string)
+  async RemovePasswordToRoom(RoomName: string, owner: number)
   {
     await this.Chatrepository.findOneOrFail({
       where: {
@@ -274,37 +274,37 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
 
   }
 
-  async AllRoom(username: string)
+  async AllRoom(id: number)
   {
-    const user = this.findUser(username);
+    const user = this.findUser(id);
     if (!user){
-      throw new BadRequestException({code: 'invalid username', message: `User with '${username}' does not exist`})
+      throw new BadRequestException({code: 'invalid id', message: `User with '${id}' does not exist`})
     }
+    
     const allrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
     .select(['db_chat.name', 'db_chat.ownerID' ,'db_chat.id', 'db_chat.status'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
-    .where("NOT (:username = ANY (db_chat.userID)) OR (:username = ANY (db_chat.InvitedUserID)) ", { username: username })
+    .where("NOT (:id = ANY (db_chat.userID)) OR (:id = ANY (db_chat.InvitedUserID)) ", { id })
     .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .groupBy("db_chat.id")
     .addGroupBy("db_chat.name")
     .getRawMany()
-
     return allrooms; 
   }
 
   // display all my rooms exist in the database
-  async AllMyRooms(username: string)
+  async AllMyRooms(id: number)
   {
-    const user = this.findUser(username);
+    const user = this.findUser(id);
     if (!user){
-      throw new BadRequestException({code: 'invalid username', message: `User with '${username}' does not exist`})
+      throw new BadRequestException({code: 'invalid username', message: `User with '${id}' does not exist`})
     }
     const Myrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
     .select(['db_chat.name','db_chat.ownerID', 'db_chat.id'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
-    .where("(:username = ANY (db_chat.userID))", { username: username })
+    .where("(:id = ANY (db_chat.userID))", { id })
     .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .groupBy("db_chat.id")
     .addGroupBy("db_chat.name")
@@ -316,14 +316,14 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
   /** The channel owner is a channel administrator. They can set other users as
     administrators. */
 
-  async SetUserRoomAsAdmin(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
+  async SetUserRoomAsAdmin(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
   {
     // check the user who want to join exist in table user
 
-    const user = await this.findUser(SetRolestoMembersDto.username);
+    const user = await this.findUser(SetRolestoMembersDto.userID);
 
     if (!user){
-      throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.username}' does not exist`})
+      throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.userID}' does not exist`})
     }
 
     const check = await this.Chatrepository.findOneOrFail({
@@ -335,21 +335,21 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
         throw new BadRequestException({code: 'invalid', message: `there is no chat room with name '${SetRolestoMembersDto.RoomID}' and owner '${owner}'!!`})
       });
 
-      if (check.userID.includes(user.username))
+      if (check.userID.includes(user.id))
       {
         if (!check.AdminsID || check.AdminsID.length == 0)
         {
-          check.AdminsID = [user.username];
+          check.AdminsID = [user.id];
           await this.Chatrepository.save(check);
         }
-        else if (!check.AdminsID.includes(user.username))
+        else if (!check.AdminsID.includes(user.id))
         {
-          check.AdminsID.push(user.username);
+          check.AdminsID.push(user.id);
           await this.Chatrepository.save(check);
         }
       }
       else
-        throw new ForbiddenException({code: 'Forbidden', message: `This user '${SetRolestoMembersDto.username}' is not in this chat room and couldn't be admin!!`})
+        throw new ForbiddenException({code: 'Forbidden', message: `This user '${SetRolestoMembersDto.userID}' is not in this chat room and couldn't be admin!!`})
   }
 
     private random_item(items)
@@ -365,7 +365,7 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
         where: 
           {
               name: SetRolestoMembersDto.RoomID,
-              ownerID: SetRolestoMembersDto.username
+              ownerID: SetRolestoMembersDto.userID
           },
       });
 
@@ -421,14 +421,14 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
       }
       else if (isUserRoom)
       {
-        if (isUserRoom.userID.includes(SetRolestoMembersDto.username))
+        if (isUserRoom.userID.includes(SetRolestoMembersDto.userID))
         {
-          if (isUserRoom.AdminsID.includes(SetRolestoMembersDto.username))
+          if (isUserRoom.AdminsID.includes(SetRolestoMembersDto.userID))
           {
-            isUserRoom.AdminsID = isUserRoom.AdminsID.filter(item => item !== SetRolestoMembersDto.username);
+            isUserRoom.AdminsID = isUserRoom.AdminsID.filter(item => item !== SetRolestoMembersDto.userID);
             console.log("Simple Admin Leaving this room");
           }
-          isUserRoom.userID = isUserRoom.userID.filter(item => item !== SetRolestoMembersDto.username);
+          isUserRoom.userID = isUserRoom.userID.filter(item => item !== SetRolestoMembersDto.userID);
        
           const ret_query = await this.Chatrepository
           .createQueryBuilder()
@@ -447,12 +447,12 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
 
     /** The administrators of a channel can ban or mute users for a limited time */
 
-    async BanOrMuteUser(administrator: string, BanOrMuteMembersDto: BanOrMuteMembersDto)
+    async BanOrMuteUser(administrator: number, BanOrMuteMembersDto: BanOrMuteMembersDto)
     {
-      const user = await this.findUser(BanOrMuteMembersDto.username);
+      const user = await this.findUser(BanOrMuteMembersDto.userID);
 
       if (!user){
-        throw new BadRequestException({code: 'invalid username', message: `User with '${BanOrMuteMembersDto.username}' does not exist`})
+        throw new BadRequestException({code: 'invalid username', message: `User with '${BanOrMuteMembersDto.userID}' does not exist`})
       }
 
       const check = await this.Chatrepository.findOne({
@@ -468,29 +468,29 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
           },
         });
         
-        if (check && check.userID.includes(user.username) && !check.AdminsID.includes(user.username))
+        if (check && check.userID.includes(user.id) && !check.AdminsID.includes(user.id))
         {
           /** 
            * You could use Array.find() method to check if the array includes the object as 
            * "Array.includes checks for '===' in the array" which doesn't work for objects
            */
 
-          if (!check.MutedAndBannedID.find(element => element.username === user.username))
+          if (!check.MutedAndBannedID.find(element => element.userID === user.id))
           {
-            check.MutedAndBannedID.push({action: BanOrMuteMembersDto.action, username: user.username, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
+            check.MutedAndBannedID.push({action: BanOrMuteMembersDto.action, userID: user.id, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
             await this.Chatrepository.save(check);
           }
           else
             throw new ForbiddenException({code: 'Forbidden', message: `this user is already muted/banned for a specific time!!`})
             console.log("owner", administrator);
         }
-        else if (checkadmin && checkadmin.userID.includes(user.username) && checkadmin.ownerID !== user.username)
+        else if (checkadmin && checkadmin.userID.includes(user.id) && checkadmin.ownerID !== user.id)
         {
           if (checkadmin.AdminsID.includes(administrator))
           {
-            if (!checkadmin.MutedAndBannedID.find(element => element.username === user.username))
+            if (!checkadmin.MutedAndBannedID.find(element => element.userID === user.id))
             {
-              checkadmin.MutedAndBannedID.push({action: BanOrMuteMembersDto.action, username: user.username, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
+              checkadmin.MutedAndBannedID.push({action: BanOrMuteMembersDto.action, userID: user.id, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
               await this.Chatrepository.save(checkadmin);
             }
             else
@@ -527,11 +527,11 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
         if ((mutedIds.MutedAndBannedID[i].current_time + mutedIds.MutedAndBannedID[i].duration * 1000 ) > Date.now())
         {
           if (mutedIds.MutedAndBannedID[i].action === Action.MUTE)
-            listMuted.push(mutedIds.MutedAndBannedID[i].username);
+            listMuted.push(mutedIds.MutedAndBannedID[i].userID);
         }
         else
         {
-          mutedIds.MutedAndBannedID = mutedIds.MutedAndBannedID.filter(item => item.username !== mutedIds.MutedAndBannedID[i].username);
+          mutedIds.MutedAndBannedID = mutedIds.MutedAndBannedID.filter(item => item.userID !== mutedIds.MutedAndBannedID[i].userID);
   
             console.log("filter user, from mutedID array ",mutedIds.MutedAndBannedID);
   
@@ -565,11 +565,11 @@ async InviteUser(owner: string, SetRolestoMembersDto: SetRolestoMembersDto)
         if ((bannedIds.MutedAndBannedID[i].current_time + bannedIds.MutedAndBannedID[i].duration * 1000 ) > Date.now())
         {
           if (bannedIds.MutedAndBannedID[i].action === Action.BAN)
-            listBaned.push(bannedIds.MutedAndBannedID[i].username);
+            listBaned.push(bannedIds.MutedAndBannedID[i].userID);
         }
         else
         {
-          bannedIds.MutedAndBannedID = bannedIds.MutedAndBannedID.filter(item => item.username !== bannedIds.MutedAndBannedID[i].username);
+          bannedIds.MutedAndBannedID = bannedIds.MutedAndBannedID.filter(item => item.userID !== bannedIds.MutedAndBannedID[i].userID);
   
             console.log("filter user, from bannedID array ",bannedIds.MutedAndBannedID);
   

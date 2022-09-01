@@ -14,11 +14,11 @@ export class ChatController {
     @UseGuards(jwtAuthGuard)
     @Post('/CreateRoom')
     @HttpCode(201)
-    async createRoom(@Req() req, @Body() roomDto: CreateRoomDto) {
+    async createRoom(@Req() req: RequestWithUser, @Body() roomDto: CreateRoomDto) {
         console.log("Creating chat room...");
         try {
             //const newRoom = await this.chatService.createRoom(roomDto, "oum");
-            const newRoom = await this.chatService.createRoom(roomDto, req.user.username);
+            const newRoom = await this.chatService.createRoom(roomDto, req.user.id);
             return newRoom;
         } catch (e) {
             console.error('Failed to initiate room', e);
@@ -32,7 +32,7 @@ export class ChatController {
     {
         try
         {
-            await this.chatService.JointoChatRoom({username: req.user.username, ...Roomdata});
+            await this.chatService.JointoChatRoom({userID: req.user.id, ...Roomdata});
             console.log("join to room...", Roomdata.name);
         } 
         catch (e)
@@ -49,7 +49,7 @@ export class ChatController {
     {
         try {
             console.log("leave room ...", RoomID);
-            await this.chatService.LeaveRoom({RoomID, username: req.user.username});
+            await this.chatService.LeaveRoom({RoomID, userID: req.user.id});
         } catch (e) {
             console.error('Failed to leave room', e);
             throw e;
@@ -59,11 +59,11 @@ export class ChatController {
 
     @UseGuards(jwtAuthGuard)
     @Post('/Invite')
-    async InviteUser(@Req() req, @Body() invite: SetRolestoMembersDto)
+    async InviteUser(@Req() req: RequestWithUser, @Body() invite: SetRolestoMembersDto)
     {
         try {
             console.log("inviting to join private chat room...");
-           return await this.chatService.InviteUser(req.user.username, invite);
+           return await this.chatService.InviteUser(req.user.id, invite);
          } catch (e) {
              console.error('Failed to inviting to join private chat room', e);
              throw e;
@@ -85,11 +85,11 @@ export class ChatController {
 
     @UseGuards(jwtAuthGuard)
     @Post('/setPassword')
-    async SetPasswordToRoom(@Req() req, @Body() RoomDto: RoomDto)
+    async SetPasswordToRoom(@Req() req: RequestWithUser, @Body() RoomDto: RoomDto)
     {
         try {
             console.log("set password to this room...", RoomDto.name);
-            await this.chatService.SetPasswordToRoom(RoomDto, req.user.usename);
+            await this.chatService.SetPasswordToRoom(RoomDto, req.user.id);
          } catch (e) {
              console.error('Failed to set password to this room', e);
              throw e;
@@ -98,11 +98,11 @@ export class ChatController {
 
     @UseGuards(jwtAuthGuard)
     @Post('/RemovePassword')
-    async RemovePasswordToRoom(@Req() req, @Body() RoomNamedto: RoomNamedto)
+    async RemovePasswordToRoom(@Req() req: RequestWithUser, @Body() RoomNamedto: RoomNamedto)
     {
         try {
             console.log("remove password to this room...", RoomNamedto.name);
-           return await this.chatService.RemovePasswordToRoom(RoomNamedto.name, req.user.username);
+           return await this.chatService.RemovePasswordToRoom(RoomNamedto.name, req.user.id);
          } catch (e) {
              console.error('Failed to remove password to this room', e);
              throw e;
@@ -111,11 +111,11 @@ export class ChatController {
     
     @UseGuards(jwtAuthGuard)
     @Get('/allRooms')
-    async AllRooms(@Req() req)
+    async AllRooms(@Req() req: RequestWithUser)
     {
         try {
             console.log("display all rooms ...");
-            return await this.chatService.AllRoom(req.user.username);
+            return await this.chatService.AllRoom(req.user.id);
          } catch (e) {
              console.error('display all rooms', e);
              throw e;
@@ -124,11 +124,11 @@ export class ChatController {
 
     @UseGuards(jwtAuthGuard)
     @Get('/allMyRoom')
-    async AllMyRooms(@Req() req)
+    async AllMyRooms(@Req() req: RequestWithUser)
     {
         try {
             console.log("display all my rooms ...");
-            return await this.chatService.AllMyRooms(req.user.username);
+            return await this.chatService.AllMyRooms(req.user.id);
         } catch (e) {
             console.error('display all my rooms', e);
             throw e;
@@ -137,11 +137,11 @@ export class ChatController {
 
     @UseGuards(jwtAuthGuard)
     @Post('/setUserRoomAsAdmin')
-    async SetUserRoomAsAdmin(@Req() req, @Body() setRolesDto: SetRolestoMembersDto)
+    async SetUserRoomAsAdmin(@Req() req: RequestWithUser, @Body() setRolesDto: SetRolestoMembersDto)
     {
         try {
             console.log("Set user room as admin ...");
-            return await this.chatService.SetUserRoomAsAdmin(req.user.username, setRolesDto);
+            return await this.chatService.SetUserRoomAsAdmin(req.user.id, setRolesDto);
         } catch (e) {
             console.error('Failed to set this user as admin to this room', e);
             throw e;
@@ -150,11 +150,11 @@ export class ChatController {
     
     @UseGuards(jwtAuthGuard)
     @Post('/MuteUser')
-    async MuteUser(@Req() req, @Body() setRolesDto: BanOrMuteMembersDto)
+    async MuteUser(@Req() req: RequestWithUser, @Body() setRolesDto: BanOrMuteMembersDto)
     {
         try {
             console.log("mute user room ...");
-            return await this.chatService.BanOrMuteUser(req.user.username, setRolesDto);
+            return await this.chatService.BanOrMuteUser(req.user.id, setRolesDto);
         } catch (e) {
             console.error('Failed to mute this user in this chat room', e);
             throw e;
