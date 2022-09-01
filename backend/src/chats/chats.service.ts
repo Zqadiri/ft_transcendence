@@ -218,7 +218,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
 
     const profils = await this.Userrepository
     .createQueryBuilder("db_user")
-    .where("db_user.username IN (:...users)", { users: users.userID })
+    .where("db_user.id IN (:...users)", { users: users.userID })
     .getRawMany();
     
     return profils;

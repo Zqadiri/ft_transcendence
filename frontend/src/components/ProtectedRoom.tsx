@@ -9,7 +9,7 @@ const ProtectedRoom = ({ room, getAllRooms, getAllMyRooms }: any) => {
 		<div className="room w100 flex-jc-sb flex-ai-cr">
 			<div className="left flex-column">
 				<div className="name">{room.db_chat_name}</div>
-				<div className="owner">{room.db_chat_ownerID}</div>
+				<div className="owner">{room.ownerName}</div>
 			</div>
 			<div className="container flex-center flex-gap10">
 				<div className="mid flex-center">

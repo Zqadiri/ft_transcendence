@@ -32,13 +32,20 @@ const NavAndChatWrapper = () => {
 		"rooms"
 	);
 	const setActiveTab = (x: any) => {
-		getAllMyRooms();
+		if (x === "chat")
+			getAllMyRooms();
+		if (x === "rooms")
+			getAllRooms();
 		return _setActiveTab(x);
 	}
-	const [roomActiveTab, setRoomActiveTab] = useState(
+	const [roomActiveTab, _setRoomActiveTab] = useState(
 		// "public"
 		"create"
 	);
+	const setRoomActiveTab = (x: any) => {
+		getAllRooms();
+		return _setRoomActiveTab(x);
+	}
 
 	const messagesRef = useRef<HTMLDivElement>(null);
 	const submitRef = useRef<HTMLDivElement>(null);
@@ -78,7 +85,7 @@ const NavAndChatWrapper = () => {
 	const [chatRooms, setChatRooms] = useState([
 		// {
 		// 	db_chat_name: "testroom",
-		// 	db_chat_ownerID: cookies.get("name"),
+		// 	ownerName: cookies.get("name"),
 		// 	"number of users": 1,
 		// 	db_chat_owner_avatar: ""
 		// }
@@ -198,21 +205,15 @@ const NavAndChatWrapper = () => {
 		};
 	});
 
-
-	useEffect(() => {
-
-	}, [activeChat])
-
 	const [friends, setFriends] = useState([
 	]);
 
 	useEffectOnce(() => {
 		getAllMyRooms();
 	})
+
 	return (
 		<div className="c_wrapper d100">
-			{/* <img src={cookies.get("avatar")} alt="avatar" className="avatar" />
-			<h1>Welcome <span>{cookies.get("name")}</span></h1> */}
 			<nav className="navbar flex-jc-sb flex-ai-cr">
 				<div className="navelem left"></div>
 				<RRLink to="/" onClick={() => { setUserIconDropdown(false) }}>
@@ -307,7 +308,7 @@ const NavAndChatWrapper = () => {
 											}}>
 												<div className="left flex-column">
 													<div className="name">{room.db_chat_name}</div>
-													<div className="owner">{room.db_chat_ownerID}</div>
+													<div className="owner">{room.ownerName}</div>
 												</div>
 												<div className="right flex-center">
 													<i className="icon fa-solid fa-user"></i>
@@ -389,7 +390,7 @@ const NavAndChatWrapper = () => {
 												<div className="room w100 flex-jc-sb flex-ai-cr">
 													<div className="left flex-column">
 														<div className="name">{room.db_chat_name}</div>
-														<div className="owner">{room.db_chat_ownerID}</div>
+														<div className="owner">{room.ownerName}</div>
 													</div>
 													<div className="container flex-center flex-gap10">
 														<div className="mid flex-center">
