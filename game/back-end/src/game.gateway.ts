@@ -55,4 +55,13 @@ export class GameGateway {
 		client.emit("joinedRoom", roomName);
 	}
 
+	@SubscribeMessage("leaveRoom")
+	handleLeaveRoom(client: Socket, room: string, theme: string): void {
+		if (theme === "theme1")
+			this.userCounter1--;
+		else
+			this.userCounter2--;
+		client.leave(room);
+	}
+
 }

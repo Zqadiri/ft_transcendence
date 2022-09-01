@@ -4,6 +4,8 @@ import PropTypes, { InferProps } from "prop-types";
 import { useState } from "react";
 import MoonLoader from 'react-spinners/MoonLoader';
 
+let		theme: string = "none";
+
 function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): JSX.Element {
 	const [activeTheme, setActiveTheme] = useState("none");
 	const joinRoom = ():void =>
@@ -14,6 +16,7 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 			socket.emit("joinTheme1");
 		else if (activeTheme === "theme2")
 			socket.emit("joinTheme2");
+		theme = activeTheme;
 	}
 	return (
 		<>
@@ -42,7 +45,7 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 {
 	const	leaveRoom = () => {
 		setSwitchContent(true);
-		socket.emit("leaveRoom", roomName);
+		socket.emit("leaveRoom", roomName, theme);
 	}
 	return (
 		<>
