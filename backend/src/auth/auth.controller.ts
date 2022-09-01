@@ -32,6 +32,7 @@ export class AuthController
 		let obj : CreateUserDto;
 		let playerExists : any;
 		obj = await this.authService.getUserData(query.code);
+		console.log(`object  :  ` + obj);
 		if (!obj)
 		    throw new BadRequestException('Bad Request');
 		playerExists = await this.playerService.getUserById(obj.id);
@@ -44,10 +45,10 @@ export class AuthController
 			console.log('Player exists and 2FA is false');
 			await this.authService.sendJWTtoken(playerExists, response);
 		}
-		else if (playerExists && playerExists.is2FacAuth === true ){
-			console.log('Player exists and Not 2FA is true');
+		// else if (playerExists && playerExists.is2FacAuth === true ){
+		// 	console.log('Player exists and Not 2FA is true');
 			// return await this.authService.sendTmpToken(playerExists, response);
-		}
+		// }      
 		response.redirect('/');
 	}
 

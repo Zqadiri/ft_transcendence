@@ -56,7 +56,7 @@ export class User{
 		array: true,
 		nullable: true
 	})
-	FriendID: string[];
+	FriendsID: number[];
 
 	@Column('varchar',{
 		array: true,

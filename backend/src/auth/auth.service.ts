@@ -3,7 +3,6 @@ import { Response } from 'express';
 import axios from "axios";
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { User } from 'src/users/entities/user.entity';
 
 /*
 	TODO: get access token
@@ -22,6 +21,7 @@ export class AuthService {
 	){}
 
 	async getAccessToken(code : string) : Promise<string> {
+		console.log(process.env.UID);
 		let ret : string;
 		const  payload = {
 			grant_type: 'authorization_code',
