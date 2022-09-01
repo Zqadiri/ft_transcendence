@@ -385,41 +385,59 @@ const NavAndChatWrapper = () => {
 								</div>
 								<div className="d100 publicrooms flex-column flex-gap10" style={{display: roomActiveTab === "public" ? "flex" : "none"}}>
 									{
-										allRooms.filter((room: any) => room.db_chat_status === "public").map((room: any) => {
-											return (
-												<div className="room w100 flex-jc-sb flex-ai-cr">
-													<div className="left flex-column">
-														<div className="name">{room.db_chat_name}</div>
-														<div className="owner">{room.ownerName}</div>
-													</div>
-													<div className="container flex-center flex-gap10">
-														<div className="mid flex-center">
-															<i className="icon fa-solid fa-user"></i>
-															<div className="num">{room["number of users"]}</div>
+										(() => {
+											let prooms = allRooms.filter((room: any) => room.db_chat_status === "public").map((room: any) => {
+												return (
+													<div className="room w100 flex-jc-sb flex-ai-cr">
+														<div className="left flex-column">
+															<div className="name">{room.db_chat_name}</div>
+															<div className="owner">{room.ownerName}</div>
 														</div>
-														<Button onClick={(e: any) => {
-															e.preventDefault();
-															axios.post("/chat/joinRoom",
-																{ name: room.db_chat_name },
-																{ headers: { cookie: getCookieHeader() } }
-															).then((res: any) => {
-																getAllRooms();
-																getAllMyRooms();
-															});
-														}}>Join</Button>
+														<div className="container flex-center flex-gap10">
+															<div className="mid flex-center">
+																<i className="icon fa-solid fa-user"></i>
+																<div className="num">{room["number of users"]}</div>
+															</div>
+															<Button onClick={(e: any) => {
+																e.preventDefault();
+																axios.post("/chat/joinRoom",
+																	{ name: room.db_chat_name },
+																	{ headers: { cookie: getCookieHeader() } }
+																).then((res: any) => {
+																	getAllRooms();
+																	getAllMyRooms();
+																});
+															}}>Join</Button>
+														</div>
 													</div>
+												);
+											})
+
+											if (prooms.length == 0) {
+												return <div className="norooms flex-center-column d100">
+													<h1>No Public Rooms Available</h1>
 												</div>
-											);
-										})
+											}
+											return prooms;
+										})()
 									}
 								</div>
 								<div className="d100 publicrooms flex-column flex-gap10" style={{display: roomActiveTab === "protected" ? "flex" : "none"}}>
 									{
-										allRooms.filter((room: any) => room.db_chat_status === "protected").map((room: any) => {
-											return (
-												<ProtectedRoom {...{room, getAllRooms, getAllMyRooms}}></ProtectedRoom>
-											);
-										})
+										(() => {
+											let prrooms =
+											allRooms.filter((room: any) => room.db_chat_status === "protected").map((room: any) => {
+												return (
+													<ProtectedRoom {...{room, getAllRooms, getAllMyRooms}}></ProtectedRoom>
+												);
+											})
+											if (prrooms.length == 0) {
+												return <div className="norooms flex-center-column d100">
+													<h1>No Protected Rooms Available</h1>
+												</div>
+											}
+											return prrooms;
+										})()
 									}
 								</div>
 							</section>
@@ -428,7 +446,9 @@ const NavAndChatWrapper = () => {
 							<div className="header flex-jc-sb flex-ai-cr">
 								<i className="fa-solid fa-arrow-left back" onClick={() => { setActiveTab("chat") }}></i>
 								<div className="name">{activeChat}</div>
-								<div className="users">
+								<div className="users" onClick={() => {
+									// setActiveTab("users");
+								}}>
 									<i className="fa-solid fa-user"></i>
 								</div>
 							</div>

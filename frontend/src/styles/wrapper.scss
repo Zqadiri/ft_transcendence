@@ -314,6 +314,7 @@
 						}
 					}
 					.roomsbody {
+						overflow-y: auto;
 						flex-grow: 1;
 						.create-room-form {
 							label {
@@ -335,6 +336,11 @@
 							font-weight: 600;
 							border-radius: 7px;
 							padding: 5px;
+						}
+						.norooms {
+							h1 {
+								color: rgba(black, 0.2);
+							}
 						}
 						.publicrooms {
 							overflow-y: auto;
