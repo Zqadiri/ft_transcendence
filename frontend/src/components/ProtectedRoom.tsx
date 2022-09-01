@@ -3,7 +3,7 @@ import { useState } from "react";
 import Button from "./Button";
 import { getCookieHeader } from "./util";
 
-const ProtectedRoom = ({ room, getAllRooms }: any) => {
+const ProtectedRoom = ({ room, getAllRooms, getAllMyRooms }: any) => {
 	const [roomPasswordInput, setRoomPasswordInput] = useState("");
 	return (
 		<div className="room w100 flex-jc-sb flex-ai-cr">
@@ -24,6 +24,7 @@ const ProtectedRoom = ({ room, getAllRooms }: any) => {
 						{ headers: { cookie: getCookieHeader() } }
 					).then((res: any) => {
 						getAllRooms();
+						getAllMyRooms();
 					});
 				}}>Join</Button>
 			</div>

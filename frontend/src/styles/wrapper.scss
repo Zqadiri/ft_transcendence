@@ -159,32 +159,34 @@
 				padding-bottom: 45px;
 				height: 100%;
 				// box-sizing: border-box;
-				.chat {
-					overflow-y: auto;
-					.room {
-						cursor: pointer;
-						padding: 10px;
-						background-color: $darker_blue;
-						border-radius: 7px;
-						min-height: 50px;
-						.name {
-							color: $less_pastel_white;
-							font-size: 24px;
-							font-weight: 600;
-						}
-						.owner {
-							color: $less_pastel_white;
-							font-size: 12px;
-						}
-						.icon {
-							color: $less_pastel_white;
-							width: 20px;
-							height: 20px;
-						}
-						.num {
-							color: $less_pastel_white;
-							font-weight: 600;
-							font-size: 16px;
+				.chatscroll {
+					.chat {
+						overflow-y: auto;
+						.room {
+							cursor: pointer;
+							padding: 10px;
+							background-color: $darker_blue;
+							border-radius: 7px;
+							min-height: fit-content;
+							.name {
+								color: $less_pastel_white;
+								font-size: 24px;
+								font-weight: 600;
+							}
+							.owner {
+								color: $less_pastel_white;
+								font-size: 12px;
+							}
+							.icon {
+								color: $less_pastel_white;
+								width: 20px;
+								height: 20px;
+							}
+							.num {
+								color: $less_pastel_white;
+								font-weight: 600;
+								font-size: 16px;
+							}
 						}
 					}
 				}
@@ -341,7 +343,7 @@
 								padding: 10px;
 								background-color: $darker_blue;
 								border-radius: 7px;
-								min-height: 50px;
+								min-height: fit-content;
 						
 								.name {
 									color: $less_pastel_white;

@@ -82,6 +82,23 @@ const NavAndChatWrapper = () => {
 			setAllRooms(res.data);
 		})
 	}
+	const getAllMyRooms = () => {
+		axios.get("/chat/allMyRoom", {
+			headers: {
+				cookie: getCookieHeader()
+			}
+		}).then(res => {
+			console.log({res})
+			setChatRooms(res.data);
+			res.data.forEach((room: any) => {
+				let roomName: string = room.db_chat_name;
+				console.log(`joining room, roomName: ${roomName}`);
+				chatSocket.emit("socketJoinRoom", roomName);
+			});
+		}).catch(err => {
+			console.log({err})
+		})
+	}
 	const setActiveChatMessages = (x: any) => {
 		console.log(x);
 		return _setActiveChatMessages(x);
@@ -179,21 +196,7 @@ const NavAndChatWrapper = () => {
 	]);
 
 	useEffectOnce(() => {
-		axios.get("/chat/allMyRoom", {
-			headers: {
-				cookie: getCookieHeader()
-			}
-		}).then(res => {
-			console.log({res})
-			setChatRooms(res.data);
-			res.data.forEach((room: any) => {
-				let roomName: string = room.db_chat_name;
-				console.log(`joining room, roomName: ${roomName}`);
-				chatSocket.emit("socketJoinRoom", roomName);
-			});
-		}).catch(err => {
-			console.log({err})
-		})
+		getAllMyRooms();
 	})
 	return (
 		<div className="c_wrapper d100">
@@ -281,27 +284,29 @@ const NavAndChatWrapper = () => {
 						<div className="friends" style={{display: activeTab === "friends" ? "block" : "none"}}>
 							friends
 						</div>
-						<div className="chat d100 flex-column flex-gap10" style={{display: activeTab === "chat" ? "flex" : "none"}}>
-							{
-								chatRooms.map((room: any) => {
-									return (
-										<div className="room flex-jc-sb flex-ai-cr" onClick={() => {
-											// setActiveChatMessages([]);
-											setActiveTab("chatinterface");
-											setActiveChat(room.db_chat_name);
-										}}>
-											<div className="left flex-column">
-												<div className="name">{room.db_chat_name}</div>
-												<div className="owner">{room.db_chat_ownerID}</div>
+						<div className="chatscroll d100" style={{display: activeTab === "chat" ? "flex" : "none"}}>
+							<div className="chat w100 flex-column flex-gap10">
+								{
+									chatRooms.map((room: any) => {
+										return (
+											<div className="room flex-jc-sb flex-ai-cr" onClick={() => {
+												// setActiveChatMessages([]);
+												setActiveTab("chatinterface");
+												setActiveChat(room.db_chat_name);
+											}}>
+												<div className="left flex-column">
+													<div className="name">{room.db_chat_name}</div>
+													<div className="owner">{room.db_chat_ownerID}</div>
+												</div>
+												<div className="right flex-center">
+													<i className="icon fa-solid fa-user"></i>
+													<div className="num">{room["number of users"]}</div>
+												</div>
 											</div>
-											<div className="right flex-center">
-												<i className="icon fa-solid fa-user"></i>
-												<div className="num">{room["number of users"]}</div>
-											</div>
-										</div>
-									);
-								})
-							}
+										);
+									})
+								}
+							</div>
 						</div>
 						<div className="rooms d100 flex-column" style={{display: activeTab === "rooms" ? "flex" : "none"}}>
 							<section className="top_section flex w100">
@@ -380,6 +385,7 @@ const NavAndChatWrapper = () => {
 																{ headers: { cookie: getCookieHeader() } }
 															).then((res: any) => {
 																getAllRooms();
+																getAllMyRooms();
 															});
 														}}>Join</Button>
 													</div>
@@ -392,7 +398,7 @@ const NavAndChatWrapper = () => {
 									{
 										allRooms.filter((room: any) => room.db_chat_status === "protected").map((room: any) => {
 											return (
-												<ProtectedRoom {...{room, getAllRooms}}></ProtectedRoom>
+												<ProtectedRoom {...{room, getAllRooms, getAllMyRooms}}></ProtectedRoom>
 											);
 										})
 									}
