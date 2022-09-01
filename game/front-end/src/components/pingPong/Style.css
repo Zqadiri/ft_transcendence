@@ -1,18 +1,24 @@
 .container {
-	text-align: center;
-	/* margin: 0;
-	position: absolute;
-	top: 50%;
-	-ms-transform: translateY(-50%);
-	transform: translateY(-50%);
-	text-align: center; */
+	position: fixed;
+	top: 35%;
+	left: 50%;
+	/* bring your own prefixes */
+	transform: translate(-50%, -35%);
 }
 
 .container h1 {
-	color: #0fce6f;
+	color: #205375;
 	padding: 0;
 	margin: 10px 0;
 	width: 50%;
 	float: left;
 	font-size: -webkit-xxx-large;
+}
+
+.container h1:last-child {
+	text-align: right;
+}
+
+.container canvas {
+	border-radius: 20px;
 }

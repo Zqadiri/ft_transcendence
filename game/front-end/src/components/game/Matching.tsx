@@ -70,7 +70,7 @@ function	Matching(): JSX.Element
 		socket.on("joinedRoom", (data) => {
 			setRoomName(data);
 		});
-		socket.on("secondPlayerJoind", () => {
+		socket.on("secondPlayerJoined", () => {
 			navigate("/play");
 		});
 	});

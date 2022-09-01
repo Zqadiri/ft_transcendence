@@ -7,6 +7,19 @@ import { canvas, ball, user1, user2, net, Users, Directions } from './data/PingP
 export let g_setScore1: React.Dispatch<React.SetStateAction<number>>;
 export let g_setScore2: React.Dispatch<React.SetStateAction<number>>;
 
+const resetGame = (): void =>
+{
+	user1.x = 0;
+	user1.y = canvas.height/2 - 200/2;
+	user1.score = 0;
+	user2.x = canvas.width - 20;
+	user2.y = canvas.height/2 - 200/2;
+	user2.score = 0;
+
+	ball.x = canvas.width / 2;
+	ball.y = canvas.height / 2;
+}
+
 const drawRect = (x: number, y: number, w: number, h: number, color: string): void =>
 {
 	if (canvas.context !== null)
@@ -129,6 +142,7 @@ function moveUser1Paddle(event: KeyboardEvent): void
 }
 
 let gameStarted: boolean = false;
+let	intervalValue: NodeJS.Timer;
 
 const game = (current: HTMLCanvasElement | null): void =>
 {
@@ -140,11 +154,19 @@ const game = (current: HTMLCanvasElement | null): void =>
 		window.addEventListener("keydown" , (event: KeyboardEvent) => {
 			if (!gameStarted && event.key === " ")
 			{
-				setInterval(() => {
+				intervalValue = setInterval(() => {
 					update();
 					render();
 				}, 1000/50);
 				gameStarted = true;
+			}
+		});
+		window.addEventListener("keydown" , (event: KeyboardEvent) => {
+			if (gameStarted && event.key == "Escape")
+			{
+				resetGame();
+				clearInterval(intervalValue);
+				gameStarted = false;
 			}
 		});
 		current.addEventListener("mousemove" , (event: MouseEvent) => {
