@@ -41,13 +41,13 @@ export class AuthController
 			await this.authService.sendJWTtoken(obj, response);
 		}
 		else if (playerExists && playerExists.is2FacAuth === false){
-			console.log('Player exists and 2FA is enabled');
+			console.log('Player exists and 2FA is false');
 			await this.authService.sendJWTtoken(playerExists, response);
 		}
-		// else if (playerExists && playerExists.is2FacAuth === false ){
-		// 	console.log('Player exists and Not 2FA is enabled');
-			// return await this.authService.sendJWTtoken(playerExists, response);
-		// }
+		else if (playerExists && playerExists.is2FacAuth === true ){
+			console.log('Player exists and Not 2FA is true');
+			// return await this.authService.sendTmpToken(playerExists, response);
+		}
 		response.redirect('/');
 	}
 

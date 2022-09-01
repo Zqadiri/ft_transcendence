@@ -124,7 +124,6 @@ export class AuthService {
 	*/
 
 	async loginWithCredentials(user: CreateUserDto) {
-		console.log({user})
 		const payload = {username: user.username, id: user.id}; //add iS2fa 
 		return { access_token : await this.jwtService.signAsync(payload, {
 			secret: String(process.env.JWT_SECRET_KEY)}) 
