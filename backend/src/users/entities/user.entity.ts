@@ -46,23 +46,23 @@ export class User{
 	@Column({default: false})
 	Matched : boolean;
 
-	@Column('varchar',{
+	@Column('integer',{
 		array: true,
 		nullable: true
 	})
 	achievement: string[];
 
-	@Column('varchar',{
+	@Column('int',{
 		array: true,
 		nullable: true
 	})
-	FriendsID: string[];
+	FriendsID: number[]; 
 
 	@Column('varchar',{
 		array: true,
 		nullable: true
 	})
-	blockedID: string[];
+	blockedID: number[];
 
 	@Column('varchar',{
 		array: true,

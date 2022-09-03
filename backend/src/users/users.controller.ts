@@ -26,7 +26,7 @@ export class UsersController {
 	constructor(
 		@InjectRepository(User)
 		private readonly userRepo : UserRepository,
-		private readonly usersService: UsersService
+		private readonly usersService: UsersService,
 	){}
 
 	@ApiOperation({ summary: 'Change a user\'s avatar' })
@@ -57,21 +57,19 @@ export class UsersController {
 	@ApiOperation({ summary: 'Change a user\'s username' })
 	@Post('/update_username')
 	async updateUsername(@Req() req, @Body('username') newUsername: string){
+		var result :any;
 		try{
-			const result = await this.usersService.updateUsername(req.user.id, newUsername);
+			result = await this.usersService.updateUsername(req.user.id, newUsername);
 		}
 		catch (err){
 			throw new UnauthorizedException('failed to update the username');
 		}
+		return result;
 	}
-
-	/*
-		Friensd Services
-	*/
 
 	@ApiOperation({ summary: 'Add a friend to a user' })
 	@Post('/add_friend')
-	async AddFriend(@Body('username') userID : number, @Req() req: any, @Res() res: any){
+	async AddFriend(@Body('id') userID : number, @Req() req: any, @Res() res: any){
 		const newFriend = await this.usersService.getUserById(userID);
 		console.log(newFriend);
 		if (!newFriend)	
@@ -79,16 +77,15 @@ export class UsersController {
 		const user = await this.usersService.getUserById(58526); //! switch it to req.user.id
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
-		if (!user.FriendsID.includes(newFriend.username)){
-			user.FriendsID.push(newFriend.username);
-		}
+		if (!user.FriendsID.includes(newFriend.id))
+			user.FriendsID.push(newFriend.id);
 		await this.userRepo.save(user);
 		res.end();
 	}
 
 	@ApiOperation({ summary: 'Add a friend to a user' })
 	@Post('/block_friend')
-	async BlockFriend(@Body('username') userID : number, @Req() req: any, @Res() res: any){
+	async BlockFriend(@Body('id') userID : number, @Req() req: any, @Res() res: any){
 		const newFriend = await this.usersService.getUserById(userID);
 		console.log(newFriend);
 		if (!newFriend)
@@ -96,19 +93,11 @@ export class UsersController {
 		const user = await this.usersService.getUserById(58526); //! switch it to req.user.id
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
-		if (!user.FriendsID.length || !user.FriendsID.includes(newFriend.username)){
+		if (!user.FriendsID.includes(newFriend.id))
 			throw new UnauthorizedException('User is not Friend OR Already blocked');
-		}
-		// this.usersService.removeFriend(newFriend);
-		if (!user.blockedID.includes(newFriend.username))
-		{
-			if (!user.blockedID.length)
-				user.blockedID = [newFriend.username];
-			else
-				user.blockedID.push(newFriend.username);
-		}
-		else
-			throw new UnauthorizedException('User Already blocked');
+		await this.usersService.removeFriend(user, newFriend.id);
+		if (!user.blockedID.includes(newFriend.id))
+			user.blockedID.push(newFriend.id);
 		await this.userRepo.save(user);
 		res.end();
 	}
@@ -140,13 +129,6 @@ export class UsersController {
 		.getMany()
 		res.send(friends);
 	}
-
-	// TODO:
-	// add user > done
-	// get friends > done
-	// block user 
-	// get blocked users > done 
-	// get friend > can be done with get user
 
 	@ApiOperation({ summary: 'Get user data by id' })
 	@ApiResponse({
