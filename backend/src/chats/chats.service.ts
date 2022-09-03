@@ -224,6 +224,80 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     return profils;
   }
 
+   /** **To do** Get users with stat[owner or admin or simple user or banned or muted], avatar, username, id */
+  /** {id: 6432, username: sara, avatar: rtet, stat: owner} */
+  async userStat(roomName: string)
+  {
+    const user_data = [];
+    // check if the room already exist
+    const name = await this.findRoom(roomName);
+
+    if (!name){
+      throw new BadRequestException({code: 'invalid chat room name', message: `Room with '${roomName}' does not exist`})
+    }
+      
+      const profils = await this.Userrepository
+      .createQueryBuilder("db_user")
+      .select(['db_user.id','db_user.username', 'db_user.avatar'])
+      .where("db_user.id IN (:...users)", { users: name.userID })
+      .getRawMany();
+
+
+      profils.forEach((element) => {
+        if (element.db_user_id === name.ownerID)
+        {
+          const p = {
+            id: element.db_user_id,
+            username: element.db_user_username,
+            avatar: element.db_user_avatar,
+            stat: "owner"
+          };
+          user_data.push(p);
+        }
+        else if (name.AdminsID.includes(element.db_user_id))
+        {
+          const p = {
+            id : element.db_user_id,
+            username: element.db_user_username,
+            avatar: element.db_user_avatar,
+            stat: "admin"
+          };
+          user_data.push(p);
+        }        
+        else if (name.MutedAndBannedID.find(elm => elm.userID === element.db_user_id && elm.action === Action.BAN))
+        {
+          const p = {
+            id : element.db_user_id,
+            username: element.db_user_username,
+            avatar: element.db_user_avatar,
+            stat: "banned"
+          };
+          user_data.push(p);
+        }
+        else if (name.MutedAndBannedID.find(elm => elm.userID === element.db_user_id && elm.action === Action.MUTE))
+        {
+          const p = {
+            id : element.db_user_id,
+            username: element.db_user_username,
+            avatar: element.db_user_avatar,
+            stat: "muted"
+          };
+          user_data.push(p);
+        }
+        else
+        {
+          const p = {
+            id : element.db_user_id,
+            username: element.db_user_username,
+            avatar: element.db_user_avatar,
+            stat: "user"
+          };
+          user_data.push(p);
+        }
+
+      });
+      return (user_data);
+  }
 
   /** Change visibility */
 
@@ -270,8 +344,6 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           .where("ownerID = :ownerID", { ownerID: owner})
           .andWhere("name = :name", {name: RoomName})
           .execute()
-
-
   }
 
   async AllRoom(id: number)

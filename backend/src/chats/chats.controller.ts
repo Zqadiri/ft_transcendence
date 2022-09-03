@@ -82,6 +82,19 @@ export class ChatController {
              throw e;
          }
     }
+    
+    @UseGuards(jwtAuthGuard)
+    @Get('/userStats/:RoomName')
+    async getuserstat(@Param('RoomName') RoomName: string)
+    {
+        try {
+            console.log("get users with stats from room...", RoomName);
+            return await this.chatService.userStat(RoomName);
+         } catch (e) {
+             console.error('Failed to get users with stats from room', e);
+             throw e;
+         }
+    }
 
     @UseGuards(jwtAuthGuard)
     @Post('/setPassword')
