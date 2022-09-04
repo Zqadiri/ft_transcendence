@@ -6,10 +6,11 @@ import { SyntheticEvent, useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import Matching from "./Matching"
 
-export const	socket = io("http://localhost:3001/game");
-export let		roomName: string = "none";
+export	const	socket = io("http://localhost:3001/game");
+export	let		roomName: string = "none";
+export	let		playerId: number = 0;
 
-const	GamesData = [
+const	liveGamesData = [
 	{user1: "Sickl", user2: "Sesco", score1: 3, score2: 1, avatar1: "https://cdn.intra.42.fr/users/small_isaadi.jpg", avatar2: "https://cdn.intra.42.fr/users/small_aamzouar.jpg", id: 1},
 	{user1: "Zineb", user2: "Sara", score1: 6, score2: 8, avatar1: "https://cdn.intra.42.fr/users/small_zqadiri.jpg", avatar2: "https://cdn.intra.42.fr/users/small_sbensarg.jpg", id: 2},
 	{user1: "Sara", user2: "Sickl", score1: 1, score2: 5, avatar1: "https://cdn.intra.42.fr/users/small_sbensarg.jpg", avatar2: "https://cdn.intra.42.fr/users/small_isaadi.jpg", id: 3},
@@ -27,9 +28,10 @@ export function useEffectOnce(callback: any): any {
 	});
 }
 
-export function setRoomName(name: string): void
+export function setRoomName(name: string, id: number): void
 {
 	roomName = name;
+	playerId = id;
 }
 
 function	LiveGames(): JSX.Element
@@ -38,7 +40,7 @@ function	LiveGames(): JSX.Element
 		<>
 			<ul className="live-games">
 				{
-					GamesData.map((current) => {
+					liveGamesData.map((current) => {
 						return (
 							<li key={current.id}>
 								<div>

@@ -67,8 +67,8 @@ function	Matching(): JSX.Element
 	const	[switchContent, setSwitchContent] = useState(true);
 	const 	navigate = useNavigate();
 	useEffectOnce(() => {
-		socket.on("joinedRoom", (data) => {
-			setRoomName(data);
+		socket.on("joinedRoom", (room, player) => {
+			setRoomName(room, player);
 		});
 		socket.on("secondPlayerJoined", () => {
 			navigate("/play");

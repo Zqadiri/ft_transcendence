@@ -1,5 +1,13 @@
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { GameData } from "./game.interface"
+
+/*
+	1. when to create the interface
+		- when you'll lock the game
+	2. identify each instance of the interface by the room name
+	3. how to update it, how player paddels 
+*/
 
 @WebSocketGateway({
 	namespace: "game",
@@ -35,7 +43,7 @@ export class GameGateway {
 			this.roomCounter1 = (this.roomCounter1 + 1) % 1000000000;
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
-		client.emit("joinedRoom", roomName);
+		client.emit("joinedRoom", roomName, this.userCounter1);
 	}
 
 	@SubscribeMessage("joinTheme2")
@@ -52,7 +60,7 @@ export class GameGateway {
 				this.roomCounter2 = 1000000000;
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
-		client.emit("joinedRoom", roomName);
+		client.emit("joinedRoom", roomName, this.userCounter2);
 	}
 
 	@SubscribeMessage("leaveRoom")
@@ -62,6 +70,11 @@ export class GameGateway {
 		else
 			this.userCounter2--;
 		client.leave(room);
+	}
+
+	@SubscribeMessage("exchangeData")
+	handleExchangeData(client: Socket, room: string, coordinates: GameData): void {
+		
 	}
 
 }
