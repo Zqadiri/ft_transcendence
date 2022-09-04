@@ -2,13 +2,6 @@ import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/web
 import { Server, Socket } from 'socket.io';
 import { GameData } from "./game.interface"
 
-/*
-	1. when to create the interface
-		- when you'll lock the game
-	2. identify each instance of the interface by the room name
-	3. how to update it, how player paddels 
-*/
-
 @WebSocketGateway({
 	namespace: "game",
 	cors: {

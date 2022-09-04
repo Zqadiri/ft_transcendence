@@ -94,9 +94,9 @@ const update_score = (): void => {
 }
 
 const check_for_the_winner = (): void => {
-	if (user1.score == 5)
+	if (user1.score === 5)
 		alert("Player 1 Has Won The Game");
-	else if (user2.score == 5)
+	else if (user2.score === 5)
 		alert("Player 2 Has Won The Game");
 	else
 		return;
@@ -158,7 +158,7 @@ const game = (current: HTMLCanvasElement | null): void => {
 				}, 1000 / 50);
 				gameStarted = true;
 			}
-			else if (gameStarted && event.key == "Escape") {
+			else if (gameStarted && event.key === "Escape") {
 				resetGame();
 				render();
 				clearInterval(intervalValue);

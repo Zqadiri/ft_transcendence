@@ -1,10 +1,20 @@
-type position = {
+type Position = {
 	x: number,
-	y: number
+	y: number,
+	score: number
+}
+
+type Ball = {
+	x: number,
+	y: number,
+	speed: number,
+	velocityX: number,
+	velocityY: number,
+	radius: number
 }
 
 export interface GameData {
-	player1: position,
-	player2: position,
-	ball: position
+	player1: Position,
+	player2: Position,
+	ball: Ball
 }
