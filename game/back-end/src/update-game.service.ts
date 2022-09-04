@@ -1,16 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GameCoor, GameData, Directions, Position, Ball } from "./game.interface"
 
-/*
-	1. to create a new instance of GameCoor for each game
-	2. to delete an instance when the game is over
-	3. send x & y of the players' paddle
-	4. then update ball x & y velocity
-	5. send back x & y of the ball and of the players' paddle
-	6. check for score update
-	7. and check if there's a winner and then the game must end
-*/
-
 @Injectable()
 export class UpdateGameService {
 	private gameCoordinates = new Map<string, GameCoor>();
@@ -23,21 +13,26 @@ export class UpdateGameService {
 
 	create(room: string): void
 	{
-		let tmp: GameCoor;
-		tmp.player1.x = 0;
-		tmp.player1.y = this.global.canvasHeight/2 - this.global.paddleHeight/2;
-		tmp.player1.score = 0;
-	
-		tmp.player2.x = this.global.canvasWidth - this.global.paddleWidth;
-		tmp.player2.y = this.global.canvasHeight/2 - this.global.paddleHeight/2;
-		tmp.player2.score = 0;
-
-		tmp.ball.x = this.global.canvasWidth / 2;
-		tmp.ball.y = this.global.canvasHeight / 2;
-		tmp.ball.speed = 12;
-		tmp.ball.velocityX = 11;
-		tmp.ball.velocityY = 11;
-		tmp.ball.radius = 15;
+		const tmp: GameCoor = {
+			player1: {
+				x: 0,
+				y:  this.global.canvasHeight/2 - this.global.paddleHeight/2,
+				score: 0
+			},
+			player2: {
+				x: this.global.canvasWidth - this.global.paddleWidth,
+				y: this.global.canvasHeight/2 - this.global.paddleHeight/2,
+				score: 0
+			},
+			ball: {
+				x: this.global.canvasWidth / 2,
+				y: this.global.canvasHeight / 2,
+				speed: 12,
+				velocityX: 11,
+				velocityY: 11,
+				radius: 15
+			}
+		};
 
 		this.gameCoordinates.set(room, tmp);
 	}
@@ -114,6 +109,7 @@ export class UpdateGameService {
 		else {
 			tmp = this.#update_score(tmp);
 			this.gameCoordinates.set(room, tmp);
+
 			data.b.x = tmp.ball.x;
 			data.b.y = tmp.ball.y;
 			data.p1.score = tmp.player1.score;
@@ -122,12 +118,12 @@ export class UpdateGameService {
 		}
 	}
 
-	check_for_the_winner(score1: number, score2: number): string
+	check_for_the_winner(score1: number, score2: number): number
 	{
 		if (score1 == 5)
-			return ("player1");
+			return (1);
 		else if (score2 == 5)
-			return ("player2");
-		return ("none");
+			return (1);
+		return (0);
 	}
 }

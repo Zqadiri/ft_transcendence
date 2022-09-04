@@ -43,9 +43,9 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 
 function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JSX.Element
 {
-	const	leaveRoom = () => {
+	const	cancelRoom = () => {
 		setSwitchContent(true);
-		socket.emit("leaveRoom", roomName, theme);
+		socket.emit("cancelRoom", roomName, theme);
 	}
 	return (
 		<>
@@ -56,7 +56,7 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 				<p>
 					Waiting for the second player...
 				</p>
-				<button onClick={leaveRoom}>Cancel</button>
+				<button onClick={cancelRoom}>Cancel</button>
 			</div>
 		</>
 	);

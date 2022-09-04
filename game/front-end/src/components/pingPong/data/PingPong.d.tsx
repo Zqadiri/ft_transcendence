@@ -15,11 +15,23 @@ export  type Users = {
 	score: number,
 }
 
+export  type Position = {
+	x: number,
+	y: number,
+	score: number
+}
+
 export type Directions = {
 	top: number,
 	down: number,
 	left: number,
 	right: number
+}
+
+export type GameData = {
+	p1: Position,
+	p2: Position,
+	b: Position 
 }
 
 export const user1: Users = {
