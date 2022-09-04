@@ -1,10 +1,10 @@
-type Position = {
+type Paddle = {
 	x: number,
 	y: number,
 	score: number
 }
 
-type Ball = {
+export type Ball = {
 	x: number,
 	y: number,
 	speed: number,
@@ -13,8 +13,27 @@ type Ball = {
 	radius: number
 }
 
-export interface GameData {
-	player1: Position,
-	player2: Position,
+export type Position = {
+	x: number,
+	y: number
+}
+
+export interface GameCoor {
+	player1: Paddle,
+	player2: Paddle,
 	ball: Ball
+}
+
+
+export interface GameData {
+	p1: Paddle,
+	p2: Paddle,
+	b: Position
+}
+
+export interface Directions {
+	top: number,
+	down: number,
+	left: number,
+	right: number
 }
