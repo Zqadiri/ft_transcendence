@@ -31,20 +31,33 @@ const		gameCoordinates: GameData = {
 	}
 };
 
-// const resetGame = (): void => {
-// 	user1.x = 0;
-// 	user1.y = canvas.height / 2 - 200 / 2;
-// 	user1.score = 0;
-// 	user2.x = canvas.width - 20;
-// 	user2.y = canvas.height / 2 - 200 / 2;
-// 	user2.score = 0;
+const resetGame = (): void => {
+	user1.x = 0;
+	user1.y = canvas.height / 2 - 200 / 2;
+	user1.score = 0;
 
-// 	g_setScore1(user1.score);
-// 	g_setScore2(user2.score);
+	user2.x = canvas.width - 20;
+	user2.y = canvas.height / 2 - 200 / 2;
+	user2.score = 0;
 
-// 	ball.x = canvas.width / 2;
-// 	ball.y = canvas.height / 2;
-// }
+	ball.x = canvas.width / 2;
+	ball.y = canvas.height / 2;
+	gameStarted = false;
+	clearInterval(intervalValue);
+	setRoomName("none", 0);
+}
+
+const setTheWinner = (theWinner: number): void => {
+	if (playerId > 2)
+		alert("Player " + theWinner + " Has Won The Game");
+	else if (playerId === theWinner)
+		alert("You've Won The Game");
+	else 
+		alert("You've Lost The Game");
+	resetGame();
+	socket.emit("leaveRoom", roomName);
+	g_navigate("/");
+}
 
 const drawRect = (x: number, y: number, w: number, h: number, color: string): void => {
 	if (canvas.context !== null) {
@@ -65,7 +78,7 @@ const drawCircle = (x: number, y: number, r: number, color: string): void => {
 
 const drawNet = (): void => {
 	for (let i: number = 0; i < canvas.height; i += (net.height + 15))
-		drawRect(net.x, i, net.width, net.height, net.color);
+	drawRect(net.x, i, net.width, net.height, net.color);
 }
 
 const render = (): void => {
@@ -111,18 +124,6 @@ const render = (): void => {
 // 	}
 // }
 
-const setTheWinner = (theWinner: number): void => {
-	if (playerId > 2)
-		alert("Player " + theWinner + " Has Won The Game");
-	else if (playerId === theWinner)
-		alert("You've Won The Game");
-	else 
-		alert("You've Lost The Game");
-	setRoomName("none", 0);
-	socket.emit("leaveRoom", roomName);
-	clearInterval(intervalValue);
-	g_navigate("/");
-}
 
 // const update = (): void => {
 // 	ball.x += ball.velocityX;
@@ -214,26 +215,30 @@ const game = (current: HTMLCanvasElement | null): void => {
 		// 	}
 		// });
 
-		intervalValue = setInterval(() => {
-			setGameCoordinates();
-			console.log(roomName);
-			socket.emit("exchangeData", {roomName, gameCoordinates});
-			render();
-		}, 1000 / 50);
-
-		if (playerId === 1)
+		if (!gameStarted)
 		{
-			current.addEventListener("mousemove", (event: MouseEvent) => {
-				let rect = current.getBoundingClientRect();
-				user1.y = event.clientY - rect.top - user1.height / 2;
-			});
-		}
-		else if (playerId === 2)
-		{
-			current.addEventListener("mousemove", (event: MouseEvent) => {
-				let rect = current.getBoundingClientRect();
-				user2.y = event.clientY - rect.top - user2.height / 2;
-			});
+			if (playerId === 1)
+			{
+				intervalValue = setInterval(() => {
+					setGameCoordinates();
+					socket.emit("exchangeData", {roomName, gameCoordinates});
+					// render();
+				}, 1000 / 50);
+				current.addEventListener("mousemove", (event: MouseEvent) => {
+					let rect = current.getBoundingClientRect();
+					user1.y = event.clientY - rect.top - user1.height / 2;
+				});
+			}
+			else if (playerId === 2)
+			{
+				current.addEventListener("mousemove", (event: MouseEvent) => {
+					let rect = current.getBoundingClientRect();
+					user2.y = event.clientY - rect.top - user2.height / 2;
+					let y: number = user2.y;
+					socket.emit("sendSecondPlayerY", {roomName, y});
+				});
+			}
+			gameStarted = true;
 		}
 	}
 }
@@ -248,12 +253,12 @@ function PingPong(): JSX.Element
 	g_setScore2 = setScore2;
 	g_navigate = navigate;
 	useEffectOnce(() => {
-		socket.on("newCoordinates", (data) => {
+		socket.off("theWinner").on("theWinner", (theWinner) => {
+			setTheWinner(theWinner);
+		});
+		socket.off("newCoordinates").on("newCoordinates", (data) => {
 			setUserData(data);
 			render();
-		});
-		socket.on("theWinner", (theWinner) => {
-			setTheWinner(theWinner);
 		});
 	});
 	return (

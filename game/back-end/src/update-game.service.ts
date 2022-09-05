@@ -16,7 +16,7 @@ export class UpdateGameService {
 		const tmp: GameCoor = {
 			player1: {
 				x: 0,
-				y:  this.global.canvasHeight/2 - this.global.paddleHeight/2,
+				y: this.global.canvasHeight/2 - this.global.paddleHeight/2,
 				score: 0
 			},
 			player2: {
@@ -42,10 +42,10 @@ export class UpdateGameService {
 	#update_score(tmp: GameCoor): GameCoor
 	{
 		if (tmp.ball.x - tmp.ball.radius < 0) {
-			tmp.player1.score += 1;
+			tmp.player2.score += 1;
 		}
 		else if (tmp.ball.x + tmp.ball.radius > this.global.canvasWidth) {
-			tmp.player2.score += 1;
+			tmp.player1.score += 1;
 		}
 
 		if (tmp.ball.x - tmp.ball.radius < 0 || tmp.ball.x + tmp.ball.radius > this.global.canvasWidth) {
@@ -54,6 +54,10 @@ export class UpdateGameService {
 			tmp.ball.speed = 12;
 			tmp.ball.velocityX = tmp.ball.velocityX < 0 ? 11 : -11;
 			tmp.ball.velocityY = 11;
+			tmp.player1.x = 0;
+			tmp.player1.y = this.global.canvasHeight/2 - this.global.paddleHeight/2;
+			tmp.player2.x = this.global.canvasWidth - this.global.paddleWidth;
+			tmp.player2.y = this.global.canvasHeight/2 - this.global.paddleHeight/2;
 		}
 		return (tmp);
 	}
@@ -78,6 +82,7 @@ export class UpdateGameService {
 	update(data: GameData, room: string): GameData
 	{ 
 		let	tmp: GameCoor = this.gameCoordinates.get(room);
+		data.p2.y = tmp.player2.y;
 		tmp.ball.x += tmp.ball.velocityX;
 		tmp.ball.y += tmp.ball.velocityY;
 
@@ -125,5 +130,12 @@ export class UpdateGameService {
 		else if (score2 == 5)
 			return (1);
 		return (0);
+	}
+
+	setY(room: string, y: number): void
+	{
+		let tmp: GameCoor = this.gameCoordinates.get(room);
+		tmp.player2.y = y;
+		this.gameCoordinates.set(room, tmp);
 	}
 }

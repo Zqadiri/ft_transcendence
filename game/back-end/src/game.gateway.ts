@@ -82,13 +82,17 @@ export class GameGateway {
 	handleExchangeData(client: Socket, {roomName, gameCoordinates}): void {
 		gameCoordinates = this.updateGame.update(gameCoordinates, roomName);
 		let	winner = this.updateGame.check_for_the_winner(gameCoordinates.p1.score, gameCoordinates.p2.score);
+		this.server.to(roomName).emit("newCoordinates", gameCoordinates);
 		if (winner !== 0)
 		{
 			this.server.to(roomName).emit("theWinner", winner);
 			this.updateGame.delete(roomName);
 		}
-		else
-			this.server.to(roomName).emit("newCoordinates", gameCoordinates);
 	}
 
+	@SubscribeMessage("sendSecondPlayerY")
+	handleSendUser2Y(client: Socket, {roomName, y}): void {
+		this.updateGame.setY(roomName, y);
+
+	}
 }
