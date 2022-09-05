@@ -34,6 +34,7 @@ export class GameGateway {
 
 		this.userCounter1++;
 		client.join(roomName);
+		client.emit("joinedRoom", roomName, this.userCounter1);
 		if (this.userCounter1 === 2)
 		{
 			this.userCounter1 = 0;
@@ -41,8 +42,7 @@ export class GameGateway {
 			this.updateGame.create(roomName);
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
-		client.emit("joinedRoom", roomName, this.userCounter1);
-		this.logger.log("joined Theme 1");
+		this.logger.log(client.id + " joined Theme 1");
 	}
 
 	@SubscribeMessage("joinTheme2")
@@ -51,6 +51,7 @@ export class GameGateway {
 
 		this.userCounter2++;
 		client.join(roomName);
+		client.emit("joinedRoom", roomName, this.userCounter2);
 		if (this.userCounter2 === 2)
 		{
 			this.userCounter2 = 0;
@@ -60,16 +61,16 @@ export class GameGateway {
 			this.updateGame.create(roomName);
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
-		client.emit("joinedRoom", roomName, this.userCounter2);
+		this.logger.log(client.id + " joined Theme 2");
 	}
 
 	@SubscribeMessage("cancelRoom")
-	handleCancelRoom(client: Socket, room: string, theme: string): void {
+	handleCancelRoom(client: Socket, {roomName, theme}): void {
 		if (theme === "theme1")
 			this.userCounter1--;
 		else
 			this.userCounter2--;
-		client.leave(room);
+		client.leave(roomName);
 	}
 
 	@SubscribeMessage("leaveRoom")
@@ -78,16 +79,16 @@ export class GameGateway {
 	}
 
 	@SubscribeMessage("exchangeData")
-	handleExchangeData(client: Socket, room: string, coordinates: GameData): void {
-		coordinates = this.updateGame.update(coordinates, room);
-		let	winner = this.updateGame.check_for_the_winner(coordinates.p1.score, coordinates.p2.score);
+	handleExchangeData(client: Socket, {roomName, gameCoordinates}): void {
+		gameCoordinates = this.updateGame.update(gameCoordinates, roomName);
+		let	winner = this.updateGame.check_for_the_winner(gameCoordinates.p1.score, gameCoordinates.p2.score);
 		if (winner !== 0)
 		{
-			this.server.to(room).emit("theWinner", winner);
-			this.updateGame.delete(room);
+			this.server.to(roomName).emit("theWinner", winner);
+			this.updateGame.delete(roomName);
 		}
 		else
-			this.server.to(room).emit("newCoordinates", coordinates);
+			this.server.to(roomName).emit("newCoordinates", gameCoordinates);
 	}
 
 }

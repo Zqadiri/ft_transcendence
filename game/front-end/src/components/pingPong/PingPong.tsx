@@ -216,7 +216,8 @@ const game = (current: HTMLCanvasElement | null): void => {
 
 		intervalValue = setInterval(() => {
 			setGameCoordinates();
-			socket.emit("exchangeData", roomName, gameCoordinates);
+			console.log(roomName);
+			socket.emit("exchangeData", {roomName, gameCoordinates});
 			render();
 		}, 1000 / 50);
 

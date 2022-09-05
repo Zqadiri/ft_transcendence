@@ -11,7 +11,7 @@ export class UpdateGameService {
 		paddleHeight: 200
 	};
 
-	create(room: string): void
+	create(room: string)
 	{
 		const tmp: GameCoor = {
 			player1: {

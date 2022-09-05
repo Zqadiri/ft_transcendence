@@ -1,4 +1,4 @@
-import { socket, useEffectOnce, roomName, setRoomName } from "./Game";
+import { socket, useEffectOnce, roomName, setRoomName, playerId } from "./Game";
 import { useNavigate } from 'react-router-dom';
 import PropTypes, { InferProps } from "prop-types";
 import { useState } from "react";
@@ -45,7 +45,7 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 {
 	const	cancelRoom = () => {
 		setSwitchContent(true);
-		socket.emit("cancelRoom", roomName, theme);
+		socket.emit("cancelRoom", {roomName, theme});
 	}
 	return (
 		<>
@@ -67,8 +67,8 @@ function	Matching(): JSX.Element
 	const	[switchContent, setSwitchContent] = useState(true);
 	const 	navigate = useNavigate();
 	useEffectOnce(() => {
-		socket.on("joinedRoom", (room, player) => {
-			setRoomName(room, player);
+		socket.on("joinedRoom", (room, playerId) => {
+			setRoomName(room, playerId);
 		});
 		socket.on("secondPlayerJoined", () => {
 			navigate("/play");
