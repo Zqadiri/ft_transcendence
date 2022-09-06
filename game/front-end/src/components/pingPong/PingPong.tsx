@@ -11,25 +11,7 @@ import { socket, useEffectOnce, roomName, setRoomName, playerId } from "../game/
 export let 	g_setScore1: React.Dispatch<React.SetStateAction<number>>;
 export let 	g_setScore2: React.Dispatch<React.SetStateAction<number>>;
 let 		gameStarted: boolean = false;
-let 		intervalValue: NodeJS.Timer;
 let 		g_navigate: NavigateFunction;
-const		gameCoordinates: GameData = {
-	p1: {
-		x: user1.x,
-		y: user1.y,
-		score: 0
-	},
-	p2: {
-		x: user2.x,
-		y: user2.y,
-		score: 0
-	},
-	b: {
-		x: ball.x,
-		y: ball.y,
-		score: 0
-	}
-};
 
 const resetGame = (): void => {
 	user1.x = 0;
@@ -43,7 +25,6 @@ const resetGame = (): void => {
 	ball.x = canvas.width / 2;
 	ball.y = canvas.height / 2;
 	gameStarted = false;
-	clearInterval(intervalValue);
 	setRoomName("none", 0);
 }
 
@@ -166,15 +147,6 @@ const render = (): void => {
 // 		user1.y += move;
 // }
 
-const setGameCoordinates = (): void => {
-	gameCoordinates.p1.x = user1.x;
-	gameCoordinates.p1.y = user1.y;
-	gameCoordinates.p2.x = user2.x;
-	gameCoordinates.p2.y = user2.y;
-	gameCoordinates.b.x = ball.x;
-	gameCoordinates.b.y = ball.y;
-}
-
 const setUserData = (data: GameData): void => {
 	user1.x = data.p1.x;	
 	user1.y = data.p1.y;	
@@ -217,16 +189,15 @@ const game = (current: HTMLCanvasElement | null): void => {
 
 		if (!gameStarted)
 		{
+			socket.emit("gameIsStarted", roomName);
+
 			if (playerId === 1)
 			{
-				intervalValue = setInterval(() => {
-					setGameCoordinates();
-					socket.emit("exchangeData", {roomName, gameCoordinates});
-					// render();
-				}, 1000 / 50);
 				current.addEventListener("mousemove", (event: MouseEvent) => {
 					let rect = current.getBoundingClientRect();
 					user1.y = event.clientY - rect.top - user1.height / 2;
+					const y: number = user1.y; // please update this approach, get value y from user1.y
+					socket.emit("updatePaddlePosition", {roomName, playerId, y});
 				});
 			}
 			else if (playerId === 2)
@@ -234,8 +205,8 @@ const game = (current: HTMLCanvasElement | null): void => {
 				current.addEventListener("mousemove", (event: MouseEvent) => {
 					let rect = current.getBoundingClientRect();
 					user2.y = event.clientY - rect.top - user2.height / 2;
-					let y: number = user2.y;
-					socket.emit("sendSecondPlayerY", {roomName, y});
+					const y: number = user2.y;
+					socket.emit("updatePaddlePosition", {roomName, playerId, y});
 				});
 			}
 			gameStarted = true;

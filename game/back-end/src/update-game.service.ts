@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { GameCoor, GameData, Directions, Position, Ball } from "./game.interface"
+import { GameCoor, GameData, Directions, Position, Ball, Paddle } from "./game.interface"
 
 @Injectable()
 export class UpdateGameService {
@@ -10,6 +10,12 @@ export class UpdateGameService {
 		paddleWidth: 20,
 		paddleHeight: 200
 	};
+	private server: any;
+
+	initializeServerObject(server: any): void
+	{
+		this.server = server;
+	}
 
 	create(room: string)
 	{
@@ -37,9 +43,37 @@ export class UpdateGameService {
 		this.gameCoordinates.set(room, tmp);
 	}
 
-	delete(room: string): void { this.gameCoordinates.delete(room) }
+	sendDataToFrontend(room: string): void
+	{
+		let tmp: GameCoor = this.gameCoordinates.get(room);
 
-	#update_score(tmp: GameCoor): GameCoor
+		tmp.interval = setInterval(() => {
+			this.#updateBallPosition(room);
+
+			const		gameCoordinates: GameData = {
+				p1: {
+					x: this.gameCoordinates.get(room).player1.x,
+					y: this.gameCoordinates.get(room).player1.y,
+					score: this.gameCoordinates.get(room).player1.score
+				},
+				p2: {
+					x: this.gameCoordinates.get(room).player2.x,
+					y: this.gameCoordinates.get(room).player2.y,
+					score: this.gameCoordinates.get(room).player2.score
+				},
+				b: {
+					x: this.gameCoordinates.get(room).ball.x,
+					y: this.gameCoordinates.get(room).ball.y,
+				}
+			};
+
+			this.server.to(room).emit("newCoordinates", gameCoordinates);
+		}, 1000/50);
+	
+		this.gameCoordinates.set(room, tmp);
+	}
+
+	#updateScore(tmp: GameCoor): GameCoor
 	{
 		if (tmp.ball.x - tmp.ball.radius < 0) {
 			tmp.player2.score += 1;
@@ -54,15 +88,15 @@ export class UpdateGameService {
 			tmp.ball.speed = 12;
 			tmp.ball.velocityX = tmp.ball.velocityX < 0 ? 11 : -11;
 			tmp.ball.velocityY = 11;
-			tmp.player1.x = 0;
-			tmp.player1.y = this.global.canvasHeight/2 - this.global.paddleHeight/2;
-			tmp.player2.x = this.global.canvasWidth - this.global.paddleWidth;
-			tmp.player2.y = this.global.canvasHeight/2 - this.global.paddleHeight/2;
+			// tmp.player1.x = 0;
+			// tmp.player1.y = this.global.canvasHeight/2 - this.global.paddleHeight/2;
+			// tmp.player2.x = this.global.canvasWidth - this.global.paddleWidth;
+			// tmp.player2.y = this.global.canvasHeight/2 - this.global.paddleHeight/2;
 		}
 		return (tmp);
 	}
 
-	#hasCollided(player: Position, ball: Ball ): boolean
+	#hasCollided(player: Paddle, ball: Ball ): boolean
 	{
 		const b: Directions = {
 			top: ball.y - ball.radius,
@@ -79,20 +113,32 @@ export class UpdateGameService {
 		return (b.left < p.right && b.down > p.top && b.right > p.left && b.top < p.down);
 	}
 
-	update(data: GameData, room: string): GameData
+	#checkForTheWinner(score1: number, score2: number, room: string): void
+	{
+		if (score1 === 5 || score2 === 5)
+		{
+			if (score1 == 5)
+				this.server.to(room).emit("TheWinner", 1);
+			else if (score2 == 5)
+				this.server.to(room).emit("TheWinner", 2);
+
+			clearInterval(this.gameCoordinates.get(room).interval);
+			this.gameCoordinates.delete(room)
+		}
+	}
+
+	#updateBallPosition(room: string)
 	{ 
 		let	tmp: GameCoor = this.gameCoordinates.get(room);
-		data.p2.y = tmp.player2.y;
 		tmp.ball.x += tmp.ball.velocityX;
 		tmp.ball.y += tmp.ball.velocityY;
 
 		if (tmp.ball.y + tmp.ball.radius > this.global.canvasHeight || tmp.ball.y - tmp.ball.radius < 0) {
 			tmp.ball.velocityY = -tmp.ball.velocityY;
 			this.gameCoordinates.set(room, tmp);
-			return (data);
 		}
 
-		let player: Position = tmp.ball.x < this.global.canvasWidth / 2 ? data.p1 : data.p2;
+		let player: Paddle = tmp.ball.x < this.global.canvasWidth / 2 ? tmp.player1 : tmp.player2;
 
 		if (this.#hasCollided(player, tmp.ball)) {
 			let collidePoint: number = tmp.ball.y - (player.y + this.global.paddleHeight / 2);
@@ -107,35 +153,23 @@ export class UpdateGameService {
 			tmp.ball.speed += 0.5;
 
 			this.gameCoordinates.set(room, tmp);
-			data.b.x = tmp.ball.x;
-			data.b.y = tmp.ball.y;
-			return (data);
 		}
 		else {
-			tmp = this.#update_score(tmp);
+			tmp = this.#updateScore(tmp);
 			this.gameCoordinates.set(room, tmp);
-
-			data.b.x = tmp.ball.x;
-			data.b.y = tmp.ball.y;
-			data.p1.score = tmp.player1.score;
-			data.p2.score = tmp.player2.score;
-			return (data);
+			this.#checkForTheWinner(tmp.player1.score, tmp.player2.score, room);
 		}
 	}
 
-	check_for_the_winner(score1: number, score2: number): number
-	{
-		if (score1 == 5)
-			return (1);
-		else if (score2 == 5)
-			return (1);
-		return (0);
-	}
-
-	setY(room: string, y: number): void
+	updatePaddlePosition(paddlePosition: number, room: string, playerId: number)
 	{
 		let tmp: GameCoor = this.gameCoordinates.get(room);
-		tmp.player2.y = y;
+
+		if (playerId === 1)
+			tmp.player1.y = paddlePosition;
+		else if (playerId === 2)
+			tmp.player2.y = paddlePosition;
+
 		this.gameCoordinates.set(room, tmp);
 	}
 }

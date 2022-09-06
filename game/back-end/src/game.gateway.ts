@@ -16,10 +16,17 @@ export class GameGateway {
 	private	roomCounter1: number;
 	private	userCounter2: number;
 	private	roomCounter2: number;
-	constructor(private updateGame: UpdateGameService) { this.userCounter1 = 0; this.roomCounter1 = 1; this.userCounter2 = 0; this.roomCounter2 = 1000000000;}
 
 	@WebSocketServer()
 	server: Server;
+
+	constructor(private updateGame: UpdateGameService) {
+		this.userCounter1 = 0;
+		this.roomCounter1 = 1;
+		this.userCounter2 = 0;
+		this.roomCounter2 = 1000000000;
+		this.updateGame.initializeServerObject(this.server);
+	}
 
 	private logger: Logger = new Logger("GameGateway");
 
@@ -78,21 +85,13 @@ export class GameGateway {
 		client.leave(room);
 	}
 
-	@SubscribeMessage("exchangeData")
-	handleExchangeData(client: Socket, {roomName, gameCoordinates}): void {
-		gameCoordinates = this.updateGame.update(gameCoordinates, roomName);
-		let	winner = this.updateGame.check_for_the_winner(gameCoordinates.p1.score, gameCoordinates.p2.score);
-		this.server.to(roomName).emit("newCoordinates", gameCoordinates);
-		if (winner !== 0)
-		{
-			this.server.to(roomName).emit("theWinner", winner);
-			this.updateGame.delete(roomName);
-		}
+	@SubscribeMessage("gameIsStarted")
+	handleExchangeData(client: Socket, roomName): void {
+		this.updateGame.sendDataToFrontend(roomName);
 	}
 
-	@SubscribeMessage("sendSecondPlayerY")
-	handleSendUser2Y(client: Socket, {roomName, y}): void {
-		this.updateGame.setY(roomName, y);
-
+	@SubscribeMessage("updatePaddlePosition")
+	handleUpdatePaddlePosition(client: Socket, {roomName, playerId, y}): void {
+		this.updateGame.updatePaddlePosition(y, roomName, playerId);
 	}
 }

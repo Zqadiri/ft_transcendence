@@ -1,4 +1,4 @@
-type Paddle = {
+export type Paddle = {
 	x: number,
 	y: number,
 	score: number
@@ -21,9 +21,9 @@ export type Position = {
 export interface GameCoor {
 	player1: Paddle,
 	player2: Paddle,
-	ball: Ball
+	ball: Ball,
+	interval?: NodeJS.Timer
 }
-
 
 export interface GameData {
 	p1: Paddle,
