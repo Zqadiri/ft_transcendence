@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { GameCoor, GameData, Directions, Position, Ball, Paddle } from "./game.interface"
+import { Server } from 'socket.io';
+import { GameCoor, GameData, Directions, Ball, Paddle } from "./game.interface"
 
 @Injectable()
 export class UpdateGameService {
@@ -10,9 +11,9 @@ export class UpdateGameService {
 		paddleWidth: 20,
 		paddleHeight: 200
 	};
-	private server: any;
+	private server: Server;
 
-	initializeServerObject(server: any): void
+	initializeServerObject(server: Server): void
 	{
 		this.server = server;
 	}
@@ -88,10 +89,6 @@ export class UpdateGameService {
 			tmp.ball.speed = 12;
 			tmp.ball.velocityX = tmp.ball.velocityX < 0 ? 11 : -11;
 			tmp.ball.velocityY = 11;
-			// tmp.player1.x = 0;
-			// tmp.player1.y = this.global.canvasHeight/2 - this.global.paddleHeight/2;
-			// tmp.player2.x = this.global.canvasWidth - this.global.paddleWidth;
-			// tmp.player2.y = this.global.canvasHeight/2 - this.global.paddleHeight/2;
 		}
 		return (tmp);
 	}
@@ -118,13 +115,17 @@ export class UpdateGameService {
 		if (score1 === 5 || score2 === 5)
 		{
 			if (score1 == 5)
-				this.server.to(room).emit("TheWinner", 1);
+				this.server.to(room).emit("theWinner", 1);
 			else if (score2 == 5)
-				this.server.to(room).emit("TheWinner", 2);
+				this.server.to(room).emit("theWinner", 2);
 
 			clearInterval(this.gameCoordinates.get(room).interval);
-			this.gameCoordinates.delete(room)
 		}
+	}
+
+	delete (room: string)
+	{
+		this.gameCoordinates.delete(room)
 	}
 
 	#updateBallPosition(room: string)

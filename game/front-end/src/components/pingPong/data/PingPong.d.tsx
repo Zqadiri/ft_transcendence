@@ -53,12 +53,9 @@ export const user2: Users = {
 }
 
 export const ball:
-{x: number, y: number, speed: number, velocityX: number, velocityY: number, radius: number, color: string} = {
+{x: number, y: number, radius: number, color: string} = {
 	x: canvas.width / 2,
 	y: canvas.height / 2,
-	speed: 12,
-	velocityX: 11,
-	velocityY: 11,
 	radius: 15,
 	color: "WHITE"
 }

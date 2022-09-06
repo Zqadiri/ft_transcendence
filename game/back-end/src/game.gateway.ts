@@ -20,15 +20,15 @@ export class GameGateway {
 	@WebSocketServer()
 	server: Server;
 
+	private logger: Logger = new Logger("GameGateway");
+
 	constructor(private updateGame: UpdateGameService) {
 		this.userCounter1 = 0;
 		this.roomCounter1 = 1;
 		this.userCounter2 = 0;
 		this.roomCounter2 = 1000000000;
-		this.updateGame.initializeServerObject(this.server);
 	}
 
-	private logger: Logger = new Logger("GameGateway");
 
 	@SubscribeMessage('message')
 	handleMessage(client: any, payload: any): string {
@@ -83,10 +83,13 @@ export class GameGateway {
 	@SubscribeMessage("leaveRoom")
 	handleLeaveRoom(client: Socket, room: string): void {
 		client.leave(room);
+		this.updateGame.delete(room);
 	}
 
 	@SubscribeMessage("gameIsStarted")
-	handleExchangeData(client: Socket, roomName): void {
+	handleExchangeData(client: Socket, roomName: string): void {
+		this.logger.log("server value is: " + this.server);
+		this.updateGame.initializeServerObject(this.server);
 		this.updateGame.sendDataToFrontend(roomName);
 	}
 

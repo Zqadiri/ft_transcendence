@@ -35,8 +35,8 @@ const setTheWinner = (theWinner: number): void => {
 		alert("You've Won The Game");
 	else 
 		alert("You've Lost The Game");
-	resetGame();
 	socket.emit("leaveRoom", roomName);
+	resetGame();
 	g_navigate("/");
 }
 
@@ -70,83 +70,6 @@ const render = (): void => {
 	drawCircle(ball.x, ball.y, ball.radius, ball.color);
 }
 
-// const hasCollided = (player: Users): boolean => {
-// 	const b: Directions = {
-// 		top: ball.y - ball.radius,
-// 		down: ball.y + ball.radius,
-// 		left: ball.x - ball.radius,
-// 		right: ball.x + ball.radius
-// 	}
-// 	const p: Directions = {
-// 		top: player.y,
-// 		down: player.y + player.height,
-// 		left: player.x,
-// 		right: player.x + player.width
-// 	}
-// 	return (b.left < p.right && b.down > p.top && b.right > p.left && b.top < p.down);
-// }
-
-// const update_score = (): void => {
-// 	if (ball.x - ball.radius < 0) {
-// 		user2.score += 1;
-// 		g_setScore2(user2.score);
-// 	}
-// 	else if (ball.x + ball.radius > canvas.width) {
-// 		user1.score += 1;
-// 		g_setScore1(user1.score);
-// 	}
-
-// 	if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
-// 		ball.x = canvas.width / 2;
-// 		ball.y = canvas.height / 2;
-// 		ball.speed = 12;
-// 		ball.velocityX = ball.velocityX < 0 ? 11 : -11;
-// 		ball.velocityY = 11;
-// 	}
-// }
-
-
-// const update = (): void => {
-// 	ball.x += ball.velocityX;
-// 	ball.y += ball.velocityY;
-
-// 	if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
-// 		ball.velocityY = -ball.velocityY;
-// 		return;
-// 	}
-
-// 	let player: Users = ball.x < canvas.width / 2 ? user1 : user2;
-
-// 	if (hasCollided(player)) {
-// 		let collidePoint: number = ball.y - (player.y + player.height / 2);
-// 		let direction: number = ball.x < canvas.width / 2 ? 1 : -1;
-// 		// normalize
-// 		collidePoint /= player.height / 2;
-// 		let angle: number = collidePoint * (Math.PI / 4);
-
-// 		ball.velocityX = (ball.speed * Math.cos(angle)) * direction;
-// 		ball.velocityY = ball.speed * Math.sin(angle);
-
-// 		ball.speed += 0.5;
-// 	}
-// 	else {
-// 		update_score();
-// 		// check_for_the_winner();
-// 	}
-// }
-
-// function moveUser1Paddle(event: KeyboardEvent): void {
-// 	let move: number = 0;
-
-// 	if (event.key === "ArrowUp")
-// 		move = -20;
-// 	else if (event.key === "ArrowDown")
-// 		move = 20;
-
-// 	if ((user1.y + user1.height / 2) + move > 0 && (user1.y + user1.height / 2) + move < canvas.height)
-// 		user1.y += move;
-// }
-
 const setUserData = (data: GameData): void => {
 	user1.x = data.p1.x;	
 	user1.y = data.p1.y;	
@@ -170,29 +93,12 @@ const game = (current: HTMLCanvasElement | null): void => {
 	if (current !== null) {
 		canvas.context = current.getContext("2d");
 		render();
-		// window.addEventListener("keydown", moveUser1Paddle);
-		// window.addEventListener("keydown", (event: KeyboardEvent) => {
-		// 	if (!gameStarted && event.key === " ") {
-		// 		intervalValue = setInterval(() => {
-		// 			update();
-		// 			render();
-		// 		}, 1000 / 50);
-		// 		gameStarted = true;
-		// 	}
-		// 	else if (gameStarted && event.key === "Escape") {
-		// 		resetGame();
-		// 		render();
-		// 		clearInterval(intervalValue);
-		// 		gameStarted = false;
-		// 	}
-		// });
 
 		if (!gameStarted)
 		{
-			socket.emit("gameIsStarted", roomName);
-
 			if (playerId === 1)
 			{
+				socket.emit("gameIsStarted", roomName);
 				current.addEventListener("mousemove", (event: MouseEvent) => {
 					let rect = current.getBoundingClientRect();
 					user1.y = event.clientY - rect.top - user1.height / 2;
