@@ -3,7 +3,7 @@ import { theme2, theme1, global } from './data/PingPong.d';
 const drawRect_2 = (x: number, y: number, w: number, h: number, color: string): void => {
 	if (global.context !== null)
 	{
-		let grd = global.context.createRadialGradient(200, 200, 20, 90, 60, 200);
+		let grd = global.context.createRadialGradient(global.canvasWidth/2, global.canvasHeight/2, 20, global.canvasWidth/2, global.canvasHeight/2, 500);
 		grd.addColorStop(0, theme2.canvas.firstColor);
 		grd.addColorStop(1, theme2.canvas.secondColor);
 		global.context.fillStyle = grd;
