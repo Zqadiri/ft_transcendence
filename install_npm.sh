@@ -15,5 +15,6 @@ if command -v npm >/dev/null 2>&1; then
 		source $HOME/.zshrc
 		nvm install --lts
 		npm install -g typescript
+		npm i -g @nestjs/cli
 		echo "*************** DONE ! ***************"
 fi

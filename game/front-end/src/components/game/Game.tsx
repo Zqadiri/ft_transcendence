@@ -38,7 +38,7 @@ function	LiveGames(): JSX.Element
 {
 	return (
 		<>
-			<ul className="live-games">
+			{/* <ul className="live-games">
 				{
 					liveGamesData.map((current) => {
 						return (
@@ -64,7 +64,7 @@ function	LiveGames(): JSX.Element
 						);
 					})
 				}
-			</ul>
+			</ul> */}
 		</>
 	);
 }

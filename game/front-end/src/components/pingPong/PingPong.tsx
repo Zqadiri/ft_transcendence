@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Style.css';
 import Canvas from './Canvas';
 import Score from './Score';
-import { canvas, ball, user1, user2, net, Users, Directions, GameData } from './data/PingPong.d';
+import { canvas, ball, user1, user2, net, Users, GameData } from './data/PingPong.d';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { socket, useEffectOnce, roomName, setRoomName, playerId } from "../game/Game";
 
