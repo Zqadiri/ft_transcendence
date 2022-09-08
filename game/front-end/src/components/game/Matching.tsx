@@ -4,7 +4,7 @@ import PropTypes, { InferProps } from "prop-types";
 import { useState } from "react";
 import MoonLoader from 'react-spinners/MoonLoader';
 
-let		theme: string = "none";
+export let	theme: string = "none";
 
 function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): JSX.Element {
 	const [activeTheme, setActiveTheme] = useState("none");
