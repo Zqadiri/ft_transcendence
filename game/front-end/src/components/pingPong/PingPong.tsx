@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Style.css';
 import Canvas from './Canvas';
 import Score from './Score';
-import { theme1, global, GameData } from './data/PingPong.d';
+import { global, GameData } from './data/PingPong.d';
 import { renderTheme1 } from "./RenderTheme1";
 import { renderTheme2 } from "./RenderTheme2";
 import { useNavigate, NavigateFunction } from 'react-router-dom';
@@ -44,9 +44,10 @@ const setTheWinner = (theWinner: number): void => {
 }
 
 const render = (): void => {
-	// if (theme === "theme1")
-	// 	renderTheme1();
-	renderTheme2();
+	if (theme === "theme1")
+		renderTheme1();
+	else if (theme === "theme2")
+		renderTheme2();
 }
 
 const setUserData = (data: GameData): void => {
