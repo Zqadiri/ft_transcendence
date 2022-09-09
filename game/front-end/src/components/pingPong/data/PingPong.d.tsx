@@ -80,22 +80,26 @@ export const theme1 = {
 
 export const theme2 = {
 	canvas: {
-		firstColor: "#205375",
+		// firstColor: "#205375",
+		firstColor: "#295c7d",
 		secondColor: "#112B3C"
 	},
 	player1: {
 		firstColor: "#F66B0E",
-		secondColor: "#f5b082"
+		secondColor: "#f5883f"
 	},
 	player2: {
-		color: "#EEEEEE"
+		firstColor: "#f5883f",
+		secondColor: "#F66B0E"
 	},
 	ball: {
-		color: "#EEEEEE",
+		firstColor: "#f5883f",
+		secondColor: "#F66B0E",
 		radius: 15
 	},
 	net: {
-		color: "#EEEEEE"
+		firstColor: "#4c81a5",
+		secondColor: "#295c7d"
 	}
 }
 
