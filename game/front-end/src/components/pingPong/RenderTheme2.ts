@@ -37,7 +37,7 @@ const drawRightPaddle = (x: number, y: number, w: number, h: number): void => {
 
 const drawCircle = (x: number, y: number, r: number): void => {
 	if (global.context !== null) {
-		let grd = global.context.createRadialGradient(x, y, 3, x, y, 11);
+		let grd = global.context.createRadialGradient(x, y, 5, x, y, 15);
 		grd.addColorStop(0, theme2.ball.firstColor);
 		grd.addColorStop(1, theme2.ball.secondColor);
 		global.context.fillStyle = grd;

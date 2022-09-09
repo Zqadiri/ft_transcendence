@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import PropTypes, { InferProps } from "prop-types";
 import { useState } from "react";
 import MoonLoader from 'react-spinners/MoonLoader';
+import { ReactComponent as GameTheme01 } from './theme#01.svg';
+import { ReactComponent as GameTheme02 } from './theme#02.svg';
+
+// import styleTheme02 from './canvas_1.jpeg';
 
 export let	theme: string = "none";
 
@@ -21,18 +25,22 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 	return (
 		<>
 			<div className="matching-container" >
-				<button
+				<div
 					onClick={() => {
 						setActiveTheme(activeTheme === "theme1" ? "none" : "theme1");
 					}}
 					className={`${activeTheme === "theme1" ? "active-theme" : ""}`}
-				>Theme #01</button>
-				<button
+				>
+					<GameTheme01 />
+				</div>
+				<div
 					onClick={() => {
 						setActiveTheme(activeTheme === "theme2" ? "none" : "theme2");
 					}}
 					className={`${activeTheme === "theme2" ? "active-theme" : ""}`}
-				>Theme #02</button>
+				>
+					<GameTheme02 />
+				</div>
 			</div>
 			<div className="match-me">
 				<button onClick={joinRoom}>Match Me</button>

@@ -44,9 +44,9 @@ const setTheWinner = (theWinner: number): void => {
 }
 
 const render = (): void => {
-	if (theme === "theme1")
-		renderTheme1();
-	else if (theme === "theme2")
+	// if (theme === "theme1")
+		// renderTheme1();
+	// else if (theme === "theme2")
 		renderTheme2();
 }
 

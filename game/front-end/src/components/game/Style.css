@@ -40,17 +40,17 @@
 	margin-top: 5%;
 }
 
-.matching-container button {
-	border: none;
+.matching-container div {
 	width: 400px;
 	height: 300px;
+	display: inline-block;
 	background-color: #EFEFEF;
 	font-size: 18px;
 	transition: 0.3s;
 	cursor: pointer;
 }
 
-.matching-container button:last-child {
+.matching-container div:last-child {
 	margin-left: 40px
 }
 
