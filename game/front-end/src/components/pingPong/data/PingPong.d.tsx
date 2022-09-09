@@ -84,7 +84,8 @@ export const theme2 = {
 		secondColor: "#112B3C"
 	},
 	player1: {
-		color: "#EEEEEE"
+		firstColor: "#F66B0E",
+		secondColor: "#f5b082"
 	},
 	player2: {
 		color: "#EEEEEE"
