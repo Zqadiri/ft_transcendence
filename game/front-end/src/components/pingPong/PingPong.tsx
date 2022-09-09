@@ -111,12 +111,12 @@ function PingPong(): JSX.Element
 	g_setScore2 = setScore2;
 	g_navigate = navigate;
 	useEffectOnce(() => {
-		socket.off("theWinner").on("theWinner", (theWinner) => {
-			setTheWinner(theWinner);
-		});
 		socket.off("newCoordinates").on("newCoordinates", (data) => {
 			setUserData(data);
 			render();
+		});
+		socket.off("theWinner").on("theWinner", (theWinner) => {
+			setTheWinner(theWinner);
 		});
 	});
 	return (

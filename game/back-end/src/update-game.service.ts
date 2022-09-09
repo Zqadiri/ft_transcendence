@@ -69,6 +69,7 @@ export class UpdateGameService {
 			};
 
 			this.server.to(room).emit("newCoordinates", gameCoordinates);
+			this.#checkForTheWinner(gameCoordinates.p1.score, gameCoordinates.p2.score, room);
 		}, 1000/50);
 	
 		this.gameCoordinates.set(room, tmp);
@@ -158,7 +159,6 @@ export class UpdateGameService {
 		else {
 			tmp = this.#updateScore(tmp);
 			this.gameCoordinates.set(room, tmp);
-			this.#checkForTheWinner(tmp.player1.score, tmp.player2.score, room);
 		}
 	}
 
