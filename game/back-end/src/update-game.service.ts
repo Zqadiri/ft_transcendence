@@ -9,7 +9,7 @@ export class UpdateGameService {
 		canvasWidth: 1000,
 		canvasHeight: 600,
 		paddleWidth: 20,
-		paddleHeight: 200
+		paddleHeight: 150
 	};
 	private server: Server;
 
@@ -18,7 +18,7 @@ export class UpdateGameService {
 		this.server = server;
 	}
 
-	create(room: string)
+	create(room: string, theme: string)
 	{
 		const tmp: GameCoor = {
 			player1: {
@@ -35,11 +35,19 @@ export class UpdateGameService {
 				x: this.global.canvasWidth / 2,
 				y: this.global.canvasHeight / 2,
 				speed: 12,
-				velocityX: 11,
-				velocityY: 11,
+				velocityX: 12,
+				velocityY: 12,
 				radius: 15
-			}
+			},
+			theme: theme
 		};
+
+		if (tmp.theme === "theme02")
+		{
+			tmp.ball.speed = 20;
+			tmp.ball.velocityX = 20;
+			tmp.ball.velocityY = 20;
+		}
 
 		this.gameCoordinates.set(room, tmp);
 	}
@@ -87,9 +95,18 @@ export class UpdateGameService {
 		if (tmp.ball.x - tmp.ball.radius < 0 || tmp.ball.x + tmp.ball.radius > this.global.canvasWidth) {
 			tmp.ball.x = this.global.canvasWidth / 2;
 			tmp.ball.y = this.global.canvasHeight / 2;
-			tmp.ball.speed = 12;
-			tmp.ball.velocityX = tmp.ball.velocityX < 0 ? 11 : -11;
-			tmp.ball.velocityY = 11;
+			if (tmp.theme === "theme01")
+			{
+				tmp.ball.speed = 12;
+				tmp.ball.velocityX = tmp.ball.velocityX < 0 ? 12 : -12;
+				tmp.ball.velocityY = 12;
+			}
+			else if (tmp.theme === "theme02")
+			{
+				tmp.ball.speed = 20; // 12
+				tmp.ball.velocityX = tmp.ball.velocityX < 0 ? 20 : -20; // 11
+				tmp.ball.velocityY = 20;
+			}
 		}
 		return (tmp);
 	}
@@ -149,10 +166,11 @@ export class UpdateGameService {
 			collidePoint /= this.global.paddleHeight / 2;
 			let angle: number = collidePoint * (Math.PI / 4);
 
+			tmp.ball.speed += 0.5;
+
 			tmp.ball.velocityX = (tmp.ball.speed * Math.cos(angle)) * direction;
 			tmp.ball.velocityY = tmp.ball.speed * Math.sin(angle);
 
-			tmp.ball.speed += 0.5;
 
 			this.gameCoordinates.set(room, tmp);
 		}

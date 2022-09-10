@@ -22,7 +22,8 @@ export interface GameCoor {
 	player1: Paddle,
 	player2: Paddle,
 	ball: Ball,
-	interval?: NodeJS.Timer
+	interval?: NodeJS.Timer,
+	theme: string
 }
 
 export interface GameData {

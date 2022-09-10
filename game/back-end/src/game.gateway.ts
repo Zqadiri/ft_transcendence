@@ -46,7 +46,7 @@ export class GameGateway {
 		{
 			this.userCounter1 = 0;
 			this.roomCounter1 = (this.roomCounter1 + 1) % 1000000000;
-			this.updateGame.create(roomName);
+			this.updateGame.create(roomName, "theme01");
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
 		this.logger.log(client.id + " joined Theme 1");
@@ -65,7 +65,7 @@ export class GameGateway {
 			this.roomCounter2++;
 			if (this.roomCounter2 > 2000000000)
 				this.roomCounter2 = 1000000000;
-			this.updateGame.create(roomName);
+			this.updateGame.create(roomName, "theme02");
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
 		this.logger.log(client.id + " joined Theme 2");
