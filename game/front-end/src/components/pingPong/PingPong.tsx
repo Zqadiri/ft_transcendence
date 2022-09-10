@@ -15,6 +15,7 @@ export let 	g_setScore1: React.Dispatch<React.SetStateAction<number>>;
 export let 	g_setScore2: React.Dispatch<React.SetStateAction<number>>;
 let 		gameStarted: boolean = false;
 let 		g_navigate: NavigateFunction;
+let			winnerId: number = 0;
 
 const resetGame = (): void => {
 	global.player1X = 0;
@@ -29,18 +30,6 @@ const resetGame = (): void => {
 	global.ballY = global.canvasHeight/2;
 	gameStarted = false;
 	setRoomName("none", 0);
-}
-
-const setTheWinner = (theWinner: number): void => {
-	if (playerId > 2)
-		alert("Player " + theWinner + " Has Won The Game");
-	else if (playerId === theWinner)
-		alert("You've Won The Game");
-	else 
-		alert("You've Lost The Game");
-	socket.emit("leaveRoom", roomName);
-	resetGame();
-	g_navigate("/");
 }
 
 const render = (): void => {
@@ -101,6 +90,53 @@ const game = (current: HTMLCanvasElement | null): void => {
 	}
 }
 
+const setTheWinner = (theWinner: number): void => {
+	winnerId = theWinner;
+	g_setScore1(0);
+	g_setScore2(0);
+}
+
+function ResultPrompt(): JSX.Element {
+	let		resultMessage: string;
+	let		winnerName: string = "you";
+	let		mainColor: string;
+
+	if (playerId > 2)
+	{
+		winnerName = "Player " + winnerId;
+		resultMessage = "Won The Game";
+		mainColor = "#f66b0e";
+	}
+	else if (playerId === winnerId)
+	{
+		resultMessage = "Won The Game";
+		mainColor = "#6a994e";
+	}
+	else 
+	{
+		resultMessage = "Lost The Game";
+		mainColor = "#d62828";
+	}
+
+	return (
+		<>
+			<section className="result-overlay">
+				<div className="prompt">
+					<span style={{color: mainColor}}>{winnerName}</span>
+					<span style={{backgroundColor: mainColor}}>{resultMessage}</span>
+				</div>
+			</section>
+			{
+				setTimeout(() => {
+					socket.emit("leaveRoom", roomName);
+					resetGame();
+					g_navigate("/");
+				}, 4000)
+			}
+		</>
+	);
+}
+
 function PingPong(): JSX.Element
 {
 	const navigate: NavigateFunction = useNavigate();
@@ -120,10 +156,13 @@ function PingPong(): JSX.Element
 		});
 	});
 	return (
-		<div className="container">
-			<Score s1={score1} s2={score2} />
-			<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />
-		</div>
+		<>
+			{winnerId !== 0 ? <ResultPrompt /> : null}
+			<div className="container">
+				<Score s1={score1} s2={score2} />
+				<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />
+			</div>
+		</>
 	);
 }
 
