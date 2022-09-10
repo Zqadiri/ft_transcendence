@@ -8,6 +8,7 @@ import * as bcrypt from 'bcryptjs';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 import { FriendsService } from 'src/friends/friends.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 
 // import { Cron, CronExpression } from '@nestjs/schedule';
@@ -583,15 +584,41 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
         else
           throw new ForbiddenException({code: 'Forbidden', message: `Failed to mute/ban this user in this chat room!!`})
     }
-    // @Cron(CronExpression.EVERY_30_SECONDS)
-    // handleCron() {
-    //   this.logger.debug('Called every 30 seconds');
-    // }
+
+    @Cron(CronExpression.EVERY_30_SECONDS)
+    async handleCron() {
+      this.logger.debug('Called every 30 seconds');
+
+      const allchats = await this.Chatrepository
+        .createQueryBuilder("db_chat")
+        .select(['db_chat.MutedAndBannedID', 'db_chat.name']) // added selection
+        // .where("db_chat.name = :name", { name: roomName })
+        .getMany();
+
+      for (let x = 0; x < allchats.length; x++) {
+        let mutedAndBannedID = allchats[x].MutedAndBannedID;
+        let roomName = allchats[x].name;
+        for (let i = 0; i < mutedAndBannedID.length; i++) {
+          if ((mutedAndBannedID[i].current_time + mutedAndBannedID[i].duration * 1000) <= Date.now()) {
+            mutedAndBannedID = mutedAndBannedID.filter(item => item.userID !== mutedAndBannedID[i].userID);
+
+            console.log("filter user, from mutedID array ", mutedAndBannedID);
+
+            await this.Chatrepository
+              .createQueryBuilder()
+              .update(Chat)
+              .set({ MutedAndBannedID: mutedAndBannedID })
+              .where("name = :name", { name: roomName})
+              .execute()
+          }
+        }
+      }
+    }
 
     async ListMutedID(roomName: string)
     {
       this.logger.debug('Called every 30 seconds !!');
-      const listMuted = [];
+      let listMuted = [];
       
       const mutedIds = await this.Chatrepository
       .createQueryBuilder("db_chat")
@@ -599,36 +626,15 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
       .where("db_chat.name = :name", { name: roomName })
       .getOne();
 
-      //if ( mutedIds.MutedAndBannedID)
-       // this.handleCron();
-      for (let i = 0; i < mutedIds.MutedAndBannedID.length; i++)
-      {
-        if ((mutedIds.MutedAndBannedID[i].current_time + mutedIds.MutedAndBannedID[i].duration * 1000 ) > Date.now())
-        {
-          if (mutedIds.MutedAndBannedID[i].action === Action.MUTE)
-            listMuted.push(mutedIds.MutedAndBannedID[i].userID);
-        }
-        else
-        {
-          mutedIds.MutedAndBannedID = mutedIds.MutedAndBannedID.filter(item => item.userID !== mutedIds.MutedAndBannedID[i].userID);
-  
-            console.log("filter user, from mutedID array ",mutedIds.MutedAndBannedID);
-  
-            const ret_query = await this.Chatrepository
-            .createQueryBuilder()
-            .update(Chat)
-            .set({MutedAndBannedID: mutedIds.MutedAndBannedID})
-            .where("name = :name", { name: roomName})
-            .execute()
-        }
-      }
+      listMuted = mutedIds.MutedAndBannedID.filter(el => { return el.action === Action.MUTE });
+
       return listMuted;
     }
 
     async ListBannedID(roomName: string)
     {
-      this.logger.debug('Called every 30 seconds !');
-      const listBaned = [];
+      this.logger.debug('Called every 30 seconds !!');
+      let listBanned = [];
       
       const bannedIds = await this.Chatrepository
       .createQueryBuilder("db_chat")
@@ -636,31 +642,9 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
       .where("db_chat.name = :name", { name: roomName })
       .getOne();
 
-     // if (bannedIds.MutedAndBannedID)
-       // this.handleCron();
+      listBanned = bannedIds.MutedAndBannedID.filter(el => { return el.action === Action.BAN });
 
-      for (let i = 0; i < bannedIds.MutedAndBannedID.length; i++)
-      {
-        if ((bannedIds.MutedAndBannedID[i].current_time + bannedIds.MutedAndBannedID[i].duration * 1000 ) > Date.now())
-        {
-          if (bannedIds.MutedAndBannedID[i].action === Action.BAN)
-            listBaned.push(bannedIds.MutedAndBannedID[i].userID);
-        }
-        else
-        {
-          bannedIds.MutedAndBannedID = bannedIds.MutedAndBannedID.filter(item => item.userID !== bannedIds.MutedAndBannedID[i].userID);
-  
-            console.log("filter user, from bannedID array ",bannedIds.MutedAndBannedID);
-  
-            const ret_query = await this.Chatrepository
-            .createQueryBuilder()
-            .update(Chat)
-            .set({MutedAndBannedID: bannedIds.MutedAndBannedID})
-            .where("name = :name", { name: roomName})
-            .execute()
-        }
-      }
-      return listBaned;
+      return listBanned;
     }
 
   /*-------------------------------------------------------------------------- */
