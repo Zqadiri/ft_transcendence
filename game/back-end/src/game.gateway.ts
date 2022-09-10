@@ -88,7 +88,6 @@ export class GameGateway {
 
 	@SubscribeMessage("gameIsStarted")
 	handleExchangeData(client: Socket, roomName: string): void {
-		this.logger.log("server value is: " + this.server);
 		this.updateGame.initializeServerObject(this.server);
 		this.updateGame.sendDataToFrontend(roomName);
 	}

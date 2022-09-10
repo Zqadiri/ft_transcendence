@@ -37,16 +37,14 @@
 
 .matching-container {
 	text-align: center;
-	margin-top: 5%;
+	margin-top: 95px;
 }
 
 .matching-container div {
 	width: 400px;
-	height: 300px;
+	height: 241px;
 	display: inline-block;
-	background-color: #EFEFEF;
-	font-size: 18px;
-	transition: 0.3s;
+	/* transition: 0.3s; */
 	cursor: pointer;
 }
 
@@ -55,23 +53,25 @@
 }
 
 .matching-container .active-theme {
-	background-color: #F66B0E;
-	color: #fff
+	/* opacity: 0.6; */
+	outline: 5px solid #F66B0E;
+	border: 1px solid #fff;
+	/* background-color: #F66B0E; */
 }
 
 .match-me {
 	text-align: center;
-	margin-top: 3%;
+	margin-top: 45px;
 }
 
 .match-me button {
-	border: 4px solid #F66B0E;
+	border: 3px solid #F66B0E;
 	color: #F66B0E;
-	padding: 20px 35px;
+	padding: 18px 25px;
 	background-color: #fff;
-	font-size: 20px;
+	font-size: 18px;
 	font-weight: bold;
-	border-radius: 20px;
+	border-radius: 15px;
 	cursor: pointer;
 	transition: 0.3s;
 }

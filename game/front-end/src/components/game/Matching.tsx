@@ -6,8 +6,6 @@ import MoonLoader from 'react-spinners/MoonLoader';
 import { ReactComponent as GameTheme01 } from './theme#01.svg';
 import { ReactComponent as GameTheme02 } from './theme#02.svg';
 
-// import styleTheme02 from './canvas_1.jpeg';
-
 export let	theme: string = "none";
 
 function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): JSX.Element {

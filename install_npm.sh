@@ -9,7 +9,7 @@ if command -v npm >/dev/null 2>&1; then
 		#echo 'export NVM_DIR="/goinfre/$USER/.nvm"
 		#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 		#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> $HOME/.zshrc
-		#source $HOME/.zshrc
+		source $HOME/.zshrc
 		nvm install --lts
 		npm install -g typescript
 		npm i -g @nestjs/cli
