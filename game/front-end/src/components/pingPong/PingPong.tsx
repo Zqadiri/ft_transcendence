@@ -13,6 +13,7 @@ import { theme } from "../game/Matching"
 
 export let 	g_setScore1: React.Dispatch<React.SetStateAction<number>>;
 export let 	g_setScore2: React.Dispatch<React.SetStateAction<number>>;
+let			g_setForceChange: React.Dispatch<React.SetStateAction<boolean>>;
 let 		gameStarted: boolean = false;
 let 		g_navigate: NavigateFunction;
 let			winnerId: number = 0;
@@ -92,13 +93,21 @@ const game = (current: HTMLCanvasElement | null): void => {
 
 const setTheWinner = (theWinner: number): void => {
 	winnerId = theWinner;
-	g_setScore1(0);
-	g_setScore2(0);
+	g_setForceChange(true);
+}
+
+const goHome = (): void => {
+	setTimeout(() => {
+		winnerId = 0;
+		socket.emit("leaveRoom", roomName);
+		resetGame();
+		g_navigate("/");
+	}, 3000)
 }
 
 function ResultPrompt(): JSX.Element {
 	let		resultMessage: string;
-	let		winnerName: string = "you";
+	let		winnerName: string = "You";
 	let		mainColor: string;
 
 	if (playerId > 2)
@@ -126,13 +135,7 @@ function ResultPrompt(): JSX.Element {
 					<span style={{backgroundColor: mainColor}}>{resultMessage}</span>
 				</div>
 			</section>
-			{
-				setTimeout(() => {
-					socket.emit("leaveRoom", roomName);
-					resetGame();
-					g_navigate("/");
-				}, 4000)
-			}
+			{goHome()}
 		</>
 	);
 }
@@ -142,9 +145,11 @@ function PingPong(): JSX.Element
 	const navigate: NavigateFunction = useNavigate();
 	const [score1, setScore1] = useState(global.player1Score);
 	const [score2, setScore2] = useState(global.player2Score);
+	const [forceChange, setForceChange] = useState(false);
 
 	g_setScore1 = setScore1;
 	g_setScore2 = setScore2;
+	g_setForceChange = setForceChange;
 	g_navigate = navigate;
 	useEffectOnce(() => {
 		socket.off("newCoordinates").on("newCoordinates", (data) => {
@@ -157,7 +162,7 @@ function PingPong(): JSX.Element
 	});
 	return (
 		<>
-			{winnerId !== 0 ? <ResultPrompt /> : null}
+			{forceChange ? <ResultPrompt /> : null}
 			<div className="container">
 				<Score s1={score1} s2={score2} />
 				<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />

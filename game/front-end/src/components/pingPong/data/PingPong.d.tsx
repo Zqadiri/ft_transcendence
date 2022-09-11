@@ -83,7 +83,7 @@ export const theme2 = {
 		secondColor: "#F66B0E"
 	},
 	ball: {
-		firstColor: "#f5883f",
+		firstColor: "#f69b5e",
 		secondColor: "#F66B0E",
 		radius: 15
 	},
