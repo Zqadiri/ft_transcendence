@@ -4,9 +4,9 @@ import "./Style.css";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { SyntheticEvent, useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
-import Matching from "./Matching"
+import Matching, { setTheme } from "./Matching"
 
-export	const	socket = io("http://localhost:3001/game");
+export	const	socket = io("http://10.11.9.3:3001/game");
 export	let		roomName: string = "none";
 export	let		playerId: number = 0;
 
@@ -36,10 +36,20 @@ export function setRoomName(name: string, id: number): void
 
 function	LiveGames(): JSX.Element
 {
+	// let		namedRoom: string;
+
+	// const joinLiveGame = (): void =>
+	// {
+	// 	socket.emit("joinLiveGame", namedRoom);
+	// }
+	// socket.off("joinedRoom").on("joinedRoom", (room, playerId) => {
+	// 	setRoomName(room, playerId);
+	// 	setTheme("theme1");
+	// });
 	return (
 		<>
-			{/* <ul className="live-games">
-				{
+			<ul className="live-games">
+				{/* {
 					liveGamesData.map((current) => {
 						return (
 							<li key={current.id}>
@@ -63,8 +73,8 @@ function	LiveGames(): JSX.Element
 							</li>
 						);
 					})
-				}
-			</ul> */}
+				} */}
+			</ul>
 		</>
 	);
 }

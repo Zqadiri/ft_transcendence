@@ -103,9 +103,9 @@ export class UpdateGameService {
 			}
 			else if (tmp.theme === "theme02")
 			{
-				tmp.ball.speed = 20; // 12
-				tmp.ball.velocityX = tmp.ball.velocityX < 0 ? 20 : -20; // 11
-				tmp.ball.velocityY = 20;
+				tmp.ball.speed = 16; // 12
+				tmp.ball.velocityX = tmp.ball.velocityX < 0 ? 16 : -16; // 11
+				tmp.ball.velocityY = 16;
 			}
 		}
 		return (tmp);
@@ -168,8 +168,8 @@ export class UpdateGameService {
 
 			tmp.ball.speed += 0.5;
 
-			tmp.ball.velocityX = (tmp.ball.speed * Math.cos(angle)) * direction;
-			tmp.ball.velocityY = tmp.ball.speed * Math.sin(angle);
+			tmp.ball.velocityX = ((tmp.ball.speed * Math.cos(angle)) * direction) * 1.2;
+			tmp.ball.velocityY = (tmp.ball.speed * Math.sin(angle)) * 1.2;
 
 
 			this.gameCoordinates.set(room, tmp);

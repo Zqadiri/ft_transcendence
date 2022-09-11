@@ -49,7 +49,7 @@ export class GameGateway {
 			this.updateGame.create(roomName, "theme01");
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
-		this.logger.log(client.id + " joined Theme 1");
+		this.logger.log(client.id + " joined Theme 1 & roomName " + roomName);
 	}
 
 	@SubscribeMessage("joinTheme2")
@@ -68,7 +68,13 @@ export class GameGateway {
 			this.updateGame.create(roomName, "theme02");
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
-		this.logger.log(client.id + " joined Theme 2");
+		this.logger.log(client.id + " joined Theme 2 & roomName " + roomName);
+	}
+	@SubscribeMessage("joinLiveGame")
+	handleJoinLiveGame(client: Socket, roomName: string): void {
+		client.emit("joinedRoom", roomName, 3);
+		client.join(roomName);
+		this.server.to(roomName).emit("secondPlayerJoined");
 	}
 
 	@SubscribeMessage("cancelRoom")

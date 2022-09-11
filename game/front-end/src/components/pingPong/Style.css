@@ -76,7 +76,7 @@
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	animation : announcement 1.5s 1;
+	animation : announcement 1s 1;
 }
 .result-overlay .prompt span {
 	width: 100%;

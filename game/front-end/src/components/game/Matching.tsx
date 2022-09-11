@@ -8,6 +8,10 @@ import { ReactComponent as GameTheme02 } from './theme#02.svg';
 
 export let	theme: string = "none";
 
+export const setTheme = (value: string): void => {
+	theme = value;
+}
+
 function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): JSX.Element {
 	const [activeTheme, setActiveTheme] = useState("none");
 	const joinRoom = ():void =>
