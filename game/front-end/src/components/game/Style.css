@@ -62,7 +62,8 @@
 	border: 1px solid #fff;
 }
 
-.match-me {
+.match-me,
+.match-me-disabled {
 	text-align: center;
 	margin-top: 45px;
 }
@@ -82,6 +83,17 @@
 .match-me button:hover {
 	background-color: #F66B0E;
 	color: #fff
+}
+
+.match-me-disabled button {
+	border: 3px solid #fbbf97;
+	color: #fbbf97;
+	padding: 18px 25px;
+	background-color: white;
+	font-size: 18px;
+	font-weight: bold;
+	border-radius: 15px;
+	transition: 0.3s;
 }
 
 /* Live Games Section */

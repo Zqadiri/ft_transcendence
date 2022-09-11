@@ -85,14 +85,14 @@ export class UpdateGameService {
 
 	#updateScore(tmp: GameCoor): GameCoor
 	{
-		if (tmp.ball.x - tmp.ball.radius < 0) {
+		if (tmp.ball.x + tmp.ball.radius < 0) {
 			tmp.player2.score += 1;
 		}
-		else if (tmp.ball.x + tmp.ball.radius > this.global.canvasWidth) {
+		else if (tmp.ball.x - tmp.ball.radius > this.global.canvasWidth) {
 			tmp.player1.score += 1;
 		}
 
-		if (tmp.ball.x - tmp.ball.radius < 0 || tmp.ball.x + tmp.ball.radius > this.global.canvasWidth) {
+		if (tmp.ball.x + tmp.ball.radius < 0 || tmp.ball.x - tmp.ball.radius > this.global.canvasWidth) {
 			tmp.ball.x = this.global.canvasWidth / 2;
 			tmp.ball.y = this.global.canvasHeight / 2;
 			if (tmp.theme === "theme01")

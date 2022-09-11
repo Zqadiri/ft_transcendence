@@ -44,7 +44,7 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 					<GameTheme02 />
 				</div>
 			</div>
-			<div className="match-me">
+			<div className={`${activeTheme !== "none" ? "match-me" : "match-me-disabled"}`}>
 				<button onClick={joinRoom}>Match Me</button>
 			</div>
 		</>
