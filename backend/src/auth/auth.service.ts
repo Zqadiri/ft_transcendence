@@ -1,6 +1,6 @@
 import { Injectable, Res } from '@nestjs/common';
 import { Response } from 'express';
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -30,6 +30,7 @@ export class AuthService {
 			redirect_uri: process.env.REDIRECT_URI,
 			code : code
 		};
+		console.log({payload})
 		await axios({
 			method: 'post',
 			url: 'https://api.intra.42.fr/oauth/token',
@@ -43,8 +44,9 @@ export class AuthService {
 			ret = res.data.access_token;
 			return ret;
 		})
-		.catch((err) => { 
+		.catch((err: AxiosError) => { 
 			console.log('ERROR!');
+			console.log({er: err.response.data})
 		})
 		return ret; 
 	}

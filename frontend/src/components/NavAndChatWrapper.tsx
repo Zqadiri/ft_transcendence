@@ -9,7 +9,7 @@ import Home from "./Home";
 import Profile from "./Profile";
 import Settings from "./Settings";
 import UserProfile from "./UserProfile";
-import { cookies, getCookieHeader, globalContext, RRLink, useEffectOnce, valDef } from "./util";
+import { cookies, getCookieHeader, globalContext, RRLink, ShowConditionally, useEffectOnce, valDef } from "./util";
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
 
@@ -31,6 +31,8 @@ const NavAndChatWrapper = () => {
 		// "friends"
 		"rooms"
 	);
+
+
 	const setActiveTab = (x: any) => {
 		if (x === "chat")
 			getAllMyRooms();
@@ -70,12 +72,12 @@ const NavAndChatWrapper = () => {
 		if (newActiveChat) {
 			// setActiveChatMessages([]);
 			chatSocket.emit("GetRoomMessages", newActiveChat);
-			axios.get("/chat/users/" + newActiveChat).then(res => {
-				let users: any = {};
-				res.data.forEach((el: any) => {
-					users[el.db_user_username] = el.db_user_avatar;
-				});
-				setActiveChatUsers(users);
+			axios.get("/chat/userStats/" + newActiveChat).then(res => {
+				// let users: any = {};
+				// res.data.forEach((el: any) => {
+				// 	users[el.db_user_username] = el.db_user_avatar;
+				// });
+				setActiveChatUsers(res.data);
 			}).catch((err) => {
 	
 			})
@@ -121,7 +123,7 @@ const NavAndChatWrapper = () => {
 		console.log(x);
 		return _setActiveChatMessages(x);
 	}
-	const [activeChatUsers, setActiveChatUsers] = useState<any>([]);
+	const [activeChatUsers, setActiveChatUsers] = useState<any[]>([]);
 	const [activeChatMessages, _setActiveChatMessages] = useState<ChatMessage[]>([
 		// {
 		// 	// user: {
@@ -211,6 +213,14 @@ const NavAndChatWrapper = () => {
 	useEffectOnce(() => {
 		getAllMyRooms();
 	})
+
+	const userIcon: any = {
+		"owner": "fa-solid fa-crown",
+		"user": "fa-solid fa-user",
+		"admin": "fa-solid fa-shield",
+		"muted": "fa-solid fa-comment-slash",
+		"banned": "fa-solid fa-ban"
+	}
 
 	return (
 		<div className="c_wrapper d100">
@@ -442,17 +452,80 @@ const NavAndChatWrapper = () => {
 								</div>
 							</section>
 						</div>
-						<div className="chatinterface d100 flex-column" style={{display: activeTab === "chatinterface" ? "flex" : "none"}}>
+						<div className="chatinterface d100 flex-column" style={{display: activeTab.startsWith("chatinterface") ? "flex" : "none"}}>
 							<div className="header flex-jc-sb flex-ai-cr">
 								<i className="fa-solid fa-arrow-left back" onClick={() => { setActiveTab("chat") }}></i>
-								<div className="name">{activeChat}</div>
+								<div className="name" onClick={() => setActiveTab("chatinterface")}>{activeChat}</div>
 								<div className="users" onClick={() => {
-									// setActiveTab("users");
+									setActiveTab("chatinterfaceusers");
 								}}>
 									<i className="fa-solid fa-user"></i>
 								</div>
 							</div>
-							<div className="messages" ref={messagesRef}>
+							<div className="chatinterfaceusers flex-center-column" style={{display: activeTab === "chatinterfaceusers" ? "flex" : "none"}}>
+								<Button className="leave">
+									Leave Chat
+								</Button>
+								{
+									activeChatUsers.find(el => el.username === cookies.get("name")) &&
+									activeChatUsers.find(el => el.username === cookies.get("name")).stat === "owner" ?
+									<>
+										<div className="setpassword">
+											<input type="password" />
+										</div>
+									</> :
+									<></>
+								}
+								{
+									activeChatUsers.map(user => {
+										return <>
+										<div className="user flex-ai-cr flex-jc-sb">
+											<div className="right flex-gap5 flex-ai-cr">
+												<img src={user.avatar} alt="" className="avatar" />
+												<div className="left container flex-column">
+													<div className="name">{user.username}</div>
+													<div className="id">{user.id}</div>
+												</div>
+											</div>
+											{/* <div className="stat">{user.stat}</div> */}
+											<div className="left flex-gap20 flex-ai-cr">
+												<div className="controls flex-gap10 flex-ai-cr">
+														<ShowConditionally cond={
+															activeChatUsers.find(el => cookies.get("name") === el.username)
+															&& (activeChatUsers.find(el => cookies.get("name") === el.username).stat === "owner"
+																|| activeChatUsers.find(el => cookies.get("name") === el.username).stat === "admin")
+															&& user.stat === "user"
+														}>
+															<>
+																<input type="text" className="duration" />
+																<div className="iconcontainer">
+																	<i className="fa-solid fa-volume-xmark"></i>
+																</div>
+																<div className="iconcontainer">
+																	<i className="fa-solid fa-circle-xmark"></i>
+																</div>
+															</>
+														</ShowConditionally>
+														<ShowConditionally cond={
+															activeChatUsers.find(el => cookies.get("name") === el.username)
+															&& activeChatUsers.find(el => cookies.get("name") === el.username).stat === "owner"
+															&& user.stat === "user"
+														}>
+															<div className="iconcontainer">
+																<i className="fa-solid fa-shield flex-center addadmin"><div className="plus">+</div></i>
+															</div>
+														</ShowConditionally>
+													</div>
+													<div className="iconcontainer">
+														<i className={userIcon[user.stat] + " userstat"}></i>
+													</div>
+												</div>
+										</div>
+										</>
+									})
+								}
+							</div>
+							<div className="messages" ref={messagesRef} style={{display: activeTab === "chatinterface" ? "block" : "none"}}>
 								<div className="msgcontainer flex-column flex-jc-fe">
 								{
 									activeChatMessages.map((msg: ChatMessage) => {
@@ -465,11 +538,14 @@ const NavAndChatWrapper = () => {
 														{
 															msg.userID != cookies.get("name") ?
 																<div className="profilepic flex-center">
-																	<img src={activeChatUsers[msg.userID] ? activeChatUsers[msg.userID] : ""} alt="user avatar" />
+																	<img src={activeChatUsers.find(el => el.username === msg.userID) ? activeChatUsers.find(el => el.username === msg.userID).avatar : ""} alt="user avatar" />
 																</div>
 															: <></>
 														}
 														<div className="message_text">
+															<ShowConditionally cond={msg.userID != cookies.get("name")}>
+																<p className="username">{msg.userID}</p>
+															</ShowConditionally>
 															{
 																msg.message
 															}
@@ -482,7 +558,7 @@ const NavAndChatWrapper = () => {
 								}
 								</div>
 							</div>
-							<form className="input flex-center" onSubmit={(e) => {
+							<form className="input flex-center" style={{display: activeTab === "chatinterface" ? "flex" : "none"}} onSubmit={(e) => {
 								e.preventDefault();
 								if (submitRef.current)
 									submitRef.current.click();

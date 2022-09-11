@@ -208,6 +208,45 @@
 							cursor: pointer;
 						}
 					}
+					.chatinterfaceusers {
+						padding: 5px;
+						.leave {
+							width: fit-content;
+							background-color: rgb(230, 52, 52);
+							font-weight: 900;
+						}
+						.user {
+							height: 40px;
+							width: 100%;
+							.avatar {
+								width: 30px;
+								height: 30px;
+								border-radius: 999px;
+							}
+							.container {
+								.id {
+									color: gray;
+									font-size: 75%;
+								}
+							}
+							.iconcontainer {
+								width: 20px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+							}
+							.addadmin {
+								.plus {
+									position: absolute;
+									font-size: 75%;
+									color: white;
+								}
+							}
+						}
+					}
+					.name {
+						cursor: pointer;
+					}
 					.messages {
 						// background-color: $pastel_dark_blue;
 						// margin-inline: 15px;
@@ -256,8 +295,13 @@
 								&.notmine {
 									align-self: flex-start;
 									.message_text {
+										.username {
+											color: gray;
+											font-size: 75%;
+										}
 										background-color: white;
 										filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
+										padding-top: 5px;
 									}
 								}
 								&.mine {
