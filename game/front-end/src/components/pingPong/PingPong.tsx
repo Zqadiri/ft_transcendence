@@ -140,6 +140,21 @@ function ResultPrompt(): JSX.Element {
 	);
 }
 
+function NoAccessAuthorized(): JSX.Element{
+	return (
+		<>
+			<section className="play-error-container">
+				<div className="error-prompt">
+					<h2>Warning!</h2>
+					<p>
+						you're not authorized to access this page without matching another player.
+					</p>
+				</div>
+			</section>
+		</>
+	);
+}
+
 function PingPong(): JSX.Element
 {
 	const navigate: NavigateFunction = useNavigate();
@@ -160,14 +175,20 @@ function PingPong(): JSX.Element
 			setTheWinner(theWinner);
 		});
 	});
+	if (theme !== "none")
+	{
+		return (
+			<>
+				{forceChange ? <ResultPrompt /> : null}
+				<div className="container">
+					<Score s1={score1} s2={score2} />
+					<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />
+				</div>
+			</>
+		);
+	}
 	return (
-		<>
-			{forceChange ? <ResultPrompt /> : null}
-			<div className="container">
-				<Score s1={score1} s2={score2} />
-				<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />
-			</div>
-		</>
+		<NoAccessAuthorized />
 	);
 }
 

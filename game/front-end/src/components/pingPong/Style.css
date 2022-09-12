@@ -1,3 +1,5 @@
+/* Canvas & Score Section */
+
 .container {
 	position: fixed;
 	top: 35%;
@@ -100,4 +102,34 @@
 		opacity: 1;
 		top: 50%;
 	}
+}
+
+/* Play Error Prompt */
+
+.play-error-container {
+	width: 380px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.play-error-container .error-prompt {
+	text-align: center;
+	background-color: #d62828;
+	border-radius: 20px;
+}
+
+.play-error-container .error-prompt h2 {
+	color: white;
+	padding: 15px;
+	border-bottom: 3px solid white;
+	font-size: 30px;
+}
+
+.play-error-container .error-prompt p {
+	padding: 25px 20px 40px;
+	text-transform: capitalize;
+	font-weight: bold;
+	color: white;
 }

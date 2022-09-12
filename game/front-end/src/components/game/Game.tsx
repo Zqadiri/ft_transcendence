@@ -6,7 +6,7 @@ import { SyntheticEvent, useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import Matching, { setTheme } from "./Matching"
 
-export	const	socket = io("http://10.11.9.3:3001/game");
+export	const	socket = io("http://localhost:3001/game");
 export	let		roomName: string = "none";
 export	let		playerId: number = 0;
 
@@ -25,7 +25,7 @@ export function useEffectOnce(callback: any): any {
 			ref.current = false;
 			return callback();
 		}
-	});
+	}, []);
 }
 
 export function setRoomName(name: string, id: number): void

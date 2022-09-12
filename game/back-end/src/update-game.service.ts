@@ -78,7 +78,7 @@ export class UpdateGameService {
 
 			this.server.to(room).emit("newCoordinates", gameCoordinates);
 			this.#checkForTheWinner(gameCoordinates.p1.score, gameCoordinates.p2.score, room);
-		}, 1000/50);
+		}, 1000/60);
 	
 		this.gameCoordinates.set(room, tmp);
 	}
