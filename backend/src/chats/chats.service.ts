@@ -224,6 +224,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
   async userStat(roomName: string)
   {
     const user_data = [];
+    let ret;
     // check if the room already exist
     const name = await this.findRoom(roomName);
 
@@ -259,25 +260,41 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           };
           user_data.push(p);
         }        
-        else if (name.MutedAndBannedID.find(elm => elm.userID === element.db_user_id && elm.action === Action.BAN))
+        else if (name.MutedAndBannedID.find(elm => {
+          if (elm.userID === element.db_user_id && elm.action === Action.BAN)
+          {
+            const p = {
+              id : element.db_user_id,
+              username: element.db_user_username,
+              avatar: element.db_user_avatar,
+              stat: "banned",
+              releasetime: elm.current_time + elm.duration * 1000
+            };
+            user_data.push(p);
+            return true;
+          }
+          return false;
+        }))
         {
-          const p = {
-            id : element.db_user_id,
-            username: element.db_user_username,
-            avatar: element.db_user_avatar,
-            stat: "banned"
-          };
-          user_data.push(p);
+         
         }
-        else if (name.MutedAndBannedID.find(elm => elm.userID === element.db_user_id && elm.action === Action.MUTE))
+        else if (name.MutedAndBannedID.find(elm => {
+          if (elm.userID === element.db_user_id && elm.action === Action.MUTE)
+          {
+            const p = {
+              id : element.db_user_id,
+              username: element.db_user_username,
+              avatar: element.db_user_avatar,
+              stat: "muted",
+              releasetime: elm.current_time + elm.duration * 1000
+            };
+            user_data.push(p);
+            return true;
+          }
+          return false;
+        }))
         {
-          const p = {
-            id : element.db_user_id,
-            username: element.db_user_username,
-            avatar: element.db_user_avatar,
-            stat: "muted"
-          };
-          user_data.push(p);
+         
         }
         else
         {
@@ -373,7 +390,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     }
     const Myrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
-    .select(['db_chat.name', 'db_chat.id'])
+    .select(['db_chat.name', 'db_chat.id', 'db_chat.status'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
     .leftJoin(User, 'db_user', 'db_user.id = db_chat.ownerID')
     .addSelect('db_user.username', 'ownerName')

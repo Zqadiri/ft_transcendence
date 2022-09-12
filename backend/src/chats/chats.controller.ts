@@ -32,7 +32,7 @@ export class ChatController {
     {
         try
         {
-            await this.chatService.JointoChatRoom({userID: req.user.id, ...Roomdata});
+            await this.chatService.JointoChatRoom({userID: 2, ...Roomdata});
             console.log("join to room...", Roomdata.name);
         } 
         catch (e)
@@ -153,7 +153,7 @@ export class ChatController {
     {
         try {
             console.log("Set user room as admin ...");
-            return await this.chatService.SetUserRoomAsAdmin(req.user.id, setRolesDto);
+            return await this.chatService.SetUserRoomAsAdmin(62669, setRolesDto);
         } catch (e) {
             console.error('Failed to set this user as admin to this room', e);
             throw e;
@@ -166,7 +166,7 @@ export class ChatController {
     {
         try {
             console.log("mute user room ...");
-            return await this.chatService.BanOrMuteUser(req.user.id, setRolesDto);
+            return await this.chatService.BanOrMuteUser(62669, setRolesDto);
         } catch (e) {
             console.error('Failed to mute this user in this chat room', e);
             throw e;

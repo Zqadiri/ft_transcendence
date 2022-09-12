@@ -51,6 +51,7 @@ export class RoomDto
 	name: string;
 
 	@ApiProperty({ description: "Chat Room password"})
+	@IsNotEmpty()
 	password: string;
 
 	@ApiProperty({ description: "username who want to join the chat Room" })
@@ -63,6 +64,7 @@ export class RoomWoUserDto
 	name: string;
 
 	@ApiProperty({ description: "Chat Room password"})
+	@IsNotEmpty()
 	password: string;
 }
 
