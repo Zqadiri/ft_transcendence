@@ -1,7 +1,8 @@
-import { IsEnum, Equals, Length, IsOptional } from "class-validator";
+import { IsEnum, Equals, Length, IsOptional, IsNotEmpty, ValidateIf } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Chat } from "../entities/chat.entity";
 import { Generated } from "typeorm";
+import { Exclude, Transform } from "class-transformer";
 
 export enum RoomStatus {
 	PUBLIC = 'public',
@@ -30,6 +31,8 @@ export class CreateDmDto
 
 export class CreateRoomDto
 {
+	@Transform(({ value }) => {return value.trim()})
+	@IsNotEmpty()
 	@ApiProperty({ description: "Chat Room name" })
 	name: string;
 
@@ -38,8 +41,6 @@ export class CreateRoomDto
 	status: string;
 
 	@ApiProperty({ description: "Chat Room password"})
-	@Length(8, 24)
-	@IsOptional()
 	password: string;
 
 }
@@ -50,8 +51,6 @@ export class RoomDto
 	name: string;
 
 	@ApiProperty({ description: "Chat Room password"})
-	@Length(8, 24)
-	@IsOptional()
 	password: string;
 
 	@ApiProperty({ description: "username who want to join the chat Room" })
@@ -64,8 +63,6 @@ export class RoomWoUserDto
 	name: string;
 
 	@ApiProperty({ description: "Chat Room password"})
-	@Length(8, 24)
-	@IsOptional()
 	password: string;
 }
 

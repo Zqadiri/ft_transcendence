@@ -1,5 +1,4 @@
 import { Entity, Column, OneToMany } from "typeorm";
-import { Friend } from "src/friends/entities/friend.entity";
 
 /*
 	Marks your model as an entity. Entity is a class which is 
@@ -47,11 +46,29 @@ export class User{
 	@Column({default: false})
 	Matched : boolean;
 
-	@Column('varchar',{
+	@Column('integer',{
 		array: true,
 		nullable: true
 	})
 	achievement: string[];
+
+	@Column('int',{
+		array: true,
+		nullable: true
+	})
+	FriendsID: number[]; 
+
+	@Column('varchar',{
+		array: true,
+		nullable: true
+	})
+	blockedID: number[];
+
+	@Column('varchar',{
+		array: true,
+		nullable: true
+	})
+	addFriendID: string[];
 
 	@Column({ 
 		type: 'timestamp', 
@@ -65,12 +82,6 @@ export class User{
 		nullable: true 
 	})
 	updatedAt: Date
-
-	@OneToMany(() => Friend, (friend: Friend) => friend.following)
-	followings: Friend[];
-
-	@OneToMany(() => Friend, (friend: Friend) => friend.follower)
-	followers: Friend[];
 
 	@Column({nullable: true})
 	twoFacAuthSecret : string;

@@ -47,13 +47,13 @@ export class Chat{
 	})
 	userID: number[];
 
-	@Column('varchar',{
+	@Column('int',{
 		array: true,
 		nullable: true
 	})
 	AdminsID: number[];
 
-	@Column('varchar',{
+	@Column('int',{
         array: true,
         nullable: true
     })

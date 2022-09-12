@@ -46,7 +46,6 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   @SubscribeMessage('socketJoinRoom')
   async handleJoinRoom(client: Socket, roomName: string)
   {
-	console.log({roomName});
     client.join(roomName);
     //emit to specific client
     client.emit('joinedRoom', roomName);

@@ -7,7 +7,6 @@ import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
-import { FriendsService } from 'src/friends/friends.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 
@@ -23,8 +22,6 @@ export class ChatsService {
 
   private readonly logger = new Logger(ChatsService.name);
 
-  constructor(private readonly friendsService : FriendsService) {}
-
   async findUser(userID: number)
   {
     // findOneBy - Finds the first entity that matches given FindOptionsWhere.
@@ -36,13 +33,13 @@ export class ChatsService {
     return await this.Chatrepository.findOneBy({ name: roomName });
   }
   
-  private checkName(name: string)
-  {
-    // check if room name contains only white space or is empty
-    if (!name || name.trim().length === 0)
-      throw new BadRequestException({code: 'invalid name', message: `Room name must not be empty`})
-    return (name.trim());
-  }
+  // private checkName(name: string)
+  // {
+  //   // check if room name contains only white space or is empty
+  //   if (!name || name.trim().length === 0)
+  //     throw new BadRequestException({code: 'invalid name', message: `Room name must not be empty!!!!`})
+  //   return (name.trim());
+  // }
 
   private checkPassword(password: string, status: string)
   {
@@ -83,7 +80,7 @@ export class ChatsService {
       AdminsID: [],
       InvitedUserID: [],
       MutedAndBannedID:[],
-      name: this.checkName(room.name),
+      name: room.name,
       type: ChatTypes.CHATROOM,
       status: room.status,
       password: this.checkPassword(room.password, room.status)
@@ -94,22 +91,19 @@ export class ChatsService {
     return newRoom;
   }
 
-async isFriend(owner: any, username: any)
-{
-  const isfrirnd = await this.friendsService.isFollowing({FirstUser: owner, SecondUser: username, isFriend: false, blocked: false});
-  console.log(`Rela Exists: ${JSON.stringify(isfrirnd)}`);
-  if (!isfrirnd)
-    throw new UnauthorizedException('this user is not my friend');
-  return (true);
-}
-
 /** invite user to join private chat room */
 async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
 {
   const user = await this.findUser(SetRolestoMembersDto.userID);
 
   if (!user){
-    throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.userID}' does not exist`})
+    throw new BadRequestException({code: 'invalid id', message: `User with '${SetRolestoMembersDto.userID}' does not exist`})
+  }
+
+  const checkowner = await this.findUser(owner);
+
+  if (!checkowner){
+    throw new BadRequestException({code: 'invalid id', message: `User with '${owner}' does not exist`})
   }
 
   const check = await this.Chatrepository.findOneOrFail({
@@ -121,15 +115,15 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
       throw new BadRequestException({code: 'invalid', message: `there is no chat room with name '${SetRolestoMembersDto.RoomID}' and owner '${owner}'!!`})
     });
 
-    const isfriend = this.isFriend(check.ownerID, user.username);
-    
-    if (isfriend)
+    if (checkowner.FriendsID.includes(user.id))
     {
-      if (!check.InvitedUserID.includes(user.id) && check.status === RoomStatus.PRIVATE)
+      if (!check.InvitedUserID.includes(user.id) && !check.userID.includes(user.id) && check.status === RoomStatus.PRIVATE)
       {
         check.InvitedUserID.push(user.id);
         await this.Chatrepository.save(check);
       }
+      else
+        throw new ForbiddenException({code: 'Forbidden', message: `Failed to invite this user to this chat room!!!`})
     }
     else
       throw new ForbiddenException({code: 'Forbidden', message: `Failed to invite this user to this chat room!!`})
@@ -617,7 +611,6 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
 
     async ListMutedID(roomName: string)
     {
-      this.logger.debug('Called every 30 seconds !!');
       let listMuted = [];
       
       const mutedIds = await this.Chatrepository
@@ -633,7 +626,6 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
 
     async ListBannedID(roomName: string)
     {
-      this.logger.debug('Called every 30 seconds !!');
       let listBanned = [];
       
       const bannedIds = await this.Chatrepository

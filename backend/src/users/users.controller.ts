@@ -14,17 +14,19 @@ import {
 import { User } from './entities/user.entity';
 import { AvatarDto } from './dto/upload.dto';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { FriendsService } from 'src/friends/friends.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserRepository } from './user.repository';
 
 @ApiTags('users')
 @Controller('users')
-@UseGuards(jwtAuthGuard)
+// @UseGuards(jwtAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
 
 	constructor(
+		@InjectRepository(User)
+		private readonly userRepo : UserRepository,
 		private readonly usersService: UsersService,
-		private readonly FriendService: FriendsService
 	){}
 
 	@ApiOperation({ summary: 'Change a user\'s avatar' })
@@ -51,37 +53,81 @@ export class UsersController {
 		});
 		res.send({avatar: user.avatar});
 	}
-
-
-	@ApiOperation({ summary: 'Add a friend to a user' })
-	@Post('/add_friend')
-	async AddFriend(@Body('id') userID : number, @Req() req, @Res() res){
-		console.log(`${JSON.stringify(req.body.user)}`);
-		try {
-			const firstUser  = await this.usersService.getUserById(58526);
-			const secondUser = await this.usersService.getUserById(req.body.user.id);
-			this.FriendService.createFriendRelation({
-				FirstUser: firstUser,
-				SecondUser: secondUser,
-				isFriend: false,
-				blocked: false
-			}, req.body.user);
-		}
-		catch(err){
-			 throw new UnauthorizedException('Can\'t add friend');
-		}
-		res.send('done');
-	}
 	
 	@ApiOperation({ summary: 'Change a user\'s username' })
 	@Post('/update_username')
 	async updateUsername(@Req() req, @Body('username') newUsername: string){
+		var result :any;
 		try{
-			const result = await this.usersService.updateUsername(req.user.id, newUsername);
+			result = await this.usersService.updateUsername(req.user.id, newUsername);
 		}
 		catch (err){
 			throw new UnauthorizedException('failed to update the username');
 		}
+		return result;
+	}
+
+	@ApiOperation({ summary: 'Add a friend to a user' })
+	@Post('/add_friend')
+	async AddFriend(@Body('id') userID : number, @Req() req: any, @Res() res: any){
+		const newFriend = await this.usersService.getUserById(userID);
+		console.log(newFriend);
+		if (!newFriend)	
+			throw new UnauthorizedException('NOT a User');
+		const user = await this.usersService.getUserById(58526); //! switch it to req.user.id
+		if (!user)
+			throw new UnauthorizedException('NOT a User');
+		if (!user.FriendsID.includes(newFriend.id))
+			user.FriendsID.push(newFriend.id);
+		await this.userRepo.save(user);
+		res.end();
+	}
+
+	@ApiOperation({ summary: 'Add a friend to a user' })
+	@Post('/block_friend')
+	async BlockFriend(@Body('id') userID : number, @Req() req: any, @Res() res: any){
+		const newFriend = await this.usersService.getUserById(userID);
+		console.log(newFriend);
+		if (!newFriend)
+			throw new UnauthorizedException('NOT a User');
+		const user = await this.usersService.getUserById(58526); //! switch it to req.user.id
+		if (!user)
+			throw new UnauthorizedException('NOT a User');
+		if (!user.FriendsID.includes(newFriend.id))
+			throw new UnauthorizedException('User is not Friend OR Already blocked');
+		await this.usersService.removeFriend(user, newFriend.id);
+		if (!user.blockedID.includes(newFriend.id))
+			user.blockedID.push(newFriend.id);
+		await this.userRepo.save(user);
+		res.end();
+	}
+
+	@ApiOperation({ summary: 'get friends list'})
+	@Get('/friends_list')
+	async friendsList(@Req() req: any, @Res() res: any){
+		const user = await this.usersService.getUserById(58526); //! switch it to req.user.id
+		if (!user)
+			throw new BadRequestException("user does not exist");
+		const friends = await this.userRepo
+		.createQueryBuilder("db_user")
+		.select(['db_user.username', 'db_user.avatar' ,'db_user.id', 'db_user.status'])
+		.where(":id = ANY (db_user.FriendsID)", {id: user.id})
+		.getMany()
+		res.send(friends);
+	}
+
+	@ApiOperation({ summary: 'get friends list'})
+	@Get('/blocked_list')
+	async blockedFriend(@Req() req: any, @Res() res: any){
+		const user = this.usersService.getUserById(58526); //! switch it to req.user.id
+		if (!user)
+			throw new BadRequestException("user does not exist");
+		const friends = await this.userRepo
+		.createQueryBuilder("db_user")
+		.select(['db_user.username', 'db_user.avatar' ,'db_user.id', 'db_user.status'])
+		.where(":id = ANY (db_user.blockedID)", {id: 58526})
+		.getMany()
+		res.send(friends);
 	}
 
 	@ApiOperation({ summary: 'Get user data by id' })
@@ -94,4 +140,5 @@ export class UsersController {
 	getUserData(@Param('id') id : number){
 		return this.usersService.getUserById(id);
 	}
+
 }

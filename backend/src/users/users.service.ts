@@ -15,14 +15,17 @@ export class UsersService {
 		){}
 
 		async create(createUserDto: CreateUserDto) : Promise<User>{
-			const newUser = new User();
-			newUser.id = createUserDto.id;
-			newUser.username = createUserDto.username;
-			newUser.avatar = createUserDto.avatar;
-			newUser.email = createUserDto.email;
+			const newUser = this.userRepository.create({
+				id : createUserDto.id,
+				username : createUserDto.username,
+				avatar : createUserDto.avatar,
+				email : createUserDto.email,
+				FriendsID : [],
+				blockedID : []
+			});
 
-			const _error = validate(newUser);
-			if ((await _error).length)
+			const _error = await validate(newUser);
+			if ( _error.length)
 				throw new HttpException({ message: 'User Data Validation Failed', _error }, HttpStatus.BAD_REQUEST);
 			return await this.userRepository.save(newUser);
 		}
@@ -67,6 +70,13 @@ export class UsersService {
 			if ((await _error).length)
 				throw new HttpException({ message: 'User Data Validation Failed', _error }, HttpStatus.BAD_REQUEST);
 			return this.userRepository.update(userID, user);
+		}
+
+		async removeFriend(user: User, removeID: number){
+			var index = user.FriendsID.indexOf(removeID);
+			if (index > -1) {
+				user.FriendsID.splice(index, 1);
+			}
 		}
 
 		async removeUser(userID: number){

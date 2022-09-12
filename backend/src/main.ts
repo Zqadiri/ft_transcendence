@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+import { ValidationPipe } from '@nestjs/common';
 
 /*
   NestFactory exposes a few static methods that allow creating an application instance.
@@ -13,7 +14,7 @@ async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(
 		AppModule,
 	);
-
+	app.useGlobalPipes(new ValidationPipe());
 	const swaggerConfig = new DocumentBuilder()
 		.setTitle('pong pong API')
 		.setDescription('The pong API description')

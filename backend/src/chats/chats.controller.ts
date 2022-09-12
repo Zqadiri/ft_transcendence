@@ -15,7 +15,7 @@ export class ChatController {
     @Post('/CreateRoom')
     @HttpCode(201)
     async createRoom(@Req() req: RequestWithUser, @Body() roomDto: CreateRoomDto) {
-        console.log("Creating chat room...");
+        console.log("Creating chat room...", roomDto);
         try {
             //const newRoom = await this.chatService.createRoom(roomDto, "oum");
             const newRoom = await this.chatService.createRoom(roomDto, req.user.id);
@@ -56,14 +56,13 @@ export class ChatController {
         }
     }
 
-
     @UseGuards(jwtAuthGuard)
     @Post('/Invite')
     async InviteUser(@Req() req: RequestWithUser, @Body() invite: SetRolestoMembersDto)
     {
         try {
             console.log("inviting to join private chat room...");
-           return await this.chatService.InviteUser(req.user.id, invite);
+            await this.chatService.InviteUser(req.user.id, invite);
          } catch (e) {
              console.error('Failed to inviting to join private chat room', e);
              throw e;
