@@ -18,15 +18,17 @@ export class UpdateGameService {
 		this.server = server;
 	}
 
-	create(room: string, theme: string)
+	create(room: string, theme: string, player1Id: string, player2Id: string)
 	{
 		const tmp: GameCoor = {
 			player1: {
+				id: player1Id,
 				x: 0,
 				y: this.global.canvasHeight/2 - this.global.paddleHeight/2,
 				score: 0
 			},
 			player2: {
+				id: player2Id,
 				x: this.global.canvasWidth - this.global.paddleWidth,
 				y: this.global.canvasHeight/2 - this.global.paddleHeight/2,
 				score: 0
@@ -138,15 +140,16 @@ export class UpdateGameService {
 				this.server.to(room).emit("theWinner", 2);
 
 			clearInterval(this.gameCoordinates.get(room).interval);
+			this.gameCoordinates.delete(room)
 		}
 	}
 
-	delete (room: string)
-	{
-		this.gameCoordinates.delete(room)
-	}
+	// delete (room: string): void
+	// {
+	// 	this.gameCoordinates.delete(room)
+	// }
 
-	#updateBallPosition(room: string)
+	#updateBallPosition(room: string): void
 	{ 
 		let	tmp: GameCoor = this.gameCoordinates.get(room);
 		tmp.ball.x += tmp.ball.velocityX;
@@ -180,7 +183,7 @@ export class UpdateGameService {
 		}
 	}
 
-	updatePaddlePosition(paddlePosition: number, room: string, playerId: number)
+	updatePaddlePosition(paddlePosition: number, room: string, playerId: number): void
 	{
 		let tmp: GameCoor = this.gameCoordinates.get(room);
 
@@ -190,5 +193,21 @@ export class UpdateGameService {
 			tmp.player2.y = paddlePosition;
 
 		this.gameCoordinates.set(room, tmp);
+	}
+
+	OnePlayerDisconnect(playerId: string): void
+	{
+		for (const [key, value] of this.gameCoordinates) {
+			if (value.player1.id === playerId)
+			{
+				this.#checkForTheWinner(value.player1.score, 5, key);
+				break ;
+			}
+			else if (value.player2.id === playerId)
+			{
+				this.#checkForTheWinner(5, value.player2.score, key);
+				break ;
+			}
+		}
 	}
 }

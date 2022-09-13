@@ -1,4 +1,5 @@
 export type Paddle = {
+	id?: string,
 	x: number,
 	y: number,
 	score: number

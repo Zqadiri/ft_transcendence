@@ -8,7 +8,7 @@ const root: ReactDOM.Root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
+//   <React.StrictMode>
     <Game />
-  </React.StrictMode>
+//   </React.StrictMode>
 );

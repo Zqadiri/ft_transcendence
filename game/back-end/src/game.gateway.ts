@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayDisconnect, OnGatewayConnection } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { GameData } from "./game.interface"
 import { UpdateGameService } from './update-game.service';
@@ -10,11 +10,11 @@ import { UpdateGameService } from './update-game.service';
 		origin: '*',
 	}
 })
-export class GameGateway {
+export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 
-	private	userCounter1: number;
+	private	themeOneUsers: string[] = [];
 	private	roomCounter1: number;
-	private	userCounter2: number;
+	private	themeTwoUsers: string[] = [];
 	private	roomCounter2: number;
 
 	@WebSocketServer()
@@ -23,30 +23,39 @@ export class GameGateway {
 	private logger: Logger = new Logger("GameGateway");
 
 	constructor(private updateGame: UpdateGameService) {
-		this.userCounter1 = 0;
 		this.roomCounter1 = 1;
-		this.userCounter2 = 0;
 		this.roomCounter2 = 1000000000;
 	}
 
+	handleConnection(client: any, ...args: any[]) {
+		this.logger.log(client.id + " Connected");
+	}
+	handleDisconnect(client: any) {
 
-	@SubscribeMessage('message')
-	handleMessage(client: any, payload: any): string {
-		return 'Hello world!';
+		let		index1: number = this.themeOneUsers.indexOf(client.id);
+		let		index2: number = this.themeTwoUsers.indexOf(client.id);
+
+		if (this.themeOneUsers.length === 1 && index1 !== -1)
+			this.themeOneUsers.splice(index1, 1);
+		else if (this.themeTwoUsers.length === 1 && index2 !== -1)
+			this.themeTwoUsers.splice(index1, 1);
+		
+		this.updateGame.OnePlayerDisconnect(client.id);
+		this.logger.log(client.id + " Disconnected");
 	}
 
 	@SubscribeMessage("joinTheme1")
 	handleJoinTheme1(client: Socket): void {
 		let roomName: string = "Room #" + this.roomCounter1;
 
-		this.userCounter1++;
+		this.themeOneUsers.push(client.id);
 		client.join(roomName);
-		client.emit("joinedRoom", roomName, this.userCounter1);
-		if (this.userCounter1 === 2)
+		client.emit("joinedRoom", roomName, this.themeOneUsers.length);
+		if (this.themeOneUsers.length === 2)
 		{
-			this.userCounter1 = 0;
 			this.roomCounter1 = (this.roomCounter1 + 1) % 1000000000;
-			this.updateGame.create(roomName, "theme01");
+			this.updateGame.create(roomName, "theme01", this.themeOneUsers[0], this.themeOneUsers[1]);
+			this.themeOneUsers.splice(0, 2);
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
 		this.logger.log(client.id + " joined Theme 1 & roomName " + roomName);
@@ -56,16 +65,16 @@ export class GameGateway {
 	handleJoinTheme2(client: Socket): void {
 		let roomName: string = "Room #" + this.roomCounter2;
 
-		this.userCounter2++;
+		this.themeTwoUsers.push(client.id);
 		client.join(roomName);
-		client.emit("joinedRoom", roomName, this.userCounter2);
-		if (this.userCounter2 === 2)
+		client.emit("joinedRoom", roomName, this.themeTwoUsers.length);
+		if (this.themeTwoUsers.length === 2)
 		{
-			this.userCounter2 = 0;
 			this.roomCounter2++;
 			if (this.roomCounter2 > 2000000000)
 				this.roomCounter2 = 1000000000;
-			this.updateGame.create(roomName, "theme02");
+			this.updateGame.create(roomName, "theme02", this.themeTwoUsers[0], this.themeTwoUsers[1]);
+			this.themeTwoUsers.splice(0, 2);
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
 		this.logger.log(client.id + " joined Theme 2 & roomName " + roomName);
@@ -79,17 +88,21 @@ export class GameGateway {
 
 	@SubscribeMessage("cancelRoom")
 	handleCancelRoom(client: Socket, {roomName, theme}): void {
+		this.logger.log("Cancel Event is fired " + roomName + " " + theme + " " + this.themeOneUsers);
 		if (theme === "theme1")
-			this.userCounter1--;
+		{
+			this.themeOneUsers.pop();
+			this.logger.log(this.themeOneUsers);
+		}
 		else
-			this.userCounter2--;
+			this.themeTwoUsers.pop();
 		client.leave(roomName);
 	}
 
 	@SubscribeMessage("leaveRoom")
 	handleLeaveRoom(client: Socket, room: string): void {
 		client.leave(room);
-		this.updateGame.delete(room);
+		// this.updateGame.delete(room);
 	}
 
 	@SubscribeMessage("gameIsStarted")

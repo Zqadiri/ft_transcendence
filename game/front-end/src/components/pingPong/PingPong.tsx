@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Style.css';
 import Canvas from './Canvas';
 import Score from './Score';
@@ -7,7 +7,7 @@ import { renderTheme1 } from "./RenderTheme1";
 import { renderTheme2 } from "./RenderTheme2";
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { socket, useEffectOnce, roomName, setRoomName, playerId } from "../game/Game";
-import { theme } from "../game/Matching"
+import { theme, secondPlayerExist, setSecondPlayerExist } from "../game/Matching"
 
 // Global Variables
 
@@ -31,6 +31,7 @@ const resetGame = (): void => {
 	global.ballY = global.canvasHeight/2;
 	gameStarted = false;
 	setRoomName("none", 0);
+	setSecondPlayerExist(false);
 }
 
 const render = (): void => {
@@ -166,6 +167,7 @@ function PingPong(): JSX.Element
 	g_setScore2 = setScore2;
 	g_setForceChange = setForceChange;
 	g_navigate = navigate;
+
 	useEffectOnce(() => {
 		socket.off("newCoordinates").on("newCoordinates", (data) => {
 			setUserData(data);
@@ -174,8 +176,20 @@ function PingPong(): JSX.Element
 		socket.off("theWinner").on("theWinner", (theWinner) => {
 			setTheWinner(theWinner);
 		});
+
 	});
-	if (theme !== "none")
+
+	useEffect(() => {
+		window.onbeforeunload = () => { return "" };
+		
+		return () => {
+			window.onbeforeunload = null;
+			resetGame();
+			socket.disconnect();
+		};
+	}, []);
+
+	if (secondPlayerExist === true)
 	{
 		return (
 			<>

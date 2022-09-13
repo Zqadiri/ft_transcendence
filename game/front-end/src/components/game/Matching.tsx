@@ -1,12 +1,18 @@
 import { socket, useEffectOnce, roomName, setRoomName, playerId } from "./Game";
 import { useNavigate } from 'react-router-dom';
 import PropTypes, { InferProps } from "prop-types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MoonLoader from 'react-spinners/MoonLoader';
 import { ReactComponent as GameTheme01 } from './theme#01.svg';
 import { ReactComponent as GameTheme02 } from './theme#02.svg';
 
 export let	theme: string = "none";
+export let	secondPlayerExist: boolean = false;
+let			g_switchContent: boolean = true;
+
+export const setSecondPlayerExist = (value: boolean): void => {
+	secondPlayerExist = value;
+}
 
 export const setTheme = (value: string): void => {
 	theme = value;
@@ -17,7 +23,10 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 	const joinRoom = ():void =>
 	{
 		if (activeTheme !== "none")
+		{
 			setSwitchContent(false);
+			g_switchContent = false;
+		}
 		if (activeTheme === "theme1")
 			socket.emit("joinTheme1");
 		else if (activeTheme === "theme2")
@@ -54,9 +63,19 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JSX.Element
 {
 	const	cancelRoom = () => {
+		g_switchContent = true;
 		setSwitchContent(true);
 		socket.emit("cancelRoom", {roomName, theme});
 	}
+
+	useEffect(() => {
+		window.onbeforeunload = () => { return "" };
+		
+		return () => {
+			window.onbeforeunload = null;
+		};
+	}, []);
+
 	return (
 		<>
 			<div className="spinner-container" >
@@ -74,16 +93,20 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 
 function	Matching(): JSX.Element
 {
-	const	[switchContent, setSwitchContent] = useState(true);
+	const	[switchContent, setSwitchContent] = useState(g_switchContent);
 	const 	navigate = useNavigate();
+
 	useEffectOnce(() => {
 		socket.off("joinedRoom").on("joinedRoom", (room, playerId) => {
 			setRoomName(room, playerId);
 		});
 		socket.off("secondPlayerJoined").on("secondPlayerJoined", () => {
+			setSecondPlayerExist(true);
+			g_switchContent = true;
 			navigate("/play");
 		});
 	});
+
 	return (
 		<>
 			{switchContent ? <Selection setSwitchContent={setSwitchContent}/> : <Waiting setSwitchContent={setSwitchContent}/>}
