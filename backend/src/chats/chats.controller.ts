@@ -111,7 +111,7 @@ export class ChatController {
 
     @UseGuards(jwtAuthGuard)
     @Post('/setPassword')
-    async SetPasswordToRoom(@Req() req: RequestWithUser, @Body() RoomDto: RoomDto)
+    async SetPasswordToRoom(@Req() req: RequestWithUser, @Body() RoomDto: RoomWoUserDto)
     {
         try {
             console.log("set password to this room...", RoomDto.name);
@@ -167,7 +167,7 @@ export class ChatController {
     {
         try {
             console.log("Set user room as admin ...");
-            return await this.chatService.SetUserRoomAsAdmin(62669, setRolesDto);
+            return await this.chatService.SetUserRoomAsAdmin(req.user.id, setRolesDto);
         } catch (e) {
             console.error('Failed to set this user as admin to this room', e);
             throw e;
@@ -180,7 +180,7 @@ export class ChatController {
     {
         try {
             console.log("mute user room ...");
-            return await this.chatService.BanOrMuteUser(62669, setRolesDto);
+            return await this.chatService.BanOrMuteUser(req.user.id, setRolesDto);
         } catch (e) {
             console.error('Failed to mute this user in this chat room', e);
             throw e;

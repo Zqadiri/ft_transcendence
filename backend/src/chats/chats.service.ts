@@ -2,7 +2,7 @@ import { Injectable, ConflictException, BadRequestException, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository, createQueryBuilder, In } from 'typeorm';
-import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes, RoomDto, SetRolestoMembersDto, BanOrMuteMembersDto, RoomNamedto, Action } from './dto/create-chat.dto';
+import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes, RoomDto, SetRolestoMembersDto, BanOrMuteMembersDto, RoomNamedto, Action, RoomWoUserDto } from './dto/create-chat.dto';
 import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
@@ -33,14 +33,19 @@ export class ChatsService {
     return await this.Chatrepository.findOneBy({ name: roomName });
   }
   
-  // private checkName(name: string)
-  // {
-  //   // check if room name contains only white space or is empty
-  //   if (!name || name.trim().length === 0)
-  //     throw new BadRequestException({code: 'invalid name', message: `Room name must not be empty!!!!`})
-  //   return (name.trim());
-  // }
-
+  async checkRoomOwner(RoomName: string, owner: number)
+  {
+    const check = await this.Chatrepository.findOneOrFail({
+      where: {
+          name: RoomName,
+          ownerID: owner,
+      },
+      }).catch(() => {
+        throw new BadRequestException({code: 'invalid', message: `there is no chat room with name '${RoomName}' and owner '${owner}'!!`})
+      });
+      return (check);
+  }
+  
   private checkPassword(password: string, status: string)
   {
     if ((status !== RoomStatus.PROTECTED) && password)
@@ -110,7 +115,9 @@ export class ChatsService {
     return newRoom;
   }
 
-/** invite user to join private chat room */
+/** invite user to join private chat room 
+ * The room owner must send an invitation to join the room only to his friends
+*/
 async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
 {
   const user = await this.findUser(SetRolestoMembersDto.userID);
@@ -125,14 +132,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     throw new BadRequestException({code: 'invalid id', message: `User with '${owner}' does not exist`})
   }
 
-  const check = await this.Chatrepository.findOneOrFail({
-    where: {
-        name: SetRolestoMembersDto.RoomID,
-        ownerID: owner,
-    },
-    }).catch(() => {
-      throw new BadRequestException({code: 'invalid', message: `there is no chat room with name '${SetRolestoMembersDto.RoomID}' and owner '${owner}'!!`})
-    });
+    const check = await this.checkRoomOwner(SetRolestoMembersDto.RoomID, owner);
 
     if (checkowner.FriendsID.includes(user.id))
     {
@@ -240,10 +240,21 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
 
    /** **To do** Get users with stat[owner or admin or simple user or banned or muted], avatar, username, id */
   /** {id: 6432, username: sara, avatar: rtet, stat: owner} */
+
+  private new_obj(id: number, username: string, avatar: string, stat: string)
+  {
+    const p = {
+      id: id,
+      username: username,
+      avatar: avatar,
+      stat: stat
+    };
+    return p;
+  }
+
   async userStat(roomName: string)
   {
     const user_data = [];
-    let ret;
     // check if the room already exist
     const name = await this.findRoom(roomName);
 
@@ -257,75 +268,39 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
       .where("db_user.id IN (:...users)", { users: name.userID })
       .getRawMany();
 
-
       profils.forEach((element) => {
         if (element.db_user_id === name.ownerID)
         {
-          const p = {
-            id: element.db_user_id,
-            username: element.db_user_username,
-            avatar: element.db_user_avatar,
-            stat: "owner"
-          };
-          user_data.push(p);
+          user_data.push(this.new_obj(element.db_user_id, element.db_user_username, element.db_user_avatar, "owner")); 
         }
         else if (name.AdminsID.includes(element.db_user_id))
         {
-          const p = {
-            id : element.db_user_id,
-            username: element.db_user_username,
-            avatar: element.db_user_avatar,
-            stat: "admin"
-          };
-          user_data.push(p);
-        }        
+          user_data.push(this.new_obj(element.db_user_id, element.db_user_username, element.db_user_avatar, "admin"));
+        }      
         else if (name.MutedAndBannedID.find(elm => {
           if (elm.userID === element.db_user_id && elm.action === Action.BAN)
           {
-            const p = {
-              id : element.db_user_id,
-              username: element.db_user_username,
-              avatar: element.db_user_avatar,
-              stat: "banned",
-              releasetime: elm.current_time + elm.duration * 1000
-            };
-            user_data.push(p);
+            user_data.push(Object.assign(this.new_obj(element.db_user_id, element.db_user_username, element.db_user_avatar, "banned"),
+            { releasetime: elm.current_time + elm.duration * 1000 }));
             return true;
           }
           return false;
         }))
-        {
-         
-        }
+        {}
         else if (name.MutedAndBannedID.find(elm => {
           if (elm.userID === element.db_user_id && elm.action === Action.MUTE)
           {
-            const p = {
-              id : element.db_user_id,
-              username: element.db_user_username,
-              avatar: element.db_user_avatar,
-              stat: "muted",
-              releasetime: elm.current_time + elm.duration * 1000
-            };
-            user_data.push(p);
+            user_data.push(Object.assign(this.new_obj(element.db_user_id, element.db_user_username, element.db_user_avatar, "muted"),
+            { releasetime: elm.current_time + elm.duration * 1000 }));
             return true;
           }
           return false;
         }))
-        {
-         
-        }
+        {}
         else
         {
-          const p = {
-            id : element.db_user_id,
-            username: element.db_user_username,
-            avatar: element.db_user_avatar,
-            stat: "user"
-          };
-          user_data.push(p);
+          user_data.push(this.new_obj(element.db_user_id, element.db_user_username, element.db_user_avatar, "user"));
         }
-
       });
       return (user_data);
   }
@@ -335,8 +310,18 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
   //     The channel owner can set a password required to access the channel, change
   //     it, and also remove it.
 
+  async ChangeVisibility(password: string, status: string, ownerID: number, name: string)
+  {
+    await this.Chatrepository
+    .createQueryBuilder()
+    .update(Chat)
+    .set({password: password, status: status})
+    .where("ownerID = :ownerID", {ownerID})
+    .andWhere("name = :name", {name})
+    .execute()
+  }
 
-  async SetPasswordToRoom(RoomDto: RoomDto, owner: number)
+  async SetPasswordToRoom(RoomDto: RoomWoUserDto, owner: number)
   {
     await this.Chatrepository.findOneOrFail({
       where: {
@@ -348,13 +333,8 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
       });
 
       const hash = await bcrypt.hash(RoomDto.password, 10);
-      await this.Chatrepository
-          .createQueryBuilder()
-          .update(Chat)
-          .set({password: hash, status: RoomStatus.PROTECTED})
-          .where("ownerID = :ownerID", { ownerID: owner})
-          .andWhere("name = :name", {name: RoomDto.name})
-          .execute()
+
+      await this.ChangeVisibility(hash, RoomStatus.PROTECTED, owner, RoomDto.name);
   }
 
   async RemovePasswordToRoom(RoomName: string, owner: number)
@@ -368,13 +348,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
         throw new UnauthorizedException({code: 'Unauthorized', message: `can not remove password to '${RoomName}' chat room!!`})
       });
 
-      await this.Chatrepository
-          .createQueryBuilder()
-          .update(Chat)
-          .set({password: null, status: RoomStatus.PUBLIC})
-          .where("ownerID = :ownerID", { ownerID: owner})
-          .andWhere("name = :name", {name: RoomName})
-          .execute()
+      await this.ChangeVisibility(null, RoomStatus.PUBLIC, owner, RoomName);
   }
 
   async AllRoom(id: number)
@@ -436,14 +410,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
       throw new BadRequestException({code: 'invalid username', message: `User with '${SetRolestoMembersDto.userID}' does not exist`})
     }
 
-    const check = await this.Chatrepository.findOneOrFail({
-      where: {
-          name: SetRolestoMembersDto.RoomID,
-          ownerID: owner,
-      },
-      }).catch(() => {
-        throw new BadRequestException({code: 'invalid', message: `there is no chat room with name '${SetRolestoMembersDto.RoomID}' and owner '${owner}'!!`})
-      });
+    const check = await  this.checkRoomOwner(SetRolestoMembersDto.RoomID, owner);
 
       if (check.userID.includes(user.id))
       {
@@ -464,9 +431,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
 
     private random_item(items)
     {
-      
       return items[Math.floor(Math.random()*items.length)];
-        
     }
 
     async LeaveRoom(SetRolestoMembersDto: SetRolestoMembersDto)

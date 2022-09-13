@@ -68,7 +68,7 @@ export class RoomWoUserDto
 	name: string;
 
 	@ApiProperty({ description: "Chat Room password"})
-	@IsNotEmpty()
+	// @IsNotEmpty()
 	password: string;
 }
 
