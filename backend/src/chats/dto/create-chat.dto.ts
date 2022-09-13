@@ -1,7 +1,7 @@
 import { IsEnum, Equals, Length, IsOptional, IsNotEmpty, ValidateIf } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Chat } from "../entities/chat.entity";
-import { Generated } from "typeorm";
+import { Generated, Unique } from "typeorm";
 import { Exclude, Transform } from "class-transformer";
 
 export enum RoomStatus {
@@ -22,11 +22,15 @@ export enum Action {
 
 export class CreateDmDto
 {
+	@ApiProperty({ description: "dm name" })
 	name: string;
 
-	@IsEnum(ChatTypes)
-	@Equals(ChatTypes[ChatTypes.DM])
+	@ApiProperty({ description: "dm type" })
+	@Equals(ChatTypes.DM)
 	type: string;
+
+	@ApiProperty({ description: "userID of the reciver" })
+	reciver: number;
 }
 
 export class CreateRoomDto

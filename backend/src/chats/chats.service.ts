@@ -51,9 +51,28 @@ export class ChatsService {
   }
   /** Create DM */
 
-  async CreateDm(dm: CreateDmDto, userid1: number, userid2: number)
+  async CreateDm(dm: CreateDmDto, userid1: number)
   {
     //TODO
+    const userid2 = dm.reciver;
+    const user1 = await this.findUser(userid1);
+    if (!user1){
+      throw new BadRequestException({code: 'invalid id', message: `User with '${userid1}' does not exist`})
+    }
+
+    const user2 = await this.findUser(userid2);
+    if (!user2){
+      throw new BadRequestException({code: 'invalid id', message: `User with '${userid2}' does not exist`})
+    }
+
+    const directmessage = this.Chatrepository.create({
+      ownerID: user1.id,
+      userID: [user1.id, user2.id],
+      name: dm.name,
+      type: ChatTypes.DM,
+    });
+
+    await this.Chatrepository.save(directmessage);
   }
 
   /** Create ROOM */
@@ -596,65 +615,67 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           throw new ForbiddenException({code: 'Forbidden', message: `Failed to mute/ban this user in this chat room!!`})
     }
 
-    @Cron(CronExpression.EVERY_30_SECONDS)
+    @Cron(CronExpression.EVERY_10_SECONDS)
     async handleCron() {
-      this.logger.debug('Called every 30 seconds');
-
       const allchats = await this.Chatrepository
         .createQueryBuilder("db_chat")
-        .select(['db_chat.MutedAndBannedID', 'db_chat.name']) // added selection
-        // .where("db_chat.name = :name", { name: roomName })
+        .select(['db_chat.MutedAndBannedID', 'db_chat.name'])
         .getMany();
-
-      for (let x = 0; x < allchats.length; x++) {
-        let mutedAndBannedID = allchats[x].MutedAndBannedID;
-        let roomName = allchats[x].name;
-        for (let i = 0; i < mutedAndBannedID.length; i++) {
-          if ((mutedAndBannedID[i].current_time + mutedAndBannedID[i].duration * 1000) <= Date.now()) {
-            mutedAndBannedID = mutedAndBannedID.filter(item => item.userID !== mutedAndBannedID[i].userID);
-
-            console.log("filter user, from mutedID array ", mutedAndBannedID);
-
-            await this.Chatrepository
-              .createQueryBuilder()
-              .update(Chat)
-              .set({ MutedAndBannedID: mutedAndBannedID })
-              .where("name = :name", { name: roomName})
-              .execute()
+      if (allchats)
+      {
+        for (let x = 0; x < allchats.length; x++) {
+          let mutedAndBannedID = allchats[x].MutedAndBannedID;
+          let roomName = allchats[x].name;
+          if (mutedAndBannedID)
+          {
+            for (let i = 0; i < mutedAndBannedID.length; i++) {
+              if ((mutedAndBannedID[i].current_time + mutedAndBannedID[i].duration * 1000) <= Date.now()) {
+                mutedAndBannedID = mutedAndBannedID.filter(item => item.userID !== mutedAndBannedID[i].userID);
+    
+                console.log("filter user, from mutedID array ", mutedAndBannedID);
+    
+                await this.Chatrepository
+                  .createQueryBuilder()
+                  .update(Chat)
+                  .set({ MutedAndBannedID: mutedAndBannedID })
+                  .where("name = :name", { name: roomName})
+                  .execute()
+              }
+            }
           }
         }
       }
     }
 
-    async ListMutedID(roomName: string)
-    {
-      let listMuted = [];
+    // async ListMutedID(roomName: string)
+    // {
+    //   let listMuted = [];
       
-      const mutedIds = await this.Chatrepository
-      .createQueryBuilder("db_chat")
-      .select(['db_chat.MutedAndBannedID']) // added selection
-      .where("db_chat.name = :name", { name: roomName })
-      .getOne();
+    //   const mutedIds = await this.Chatrepository
+    //   .createQueryBuilder("db_chat")
+    //   .select(['db_chat.MutedAndBannedID']) // added selection
+    //   .where("db_chat.name = :name", { name: roomName })
+    //   .getOne();
 
-      listMuted = mutedIds.MutedAndBannedID.filter(el => { return el.action === Action.MUTE });
+    //   listMuted = mutedIds.MutedAndBannedID.filter(el => { return el.action === Action.MUTE });
 
-      return listMuted;
-    }
+    //   return listMuted;
+    // }
 
-    async ListBannedID(roomName: string)
-    {
-      let listBanned = [];
+    // async ListBannedID(roomName: string)
+    // {
+    //   let listBanned = [];
       
-      const bannedIds = await this.Chatrepository
-      .createQueryBuilder("db_chat")
-      .select(['db_chat.MutedAndBannedID']) // added selection
-      .where("db_chat.name = :name", { name: roomName })
-      .getOne();
+    //   const bannedIds = await this.Chatrepository
+    //   .createQueryBuilder("db_chat")
+    //   .select(['db_chat.MutedAndBannedID']) // added selection
+    //   .where("db_chat.name = :name", { name: roomName })
+    //   .getOne();
 
-      listBanned = bannedIds.MutedAndBannedID.filter(el => { return el.action === Action.BAN });
+    //   listBanned = bannedIds.MutedAndBannedID.filter(el => { return el.action === Action.BAN });
 
-      return listBanned;
-    }
+    //   return listBanned;
+    // }
 
   /*-------------------------------------------------------------------------- */
   
