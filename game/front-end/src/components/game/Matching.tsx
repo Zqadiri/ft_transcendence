@@ -1,10 +1,12 @@
-import { socket, useEffectOnce, roomName, setRoomName, playerId } from "./Game";
+import Game, { socket, useEffectOnce, roomName, setRoomName, playerId } from "./Game";
 import { useNavigate } from 'react-router-dom';
 import PropTypes, { InferProps } from "prop-types";
 import { useState, useEffect } from "react";
 import MoonLoader from 'react-spinners/MoonLoader';
 import { ReactComponent as GameTheme01 } from './theme#01.svg';
 import { ReactComponent as GameTheme02 } from './theme#02.svg';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
 export let	theme: string = "none";
 export let	secondPlayerExist: boolean = false;
@@ -16,6 +18,23 @@ export const setSecondPlayerExist = (value: boolean): void => {
 
 export const setTheme = (value: string): void => {
 	theme = value;
+}
+
+function	GameRules(): JSX.Element {
+	return (
+		<section className="game-rules">
+				<h2>Game Rules</h2>
+			<div className="rules-list">
+				<ol>
+					<li><span>(1)</span> To win you need to score 10 balls against your opponent.</li>
+					<li><span>(2)</span> You will play with your mouse.</li>
+					<li><span>(3)</span> To move your paddle you need to point the cursor inside the game canvas.</li>
+					<li><span>(4)</span> While you play the speed of the ball increases.</li>
+					<li><span>(5)</span> Second theme starting speed is higher than the first theme.</li>
+				</ol>
+			</div>
+		</section>
+	);
 }
 
 function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): JSX.Element {
@@ -56,6 +75,7 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 			<div className={`${activeTheme !== "none" ? "match-me" : "match-me-disabled"}`}>
 				<button onClick={joinRoom}>Match Me</button>
 			</div>
+			<GameRules />
 		</>
 	);
 }
@@ -73,7 +93,11 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 
 		
 		return () => {
-			g_switchContent = true;
+			if (g_switchContent === false)
+			{
+				alert("You matching is about to be canceled");
+				g_switchContent = true;
+			}
 			if (secondPlayerExist === false)
 				socket.emit("cancelRoom", {roomName, theme});
 			window.onbeforeunload = null;

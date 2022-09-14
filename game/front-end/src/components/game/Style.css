@@ -226,3 +226,46 @@
 	cursor: pointer;
 	border: none;
 }
+
+/* Game Rules Section */
+
+.game-rules {
+	width: 500px;
+	overflow: hidden;
+	margin: auto;
+	margin-top: 290px;
+	margin-bottom: 35px;
+	text-align: center;
+}
+
+.game-rules h2 {
+	margin-bottom: 18px;
+	color: #F66B0E;
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+.game-rules .rules-list {
+	background-color: #d7e5ff;
+	border-radius: 20px;
+	padding: 20px
+}
+
+.game-rules .rules-list ol {
+	color: #112B3C;
+	font-weight: 500;
+	list-style: none;
+}
+
+.game-rules .rules-list ol li {
+	padding: 10px 0;
+}
+
+.game-rules .rules-list ol li span {
+	color: #F66B0E;
+}
+
+.game-rules .rules-list ol li:last-child {
+	margin-bottom: 0;
+	border-bottom: none;
+}

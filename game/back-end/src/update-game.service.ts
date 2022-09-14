@@ -41,7 +41,8 @@ export class UpdateGameService {
 				velocityY: 12,
 				radius: 15
 			},
-			theme: theme
+			theme: theme,
+			pause: false
 		};
 
 		if (tmp.theme === "theme02")
@@ -59,8 +60,9 @@ export class UpdateGameService {
 		let tmp: GameCoor = this.gameCoordinates.get(room);
 
 		tmp.interval = setInterval(() => {
-			this.#updateBallPosition(room);
 
+			if (this.gameCoordinates.get(room).pause === false)
+				this.#updateBallPosition(room);
 			const		gameCoordinates: GameData = {
 				p1: {
 					x: this.gameCoordinates.get(room).player1.x,
@@ -80,6 +82,7 @@ export class UpdateGameService {
 
 			this.server.to(room).emit("newCoordinates", gameCoordinates);
 			this.#checkForTheWinner(gameCoordinates.p1.score, gameCoordinates.p2.score, room);
+
 		}, 1000/60);
 	
 		this.gameCoordinates.set(room, tmp);
@@ -109,6 +112,10 @@ export class UpdateGameService {
 				tmp.ball.velocityX = tmp.ball.velocityX < 0 ? 16 : -16; // 11
 				tmp.ball.velocityY = 16;
 			}
+			tmp.pause = true;
+			setTimeout(() => {
+				tmp.pause = false;
+			}, 400);
 		}
 		return (tmp);
 	}
@@ -155,7 +162,7 @@ export class UpdateGameService {
 		tmp.ball.x += tmp.ball.velocityX;
 		tmp.ball.y += tmp.ball.velocityY;
 
-		if (tmp.ball.y + tmp.ball.radius > this.global.canvasHeight || tmp.ball.y - tmp.ball.radius < 0) {
+		if (Math.abs(tmp.ball.y) + tmp.ball.radius >= this.global.canvasHeight || Math.abs(tmp.ball.y) - tmp.ball.radius <= 0) {
 			tmp.ball.velocityY = -tmp.ball.velocityY;
 			this.gameCoordinates.set(room, tmp);
 		}
@@ -200,12 +207,12 @@ export class UpdateGameService {
 		for (const [key, value] of this.gameCoordinates) {
 			if (value.player1.id === playerId)
 			{
-				this.#checkForTheWinner(value.player1.score, 5, key);
+				this.#checkForTheWinner(value.player1.score, 10, key);
 				break ;
 			}
 			else if (value.player2.id === playerId)
 			{
-				this.#checkForTheWinner(5, value.player2.score, key);
+				this.#checkForTheWinner(10, value.player2.score, key);
 				break ;
 			}
 		}

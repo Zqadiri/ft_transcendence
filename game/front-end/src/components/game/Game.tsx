@@ -6,7 +6,7 @@ import { SyntheticEvent, useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import Matching, { setTheme } from "./Matching"
 
-export const	socket = io("http://localhost:3001/game", {
+export const	socket = io("http://10.11.13.7:3001/game", {
 	closeOnBeforeunload: false
 });
 socket.off("disconnect").on("disconnect", () => {
