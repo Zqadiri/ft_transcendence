@@ -141,21 +141,6 @@ function ResultPrompt(): JSX.Element {
 	);
 }
 
-// function NoAccessAuthorized(): JSX.Element{
-// 	return (
-// 		<>
-// 			<section className="play-error-container">
-// 				<div className="error-prompt">
-// 					<h2>Warning!</h2>
-// 					<p>
-// 						you're not authorized to access this page without matching another player.
-// 					</p>
-// 				</div>
-// 			</section>
-// 		</>
-// 	);
-// }
-
 function PingPong(): JSX.Element
 {
 	const navigate: NavigateFunction = useNavigate();
