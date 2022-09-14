@@ -1,9 +1,8 @@
 import PingPong from "./PingPong";
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "./Style.css";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { SyntheticEvent, useState, useEffect, useRef } from "react";
-import { io, Socket } from "socket.io-client";
+import { useEffect, useRef } from "react";
 import Matching from "./Matching"
 import { global } from "./data/PingPong.d"
 

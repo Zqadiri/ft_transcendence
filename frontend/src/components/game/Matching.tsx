@@ -1,4 +1,4 @@
-import Game, { useEffectOnce } from "./Game";
+import { useEffectOnce } from "./Game";
 import { useNavigate } from 'react-router-dom';
 import PropTypes, { InferProps } from "prop-types";
 import { useState, useEffect } from "react";
@@ -6,8 +6,6 @@ import MoonLoader from 'react-spinners/MoonLoader';
 import { ReactComponent as GameTheme01 } from './theme#01.svg';
 import { ReactComponent as GameTheme02 } from './theme#02.svg';
 import { global } from "./data/PingPong.d"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
 // export let	theme: string = "none";
 // export let	secondPlayerExist: boolean = false;
