@@ -207,12 +207,12 @@ export class UpdateGameService {
 		for (const [key, value] of this.gameCoordinates) {
 			if (value.player1.id === playerId)
 			{
-				this.#checkForTheWinner(value.player1.score, 10, key);
+				this.#checkForTheWinner(value.player1.score, 5, key);
 				break ;
 			}
 			else if (value.player2.id === playerId)
 			{
-				this.#checkForTheWinner(10, value.player2.score, key);
+				this.#checkForTheWinner(5, value.player2.score, key);
 				break ;
 			}
 		}

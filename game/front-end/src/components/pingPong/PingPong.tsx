@@ -13,6 +13,7 @@ import { theme, secondPlayerExist, setSecondPlayerExist } from "../game/Matching
 
 export let 	g_setScore1: React.Dispatch<React.SetStateAction<number>>;
 export let 	g_setScore2: React.Dispatch<React.SetStateAction<number>>;
+let 		g_setDisappear: React.Dispatch<React.SetStateAction<boolean>>;
 let			g_setForceChange: React.Dispatch<React.SetStateAction<boolean>>;
 let 		gameStarted: boolean = false;
 let 		g_navigate: NavigateFunction;
@@ -61,7 +62,27 @@ const setUserData = (data: GameData): void => {
 	}
 }
 
-const game = (current: HTMLCanvasElement | null): void => {
+function CountDown(): JSX.Element {
+	
+	const [disappear, setDesppear] = useState(false);
+
+	g_setDisappear = setDesppear;
+	return (
+		<section className={`${disappear ? "count-down-disabled" : "count-down"}`}>
+			 <div className="number">
+				<h2>3</h2>
+			</div>
+			 <div className="number">
+				<h2>2</h2>
+			</div>
+			 <div className="number">
+				<h2>1</h2>
+			</div>
+		</section>
+	);
+}
+
+const game = (current: HTMLCanvasElement | null) => {
 	if (current !== null) {
 		global.context = current.getContext("2d");
 		render();
@@ -70,7 +91,10 @@ const game = (current: HTMLCanvasElement | null): void => {
 		{
 			if (playerId === 1)
 			{
-				socket.emit("gameIsStarted", roomName);
+				setTimeout(() => {
+					g_setDisappear(true);
+					socket.emit("gameIsStarted", roomName);
+				}, 3000);
 				current.addEventListener("mousemove", (event: MouseEvent) => {
 					let rect = current.getBoundingClientRect();
 					global.player1Y = event.clientY - rect.top - global.paddleHeight/2;
@@ -80,6 +104,9 @@ const game = (current: HTMLCanvasElement | null): void => {
 			}
 			else if (playerId === 2)
 			{
+				setTimeout(() => {
+					g_setDisappear(true);
+				}, 3000);
 				current.addEventListener("mousemove", (event: MouseEvent) => {
 					let rect = current.getBoundingClientRect();
 					global.player2Y = event.clientY - rect.top - global.paddleHeight/2;
@@ -160,6 +187,7 @@ function PingPong(): JSX.Element
 		});
 		socket.off("theWinner").on("theWinner", (theWinner) => {
 			setTheWinner(theWinner);
+			console.log("the winner is here");
 		});
 
 	});
@@ -181,6 +209,7 @@ function PingPong(): JSX.Element
 	{
 		return (
 			<>
+				<CountDown />
 				{forceChange ? <ResultPrompt /> : null}
 				<div className="container">
 					<Score s1={score1} s2={score2} />
