@@ -1,5 +1,5 @@
 import { getOriginalNode } from 'typescript';
-import { theme2, theme1, global } from './data/PingPong.d';
+import { theme2, global } from './data/PingPong.d';
 
 const drawPlayground = (x: number, y: number, w: number, h: number): void => {
 	if (global.context !== null)

@@ -1,3 +1,6 @@
+import { NavigateFunction } from 'react-router-dom';
+import { io, Socket } from "socket.io-client";
+
 type Position = {
 	x: number,
 	y: number,
@@ -27,7 +30,20 @@ type Global = {
 	netY: number,
 	netWidth: number,
 	netHeight: number,
-	context: CanvasRenderingContext2D | null
+	context: CanvasRenderingContext2D | null,
+	setScore1?: React.Dispatch<React.SetStateAction<number>>,
+	setScore2?: React.Dispatch<React.SetStateAction<number>>,
+	setDisappear?: React.Dispatch<React.SetStateAction<boolean>>,
+	setForceChange?: React.Dispatch<React.SetStateAction<boolean>>,
+	navigate?: NavigateFunction,
+	gameStarted: boolean,
+	winnerId: number;
+	roomName: string,
+	playerId: number,
+	socket: Socket,
+	theme: string,
+	secondPlayerExist: boolean,
+	switchContent: boolean
 }
 
 export const global: Global = {
@@ -47,7 +63,17 @@ export const global: Global = {
 	netY: 0,
 	netWidth: 3,
 	netHeight: 10,
-	context: null
+	context: null,
+	gameStarted: false,
+	winnerId: 0,
+	roomName: "none",
+	playerId: 0,
+	socket: io("http://10.11.13.7:3001/game", {
+	closeOnBeforeunload: false
+	}),
+	theme: "none",
+	secondPlayerExist: false,
+	switchContent: true
 }
 
 export const theme1 = {

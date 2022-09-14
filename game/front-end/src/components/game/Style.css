@@ -269,3 +269,191 @@
 	margin-bottom: 0;
 	border-bottom: none;
 }
+
+/* Canvas & Score Section */
+
+.container {
+	position: fixed;
+	top: 35%;
+	left: 50%;
+	/* bring your own prefixes */
+	transform: translate(-50%, -35%);
+}
+
+.container .score-panel {
+	font-weight: bold;
+	padding: 10px;
+	overflow: hidden;
+}
+
+.container .score-panel .first-player,
+.container .score-panel .the-score,
+.container .score-panel .second-player {
+	width: 33.33%;
+	float: left;
+	text-align: center
+}
+
+.container .score-panel .first-player .prof-picture img,
+.container .score-panel .second-player .prof-picture img {
+	width: 65px;
+	height: 65px;
+	background-color: #EFEFEF;
+	border-radius: 100%;
+}
+
+.container .score-panel .first-player h3,
+.container .score-panel .second-player h3 {
+	font-size: 14px;
+	padding: 8px 0;
+	color: #112B3C
+}
+
+.container .score-panel .first-player > *,
+.container .score-panel .second-player > * {
+	width: 100%;
+	overflow: hidden;
+}
+
+.container .score-panel .the-score {
+	font-weight: bold;
+	font-size: 50px;
+	padding-top: 1.5%;
+	color: #F66B0E
+}
+
+.container .score-panel .the-score div {
+	width: 33.33%;
+	float: left;
+}
+
+.container canvas {
+	border-radius: 20px;
+}
+
+/* Result Display Section */
+
+.result-overlay {
+	background-color: rgba(0, 0, 0, 0.516);
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 100;
+}
+
+.result-overlay .prompt {
+	font-weight: bold;
+	font-size: 20px;
+	color: white;
+	text-align: center;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	animation : announcement 1s 1;
+}
+.result-overlay .prompt span {
+	width: 100%;
+	display: block;
+	padding: 10px 20px;
+	border-radius: 20px;
+}
+
+.result-overlay .prompt span:first-child {
+	text-transform: uppercase;
+	margin-bottom: 8px;
+	background-color: white;
+}
+
+@keyframes announcement {
+	from {
+		opacity: 0;
+		top: 45%;
+	}
+	to {
+		opacity: 1;
+		top: 50%;
+	}
+}
+
+/* Count Down Section */
+
+.count-down {
+	background-color: rgba(0, 0, 0, 0.516);
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 100;
+}
+
+.count-down .number {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	opacity: 0;
+}
+
+.count-down .number:nth-child(1) {
+	animation: numberThree 1s linear 1;
+	animation-delay: 0s;
+}
+
+.count-down .number:nth-child(2) {
+	animation: numberTwo 1s linear 1;
+	animation-delay: 1s;
+}
+
+.count-down .number:nth-child(3) {
+	animation: numberOne 1s linear 1;
+	animation-delay: 2s;
+}
+
+.count-down .number h2 {
+	font-size: 200px;
+	color: #F66B0E;
+}
+
+@keyframes numberThree  {
+	0%
+	{
+		opacity: 0;
+	}
+	
+	50%, 100%
+	{
+		opacity: 1;
+	}
+}
+
+@keyframes numberTwo  {
+	0%
+	{
+		opacity: 0;
+	}
+	
+	50%, 100%
+	{
+		opacity: 1;
+	}
+}
+
+@keyframes numberOne  {
+	0%
+	{
+		opacity: 0;
+	}
+	
+	50%, 100%
+	{
+		opacity: 1;
+	}
+}
+
+.count-down-disabled {
+	display: none;
+}

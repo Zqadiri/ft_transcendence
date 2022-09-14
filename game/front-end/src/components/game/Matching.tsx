@@ -1,24 +1,25 @@
-import Game, { socket, useEffectOnce, roomName, setRoomName, playerId } from "./Game";
+import Game, { useEffectOnce } from "./Game";
 import { useNavigate } from 'react-router-dom';
 import PropTypes, { InferProps } from "prop-types";
 import { useState, useEffect } from "react";
 import MoonLoader from 'react-spinners/MoonLoader';
 import { ReactComponent as GameTheme01 } from './theme#01.svg';
 import { ReactComponent as GameTheme02 } from './theme#02.svg';
+import { global } from "./data/PingPong.d"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
-export let	theme: string = "none";
-export let	secondPlayerExist: boolean = false;
-let			g_switchContent: boolean = true;
+// export let	theme: string = "none";
+// export let	secondPlayerExist: boolean = false;
+// let			g_switchContent: boolean = true;
 
-export const setSecondPlayerExist = (value: boolean): void => {
-	secondPlayerExist = value;
-}
+// export const setSecondPlayerExist = (value: boolean): void => {
+// 	secondPlayerExist = value;
+// }
 
-export const setTheme = (value: string): void => {
-	theme = value;
-}
+// export const setTheme = (value: string): void => {
+// 	theme = value;
+// }
 
 function	GameRules(): JSX.Element {
 	return (
@@ -44,13 +45,13 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 		if (activeTheme !== "none")
 		{
 			setSwitchContent(false);
-			g_switchContent = false;
+			global.switchContent = false;
 		}
 		if (activeTheme === "theme1")
-			socket.emit("joinTheme1");
+			global.socket.emit("joinTheme1");
 		else if (activeTheme === "theme2")
-			socket.emit("joinTheme2");
-		theme = activeTheme;
+			global.socket.emit("joinTheme2");
+		global.theme = activeTheme;
 	}
 	return (
 		<>
@@ -83,9 +84,9 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JSX.Element
 {
 	const	cancelRoom = () => {
-		g_switchContent = true;
+		global.switchContent = true;
 		setSwitchContent(true);
-		socket.emit("cancelRoom", {roomName, theme});
+		global.socket.emit("cancelRoom", {roomName: global.roomName, theme: global.theme});
 	}
 
 	useEffect(() => {
@@ -93,13 +94,13 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 
 		
 		return () => {
-			if (g_switchContent === false)
+			if (global.switchContent === false)
 			{
 				alert("You matching is about to be canceled");
-				g_switchContent = true;
+				global.switchContent = true;
 			}
-			if (secondPlayerExist === false)
-				socket.emit("cancelRoom", {roomName, theme});
+			if (global.secondPlayerExist === false)
+				global.socket.emit("cancelRoom", {roomName: global.roomName, theme: global.theme});
 			window.onbeforeunload = null;
 		};
 	}, []);
@@ -121,16 +122,17 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 
 function	Matching(): JSX.Element
 {
-	const	[switchContent, setSwitchContent] = useState(g_switchContent);
+	const	[switchContent, setSwitchContent] = useState(global.switchContent);
 	const 	navigate = useNavigate();
 
 	useEffectOnce(() => {
-		socket.off("joinedRoom").on("joinedRoom", (room, playerId) => {
-			setRoomName(room, playerId);
+		global.socket.off("joinedRoom").on("joinedRoom", (room, playerId) => {
+			global.roomName = room;
+			global.playerId = playerId;
 		});
-		socket.off("secondPlayerJoined").on("secondPlayerJoined", () => {
-			setSecondPlayerExist(true);
-			g_switchContent = true;
+		global.socket.off("secondPlayerJoined").on("secondPlayerJoined", () => {
+			global.secondPlayerExist = true;
+			global.switchContent = true;
 			navigate("/play");
 		});
 	});

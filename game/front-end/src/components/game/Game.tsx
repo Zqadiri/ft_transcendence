@@ -1,19 +1,20 @@
-import PingPong from "../pingPong/PingPong";
+import PingPong from "./PingPong";
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import "./Style.css";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { SyntheticEvent, useState, useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
-import Matching, { setTheme } from "./Matching"
+import Matching from "./Matching"
+import { global } from "./data/PingPong.d"
 
-export const	socket = io("http://10.11.13.7:3001/game", {
-	closeOnBeforeunload: false
+// export const	socket = io("http://10.11.13.7:3001/game", {
+// 	closeOnBeforeunload: false
+// });
+global.socket.off("disconnect").on("disconnect", () => {
+	global.socket.connect();
 });
-socket.off("disconnect").on("disconnect", () => {
-	socket.connect();
-});
-export	let		roomName: string = "none";
-export	let		playerId: number = 0;
+// export	let		roomName: string = "none";
+// export	let		playerId: number = 0;
 
 const	liveGamesData = [
 	{user1: "Sickl", user2: "Sesco", score1: 3, score2: 1, avatar1: "https://cdn.intra.42.fr/users/small_isaadi.jpg", avatar2: "https://cdn.intra.42.fr/users/small_aamzouar.jpg", id: 1},
@@ -33,11 +34,11 @@ export function useEffectOnce(callback: any): any {
 	}, []);
 }
 
-export function setRoomName(name: string, id: number): void
-{
-	roomName = name;
-	playerId = id;
-}
+// export function setRoomName(name: string, id: number): void
+// {
+// 	roomName = name;
+// 	playerId = id;
+// }
 
 function	LiveGames(): JSX.Element
 {
@@ -48,8 +49,9 @@ function	LiveGames(): JSX.Element
 	// 	socket.emit("joinLiveGame", namedRoom);
 	// }
 	// socket.off("joinedRoom").on("joinedRoom", (room, playerId) => {
-	// 	setRoomName(room, playerId);
-	// 	setTheme("theme1");
+	//		global.roomName = room;
+	//		global.playerId = playerId;
+	//		global.theme = "theme1";
 	// });
 	return (
 		<>

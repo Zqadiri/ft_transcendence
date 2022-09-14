@@ -6,18 +6,7 @@ import { global, GameData } from './data/PingPong.d';
 import { renderTheme1 } from "./RenderTheme1";
 import { renderTheme2 } from "./RenderTheme2";
 import { useNavigate, NavigateFunction } from 'react-router-dom';
-import { socket, useEffectOnce, roomName, setRoomName, playerId } from "../game/Game";
-import { theme, secondPlayerExist, setSecondPlayerExist } from "../game/Matching"
-
-// Global Variables
-
-export let 	g_setScore1: React.Dispatch<React.SetStateAction<number>>;
-export let 	g_setScore2: React.Dispatch<React.SetStateAction<number>>;
-let 		g_setDisappear: React.Dispatch<React.SetStateAction<boolean>>;
-let			g_setForceChange: React.Dispatch<React.SetStateAction<boolean>>;
-let 		gameStarted: boolean = false;
-let 		g_navigate: NavigateFunction;
-let			winnerId: number = 0;
+import { useEffectOnce } from "./Game"
 
 const resetGame = (): void => {
 	global.player1X = 0;
@@ -29,16 +18,19 @@ const resetGame = (): void => {
 	global.player2Score = 0;
 
 	global.ballX = global.canvasWidth/2;
+	console.log(global.canvasWidth);
 	global.ballY = global.canvasHeight/2;
-	gameStarted = false;
-	setRoomName("none", 0);
-	setSecondPlayerExist(false);
+	console.log(global.canvasHeight);
+	global.gameStarted = false;
+	global.roomName = "none"
+	global.playerId = 0;
+	global.secondPlayerExist = false;
 }
 
 const render = (): void => {
-	if (theme === "theme1")
+	if (global.theme === "theme1")
 		renderTheme1();
-	else if (theme === "theme2")
+	else if (global.theme === "theme2")
 		renderTheme2();
 }
 
@@ -53,12 +45,12 @@ const setUserData = (data: GameData): void => {
 	if (data.p1.score !== global.player1Score)
 	{
 		global.player1Score = data.p1.score;
-		g_setScore1(global.player1Score);
+		global.setScore1?.(global.player1Score);
 	}
 	else if (data.p2.score !== global.player2Score)
 	{
 		global.player2Score = data.p2.score;
-		g_setScore2(global.player2Score);
+		global.setScore2?.(global.player2Score);
 	}
 }
 
@@ -66,7 +58,7 @@ function CountDown(): JSX.Element {
 	
 	const [disappear, setDesppear] = useState(false);
 
-	g_setDisappear = setDesppear;
+	global.setDisappear = setDesppear;
 	return (
 		<section className={`${disappear ? "count-down-disabled" : "count-down"}`}>
 			 <div className="number">
@@ -87,49 +79,47 @@ const game = (current: HTMLCanvasElement | null) => {
 		global.context = current.getContext("2d");
 		render();
 
-		if (!gameStarted)
+		if (!global.gameStarted)
 		{
-			if (playerId === 1)
+			if (global.playerId === 1)
 			{
 				setTimeout(() => {
-					g_setDisappear(true);
-					socket.emit("gameIsStarted", roomName);
+					global.setDisappear?.(true);
+					global.socket.emit("gameIsStarted", global.roomName);
 				}, 3000);
 				current.addEventListener("mousemove", (event: MouseEvent) => {
 					let rect = current.getBoundingClientRect();
 					global.player1Y = event.clientY - rect.top - global.paddleHeight/2;
-					const y: number = global.player1Y; // please update this approach, get value y from user1.y
-					socket.emit("updatePaddlePosition", {roomName, playerId, y});
+					global.socket.emit("updatePaddlePosition", {roomName: global.roomName, playerId: global.playerId, y: global.player1Y});
 				});
 			}
-			else if (playerId === 2)
+			else if (global.playerId === 2)
 			{
 				setTimeout(() => {
-					g_setDisappear(true);
+					global.setDisappear?.(true);
 				}, 3000);
 				current.addEventListener("mousemove", (event: MouseEvent) => {
 					let rect = current.getBoundingClientRect();
 					global.player2Y = event.clientY - rect.top - global.paddleHeight/2;
-					const y: number = global.player2Y;
-					socket.emit("updatePaddlePosition", {roomName, playerId, y});
+					global.socket.emit("updatePaddlePosition", {roomName: global.roomName, playerId: global.playerId, y: global.player2Y});
 				});
 			}
-			gameStarted = true;
+			global.gameStarted = true;
 		}
 	}
 }
 
 const setTheWinner = (theWinner: number): void => {
-	winnerId = theWinner;
-	g_setForceChange(true);
+	global.winnerId = theWinner;
+	global.setForceChange?.(true);
 }
 
 const goHome = (): void => {
 	setTimeout(() => {
-		winnerId = 0;
-		socket.emit("leaveRoom", roomName);
+		global.winnerId = 0;
+		global.socket.emit("leaveRoom", global.roomName);
 		resetGame();
-		g_navigate("/");
+		global.navigate?.("/");
 	}, 3000)
 }
 
@@ -138,13 +128,13 @@ function ResultPrompt(): JSX.Element {
 	let		winnerName: string = "You";
 	let		mainColor: string;
 
-	if (playerId > 2)
+	if (global.playerId > 2)
 	{
-		winnerName = "Player " + winnerId;
+		winnerName = "Player " + global.winnerId;
 		resultMessage = "Won The Game";
 		mainColor = "#f66b0e";
 	}
-	else if (playerId === winnerId)
+	else if (global.playerId === global.winnerId)
 	{
 		resultMessage = "Won The Game";
 		mainColor = "#6a994e";
@@ -175,19 +165,18 @@ function PingPong(): JSX.Element
 	const [score2, setScore2] = useState(global.player2Score);
 	const [forceChange, setForceChange] = useState(false);
 
-	g_setScore1 = setScore1;
-	g_setScore2 = setScore2;
-	g_setForceChange = setForceChange;
-	g_navigate = navigate;
+	global.setScore1 = setScore1;
+	global.setScore2 = setScore2;
+	global.setForceChange = setForceChange;
+	global.navigate = navigate;
 
 	useEffectOnce(() => {
-		socket.off("newCoordinates").on("newCoordinates", (data) => {
+		global.socket.off("newCoordinates").on("newCoordinates", (data) => {
 			setUserData(data);
 			render();
 		});
-		socket.off("theWinner").on("theWinner", (theWinner) => {
+		global.socket.off("theWinner").on("theWinner", (theWinner) => {
 			setTheWinner(theWinner);
-			console.log("the winner is here");
 		});
 
 	});
@@ -195,17 +184,17 @@ function PingPong(): JSX.Element
 	useEffect(() => {
 		window.onbeforeunload = () => { return "" };
 
-		if (secondPlayerExist === false)
-			g_navigate("/")
+		if (global.secondPlayerExist === false)
+			global.navigate?.("/");
 
 		return () => {
 			window.onbeforeunload = null;
 			resetGame();
-			socket.disconnect().connect();
+			global.socket.disconnect().connect();
 		};
 	}, []);
 
-	if (secondPlayerExist === true)
+	if (global.secondPlayerExist === true)
 	{
 		return (
 			<>
