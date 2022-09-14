@@ -70,8 +70,12 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 
 	useEffect(() => {
 		window.onbeforeunload = () => { return "" };
+
 		
 		return () => {
+			g_switchContent = true;
+			if (secondPlayerExist === false)
+				socket.emit("cancelRoom", {roomName, theme});
 			window.onbeforeunload = null;
 		};
 	}, []);

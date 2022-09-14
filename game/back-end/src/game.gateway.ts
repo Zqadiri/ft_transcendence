@@ -90,10 +90,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	handleCancelRoom(client: Socket, {roomName, theme}): void {
 		this.logger.log("Cancel Event is fired " + roomName + " " + theme + " " + this.themeOneUsers);
 		if (theme === "theme1")
-		{
 			this.themeOneUsers.pop();
-			this.logger.log(this.themeOneUsers);
-		}
 		else
 			this.themeTwoUsers.pop();
 		client.leave(roomName);

@@ -141,20 +141,20 @@ function ResultPrompt(): JSX.Element {
 	);
 }
 
-function NoAccessAuthorized(): JSX.Element{
-	return (
-		<>
-			<section className="play-error-container">
-				<div className="error-prompt">
-					<h2>Warning!</h2>
-					<p>
-						you're not authorized to access this page without matching another player.
-					</p>
-				</div>
-			</section>
-		</>
-	);
-}
+// function NoAccessAuthorized(): JSX.Element{
+// 	return (
+// 		<>
+// 			<section className="play-error-container">
+// 				<div className="error-prompt">
+// 					<h2>Warning!</h2>
+// 					<p>
+// 						you're not authorized to access this page without matching another player.
+// 					</p>
+// 				</div>
+// 			</section>
+// 		</>
+// 	);
+// }
 
 function PingPong(): JSX.Element
 {
@@ -181,11 +181,14 @@ function PingPong(): JSX.Element
 
 	useEffect(() => {
 		window.onbeforeunload = () => { return "" };
-		
+
+		if (secondPlayerExist === false)
+			g_navigate("/")
+
 		return () => {
 			window.onbeforeunload = null;
 			resetGame();
-			socket.disconnect();
+			socket.disconnect().connect();
 		};
 	}, []);
 
@@ -201,8 +204,9 @@ function PingPong(): JSX.Element
 			</>
 		);
 	}
+
 	return (
-		<NoAccessAuthorized />
+		<></>
 	);
 }
 
