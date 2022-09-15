@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './Style.css';
+// import './Style.css';
 import Canvas from './Canvas';
 import Score from './Score';
 import { global, GameData } from './data/PingPong.d';

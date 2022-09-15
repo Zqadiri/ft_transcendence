@@ -12,6 +12,8 @@ import UserProfile from "./UserProfile";
 import { cookies, getCookieHeader, globalContext, RRLink, ShowConditionally, useEffectOnce, valDef } from "./util";
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
+import GameTabs from "./game/Game"
+import PingPong from "./game/Game"
 
 const chatSocket = io("/chatNamespace");
 
@@ -262,9 +264,11 @@ const NavAndChatWrapper = () => {
 				</div>
 			</nav>
 			<Routes>
-				<Route path="/" element={
+				<Route path="/" element={<GameTabs />}></Route>
+				<Route path="/play" element={<PingPong />}></Route>
+				{/* <Route path="/" element={
 					<Home/>
-				}/>
+				}/> */}
 				<Route path="/settings" element={
 					<Settings/>
 				}/>

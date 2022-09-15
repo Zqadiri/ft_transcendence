@@ -68,7 +68,7 @@ export const global: Global = {
 	winnerId: 0,
 	roomName: "none",
 	playerId: 0,
-	socket: io("http://10.11.13.7:3001/game", {
+	socket: io("/game", {
 	closeOnBeforeunload: false
 	}),
 	theme: "none",

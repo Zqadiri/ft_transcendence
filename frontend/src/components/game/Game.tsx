@@ -1,6 +1,6 @@
 import PingPong from "./PingPong";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import "./Style.css";
+import "../../styles/Style.css";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useEffect, useRef } from "react";
 import Matching from "./Matching"
@@ -85,7 +85,7 @@ function	LiveGames(): JSX.Element
 	);
 }
 
-function	GameTabs(): JSX.Element
+export function	GameTabs(): JSX.Element
 {
 	return (
 		<>
@@ -119,4 +119,4 @@ function	Game(): JSX.Element
 	);
 }
 
-export default Game;
+export default GameTabs;
