@@ -190,7 +190,8 @@ function PingPong(): JSX.Element
 		return () => {
 			window.onbeforeunload = null;
 			resetGame();
-			global.socket.disconnect().connect();
+			if (global.secondPlayerExist === true)
+				global.socket.disconnect().connect();
 		};
 	}, []);
 
