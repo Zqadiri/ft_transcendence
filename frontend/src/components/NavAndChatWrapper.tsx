@@ -13,7 +13,7 @@ import { cookies, getCookieHeader, globalContext, RRLink, ShowConditionally, use
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
 import GameTabs from "./game/Game"
-import PingPong from "./game/Game"
+import PingPong from "./game/PingPong"
 
 const chatSocket = io("/chatNamespace");
 

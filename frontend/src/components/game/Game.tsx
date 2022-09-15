@@ -1,19 +1,14 @@
 import PingPong from "./PingPong";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import "../../styles/Style.css";
+import "../../styles/game-styling.css";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useEffect, useRef } from "react";
 import Matching from "./Matching"
 import { global } from "./data/PingPong.d"
 
-// export const	socket = io("http://10.11.13.7:3001/game", {
-// 	closeOnBeforeunload: false
-// });
 global.socket.off("disconnect").on("disconnect", () => {
 	global.socket.connect();
 });
-// export	let		roomName: string = "none";
-// export	let		playerId: number = 0;
 
 const	liveGamesData = [
 	{user1: "Sickl", user2: "Sesco", score1: 3, score2: 1, avatar1: "https://cdn.intra.42.fr/users/small_isaadi.jpg", avatar2: "https://cdn.intra.42.fr/users/small_aamzouar.jpg", id: 1},
@@ -33,11 +28,6 @@ export function useEffectOnce(callback: any): any {
 	}, []);
 }
 
-// export function setRoomName(name: string, id: number): void
-// {
-// 	roomName = name;
-// 	playerId = id;
-// }
 
 function	LiveGames(): JSX.Element
 {
