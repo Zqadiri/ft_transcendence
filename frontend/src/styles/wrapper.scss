@@ -57,7 +57,7 @@
 				position: absolute;
 				top: 60px;
 				border: 1px solid $darker_blue;
-				.bar {
+				.bar_sickl {
 					border-top: 1px solid $darker_blue;
 				}
 				.elem {
@@ -230,6 +230,7 @@
 								}
 							}
 							.iconcontainer {
+								cursor: pointer;
 								width: 20px;
 								display: flex;
 								align-items: center;
