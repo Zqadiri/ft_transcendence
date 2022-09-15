@@ -56,6 +56,20 @@ export class ChatsService {
   }
   /** Create DM */
 
+  async checkIfDmExisted(userid1: number, userid2: number)
+  {
+    const ret = await this.Chatrepository
+    .createQueryBuilder()
+    .where('type=:type', { type: ChatTypes.DM })
+    .andWhere('name=:name or name=:name2', {
+      name: `${userid1},${userid2}`,
+      name2: `${userid2},${userid1}`,
+    })
+    .getMany();
+
+    return (ret);
+  }
+
   async CreateDm(dm: CreateDmDto, userid1: number)
   {
     //TODO
@@ -69,15 +83,19 @@ export class ChatsService {
     if (!user2){
       throw new BadRequestException({code: 'invalid id', message: `User with '${userid2}' does not exist`})
     }
+    const existeddm = await this.checkIfDmExisted(user1.id, user2.id);
 
-    const directmessage = this.Chatrepository.create({
-      ownerID: user1.id,
-      userID: [user1.id, user2.id],
-      name: dm.name,
-      type: ChatTypes.DM,
-    });
-
-    await this.Chatrepository.save(directmessage);
+    if (existeddm.length === 0)
+    {
+      const directmessage = this.Chatrepository.create({
+        ownerID: user1.id,
+        userID: [user1.id, user2.id],
+        name:`${user1.id},${user2.id}`,
+        type: ChatTypes.DM,
+      });
+      return await this.Chatrepository.save(directmessage);
+    }
+    return existeddm[0];
   }
 
   /** Create ROOM */

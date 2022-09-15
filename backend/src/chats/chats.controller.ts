@@ -160,7 +160,7 @@ export class ChatController {
             throw e;
         }
     }
-
+    
     @UseGuards(jwtAuthGuard)
     @Post('/setUserRoomAsAdmin')
     async SetUserRoomAsAdmin(@Req() req: RequestWithUser, @Body() setRolesDto: SetRolestoMembersDto)

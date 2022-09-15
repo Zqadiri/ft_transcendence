@@ -22,9 +22,6 @@ export enum Action {
 
 export class CreateDmDto
 {
-	@ApiProperty({ description: "dm name" })
-	name: string;
-
 	@ApiProperty({ description: "dm type" })
 	@Equals(ChatTypes.DM)
 	type: string;
