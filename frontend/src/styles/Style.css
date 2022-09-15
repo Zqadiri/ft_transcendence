@@ -272,7 +272,7 @@
 
 /* Canvas & Score Section */
 
-.container {
+.container_sesco {
 	position: fixed;
 	top: 35%;
 	left: 50%;
@@ -280,54 +280,54 @@
 	transform: translate(-50%, -35%);
 }
 
-.container .score-panel {
+.container_sesco .score-panel {
 	font-weight: bold;
 	padding: 10px;
 	overflow: hidden;
 }
 
-.container .score-panel .first-player,
-.container .score-panel .the-score,
-.container .score-panel .second-player {
+.container_sesco .score-panel .first-player,
+.container_sesco .score-panel .the-score,
+.container_sesco .score-panel .second-player {
 	width: 33.33%;
 	float: left;
 	text-align: center
 }
 
-.container .score-panel .first-player .prof-picture img,
-.container .score-panel .second-player .prof-picture img {
+.container_sesco .score-panel .first-player .prof-picture img,
+.container_sesco .score-panel .second-player .prof-picture img {
 	width: 65px;
 	height: 65px;
 	background-color: #EFEFEF;
 	border-radius: 100%;
 }
 
-.container .score-panel .first-player h3,
-.container .score-panel .second-player h3 {
+.container_sesco .score-panel .first-player h3,
+.container_sesco .score-panel .second-player h3 {
 	font-size: 14px;
 	padding: 8px 0;
 	color: #112B3C
 }
 
-.container .score-panel .first-player > *,
-.container .score-panel .second-player > * {
+.container_sesco .score-panel .first-player > *,
+.container_sesco .score-panel .second-player > * {
 	width: 100%;
 	overflow: hidden;
 }
 
-.container .score-panel .the-score {
+.container_sesco .score-panel .the-score {
 	font-weight: bold;
 	font-size: 50px;
 	padding-top: 1.5%;
 	color: #F66B0E
 }
 
-.container .score-panel .the-score div {
+.container_sesco .score-panel .the-score div {
 	width: 33.33%;
 	float: left;
 }
 
-.container canvas {
+.container_sesco canvas {
 	border-radius: 20px;
 }
 
