@@ -86,21 +86,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 		this.server.to(roomName).emit("secondPlayerJoined");
 	}
 
-	// @SubscribeMessage("cancelRoom")
-	// handleCancelRoom(client: Socket, {roomName, theme}): void {
-	// 	this.logger.log("Cancel Event is fired " + roomName + " " + theme + " " + this.themeOneUsers);
-	// 	if (theme === "theme1")
-	// 		this.themeOneUsers.pop();
-	// 	else
-	// 		this.themeTwoUsers.pop();
-	// 	client.leave(roomName);
-	// }
-
-	@SubscribeMessage("leaveRoom")
-	handleLeaveRoom(client: Socket, room: string): void {
-		client.leave(room);
-		// this.updateGame.delete(room);
-	}
 
 	@SubscribeMessage("gameIsStarted")
 	handleExchangeData(client: Socket, roomName: string): void {

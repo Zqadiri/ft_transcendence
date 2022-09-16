@@ -117,7 +117,6 @@ const setTheWinner = (theWinner: number): void => {
 const goHome = (): void => {
 	setTimeout(() => {
 		global.winnerId = 0;
-		global.socket.emit("leaveRoom", global.roomName);
 		resetGame();
 		global.navigate?.("/");
 	}, 3000)

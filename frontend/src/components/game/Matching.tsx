@@ -74,7 +74,6 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 		global.switchContent = true;
 		setSwitchContent(true);
 		global.socket.disconnect();
-		// global.socket.emit("cancelRoom", {roomName: global.roomName, theme: global.theme});
 	}
 
 	useEffect(() => {
@@ -89,7 +88,6 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 			}
 			if (global.secondPlayerExist === false)
 				global.socket.disconnect();
-				// global.socket.emit("cancelRoom", {roomName: global.roomName, theme: global.theme});
 			window.onbeforeunload = null;
 		};
 	}, []);
@@ -111,7 +109,7 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 
 function	Matching(): JSX.Element
 {
-	const	[switchContent, setSwitchContent] = useState(global.switchContent);
+	const	[switchContent, setSwitchContent] = useState(true);
 	const 	navigate = useNavigate();
 
 	useEffectOnce(() => {
