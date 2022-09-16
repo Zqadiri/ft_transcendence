@@ -30,6 +30,7 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 	{
 		if (activeTheme !== "none")
 		{
+			global.socket.connect();
 			setSwitchContent(false);
 			global.switchContent = false;
 		}
@@ -72,7 +73,8 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 	const	cancelRoom = () => {
 		global.switchContent = true;
 		setSwitchContent(true);
-		global.socket.emit("cancelRoom", {roomName: global.roomName, theme: global.theme});
+		global.socket.disconnect();
+		// global.socket.emit("cancelRoom", {roomName: global.roomName, theme: global.theme});
 	}
 
 	useEffect(() => {
@@ -86,7 +88,8 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 				global.switchContent = true;
 			}
 			if (global.secondPlayerExist === false)
-				global.socket.emit("cancelRoom", {roomName: global.roomName, theme: global.theme});
+				global.socket.disconnect();
+				// global.socket.emit("cancelRoom", {roomName: global.roomName, theme: global.theme});
 			window.onbeforeunload = null;
 		};
 	}, []);

@@ -36,9 +36,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 		let		index2: number = this.themeTwoUsers.indexOf(client.id);
 
 		if (this.themeOneUsers.length === 1 && index1 !== -1)
-			this.themeOneUsers.splice(index1, 1);
+			this.themeOneUsers.pop();
 		else if (this.themeTwoUsers.length === 1 && index2 !== -1)
-			this.themeTwoUsers.splice(index1, 1);
+			this.themeTwoUsers.pop();
 		
 		this.updateGame.OnePlayerDisconnect(client.id);
 		this.logger.log(client.id + " Disconnected");
@@ -86,15 +86,15 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 		this.server.to(roomName).emit("secondPlayerJoined");
 	}
 
-	@SubscribeMessage("cancelRoom")
-	handleCancelRoom(client: Socket, {roomName, theme}): void {
-		this.logger.log("Cancel Event is fired " + roomName + " " + theme + " " + this.themeOneUsers);
-		if (theme === "theme1")
-			this.themeOneUsers.pop();
-		else
-			this.themeTwoUsers.pop();
-		client.leave(roomName);
-	}
+	// @SubscribeMessage("cancelRoom")
+	// handleCancelRoom(client: Socket, {roomName, theme}): void {
+	// 	this.logger.log("Cancel Event is fired " + roomName + " " + theme + " " + this.themeOneUsers);
+	// 	if (theme === "theme1")
+	// 		this.themeOneUsers.pop();
+	// 	else
+	// 		this.themeTwoUsers.pop();
+	// 	client.leave(roomName);
+	// }
 
 	@SubscribeMessage("leaveRoom")
 	handleLeaveRoom(client: Socket, room: string): void {

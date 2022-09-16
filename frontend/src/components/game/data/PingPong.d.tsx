@@ -69,7 +69,8 @@ export const global: Global = {
 	roomName: "none",
 	playerId: 0,
 	socket: io("/game", {
-	closeOnBeforeunload: false
+		closeOnBeforeunload: false,
+		autoConnect: false
 	}),
 	theme: "none",
 	secondPlayerExist: false,

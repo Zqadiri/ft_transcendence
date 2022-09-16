@@ -6,10 +6,6 @@ import { useEffect, useRef } from "react";
 import Matching from "./Matching"
 import { global } from "./data/PingPong.d"
 
-global.socket.off("disconnect").on("disconnect", () => {
-	global.socket.connect();
-});
-
 const	liveGamesData = [
 	{user1: "Sickl", user2: "Sesco", score1: 3, score2: 1, avatar1: "https://cdn.intra.42.fr/users/small_isaadi.jpg", avatar2: "https://cdn.intra.42.fr/users/small_aamzouar.jpg", id: 1},
 	{user1: "Zineb", user2: "Sara", score1: 6, score2: 8, avatar1: "https://cdn.intra.42.fr/users/small_zqadiri.jpg", avatar2: "https://cdn.intra.42.fr/users/small_sbensarg.jpg", id: 2},
