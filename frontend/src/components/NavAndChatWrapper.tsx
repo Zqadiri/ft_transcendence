@@ -29,6 +29,7 @@ const NavAndChatWrapper = () => {
 		true
 	);
 	const chatRef = useRef<HTMLDivElement>(null);
+	const muteBanDurationRef = useRef<HTMLInputElement>(null);
 	const [activeTab, _setActiveTab] = useState(
 		// "friends"
 		"rooms"
@@ -69,11 +70,11 @@ const NavAndChatWrapper = () => {
 			setCreateRoomPassword("");
 	}, [createRoomType])
 	const [textMessage, setTextMessage] = useState("");
-	const [activeChat, _setActiveChat] = useState<string | null>(null);
-	const setActiveChat = (newActiveChat: string) => {
+	const [activeChat, _setActiveChat] = useState<any>(null);
+	const setActiveChat = (newActiveChat: any) => {
 		if (newActiveChat) {
 			// setActiveChatMessages([]);
-			chatSocket.emit("GetRoomMessages", newActiveChat);
+			chatSocket.emit("GetRoomMessages", newActiveChat.db_chat_name);
 			axios.get("/chat/userStats/" + newActiveChat).then(res => {
 				// let users: any = {};
 				// res.data.forEach((el: any) => {
@@ -245,12 +246,12 @@ const NavAndChatWrapper = () => {
 							<i className="fa-solid fa-user"></i>
 							<span>Profile</span>
 						</RRLink>
-						<div className="bar"></div>
+						<div className="bar_sickl"></div>
 						<RRLink to="/settings" className="settings elem no-underline flex-ai-cr flex-gap5">
 							<i className="fa-solid fa-gear"></i>
 							<span>Settings</span>
 						</RRLink>
-						<div className="bar"></div>
+						<div className="bar_sickl"></div>
 						<div className="logout elem flex-ai-cr flex-gap5"
 							onClick={() => {
 								cookies.remove("_token");
@@ -318,7 +319,7 @@ const NavAndChatWrapper = () => {
 											<div className="room flex-jc-sb flex-ai-cr" onClick={() => {
 												// setActiveChatMessages([]);
 												setActiveTab("chatinterface");
-												setActiveChat(room.db_chat_name);
+												setActiveChat(room);
 											}}>
 												<div className="left flex-column">
 													<div className="name">{room.db_chat_name}</div>
@@ -459,14 +460,14 @@ const NavAndChatWrapper = () => {
 						<div className="chatinterface d100 flex-column" style={{display: activeTab.startsWith("chatinterface") ? "flex" : "none"}}>
 							<div className="header flex-jc-sb flex-ai-cr">
 								<i className="fa-solid fa-arrow-left back" onClick={() => { setActiveTab("chat") }}></i>
-								<div className="name" onClick={() => setActiveTab("chatinterface")}>{activeChat}</div>
+								<div className="name" onClick={() => setActiveTab("chatinterface")}>{activeChat?.db_chat_name}</div>
 								<div className="users" onClick={() => {
 									setActiveTab("chatinterfaceusers");
 								}}>
 									<i className="fa-solid fa-user"></i>
 								</div>
 							</div>
-							<div className="chatinterfaceusers flex-center-column" style={{display: activeTab === "chatinterfaceusers" ? "flex" : "none"}}>
+							<div className="chatinterfaceusers flex-center-column flex-gap5" style={{display: activeTab === "chatinterfaceusers" ? "flex" : "none"}}>
 								<Button className="leave">
 									Leave Chat
 								</Button>
@@ -474,11 +475,14 @@ const NavAndChatWrapper = () => {
 									activeChatUsers.find(el => el.username === cookies.get("name")) &&
 									activeChatUsers.find(el => el.username === cookies.get("name")).stat === "owner" ?
 									<>
-										<div className="setpassword">
-											<input type="password" />
+										<div className="setpassword flex-gap10">
+											<label htmlFor="roompassword"></label>
+											<input type="roompassword" />
+											<Button>Set New Password</Button>
 										</div>
-									</> :
-									<></>
+									</> : (
+										<></>
+									)
 								}
 								{
 									activeChatUsers.map(user => {
@@ -501,7 +505,7 @@ const NavAndChatWrapper = () => {
 															&& user.stat === "user"
 														}>
 															<>
-																<input type="text" className="duration" />
+																<input type="text" className="duration" ref={muteBanDurationRef} />
 																<div className="iconcontainer">
 																	<i className="fa-solid fa-volume-xmark"></i>
 																</div>
@@ -515,7 +519,9 @@ const NavAndChatWrapper = () => {
 															&& activeChatUsers.find(el => cookies.get("name") === el.username).stat === "owner"
 															&& user.stat === "user"
 														}>
-															<div className="iconcontainer">
+															<div className="iconcontainer" onClick={() => {
+																axios.post("/chat/setUserRoomAsAdmin", )
+															}}>
 																<i className="fa-solid fa-shield flex-center addadmin"><div className="plus">+</div></i>
 															</div>
 														</ShowConditionally>
