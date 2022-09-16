@@ -15,10 +15,7 @@ export class UpdateScoreDto{
     public player: boolean;
 }
 
-export class UpdateGameDto{
-    // public isFinished: boolean;
-    public isPlaying: boolean;
-    public firstPlayerScore : number;
-    public SecondPlayerScore : number;
+export class EndGameDto{
+    public gameId: number;
     public finishedAt : Date;
 }

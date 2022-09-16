@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { validate } from 'class-validator';
-import { CreateGameDto, UpdateGameDto } from './dto/game.dto';
+import { CreateGameDto, EndGameDto } from './dto/game.dto';
 import { Game } from './entities/game.entity';
 import { GameRepository } from './game.repository';
 import { Brackets } from 'typeorm';
@@ -39,6 +39,13 @@ export class GamesService {
 			game.SecondPlayerScore = score;
 		return this.GameRepo.update(gameID, game);
 	}
+
+	async endGame(end: EndGameDto){
+        const game = await this.findGameByid(end.gameId);
+        game.isPlaying = false;
+        game.finishedAt = end.finishedAt;
+        return this.GameRepo.update(end.gameId, game);
+    }
 
 	async remove(gameID: number){
 		const game = await this.findGameByid(gameID);

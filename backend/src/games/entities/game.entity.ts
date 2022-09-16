@@ -3,10 +3,8 @@ import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 @Entity('db_game')
 export class Game{
 	@PrimaryGeneratedColumn()
-    // @Column({primary: true})
 	id: number;
 
-	// @Column()
 	@Column({
         nullable: true 
     })

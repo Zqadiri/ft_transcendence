@@ -64,16 +64,32 @@ export class UpdateGameService {
 		initialData.modifiedAt = new Date();
 		initialData.socketRoom = room;
 
-		console.log(room);
-
-		axios.post('http://localhost:3000/game/new_game', initialData).then(resp => {
-			tmp.gameID = resp.data.id;
-			console.log(tmp.gameID);
-		}).catch(e => {
+		axios.post('http://localhost:3000/game/new_game', initialData).catch(e => {
 			console.log("sesco error: " + e);
 		});
 
 		this.gameCoordinates.set(room, tmp);
+	}
+
+	#checkForTheWinner(score1: number, score2: number, room: string): void
+	{
+		if (score1 === 5 || score2 === 5)
+		{
+			axios.post('http://localhost:3000/game/end_game', {
+				gameId: this.gameCoordinates.get(room).gameID,
+				finishedAt: new Date()
+			}).catch(e => {
+				console.log("sesco error: " + e);
+			});
+		
+			if (score1 == 5)
+				this.server.to(room).emit("theWinner", 1);
+			else if (score2 == 5)
+				this.server.to(room).emit("theWinner", 2);
+
+			clearInterval(this.gameCoordinates.get(room).interval);
+			this.gameCoordinates.delete(room)
+		}
 	}
 
 	sendDataToFrontend(room: string): void
@@ -119,8 +135,6 @@ export class UpdateGameService {
 				gameId: tmp.gameID,
 				PlayerScore: tmp.player2.score,
 				player: true
-			}).then(resp => {
-				console.log("player2: " + resp.data);
 			}).catch(e => {
 				console.log("sesco error: " + e);
 			});
@@ -134,8 +148,6 @@ export class UpdateGameService {
 				gameId: tmp.gameID,
 				PlayerScore: tmp.player1.score,
 				player: false
-			}).then(resp => {
-				console.log("player1: " + resp.data);
 			}).catch(e => {
 				console.log("sesco error: " + e);
 			});
@@ -180,20 +192,6 @@ export class UpdateGameService {
 			right: player.x + this.global.paddleWidth 
 		}
 		return (b.left < p.right && b.down > p.top && b.right > p.left && b.top < p.down);
-	}
-
-	#checkForTheWinner(score1: number, score2: number, room: string): void
-	{
-		if (score1 === 5 || score2 === 5)
-		{
-			if (score1 == 5)
-				this.server.to(room).emit("theWinner", 1);
-			else if (score2 == 5)
-				this.server.to(room).emit("theWinner", 2);
-
-			clearInterval(this.gameCoordinates.get(room).interval);
-			this.gameCoordinates.delete(room)
-		}
 	}
 
 	#updateBallPosition(room: string): void
