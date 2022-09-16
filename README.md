@@ -14,7 +14,7 @@ This project is fully coded in Typescript and could be deployed with docker-comp
 
 <p float="left">
   <img src="https://cdn.iconscout.com/icon/free/png-512/typescript-1174965.png" width="30px" height="30px">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg" width="30px" height="30px">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg" width="30px" height="30px">
   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/242px-React-icon.svg.png" width="30px" height="30px">
   <img src="https://docs.nestjs.com/assets/logo-small.svg" width="30px" height="30px"> 
 </p>
