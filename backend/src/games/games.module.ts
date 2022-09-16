@@ -4,6 +4,8 @@ import { Game } from './entities/game.entity';
 import { GameRepository } from './game.repository';
 import { GameController } from './games.controller';
 import { GamesService } from './games.service';
+import { GameGateway } from './game.gateway';
+import { UpdateGameService } from './update-game.service';
 
 @Module({
   imports: [
@@ -12,6 +14,6 @@ import { GamesService } from './games.service';
     ]),
   ],
   controllers: [GameController],
-  providers: [GamesService]
+  providers: [GamesService, GameGateway, UpdateGameService]
 })
 export class GameModule {}

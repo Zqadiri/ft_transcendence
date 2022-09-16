@@ -1,10 +1,12 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, WsResponse } from '@nestjs/websockets';
 import { ChatsService } from './chats.service';
 import { Server, Socket } from 'socket.io';
-import { Bind, Logger, Req, UseGuards } from '@nestjs/common';
+import { parse } from 'cookie';
+import { Bind, Logger, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogsService } from 'src/chat-logs/chat-logs.service';
-import { CreateRoomDto , RoomDto, SetRolestoMembersDto, RoomNamedto} from './dto/create-chat.dto';
+import { CreateRoomDto , RoomDto, SetRolestoMembersDto, RoomNamedto, CreateDmDto} from './dto/create-chat.dto';
+import { Transform } from 'class-transformer';
 
 
 @WebSocketGateway(
@@ -50,6 +52,20 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     //emit to specific client
     client.emit('joinedRoom', roomName);
   }
+
+  @SubscribeMessage('socketJoinDM')
+  async handleJoinDM(client: Socket, CreateDmDto: CreateDmDto)
+  {
+    let id : string;
+    id = parse(client.handshake.headers.cookie).id;
+    console.log("parse(client.handshake.headers.cookie)", parse(client.handshake.headers.cookie).id);
+    const dm = await this.chatsService.CreateDm(CreateDmDto, +id);
+  
+    client.join(dm.name);
+    //emit to specific client
+    client.emit('joinedDm', dm.name);
+  }
+
 
 
   @SubscribeMessage('socketleaveRoom')

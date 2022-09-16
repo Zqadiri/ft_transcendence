@@ -2,8 +2,15 @@ import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('db_game')
 export class Game{
-	@Column({primary: true})
+	@PrimaryGeneratedColumn()
+    // @Column({primary: true})
 	id: number;
+
+	// @Column()
+	@Column({
+        nullable: true 
+    })
+    socketRoom: string;
 
 	@Column({default: false})
 	isPlaying:boolean;

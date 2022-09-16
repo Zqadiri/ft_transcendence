@@ -39,7 +39,7 @@ export class ChatController {
             throw e;
         }
     }
-
+    
     @UseGuards(jwtAuthGuard)
     @Post('/JoinRoom')
     async JoinRoom(@Body() Roomdata: RoomWoUserDto , @Req() req: RequestWithUser)
@@ -160,7 +160,7 @@ export class ChatController {
             throw e;
         }
     }
-
+    
     @UseGuards(jwtAuthGuard)
     @Post('/setUserRoomAsAdmin')
     async SetUserRoomAsAdmin(@Req() req: RequestWithUser, @Body() setRolesDto: SetRolestoMembersDto)

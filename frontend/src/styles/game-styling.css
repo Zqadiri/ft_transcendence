@@ -72,7 +72,7 @@
 	border: 3px solid #F66B0E;
 	color: #F66B0E;
 	padding: 18px 25px;
-	background-color: #fff;
+	background-color: rgba(255, 255, 255, 0);
 	font-size: 18px;
 	font-weight: bold;
 	border-radius: 15px;
@@ -82,14 +82,14 @@
 
 .match-me button:hover {
 	background-color: #F66B0E;
-	color: #fff
+	color: #efefef
 }
 
 .match-me-disabled button {
 	border: 3px solid #fbbf97;
 	color: #fbbf97;
 	padding: 18px 25px;
-	background-color: white;
+	background-color: rgba(255, 255, 255, 0);
 	font-size: 18px;
 	font-weight: bold;
 	border-radius: 15px;
@@ -158,27 +158,22 @@
 
 @keyframes loadingbar {
 	0% {
-		/* width: 0px; */
 		transform: translateX(-20px) scaleX(0%);
 	}
 
 	25% {
-		/* width: 20px; */
 		transform: translateX(-10px) scaleX(200%);
 	}
 
 	50% {
-		/* width: 50px; */
 		transform: translateX(0px) scaleX(300%);
 	}
 
 	75% {
-		/* width: 20px; */
 		transform: translateX(10px) scaleX(200%);
 	}
 
 	100% {
-		/* width: 0px; */
 		transform: translateX(20px) scaleX(0%);
 	}
 }
@@ -187,7 +182,6 @@
 	height: 100%;
 	width: 10px !important;
 	animation-timing-function: linear;
-	/* border-radius: 999px; */
 	background-color: #f66b0e;
 	animation-iteration-count: infinite;
 	animation-name: loadingbar;
@@ -212,7 +206,7 @@
 
 .cancel-button button {
 	border: none;
-	background-color: white;
+	background-color: rgba(255, 255, 255, 0);
 	border-bottom: 2px solid #F66B0E;
 	font-size: 15px;
 	padding-bottom: 5px;
@@ -274,10 +268,9 @@
 
 .container_sesco {
 	position: fixed;
-	top: 35%;
+	top: 50%;
 	left: 50%;
-	/* bring your own prefixes */
-	transform: translate(-50%, -35%);
+	transform: translate(-50%, -50%);
 }
 
 .container_sesco .score-panel {
@@ -294,18 +287,27 @@
 	text-align: center
 }
 
-.container_sesco .score-panel .first-player .prof-picture img,
-.container_sesco .score-panel .second-player .prof-picture img {
+.container_sesco .score-panel .first-player .prof-picture,
+.container_sesco .score-panel .second-player .prof-picture {
 	width: 65px;
 	height: 65px;
-	background-color: #EFEFEF;
+	background-color: #efefef;
 	border-radius: 100%;
+	border: 2px solid #efefef;
+	outline: 2px solid #F66B0E;
+	margin: auto;
+}
+
+.container_sesco .score-panel .first-player .prof-picture img,
+.container_sesco .score-panel .second-player .prof-picture img {
+	width: 100%;
+	height: 100%;
 }
 
 .container_sesco .score-panel .first-player h3,
 .container_sesco .score-panel .second-player h3 {
 	font-size: 14px;
-	padding: 8px 0;
+	padding: 12px 0 5px;
 	color: #112B3C
 }
 
@@ -318,7 +320,7 @@
 .container_sesco .score-panel .the-score {
 	font-weight: bold;
 	font-size: 50px;
-	padding-top: 1.5%;
+	padding-top: 10px;
 	color: #F66B0E
 }
 
@@ -335,9 +337,9 @@
 
 .result-overlay {
 	background-color: rgba(0, 0, 0, 0.516);
+	position: fixed;
 	width: 100%;
 	height: 100%;
-	position: absolute;
 	z-index: 100;
 }
 
@@ -347,9 +349,9 @@
 	color: white;
 	text-align: center;
 	position: fixed;
-	top: 50%;
+	top: 55%;
 	left: 50%;
-	transform: translate(-50%, -50%);
+	transform: translate(-50%, -55%);
 	animation : announcement 1s 1;
 }
 .result-overlay .prompt span {
@@ -368,11 +370,11 @@
 @keyframes announcement {
 	from {
 		opacity: 0;
-		top: 45%;
+		top: 50%;
 	}
 	to {
 		opacity: 1;
-		top: 50%;
+		top: 55%;
 	}
 }
 
@@ -380,15 +382,15 @@
 
 .count-down {
 	background-color: rgba(0, 0, 0, 0.516);
+	position: fixed;
 	width: 100%;
 	height: 100%;
-	position: absolute;
 	z-index: 100;
 }
 
 .count-down .number {
 	position: absolute;
-	top: 0;
+	top: -2.5%;
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -419,41 +421,61 @@
 }
 
 @keyframes numberThree  {
-	0%
-	{
+	0% {
 		opacity: 0;
 	}
 	
-	50%, 100%
-	{
+	50%, 100% {
 		opacity: 1;
 	}
 }
 
 @keyframes numberTwo  {
-	0%
-	{
+	0% {
 		opacity: 0;
 	}
 	
-	50%, 100%
-	{
+	50%, 100% {
 		opacity: 1;
 	}
 }
 
 @keyframes numberOne  {
-	0%
-	{
+	0% {
 		opacity: 0;
 	}
 	
-	50%, 100%
-	{
+	50%, 100% {
 		opacity: 1;
 	}
 }
 
 .count-down-disabled {
 	display: none;
+}
+
+/* Making game canvas responsive */
+
+@media only screen and (max-width: 1050px) {
+	.container_sesco {
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) scale(80%);
+	}
+}
+
+@media only screen and (max-width: 817px) {
+	.container_sesco {
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) scale(60%);
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	.container_sesco {
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%) scale(48%);
+	}
 }

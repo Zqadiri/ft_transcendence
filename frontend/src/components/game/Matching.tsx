@@ -3,21 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import PropTypes, { InferProps } from "prop-types";
 import { useState, useEffect } from "react";
 import MoonLoader from 'react-spinners/MoonLoader';
-import { ReactComponent as GameTheme01 } from './theme#01.svg';
-import { ReactComponent as GameTheme02 } from './theme#02.svg';
+import { ReactComponent as GameTheme01 } from '../../img/theme#01.svg';
+import { ReactComponent as GameTheme02 } from '../../img/theme#02.svg';
 import { global } from "./data/PingPong.d"
-
-// export let	theme: string = "none";
-// export let	secondPlayerExist: boolean = false;
-// let			g_switchContent: boolean = true;
-
-// export const setSecondPlayerExist = (value: boolean): void => {
-// 	secondPlayerExist = value;
-// }
-
-// export const setTheme = (value: string): void => {
-// 	theme = value;
-// }
 
 function	GameRules(): JSX.Element {
 	return (
@@ -42,6 +30,7 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 	{
 		if (activeTheme !== "none")
 		{
+			global.socket.connect();
 			setSwitchContent(false);
 			global.switchContent = false;
 		}
@@ -84,7 +73,7 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 	const	cancelRoom = () => {
 		global.switchContent = true;
 		setSwitchContent(true);
-		global.socket.emit("cancelRoom", {roomName: global.roomName, theme: global.theme});
+		global.socket.disconnect();
 	}
 
 	useEffect(() => {
@@ -98,7 +87,7 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 				global.switchContent = true;
 			}
 			if (global.secondPlayerExist === false)
-				global.socket.emit("cancelRoom", {roomName: global.roomName, theme: global.theme});
+				global.socket.disconnect();
 			window.onbeforeunload = null;
 		};
 	}, []);
@@ -120,7 +109,7 @@ function	Waiting({setSwitchContent}: InferProps<typeof Selection.propTypes>): JS
 
 function	Matching(): JSX.Element
 {
-	const	[switchContent, setSwitchContent] = useState(global.switchContent);
+	const	[switchContent, setSwitchContent] = useState(true);
 	const 	navigate = useNavigate();
 
 	useEffectOnce(() => {

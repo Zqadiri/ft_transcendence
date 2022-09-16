@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import './Style.css';
+import { useEffect, useState } from 'react';
+import "../../styles/game-styling.css";
 import Canvas from './Canvas';
 import Score from './Score';
 import { global, GameData } from './data/PingPong.d';
@@ -117,7 +117,6 @@ const setTheWinner = (theWinner: number): void => {
 const goHome = (): void => {
 	setTimeout(() => {
 		global.winnerId = 0;
-		global.socket.emit("leaveRoom", global.roomName);
 		resetGame();
 		global.navigate?.("/");
 	}, 3000)
@@ -190,7 +189,7 @@ function PingPong(): JSX.Element
 		return () => {
 			window.onbeforeunload = null;
 			resetGame();
-			global.socket.disconnect().connect();
+			global.socket.disconnect();
 		};
 	}, []);
 

@@ -20,6 +20,7 @@ export type Position = {
 }
 
 export interface GameCoor {
+	gameID: number,
 	player1: Paddle,
 	player2: Paddle,
 	ball: Ball,
