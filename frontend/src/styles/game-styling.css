@@ -158,27 +158,22 @@
 
 @keyframes loadingbar {
 	0% {
-		/* width: 0px; */
 		transform: translateX(-20px) scaleX(0%);
 	}
 
 	25% {
-		/* width: 20px; */
 		transform: translateX(-10px) scaleX(200%);
 	}
 
 	50% {
-		/* width: 50px; */
 		transform: translateX(0px) scaleX(300%);
 	}
 
 	75% {
-		/* width: 20px; */
 		transform: translateX(10px) scaleX(200%);
 	}
 
 	100% {
-		/* width: 0px; */
 		transform: translateX(20px) scaleX(0%);
 	}
 }
@@ -187,7 +182,6 @@
 	height: 100%;
 	width: 10px !important;
 	animation-timing-function: linear;
-	/* border-radius: 999px; */
 	background-color: #f66b0e;
 	animation-iteration-count: infinite;
 	animation-name: loadingbar;
@@ -276,7 +270,6 @@
 	position: fixed;
 	top: 35%;
 	left: 50%;
-	/* bring your own prefixes */
 	transform: translate(-50%, -35%);
 }
 
@@ -294,18 +287,27 @@
 	text-align: center
 }
 
-.container_sesco .score-panel .first-player .prof-picture img,
-.container_sesco .score-panel .second-player .prof-picture img {
+.container_sesco .score-panel .first-player .prof-picture,
+.container_sesco .score-panel .second-player .prof-picture {
 	width: 65px;
 	height: 65px;
-	background-color: #EFEFEF;
+	background-color: #efefef;
 	border-radius: 100%;
+	border: 2px solid #efefef;
+	outline: 2px solid #F66B0E;
+	margin: auto;
+}
+
+.container_sesco .score-panel .first-player .prof-picture img,
+.container_sesco .score-panel .second-player .prof-picture img {
+	width: 100%;
+	height: 100%;
 }
 
 .container_sesco .score-panel .first-player h3,
 .container_sesco .score-panel .second-player h3 {
 	font-size: 14px;
-	padding: 8px 0;
+	padding: 12px 0 5px;
 	color: #112B3C
 }
 
@@ -318,7 +320,7 @@
 .container_sesco .score-panel .the-score {
 	font-weight: bold;
 	font-size: 50px;
-	padding-top: 1.5%;
+	padding-top: 10px;
 	color: #F66B0E
 }
 
@@ -450,4 +452,30 @@
 
 .count-down-disabled {
 	display: none;
+}
+
+/* Making game canvas responsive */
+
+@media only screen and (max-width: 1050px) {
+	.container_sesco {
+		top: 35%;
+		left: 50%;
+		transform: translate(-50%, -35%) scale(80%);
+	}
+}
+
+@media only screen and (max-width: 817px) {
+	.container_sesco {
+		top: 35%;
+		left: 50%;
+		transform: translate(-50%, -35%) scale(60%);
+	}
+}
+
+@media only screen and (max-width: 600px) {
+	.container_sesco {
+		top: 35%;
+		left: 50%;
+		transform: translate(-50%, -35%) scale(48%);
+	}
 }

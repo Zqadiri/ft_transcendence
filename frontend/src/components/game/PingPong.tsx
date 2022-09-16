@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import "../../styles/game-styling.css";
 import Canvas from './Canvas';
 import Score from './Score';

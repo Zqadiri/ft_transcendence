@@ -108,8 +108,8 @@ export class UpdateGameService {
 			}
 			else if (tmp.theme === "theme02")
 			{
-				tmp.ball.speed = 16; // 12
-				tmp.ball.velocityX = tmp.ball.velocityX < 0 ? 16 : -16; // 11
+				tmp.ball.speed = 16;
+				tmp.ball.velocityX = tmp.ball.velocityX < 0 ? 16 : -16;
 				tmp.ball.velocityY = 16;
 			}
 			tmp.pause = true;
@@ -150,11 +150,6 @@ export class UpdateGameService {
 			this.gameCoordinates.delete(room)
 		}
 	}
-
-	// delete (room: string): void
-	// {
-	// 	this.gameCoordinates.delete(room)
-	// }
 
 	#updateBallPosition(room: string): void
 	{ 
