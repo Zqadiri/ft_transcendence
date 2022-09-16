@@ -21,6 +21,7 @@ export class GamesService {
 		game.secondPlayerID = createGameDto.secondPlayerID;
 		game.theme = createGameDto.theme;
 		game.modifiedAt = createGameDto.modifiedAt;
+		game.socketRoom = createGameDto.socketRoom;
 		const _error = validate(game);
 		if ((await _error).length)
 			throw new HttpException({ message: 'Game Data Validation Failed', _error }, HttpStatus.BAD_REQUEST);

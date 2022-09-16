@@ -6,6 +6,13 @@ export class CreateGameDto{
     public secondPlayerID : string;
     public theme: string;
     public modifiedAt : Date;
+	public socketRoom: string;
+}
+
+export class UpdateScoreDto{
+    public gameId: number;
+    public PlayerScore : number;
+    public player: boolean;
 }
 
 export class UpdateGameDto{

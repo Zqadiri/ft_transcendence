@@ -27,6 +27,7 @@ import { GameRepository } from './games/game.repository';
 import { GamesService } from './games/games.service';
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path';
+import { GameController } from './games/games.controller';
 
 require('dotenv').config();
 
@@ -60,7 +61,7 @@ require('dotenv').config();
 			TwoFactorAuthenticationModule,
 			ChatLogsModule
 		],
-		controllers: [AuthController, UsersController, AppController],
+		controllers: [AuthController, UsersController, AppController, GameController],
 		providers: [UsersService, JwtStrategy, AuthService,  AppService, GamesService],
 		exports: [
 			AuthService, PassportModule 

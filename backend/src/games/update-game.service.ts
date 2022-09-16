@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { GameCoor, GameData, Directions, Ball, Paddle } from "./game.interface"
+import { CreateGameDto, UpdateScoreDto } from './dto/game.dto';
+import axios, { AxiosError } from "axios";
 
 @Injectable()
 export class UpdateGameService {
@@ -42,7 +44,8 @@ export class UpdateGameService {
 				radius: 15
 			},
 			theme: theme,
-			pause: false
+			pause: false,
+			gameID: 0
 		};
 
 		if (tmp.theme === "theme02")
@@ -51,6 +54,24 @@ export class UpdateGameService {
 			tmp.ball.velocityX = 20;
 			tmp.ball.velocityY = 20;
 		}
+
+		let initialData = new CreateGameDto();
+
+		initialData.isPlaying = true;
+		initialData.firstPlayerID = tmp.player1.id;
+		initialData.secondPlayerID = tmp.player2.id;
+		initialData.theme = theme;
+		initialData.modifiedAt = new Date();
+		initialData.socketRoom = room;
+
+		console.log(room);
+
+		axios.post('http://localhost:3000/game/new_game', initialData).then(resp => {
+			tmp.gameID = resp.data.id;
+			console.log(tmp.gameID);
+		}).catch(e => {
+			console.log("sesco error: " + e);
+		});
 
 		this.gameCoordinates.set(room, tmp);
 	}
@@ -88,13 +109,37 @@ export class UpdateGameService {
 		this.gameCoordinates.set(room, tmp);
 	}
 
+	 // false === FirstPlayer and true === SecondPlayer
 	#updateScore(tmp: GameCoor): GameCoor
 	{
 		if (tmp.ball.x + tmp.ball.radius < 0) {
 			tmp.player2.score += 1;
+
+			axios.post('http://localhost:3000/game/update_game', {
+				gameId: tmp.gameID,
+				PlayerScore: tmp.player2.score,
+				player: true
+			}).then(resp => {
+				console.log("player2: " + resp.data);
+			}).catch(e => {
+				console.log("sesco error: " + e);
+			});
+
 		}
 		else if (tmp.ball.x - tmp.ball.radius > this.global.canvasWidth) {
 			tmp.player1.score += 1;
+
+			console.log(tmp.gameID);
+			axios.post('http://localhost:3000/game/update_game', {
+				gameId: tmp.gameID,
+				PlayerScore: tmp.player1.score,
+				player: false
+			}).then(resp => {
+				console.log("player1: " + resp.data);
+			}).catch(e => {
+				console.log("sesco error: " + e);
+			});
+
 		}
 
 		if (tmp.ball.x + tmp.ball.radius < 0 || tmp.ball.x - tmp.ball.radius > this.global.canvasWidth) {
