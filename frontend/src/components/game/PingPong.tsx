@@ -200,7 +200,7 @@ function PingPong(): JSX.Element
 			<>
 				<CountDown />
 				{forceChange ? <ResultPrompt /> : null}
-				<div className="container">
+				<div className="container_sesco">
 					<Score s1={score1} s2={score2} />
 					<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />
 				</div>
