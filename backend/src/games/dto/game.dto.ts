@@ -17,5 +17,7 @@ export class UpdateScoreDto{
 
 export class EndGameDto{
     public gameId: number;
+    public firstPlayerScore : number;
+    public secondPlayerScore : number;
     public finishedAt : Date;
 }

@@ -33,7 +33,7 @@ export class GamesService {
 		const game = await this.findGameByid(gameID);
 		if (!game)
 			throw new HttpException({ message: 'Game Not Found' }, HttpStatus.BAD_REQUEST);
-		if ( playerNum === false)
+		if (playerNum === false)
 			game.firstPlayerScore = score;
 		else if (playerNum === true)
 			game.SecondPlayerScore = score;
@@ -42,6 +42,8 @@ export class GamesService {
 
 	async endGame(end: EndGameDto){
         const game = await this.findGameByid(end.gameId);
+		game.firstPlayerScore = end.firstPlayerScore;
+		game.SecondPlayerScore = end.secondPlayerScore;
         game.isPlaying = false;
         game.finishedAt = end.finishedAt;
         return this.GameRepo.update(end.gameId, game);

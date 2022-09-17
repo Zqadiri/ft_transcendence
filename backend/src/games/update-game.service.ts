@@ -64,7 +64,9 @@ export class UpdateGameService {
 		initialData.modifiedAt = new Date();
 		initialData.socketRoom = room;
 
-		axios.post('http://localhost:3000/game/new_game', initialData).catch(e => {
+		axios.post('http://localhost:3000/game/new_game', initialData).then(resp => {
+			tmp.gameID = resp.data.id;
+		}).catch(e => {
 			console.log("sesco error: " + e);
 		});
 
@@ -76,6 +78,8 @@ export class UpdateGameService {
 		if (score1 === 5 || score2 === 5)
 		{
 			axios.post('http://localhost:3000/game/end_game', {
+				firstPlayerScore: score1,
+				secondPlayerScore: score2,
 				gameId: this.gameCoordinates.get(room).gameID,
 				finishedAt: new Date()
 			}).catch(e => {
@@ -143,7 +147,6 @@ export class UpdateGameService {
 		else if (tmp.ball.x - tmp.ball.radius > this.global.canvasWidth) {
 			tmp.player1.score += 1;
 
-			console.log(tmp.gameID);
 			axios.post('http://localhost:3000/game/update_game', {
 				gameId: tmp.gameID,
 				PlayerScore: tmp.player1.score,

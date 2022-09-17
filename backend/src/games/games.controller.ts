@@ -18,7 +18,6 @@ export class GameController {
 	@ApiOperation({ summary: 'Create a new game' })
 	@Post('/new_game')
 	async createNewGame(@Body() newGame: CreateGameDto) {
-		console.log(newGame);
 		return this.gameServ.createGame(newGame);
 	}
 	// false === FirstPlayer and true === SecondPlayer
@@ -31,7 +30,6 @@ export class GameController {
 	@ApiOperation({ summary: 'end game' })
 	@Post('/end_game')
 	async endGame(@Body() log: EndGameDto) {
-		console.log("finished at: " + log.finishedAt);
 		return this.gameServ.endGame(log);
 	}
 
