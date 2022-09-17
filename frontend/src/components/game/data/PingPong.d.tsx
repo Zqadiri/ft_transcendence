@@ -33,7 +33,7 @@ type Global = {
 	context: CanvasRenderingContext2D | null,
 	setScore1?: React.Dispatch<React.SetStateAction<number>>,
 	setScore2?: React.Dispatch<React.SetStateAction<number>>,
-	setDisappear?: React.Dispatch<React.SetStateAction<boolean>>,
+	setCountdownDisappear?: React.Dispatch<React.SetStateAction<boolean>>,
 	setForceChange?: React.Dispatch<React.SetStateAction<boolean>>,
 	navigate?: NavigateFunction,
 	gameStarted: boolean,

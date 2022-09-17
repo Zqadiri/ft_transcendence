@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { GameRepository } from './game.repository';
 import { ApiOperation } from '@nestjs/swagger';
 import { CreateGameDto, EndGameDto, UpdateScoreDto } from './dto/game.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('game')
 export class GameController {
@@ -12,7 +13,8 @@ export class GameController {
 	constructor(
 		@InjectRepository(Game)
 		private readonly gameRepo: GameRepository,
-		private readonly gameServ: GamesService
+		private readonly gameServ: GamesService,
+		private readonly userServ: UsersService
 	) { }
 
 	@ApiOperation({ summary: 'Create a new game' })
@@ -30,7 +32,10 @@ export class GameController {
 	@ApiOperation({ summary: 'end game' })
 	@Post('/end_game')
 	async endGame(@Body() log: EndGameDto) {
+		const game: Game = await this.gameServ.findGameByid(log.gameId);
+		await this.gameServ.endGame(log);
+		await this.userServ.calculateRank(Number(game.firstPlayerID), game.firstPlayerScore);
+		await this.userServ.calculateRank(Number(game.secondPlayerID), game.secondPlayerScore);
 		return this.gameServ.endGame(log);
 	}
-
 }

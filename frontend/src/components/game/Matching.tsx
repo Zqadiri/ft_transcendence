@@ -7,10 +7,10 @@ import { ReactComponent as GameTheme01 } from '../../img/theme#01.svg';
 import { ReactComponent as GameTheme02 } from '../../img/theme#02.svg';
 import { global } from "./data/PingPong.d"
 
-function	GameRules(): JSX.Element {
+function GameRules(): JSX.Element {
 	return (
 		<section className="game-rules">
-				<h2>Game Rules</h2>
+			<h2>Game Rules</h2>
 			<div className="rules-list">
 				<ol>
 					<li><span>(1)</span> To win you need to score 10 balls against your opponent.</li>
@@ -24,8 +24,25 @@ function	GameRules(): JSX.Element {
 	);
 }
 
-function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): JSX.Element {
+const getCookie = (name: string): string | null => {
+	const nameLenPlus = (name.length + 1);
+	return document.cookie
+		.split(';')
+		.map(c => c.trim())
+		.filter(cookie => {
+			return cookie.substring(0, nameLenPlus) === `${name}=`;
+		})
+		.map(cookie => {
+			return decodeURIComponent(cookie.substring(nameLenPlus));
+		})[0] || null;
+}
+
+function Selection({ setSwitchContent }: InferProps<typeof Selection.propTypes>): JSX.Element {
 	const [activeTheme, setActiveTheme] = useState("none");
+
+	const userID: any = getCookie("id");
+	console.log(userID);
+
 	const joinRoom = ():void =>
 	{
 		if (activeTheme !== "none")
@@ -35,11 +52,12 @@ function	Selection({setSwitchContent}: InferProps<typeof Selection.propTypes>): 
 			global.switchContent = false;
 		}
 		if (activeTheme === "theme1")
-			global.socket.emit("joinTheme1");
+			global.socket.emit("joinTheme1", userID);
 		else if (activeTheme === "theme2")
-			global.socket.emit("joinTheme2");
+			global.socket.emit("joinTheme2", userID);
 		global.theme = activeTheme;
 	}
+
 	return (
 		<>
 			<div className="matching-container" >

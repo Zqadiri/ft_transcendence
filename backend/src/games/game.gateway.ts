@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayDisconnect, OnGatewayConnection } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { GameData } from "./game.interface"
 import { UpdateGameService } from './update-game.service';
 
 @WebSocketGateway({
@@ -16,6 +15,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	private	roomCounter1: number;
 	private	themeTwoUsers: string[] = [];
 	private	roomCounter2: number;
+	private	themeOneUserID: string;
+	private	themeTwoUserID: string;
 
 	@WebSocketServer()
 	server: Server;
@@ -45,7 +46,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	@SubscribeMessage("joinTheme1")
-	handleJoinTheme1(client: Socket): void {
+	handleJoinTheme1(client: Socket, userID: string): void {
 		let roomName: string = "Room #" + this.roomCounter1;
 
 		this.themeOneUsers.push(client.id);
@@ -54,15 +55,18 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 		if (this.themeOneUsers.length === 2)
 		{
 			this.roomCounter1 = (this.roomCounter1 + 1) % 1000000000;
-			this.updateGame.create(roomName, "theme01", this.themeOneUsers[0], this.themeOneUsers[1]);
+			this.updateGame.initializeServerObject(this.server);
+			this.updateGame.create(roomName, "theme01", this.themeOneUsers[0], this.themeOneUsers[1], this.themeOneUserID, userID);
 			this.themeOneUsers.splice(0, 2);
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
+		else
+			this.themeOneUserID = userID;
 		this.logger.log(client.id + " joined Theme 1 & roomName " + roomName);
 	}
 
 	@SubscribeMessage("joinTheme2")
-	handleJoinTheme2(client: Socket): void {
+	handleJoinTheme2(client: Socket, userID: string): void {
 		let roomName: string = "Room #" + this.roomCounter2;
 
 		this.themeTwoUsers.push(client.id);
@@ -73,12 +77,16 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 			this.roomCounter2++;
 			if (this.roomCounter2 > 2000000000)
 				this.roomCounter2 = 1000000000;
-			this.updateGame.create(roomName, "theme02", this.themeTwoUsers[0], this.themeTwoUsers[1]);
+			this.updateGame.initializeServerObject(this.server);
+			this.updateGame.create(roomName, "theme02", this.themeTwoUsers[0], this.themeTwoUsers[1], this.themeTwoUserID, userID);
 			this.themeTwoUsers.splice(0, 2);
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
+		else
+			this.themeTwoUserID = userID;
 		this.logger.log(client.id + " joined Theme 2 & roomName " + roomName);
 	}
+
 	@SubscribeMessage("joinLiveGame")
 	handleJoinLiveGame(client: Socket, roomName: string): void {
 		client.emit("joinedRoom", roomName, 3);
@@ -88,8 +96,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 
 
 	@SubscribeMessage("gameIsStarted")
-	handleExchangeData(client: Socket, roomName: string): void {
-		this.updateGame.initializeServerObject(this.server);
+	handleGameIsStarted(client: Socket, roomName: string): void {
 		this.updateGame.sendDataToFrontend(roomName);
 	}
 

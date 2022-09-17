@@ -56,11 +56,11 @@ const setUserData = (data: GameData): void => {
 
 function CountDown(): JSX.Element {
 	
-	const [disappear, setDesppear] = useState(false);
+	const [countdownDisappear, setCountdownDisappear] = useState(false);
 
-	global.setDisappear = setDesppear;
+	global.setCountdownDisappear = setCountdownDisappear;
 	return (
-		<section className={`${disappear ? "count-down-disabled" : "count-down"}`}>
+		<section className={`${countdownDisappear ? "count-down-disabled" : "count-down"}`}>
 			 <div className="number">
 				<h2>3</h2>
 			</div>
@@ -84,8 +84,9 @@ const game = (current: HTMLCanvasElement | null) => {
 			if (global.playerId === 1)
 			{
 				setTimeout(() => {
-					global.setDisappear?.(true);
-					global.socket.emit("gameIsStarted", global.roomName);
+					global.setCountdownDisappear?.(true);
+					if (global.winnerId === 0)
+						global.socket.emit("gameIsStarted", global.roomName);
 				}, 3000);
 				current.addEventListener("mousemove", (event: MouseEvent) => {
 					let rect = current.getBoundingClientRect();
@@ -96,7 +97,7 @@ const game = (current: HTMLCanvasElement | null) => {
 			else if (global.playerId === 2)
 			{
 				setTimeout(() => {
-					global.setDisappear?.(true);
+					global.setCountdownDisappear?.(true);
 				}, 3000);
 				current.addEventListener("mousemove", (event: MouseEvent) => {
 					let rect = current.getBoundingClientRect();
@@ -197,8 +198,7 @@ function PingPong(): JSX.Element
 	{
 		return (
 			<>
-				<CountDown />
-				{forceChange ? <ResultPrompt /> : null}
+				{forceChange ? <ResultPrompt /> : <CountDown />}
 				<div className="container_sesco">
 					<Score s1={score1} s2={score2} />
 					<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />

@@ -40,6 +40,9 @@ export class User{
 	@Column({default: 0})
 	level: number;
 
+	@Column({default: 0})
+	xp: number;
+
 	@Column({default: 'Beginner'})
 	rank: string;
 

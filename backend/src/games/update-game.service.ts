@@ -20,17 +20,19 @@ export class UpdateGameService {
 		this.server = server;
 	}
 
-	create(room: string, theme: string, player1Id: string, player2Id: string)
+	create(room: string, theme: string, player1Id: string, player2Id: string, firstUserID: string, secondUserID: string)
 	{
 		const tmp: GameCoor = {
 			player1: {
-				id: player1Id,
+				socketId: player1Id,
+				userId: Number(firstUserID),
 				x: 0,
 				y: this.global.canvasHeight/2 - this.global.paddleHeight/2,
 				score: 0
 			},
 			player2: {
-				id: player2Id,
+				socketId: player2Id,
+				userId: Number(secondUserID),
 				x: this.global.canvasWidth - this.global.paddleWidth,
 				y: this.global.canvasHeight/2 - this.global.paddleHeight/2,
 				score: 0
@@ -58,8 +60,8 @@ export class UpdateGameService {
 		let initialData = new CreateGameDto();
 
 		initialData.isPlaying = true;
-		initialData.firstPlayerID = tmp.player1.id;
-		initialData.secondPlayerID = tmp.player2.id;
+		initialData.firstPlayerID = firstUserID;
+		initialData.secondPlayerID = secondUserID;
 		initialData.theme = theme;
 		initialData.modifiedAt = new Date();
 		initialData.socketRoom = room;
@@ -75,7 +77,7 @@ export class UpdateGameService {
 
 	#checkForTheWinner(score1: number, score2: number, room: string): void
 	{
-		if (score1 === 5 || score2 === 5)
+		if (score1 === 10 || score2 === 10)
 		{
 			axios.post('http://localhost:3000/game/end_game', {
 				firstPlayerScore: score1,
@@ -86,9 +88,9 @@ export class UpdateGameService {
 				console.log("sesco error: " + e);
 			});
 		
-			if (score1 == 5)
+			if (score1 == 10)
 				this.server.to(room).emit("theWinner", 1);
-			else if (score2 == 5)
+			else if (score2 == 10)
 				this.server.to(room).emit("theWinner", 2);
 
 			clearInterval(this.gameCoordinates.get(room).interval);
@@ -106,11 +108,13 @@ export class UpdateGameService {
 				this.#updateBallPosition(room);
 			const		gameCoordinates: GameData = {
 				p1: {
+					userId: this.gameCoordinates.get(room).player1.userId,
 					x: this.gameCoordinates.get(room).player1.x,
 					y: this.gameCoordinates.get(room).player1.y,
 					score: this.gameCoordinates.get(room).player1.score
 				},
 				p2: {
+					userId: this.gameCoordinates.get(room).player2.userId,
 					x: this.gameCoordinates.get(room).player2.x,
 					y: this.gameCoordinates.get(room).player2.y,
 					score: this.gameCoordinates.get(room).player2.score
@@ -246,14 +250,14 @@ export class UpdateGameService {
 	OnePlayerDisconnect(playerId: string): void
 	{
 		for (const [key, value] of this.gameCoordinates) {
-			if (value.player1.id === playerId)
+			if (value.player1.socketId === playerId)
 			{
-				this.#checkForTheWinner(value.player1.score, 5, key);
+				this.#checkForTheWinner(value.player1.score, 10, key);
 				break ;
 			}
-			else if (value.player2.id === playerId)
+			else if (value.player2.socketId === playerId)
 			{
-				this.#checkForTheWinner(5, value.player2.score, key);
+				this.#checkForTheWinner(10, value.player2.score, key);
 				break ;
 			}
 		}

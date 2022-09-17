@@ -90,13 +90,29 @@ export class UsersService {
 			return this.userRepository.remove(user);
 		}
 
-		async calculateRank(userID: number){
-			const user = await this.getUserById(userID);
+		async calculateRank(userID: number, score: number){
+			const user: User = await this.getUserById(userID);
 
-			console.log('think about how to calculate the rank');
 			if (!user)
 				throw new HttpException({ message: 'User Not Found'}, HttpStatus.BAD_REQUEST);
-			return user;
+
+			if (user.level === 0)
+			{
+				user.xp += 150;
+				user.level = 1;
+			}
+			else if (score === 10)
+			{
+				user.xp += 150;
+				user.wins += 1;
+				user.level += 1;
+				if ((150 * user.level) * user.level < user.xp)
+					user.level -= 1;
+			}
+			else if (score < 10)
+				user.losses += 1;
+
+			return this.userRepository.update(userID, user);
 		}
 
 		async getUserById(id: number): Promise<User> {

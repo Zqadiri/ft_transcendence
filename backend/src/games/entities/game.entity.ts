@@ -23,7 +23,7 @@ export class Game{
 	firstPlayerScore: number;
 
 	@Column({default: 0})
-	SecondPlayerScore: number;
+	secondPlayerScore: number;
 
 	@Column({
 		enum: ['default', 'power-up', 'double'],

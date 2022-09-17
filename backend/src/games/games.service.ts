@@ -36,16 +36,18 @@ export class GamesService {
 		if (playerNum === false)
 			game.firstPlayerScore = score;
 		else if (playerNum === true)
-			game.SecondPlayerScore = score;
+			game.secondPlayerScore = score;
 		return this.GameRepo.update(gameID, game);
 	}
 
 	async endGame(end: EndGameDto){
         const game = await this.findGameByid(end.gameId);
+	
 		game.firstPlayerScore = end.firstPlayerScore;
-		game.SecondPlayerScore = end.secondPlayerScore;
+		game.secondPlayerScore = end.secondPlayerScore;
         game.isPlaying = false;
         game.finishedAt = end.finishedAt;
+
         return this.GameRepo.update(end.gameId, game);
     }
 
