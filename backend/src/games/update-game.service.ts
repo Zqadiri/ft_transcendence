@@ -133,6 +133,14 @@ export class UpdateGameService {
 		this.gameCoordinates.set(room, tmp);
 	}
 
+	initializeScorePanel(room: string): void
+	{
+		this.server.to(room).emit("scorePanelData", {
+			firstPlayerId: this.gameCoordinates.get(room).player1.userId,
+			secondPlayerId: this.gameCoordinates.get(room).player2.userId,
+		});
+	}
+
 	 // false === FirstPlayer and true === SecondPlayer
 	#updateScore(tmp: GameCoor): GameCoor
 	{

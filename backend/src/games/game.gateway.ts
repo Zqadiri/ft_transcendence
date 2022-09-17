@@ -100,6 +100,11 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 		this.updateGame.sendDataToFrontend(roomName);
 	}
 
+	@SubscribeMessage("initializeScorePanel")
+	handleInitializeScorePanel(client: Socket, roomName: string): void {
+		this.updateGame.initializeScorePanel(roomName);
+	}
+
 	@SubscribeMessage("updatePaddlePosition")
 	handleUpdatePaddlePosition(client: Socket, {roomName, playerId, y}): void {
 		this.updateGame.updatePaddlePosition(y, roomName, playerId);

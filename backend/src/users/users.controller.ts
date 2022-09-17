@@ -1,5 +1,5 @@
 import { Controller, ClassSerializerInterceptor,Get, UnauthorizedException,
-	BadRequestException, Param, HttpCode, UseGuards, Body, Res } from '@nestjs/common';
+	BadRequestException, Param, HttpCode, UseGuards, Body, Res, Query } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { Post, Req } from '@nestjs/common';
@@ -136,9 +136,22 @@ export class UsersController {
 		description: 'The found record',
 		type: User,
 	})
-	@Get(':id')
-	getUserData(@Param('id') id : number){
-		return this.usersService.getUserById(id);
-	}
+
+	@ApiOperation({ summary: 'Get user data by id' })
+    @ApiResponse({
+        status: 200,
+        description: 'The found record',
+        type: User,
+    })
+    @Get()
+    async getUserData(@Query() query: { id: number }){
+	 	console.log("the id we received " + query.id);
+        return await this.usersService.getUserById(query.id);
+    }  
+	// @Get(':id')
+	// getUserData(@Param('id') id : number){
+	// 	console.log("the id we received" + id);
+	// 	return this.usersService.getUserById(id);
+	// }
 
 }

@@ -83,10 +83,11 @@ const game = (current: HTMLCanvasElement | null) => {
 		{
 			if (global.playerId === 1)
 			{
+				global.socket.emit("initializeScorePanel", global.roomName);
 				setTimeout(() => {
-					global.setCountdownDisappear?.(true);
-					if (global.winnerId === 0)
-						global.socket.emit("gameIsStarted", global.roomName);
+				global.setCountdownDisappear?.(true);
+				if (global.winnerId === 0)
+					global.socket.emit("gameIsStarted", global.roomName);
 				}, 3000);
 				current.addEventListener("mousemove", (event: MouseEvent) => {
 					let rect = current.getBoundingClientRect();
@@ -96,6 +97,7 @@ const game = (current: HTMLCanvasElement | null) => {
 			}
 			else if (global.playerId === 2)
 			{
+				global.socket.emit("initializeScorePanel", global.roomName);
 				setTimeout(() => {
 					global.setCountdownDisappear?.(true);
 				}, 3000);
@@ -160,10 +162,14 @@ function ResultPrompt(): JSX.Element {
 
 function PingPong(): JSX.Element
 {
-	const navigate: NavigateFunction = useNavigate();
-	const [score1, setScore1] = useState(global.player1Score);
-	const [score2, setScore2] = useState(global.player2Score);
-	const [forceChange, setForceChange] = useState(false);
+	const	navigate: NavigateFunction = useNavigate();
+	const	[score1, setScore1] = useState(global.player1Score);
+	const	[score2, setScore2] = useState(global.player2Score);
+	const	[forceChange, setForceChange] = useState(false);
+	let		[playersUniqueIds, setPlayersUniqueIds] = useState<{firstPlayerId: number, secondPlayerId: number}>({
+		firstPlayerId: 0,
+		secondPlayerId: 0
+	});
 
 	global.setScore1 = setScore1;
 	global.setScore2 = setScore2;
@@ -175,8 +181,14 @@ function PingPong(): JSX.Element
 			setUserData(data);
 			render();
 		});
+
 		global.socket.off("theWinner").on("theWinner", (theWinner) => {
 			setTheWinner(theWinner);
+		});
+
+		global.socket.off("scorePanelData").on("scorePanelData", (scorePanelData) => {
+			setPlayersUniqueIds(scorePanelData);
+			console.log("scorePanelData is fired: " + scorePanelData.firstPlayerId + " " + scorePanelData.secondPlayerId);
 		});
 
 	});
@@ -200,7 +212,11 @@ function PingPong(): JSX.Element
 			<>
 				{forceChange ? <ResultPrompt /> : <CountDown />}
 				<div className="container_sesco">
-					<Score s1={score1} s2={score2} />
+					<Score s1={score1} s2={score2} playersID={(() => {
+						console.log("state changed?")
+						console.log({playersUniqueIds});
+						return playersUniqueIds;
+					})()} />
 					<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />
 				</div>
 			</>
