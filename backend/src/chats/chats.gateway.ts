@@ -39,10 +39,11 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
 
   @SubscribeMessage('saveChatRoom')
   async create(client: Socket, @MessageBody() createChatDto: ChatLogsDto) {
-
     await this.chatLogsService.savechat(createChatDto);
     // emit the message just to specific room
-    this.server.to(createChatDto.roomName).emit('messageToRoom', createChatDto);
+    let avt : string;
+    avt = parse(client.handshake.headers.cookie).avatar;
+    this.server.to(createChatDto.roomName).emit('messageToRoom', {...createChatDto, avatar: avt});
   }
 
   @SubscribeMessage('socketJoinRoom')
