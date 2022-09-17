@@ -66,9 +66,6 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     //emit to specific client
     client.emit('joinedDm', dm.name);
   }
-
-
-
   @SubscribeMessage('socketleaveRoom')
   async handleLeaveRoom(@ConnectedSocket() client: Socket, roomName: string)
   {
