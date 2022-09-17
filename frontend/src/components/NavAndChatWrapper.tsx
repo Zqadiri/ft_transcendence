@@ -15,7 +15,12 @@ import ProtectedRoom from "./ProtectedRoom";
 import GameTabs from "./game/Game"
 import PingPong from "./game/PingPong"
 
-const chatSocket = io("/chatNamespace");
+console.log("Global console.log()");
+
+const chatSocket = (() => {
+	console.log("connecting to chatNamespace...");
+	return io("/chatNamespace", { forceNew: true });
+})();
 
 interface ChatMessage {
 	userID: string, avatar: string | null | undefined, message: string
@@ -74,8 +79,9 @@ const NavAndChatWrapper = () => {
 	const setActiveChat = (newActiveChat: any) => {
 		if (newActiveChat) {
 			// setActiveChatMessages([]);
+			console.log("chatsokcet.emit('getroommessages')");
 			chatSocket.emit("GetRoomMessages", newActiveChat.db_chat_name);
-			axios.get("/chat/userStats/" + newActiveChat).then(res => {
+			axios.get("/chat/userStats/" + newActiveChat.db_chat_name).then(res => {
 				// let users: any = {};
 				// res.data.forEach((el: any) => {
 				// 	users[el.db_user_username] = el.db_user_avatar;
@@ -176,11 +182,16 @@ const NavAndChatWrapper = () => {
 			console.log("connected");
 		});
 
+		chatSocket.on("connect_error", (err) => {
+			console.log(`connect_error due to ${err.message}`);
+		});
+
 		chatSocket.on('disconnect', () => {
 			console.log("disconnected");
 		});
 
 		chatSocket.on('RoomMessages', (_msgs) => {
+			console.log("received room messages... setting them");
 			setActiveChatMessages(_msgs);
 		})
 
@@ -579,7 +590,7 @@ const NavAndChatWrapper = () => {
 								<input type="submit" hidden />
 								<div className="submit flex-center" ref={submitRef} onClick={() => {
 									if (textMessage.trim() != "") {
-										chatSocket.emit("saveChatRoom", { userID: cookies.get("name"), roomName: activeChat, message: textMessage})
+										chatSocket.emit("saveChatRoom", { userID: cookies.get("name"), roomName: activeChat.db_chat_name, message: textMessage})
 										setTextMessage("");
 									}
 									textAreaRef.current?.focus();
