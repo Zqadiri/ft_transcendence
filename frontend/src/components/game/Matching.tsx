@@ -41,7 +41,6 @@ function Selection({ setSwitchContent }: InferProps<typeof Selection.propTypes>)
 	const [activeTheme, setActiveTheme] = useState("none");
 
 	const userID: any = getCookie("id");
-	console.log(userID);
 
 	const joinRoom = ():void =>
 	{

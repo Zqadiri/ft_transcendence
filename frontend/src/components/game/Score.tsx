@@ -7,7 +7,7 @@ function Score
 	{s1, s2, playersID}:
 	{s1: number, s2: number, playersID: {firstPlayerId: number, secondPlayerId: number}} ): JSX.Element
 {	
-	let		[playerData, setPlayerData] = useState<{avatar: string, username: string}[]>([
+	const	[playerData, setPlayerData] = useState<{avatar: string, username: string}[]>([
 		{
 			avatar: "",
 			username: "loading"
@@ -21,19 +21,12 @@ function Score
 	useEffect(() => {
 		axios.get("/users?id=" + playersID.firstPlayerId).then(resp => {
 			setPlayerData(x => [{avatar: resp.data.avatar, username: resp.data.username}, x[1]]);
-			// playerData[0].avatar = resp.data.avatar;
-			// playerData[0].username = resp.data.username;
-			console.log(resp.data);
 		}).catch(e => {
 			console.log("sesco error: " + e);
 		});
 
 		axios.get("/users?id=" + playersID.secondPlayerId).then(resp => {
 			setPlayerData(x => [x[0], {avatar: resp.data.avatar, username: resp.data.username}]);
-			// playerData[1].avatar = resp.data.avatar;
-			// playerData[1].username = resp.data.username;
-			// setDataLoaded(true);
-			console.log(resp.data);
 		}).catch(e => {
 			console.log("sesco error: " + e);
 		});
