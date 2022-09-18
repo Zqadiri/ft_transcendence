@@ -8,6 +8,7 @@ import * as bcrypt from 'bcryptjs';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { useImperativeHandle } from 'react';
 
 
 // import { Cron, CronExpression } from '@nestjs/schedule';
@@ -542,6 +543,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
 
     async BanOrMuteUser(administrator: number, BanOrMuteMembersDto: BanOrMuteMembersDto)
     {
+      const user_data = [];
       const user = await this.findUser(BanOrMuteMembersDto.userID);
 
       if (!user){
@@ -572,6 +574,9 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           {
             check.MutedAndBannedID.push({action: BanOrMuteMembersDto.action, userID: user.id, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
             await this.Chatrepository.save(check);
+
+             user_data.push({RoomID: BanOrMuteMembersDto.RoomID, userID: user.id, releasetime: (Date.now() + BanOrMuteMembersDto.duration * 1000), action: BanOrMuteMembersDto.action});
+             return (user_data);
           }
           else
             throw new ForbiddenException({code: 'Forbidden', message: `this user is already muted/banned for a specific time!!`})
@@ -585,6 +590,8 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
             {
               checkadmin.MutedAndBannedID.push({action: BanOrMuteMembersDto.action, userID: user.id, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
               await this.Chatrepository.save(checkadmin);
+               user_data.push({RoomID: BanOrMuteMembersDto.RoomID, userID: user.id, releasetime: (Date.now() + BanOrMuteMembersDto.duration * 1000), action: BanOrMuteMembersDto.action});
+               return (user_data);
             }
             else
               throw new ForbiddenException({code: 'Forbidden', message: `this user is already muted/banned for a specific time!!`})
