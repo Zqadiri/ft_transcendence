@@ -268,25 +268,22 @@
 }
 
 /* Canvas & Score Section */
+.game_canvas_parent_container {
+	min-height: 80vh;
+}
 
 .container_sesco {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+	margin: 50px 0px;
 }
 
 .container_sesco .score-panel {
+	align-self: stretch;
 	font-weight: bold;
-	padding: 10px;
-	overflow: hidden;
 }
 
 .container_sesco .score-panel .first-player,
 .container_sesco .score-panel .the-score,
 .container_sesco .score-panel .second-player {
-	width: 33.33%;
-	float: left;
 	text-align: center
 }
 
@@ -298,11 +295,11 @@
 	border-radius: 100%;
 	border: 2px solid #efefef;
 	outline: 2px solid #F66B0E;
-	margin: auto;
 }
 
 .container_sesco .score-panel .first-player .prof-picture img,
 .container_sesco .score-panel .second-player .prof-picture img {
+	border-radius: 100%;
 	width: 100%;
 	height: 100%;
 }
@@ -310,27 +307,26 @@
 .container_sesco .score-panel .first-player h3,
 .container_sesco .score-panel .second-player h3 {
 	font-size: 14px;
-	padding: 12px 0 5px;
+	padding: 12px 0px 5px 0px;
 	color: #112B3C
 }
 
 .container_sesco .score-panel .first-player > *,
 .container_sesco .score-panel .second-player > * {
 	width: 100%;
-	overflow: hidden;
 }
 
 .container_sesco .score-panel .the-score {
 	font-weight: bold;
 	font-size: 50px;
-	padding-top: 10px;
+	width: 33.33%;
 	color: #F66B0E
 }
 
-.container_sesco .score-panel .the-score div {
+/* .container_sesco .score-panel .the-score div {
 	width: 33.33%;
 	float: left;
-}
+} */
 
 .container_sesco canvas {
 	border-radius: 20px;
@@ -461,24 +457,18 @@
 
 @media only screen and (max-width: 1050px) {
 	.container_sesco {
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%) scale(80%);
+		transform: scale(80%);
 	}
 }
 
 @media only screen and (max-width: 817px) {
 	.container_sesco {
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%) scale(60%);
+		transform: scale(60%);
 	}
 }
 
 @media only screen and (max-width: 600px) {
 	.container_sesco {
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%) scale(48%);
+		transform: scale(48%);
 	}
 }
