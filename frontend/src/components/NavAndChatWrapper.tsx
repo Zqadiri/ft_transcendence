@@ -225,9 +225,9 @@ const NavAndChatWrapper = () => {
 			setActiveChatMessages((x: any) => [...x, _msg]);
 		})
 
-		chatSocket.on("Muted", (data: {userID: number}) => {
+		chatSocket.on("Muted", (data: {userID: number, RoomID: string}) => {
 			console.log({muteddata: data})
-			if (data.userID.toString() === cookies.get("id")) {
+			if (data.userID.toString() === cookies.get("id") && activeChat?.db_chat_name === data.RoomID) {
 				setActiveChat(activeChat);
 				setActiveTab("chat");
 			}
