@@ -211,13 +211,11 @@ function PingPong(): JSX.Element
 		return (
 			<>
 				{forceChange ? <ResultPrompt /> : <CountDown />}
-				<div className="container_sesco">
-					<Score s1={score1} s2={score2} playersID={(() => {
-						console.log("state changed?")
-						console.log({playersUniqueIds});
-						return playersUniqueIds;
-					})()} />
-					<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />
+				<div className="game_canvas_parent_container flex-center-column">
+					<div className="container_sesco flex-center-column flex-gap20">
+						<Score s1={score1} s2={score2} playersID={playersUniqueIds} />
+						<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />
+					</div>
 				</div>
 			</>
 		);

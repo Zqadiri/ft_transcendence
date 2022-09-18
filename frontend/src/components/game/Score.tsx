@@ -33,14 +33,14 @@ function Score
 	}, [playersID]);
 
 	return (
-		<div className="score-panel" >
+		<div className="score-panel flex-gap20 flex-jc-se flex-ai-cr" >
 			<div className="first-player">
 				<div className="prof-picture">
 					<img src={playerData[0].avatar} alt={playerData[0].username} />
 				</div>
 				<h3>{playerData[0].username}</h3>
 			</div>
-			<div className="the-score">
+			<div className="the-score flex-jc-sb flex-ai-cr ">
 				<div>{s1}</div>
 				<div>-</div>
 				<div>{s2}</div>
