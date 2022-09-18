@@ -85,6 +85,8 @@ export class UpdateGameService {
 				secondPlayerScore: score2,
 				gameId: this.gameCoordinates.get(room).gameID,
 				finishedAt: new Date()
+			}).then(() => {
+				this.server.local.emit("gameEnded");
 			}).catch(e => {
 				console.log("sesco error: " + e);
 			});
@@ -96,7 +98,6 @@ export class UpdateGameService {
 
 			clearInterval(this.gameCoordinates.get(room).interval);
 			this.gameCoordinates.delete(room);
-			this.server.local.emit("gameEnded");
 		}
 	}
 

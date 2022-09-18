@@ -18,9 +18,7 @@ const resetGame = (): void => {
 	global.player2Score = 0;
 
 	global.ballX = global.canvasWidth/2;
-	console.log(global.canvasWidth);
 	global.ballY = global.canvasHeight/2;
-	console.log(global.canvasHeight);
 	global.gameStarted = false;
 	global.roomName = "none"
 	global.playerId = 0;

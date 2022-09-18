@@ -66,49 +66,38 @@ export function	LiveGames(): JSX.Element
 		});
 	}
 
+	const getGameData = async () => {
+		try {
+			let gameResp = await axios.get('/game/live');
+			gameResp.data.map(async (game: Game) => {
+				let userOneResp = await axios.get("/users?id=" + game.firstPlayerID);
+				let userTwoResp = await axios.get("/users?id=" + game.secondPlayerID);
+				setLiveGamesData(current => [...current,
+					{
+						user1: userOneResp.data.username,
+						user2: userTwoResp.data.username,
+						score1: game.firstPlayerScore,
+						score2: game.secondPlayerScore,
+						avatar1: userOneResp.data.avatar,
+						avatar2: userTwoResp.data.avatar,
+						socketRoom: game.socketRoom,
+						theme: game.theme,
+						id: game.id
+					}
+				]);
+				setNoLiveGames(false);
+			});
+		} catch(e) {
+			setNoLiveGames(true);
+			console.log("sesco error: " + e)
+		}	
+	}
+
 	useEffect(() => {
 
 		global.socket.connect();
 
-		console.log("i've been called");
-		axios.get('/game/live')
-		.then((gameResp: AxiosResponse) => {
-	
-			gameResp.data.map((game: Game) => {
-				axios.get("/users?id=" + game.firstPlayerID)
-				.then(userResp => {
-					setLiveGamesData(current => [...current,
-						{
-						user1: userResp.data.username,
-						user2: "",
-						score1: game.firstPlayerScore,
-						score2: game.secondPlayerScore,
-						avatar1: userResp.data.avatar,
-						avatar2: "",
-						socketRoom: game.socketRoom,
-						theme: game.theme,
-						id: game.id
-						}
-					]);
-				})
-				.catch(e => console.log("sesco error: " + e));
-
-				axios.get("/users?id=" + game.secondPlayerID)
-				.then(userResp => {
-					setLiveGamesData(current => {
-						let ret = JSON.parse(JSON.stringify(current));
-						ret[ret.length - 1].user2 = userResp.data.username;
-						ret[ret.length - 1].avatar2 = userResp.data.avatar;
-						return ret;
-					});
-				})
-				.catch(e => console.log("sesco error: " + e));
-			});
-			setNoLiveGames(false);
-		})
-		.catch(() => {
-			setNoLiveGames(true);
-		});
+		getGameData();
 
 		return () => {
 			if (global.secondPlayerExist === false)
