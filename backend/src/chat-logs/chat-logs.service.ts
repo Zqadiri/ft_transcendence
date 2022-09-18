@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ChatLogsDto } from './dto/chat-logs.dto';
@@ -10,6 +10,9 @@ export class ChatLogsService {
 
   @InjectRepository(ChatLogs)
   private readonly ChatLogsrepository: Repository<ChatLogs>;
+
+  @InjectRepository(User)
+  private readonly repo: Repository<User>;
 
   /** simple real time chat functions */
 
@@ -24,7 +27,6 @@ export class ChatLogsService {
     });
 
     return await this.ChatLogsrepository.save(msg);
-
   }
 
   async DisplayRoomMessages(roomName: string)
@@ -44,4 +46,26 @@ export class ChatLogsService {
     return roommessages;
 
   }
+
+  async findUser(userID: string)
+  {
+    // findOneBy - Finds the first entity that matches given FindOptionsWhere.
+    return await this.repo.findOneBy({ username: userID });
+  }
+
+  async FindAvatar(userID: string)
+  {
+    const user = await this.findUser(userID);
+    if (!user){
+      throw new BadRequestException({code: 'invalid username', message: `User with '${userID}' does not exist`})
+    }
+    
+    const av = await this.repo
+    .createQueryBuilder('db_user')
+    .select('db_user.avatar', 'avatar')
+    .where ("db_user.username = :userID", {userID: user.username})
+    .getRawOne()
+    return av;
+  }
+
 }
