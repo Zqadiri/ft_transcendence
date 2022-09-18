@@ -192,26 +192,26 @@ const NavAndChatWrapper = () => {
 		}
 	})
 
-	useEffectOnce(() => {
-		chatSocket.on('connect', () => {
+	useEffect(() => {
+		chatSocket.off('connect').on('connect', () => {
 			console.log("connected");
 		});
 
-		chatSocket.on("connect_error", (err) => {
+		chatSocket.off("connect_error").on("connect_error", (err) => {
 			console.log(`connect_error due to ${err.message}`);
 		});
 
-		chatSocket.on('disconnect', () => {
+		chatSocket.off('disconnect').on('disconnect', () => {
 			console.log("disconnected");
 		});
 
-		chatSocket.on('RoomMessages', (_msgs) => {
+		chatSocket.off('RoomMessages').on('RoomMessages', (_msgs) => {
 			console.log("received room messages... setting them");
 			setActiveChatMessages(_msgs);
 		})
 
 		console.log("listening to joinedRoom");
-		chatSocket.on("joinedRoom", (data) => {
+		chatSocket.off("joinedRoom").on("joinedRoom", (data) => {
 			console.log("joined room...")
 			console.log({data})
 		})
@@ -219,19 +219,18 @@ const NavAndChatWrapper = () => {
 		// socket.to("room").emit("bannedFromRoom", { roomName: "room", releaseTime: })
 
 		console.log("listening to messageToRoom");
-		chatSocket.on('messageToRoom', (_msg) => {
+		chatSocket.off('messageToRoom').on('messageToRoom', (_msg) => {
 			console.log("messageToRoom caught");
 			console.log({_msg})
 			setActiveChatMessages((x: any) => [...x, _msg]);
 		})
 
-		chatSocket.on("Muted", (data: {userID: number, RoomID: string}) => {
-			console.log({muteddata: data})
+		chatSocket.off("Muted").on("Muted", (data: {userID: number, RoomID: string}) => {
+			console.log({muteddata: data, activeChat})
 			if (data.userID.toString() === cookies.get("id") && activeChat?.db_chat_name === data.RoomID) {
 				setActiveChat(activeChat);
 				setActiveTab("chat");
 			}
-
 		})
 
 		return () => {
@@ -246,6 +245,10 @@ const NavAndChatWrapper = () => {
 	useEffectOnce(() => {
 		getAllMyRooms();
 	})
+
+	useEffect(() => {
+		console.log({activeChattttttttttttttttttttttttttt:activeChat})
+	}, [activeChat])
 
 	// useEffectOnce(() => {
 	// 	let int = setInterval(() => {
