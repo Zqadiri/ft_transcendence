@@ -1,6 +1,6 @@
 import PingPong from "./PingPong";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import "../../styles/game-styling.css";
+import "../../styles/game-styling.scss";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useEffect, useRef } from "react";
 import Matching from "./Matching"
