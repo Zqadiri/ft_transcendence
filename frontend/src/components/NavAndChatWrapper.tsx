@@ -22,6 +22,13 @@ const chatSocket = (() => {
 	return io("/chatNamespace", { forceNew: true });
 })();
 
+interface UserStat {
+	id: number,
+	username: string,
+	avatar: string,
+	stat: string,
+}
+
 interface Chat {
 	db_chat_id: number,
 	db_chat_name: string,
@@ -91,10 +98,6 @@ const NavAndChatWrapper = () => {
 			console.log("chatsokcet.emit('getroommessages')");
 			chatSocket.emit("GetRoomMessages", newActiveChat.db_chat_name);
 			axios.get("/chat/userStats/" + newActiveChat.db_chat_name).then(res => {
-				// let users: any = {};
-				// res.data.forEach((el: any) => {
-				// 	users[el.db_user_username] = el.db_user_avatar;
-				// });
 				setActiveChatUsers(res.data);
 			}).catch((err) => {
 	
@@ -484,6 +487,7 @@ const NavAndChatWrapper = () => {
 								<div className="name" onClick={() => setActiveTab("chatinterface")}>{activeChat?.db_chat_name}</div>
 								<div className="users" onClick={() => {
 									setActiveTab("chatinterfaceusers");
+									setActiveChat(activeChat);
 								}}>
 									<i className="fa-solid fa-user"></i>
 								</div>
@@ -506,7 +510,7 @@ const NavAndChatWrapper = () => {
 									)
 								}
 								{
-									activeChatUsers.map(user => {
+									activeChatUsers.map((user: UserStat) => {
 										return <>
 										<div className="user flex-ai-cr flex-jc-sb">
 											<div className="right flex-gap5 flex-ai-cr">
@@ -541,7 +545,13 @@ const NavAndChatWrapper = () => {
 															&& user.stat === "user"
 														}>
 															<div className="iconcontainer" onClick={() => {
-																axios.post("/chat/setUserRoomAsAdmin", )
+																axios.post("/chat/setUserRoomAsAdmin", { RoomID: activeChat?.db_chat_name, userID: user.id }).then((res) => {
+																	console.log({chatSetUserRoomAsAdmin: res});
+																	setActiveChat(activeChat);
+																}).catch((err) => {
+																	console.log({chatSetUserRoomAsAdminERROR: err});
+																	setActiveChat(activeChat);
+																})
 															}}>
 																<i className="fa-solid fa-shield flex-center addadmin"><div className="plus">+</div></i>
 															</div>
