@@ -45,7 +45,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
 
     const findavatar = await this.chatLogsService.FindAvatar(createChatDto.userID);
 
-    this.server.to(createChatDto.roomName).emit('messageToRoom', {...createChatDto, findavatar});
+    this.server.to(createChatDto.roomName).emit('messageToRoom', {...createChatDto, avatar: findavatar.avatar});
   }
 
   @SubscribeMessage('socketJoinRoom')
