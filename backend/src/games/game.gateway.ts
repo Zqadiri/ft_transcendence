@@ -31,6 +31,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	handleConnection(client: any, ...args: any[]) {
 		this.logger.log(client.id + " Connected");
 	}
+
 	handleDisconnect(client: any) {
 
 		let		index1: number = this.themeOneUsers.indexOf(client.id);
@@ -92,6 +93,11 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 		client.emit("joinedRoom", roomName, 3);
 		client.join(roomName);
 		this.server.to(roomName).emit("secondPlayerJoined");
+	}
+
+	@SubscribeMessage("joinSpecificRoom")
+	handleJoinSpecificRoom(client: Socket, roomName: string[]): void {
+		client.join(roomName);
 	}
 
 

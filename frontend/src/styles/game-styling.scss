@@ -8,7 +8,7 @@
 /* Tabs Section */
 
 .react-tabs__tab-list {
-	margin-top: 7%;
+	margin-top: 8.5%;
 	text-align: center;
 }
 
@@ -97,6 +97,11 @@
 }
 
 /* Live Games Section */
+
+.no-live-games {
+	color: #cccccc;
+	min-height: 70vh;
+}
 
 .live-games {
 	width: 700px;
@@ -230,7 +235,7 @@
 	width: 500px;
 	overflow: hidden;
 	margin: auto;
-	margin-top: 290px;
+	margin-top: 150px;
 	margin-bottom: 35px;
 	text-align: center;
 }

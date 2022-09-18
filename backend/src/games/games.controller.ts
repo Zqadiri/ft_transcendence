@@ -47,8 +47,9 @@ export class GameController {
                 isPlaying: true
             }
         });
-        if (!games)
-                throw new HttpException({ message: 'No live game found'}, HttpStatus.BAD_REQUEST);
+        if (!games.length)
+			return null;
+
         return games;
     }
 }

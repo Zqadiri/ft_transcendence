@@ -68,6 +68,7 @@ export class UpdateGameService {
 
 		axios.post('http://localhost:3000/game/new_game', initialData).then(resp => {
 			tmp.gameID = resp.data.id;
+			this.server.local.emit("newGameIsAvailable");
 		}).catch(e => {
 			console.log("sesco error: " + e);
 		});
@@ -94,7 +95,8 @@ export class UpdateGameService {
 				this.server.to(room).emit("theWinner", 2);
 
 			clearInterval(this.gameCoordinates.get(room).interval);
-			this.gameCoordinates.delete(room)
+			this.gameCoordinates.delete(room);
+			this.server.local.emit("gameEnded");
 		}
 	}
 
@@ -125,7 +127,7 @@ export class UpdateGameService {
 				}
 			};
 
-			this.server.to(room).emit("newCoordinates", gameCoordinates);
+			this.server.to(room).emit("newCoordinates", gameCoordinates, room);
 			this.#checkForTheWinner(gameCoordinates.p1.score, gameCoordinates.p2.score, room);
 
 		}, 1000/60);

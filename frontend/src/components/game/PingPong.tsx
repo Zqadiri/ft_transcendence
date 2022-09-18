@@ -28,9 +28,9 @@ const resetGame = (): void => {
 }
 
 const render = (): void => {
-	if (global.theme === "theme1")
+	if (global.theme === "theme01")
 		renderTheme1();
-	else if (global.theme === "theme2")
+	else if (global.theme === "theme02")
 		renderTheme2();
 }
 
@@ -83,7 +83,6 @@ const game = (current: HTMLCanvasElement | null) => {
 		{
 			if (global.playerId === 1)
 			{
-				global.socket.emit("initializeScorePanel", global.roomName);
 				setTimeout(() => {
 				global.setCountdownDisappear?.(true);
 				if (global.winnerId === 0)
@@ -97,7 +96,6 @@ const game = (current: HTMLCanvasElement | null) => {
 			}
 			else if (global.playerId === 2)
 			{
-				global.socket.emit("initializeScorePanel", global.roomName);
 				setTimeout(() => {
 					global.setCountdownDisappear?.(true);
 				}, 3000);
@@ -107,6 +105,9 @@ const game = (current: HTMLCanvasElement | null) => {
 					global.socket.emit("updatePaddlePosition", {roomName: global.roomName, playerId: global.playerId, y: global.player2Y});
 				});
 			}
+			else
+				global.setCountdownDisappear?.(true);
+			global.socket.emit("initializeScorePanel", global.roomName);
 			global.gameStarted = true;
 		}
 	}
@@ -188,7 +189,6 @@ function PingPong(): JSX.Element
 
 		global.socket.off("scorePanelData").on("scorePanelData", (scorePanelData) => {
 			setPlayersUniqueIds(scorePanelData);
-			console.log("scorePanelData is fired: " + scorePanelData.firstPlayerId + " " + scorePanelData.secondPlayerId);
 		});
 
 	});

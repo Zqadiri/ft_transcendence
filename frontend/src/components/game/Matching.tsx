@@ -50,9 +50,9 @@ function Selection({ setSwitchContent }: InferProps<typeof Selection.propTypes>)
 			setSwitchContent(false);
 			global.switchContent = false;
 		}
-		if (activeTheme === "theme1")
+		if (activeTheme === "theme01")
 			global.socket.emit("joinTheme1", userID);
-		else if (activeTheme === "theme2")
+		else if (activeTheme === "theme02")
 			global.socket.emit("joinTheme2", userID);
 		global.theme = activeTheme;
 	}
@@ -62,17 +62,17 @@ function Selection({ setSwitchContent }: InferProps<typeof Selection.propTypes>)
 			<div className="matching-container" >
 				<div
 					onClick={() => {
-						setActiveTheme(activeTheme === "theme1" ? "none" : "theme1");
+						setActiveTheme(activeTheme === "theme01" ? "none" : "theme01");
 					}}
-					className={`${activeTheme === "theme1" ? "active-theme" : ""}`}
+					className={`${activeTheme === "theme01" ? "active-theme" : ""}`}
 				>
 					<GameTheme01 />
 				</div>
 				<div
 					onClick={() => {
-						setActiveTheme(activeTheme === "theme2" ? "none" : "theme2");
+						setActiveTheme(activeTheme === "theme02" ? "none" : "theme02");
 					}}
-					className={`${activeTheme === "theme2" ? "active-theme" : ""}`}
+					className={`${activeTheme === "theme02" ? "active-theme" : ""}`}
 				>
 					<GameTheme02 />
 				</div>
