@@ -138,7 +138,6 @@ export class UsersController {
     })
     @Get()
     async getUserData(@Query() query: { id: number }){
-	 	console.log("the id we received " + query.id);
         return await this.usersService.getUserById(query.id);
     }  
 

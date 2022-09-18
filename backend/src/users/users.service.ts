@@ -98,7 +98,7 @@ export class UsersService {
 
 			if (user.level === 0)
 			{
-				user.xp += 150;
+				user.xp = 150;
 				user.level = 1;
 			}
 			else if (score === 10)
@@ -106,7 +106,7 @@ export class UsersService {
 				user.xp += 150;
 				user.wins += 1;
 				user.level += 1;
-				if ((150 * user.level) * user.level < user.xp)
+				if (user.xp < (150 * user.level) * user.level)
 					user.level -= 1;
 			}
 			else if (score < 10)
