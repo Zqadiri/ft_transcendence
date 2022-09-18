@@ -5,7 +5,7 @@ import { parse } from 'cookie';
 import { Bind, Logger, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogsService } from 'src/chat-logs/chat-logs.service';
-import { CreateRoomDto , RoomDto, SetRolestoMembersDto, RoomNamedto, CreateDmDto} from './dto/create-chat.dto';
+import { CreateRoomDto , RoomDto, SetRolestoMembersDto, RoomNamedto, CreateDmDto, BanOrMuteMembersDto} from './dto/create-chat.dto';
 import { Transform } from 'class-transformer';
 
 
@@ -44,8 +44,15 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     // emit the message just to specific roomz
 
     const findavatar = await this.chatLogsService.FindAvatar(createChatDto.userID);
+    const finduser = await this.chatLogsService.findUser(createChatDto.userID);
+    const findroom = await this.chatsService.findRoom(createChatDto.roomName);
 
-    this.server.to(createChatDto.roomName).emit('messageToRoom', {...createChatDto, avatar: findavatar.avatar});
+    let user: { action: string; userID: number; current_time: number; duration: number;} | undefined = findroom.MutedAndBannedID.find((user) => {
+      return user.userID === finduser.id;
+    })
+
+    if (!user)
+      this.server.to(createChatDto.roomName).emit('messageToRoom', {...createChatDto, avatar: findavatar.avatar});
   }
 
   @SubscribeMessage('socketJoinRoom')
@@ -68,6 +75,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     //emit to specific client
     client.emit('joinedDm', dm.name);
   }
+
   @SubscribeMessage('socketleaveRoom')
   async handleLeaveRoom(@ConnectedSocket() client: Socket, roomName: string)
   {
@@ -82,6 +90,26 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     client.emit("RoomMessages", messages);
    // return messages;
   }
+
+  @SubscribeMessage('SocketMuteUser')
+  async Mute(client: Socket, @MessageBody() setRolesDto: BanOrMuteMembersDto) {
+
+    let id : string;
+    
+    id = parse(client.handshake.headers.cookie).id;
+    try {
+      console.log("mute user room ...");
+
+      const ret = await this.chatsService.BanOrMuteUser(+id, setRolesDto);
+      console.log("ret", ret);
+      this.server.to(setRolesDto.RoomID).emit('Muted', ret);
+    } catch (e) {
+        console.error('Failed to mute this user in this chat room', e);
+        throw e;
+    }
+
+  }
+
 
    // identify the user who join the chat
   
