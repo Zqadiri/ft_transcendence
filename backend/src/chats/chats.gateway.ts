@@ -5,7 +5,7 @@ import { parse } from 'cookie';
 import { Bind, Logger, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogsService } from 'src/chat-logs/chat-logs.service';
-import { CreateRoomDto , RoomDto, SetRolestoMembersDto, RoomNamedto, CreateDmDto, BanOrMuteMembersDto} from './dto/create-chat.dto';
+import { CreateRoomDto , RoomDto, SetRolestoMembersDto, RoomNamedto, CreateDmDto, BanOrMuteMembersDto, BanOrMuteMembersPlusTokenDto} from './dto/create-chat.dto';
 import { Transform } from 'class-transformer';
 
 
@@ -40,19 +40,20 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   @SubscribeMessage('saveChatRoom')
   async create(client: Socket, @MessageBody() createChatDto: ChatLogsDto) {
 
-    await this.chatLogsService.savechat(createChatDto);
-    // emit the message just to specific roomz
-
-    const findavatar = await this.chatLogsService.FindAvatar(createChatDto.userID);
-    const finduser = await this.chatLogsService.findUser(createChatDto.userID);
-    const findroom = await this.chatsService.findRoom(createChatDto.roomName);
-
-    let user: { action: string; userID: number; current_time: number; duration: number;} | undefined = findroom.MutedAndBannedID.find((user) => {
-      return user.userID === finduser.id;
-    })
-
-    if (!user)
-      this.server.to(createChatDto.roomName).emit('messageToRoom', {...createChatDto, avatar: findavatar.avatar});
+	  // emit the message just to specific roomz
+	  
+	  const findavatar = await this.chatLogsService.FindAvatar(createChatDto.userID);
+	  const finduser = await this.chatLogsService.findUser(createChatDto.userID);
+	  const findroom = await this.chatsService.findRoom(createChatDto.roomName);
+	  
+	  let user: { action: string; userID: number; current_time: number; duration: number;} | undefined = findroom.MutedAndBannedID.find((user) => {
+		  return user.userID === finduser.id;
+		})
+		
+	  if (!user) {
+		  await this.chatLogsService.savechat(createChatDto);
+		  this.server.to(createChatDto.roomName).emit('messageToRoom', { ...createChatDto, avatar: findavatar.avatar });
+	  }
   }
 
   @SubscribeMessage('socketJoinRoom')
@@ -92,17 +93,17 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   }
 
   @SubscribeMessage('SocketMuteUser')
-  async Mute(client: Socket, @MessageBody() setRolesDto: BanOrMuteMembersDto) {
+  async Mute(client: Socket, @MessageBody() setRolesDto: BanOrMuteMembersPlusTokenDto) {
 
-    let id : string;
+    // let id : string;
     
-    id = parse(client.handshake.headers.cookie).id;
+    // id = parse(setRolesDto.token).id;
     try {
-      console.log("mute user room ...");
+    //   console.log("mute user room ...");
 
-      const ret = await this.chatsService.BanOrMuteUser(+id, setRolesDto);
-      console.log("ret", ret);
-      this.server.to(setRolesDto.RoomID).emit('Muted', ret);
+    //   const ret = await this.chatsService.BanOrMuteUser(+id, setRolesDto);
+    //   console.log("ret", ret);
+      this.server.to(setRolesDto.RoomID).emit('Muted', setRolesDto);
     } catch (e) {
         console.error('Failed to mute this user in this chat room', e);
         throw e;

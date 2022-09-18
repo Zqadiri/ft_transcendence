@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import React, { createContext, ReactPropTypes, useEffect, useRef } from "react";
+import { Link, LinkProps } from "react-router-dom";
 import Cookies from 'universal-cookie'
 
 export function useEffectOnce(effect: React.EffectCallback) {
@@ -57,11 +57,13 @@ export function isLoggedIn() {
 	return cookies.get("_token");
 }
 
-export function RRLink(props: any) {
+export function RRLink(props: LinkProps & React.RefAttributes<HTMLAnchorElement>) {
+	console.log("RRLink props:")
+	console.log({props});
 	return <Link {...{...props, className: "no-underline no-colors " + props.className}}></Link>
 }
 
-export function valDef(obj: any, def: any) {
+export function valDef(obj: any, def: any) { 
 	if (obj == null || obj == undefined)
 		return def;
 	return obj;
@@ -73,4 +75,9 @@ export function generateCookie(key: string, value: string) {
 
 export function getCookieHeader() {
 	return generateCookie("_token", cookies.get("_token"));
+}
+
+
+export function capitalize(str: string) {
+	return str[0].toUpperCase() + str.substring(1);
 }
