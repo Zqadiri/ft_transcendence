@@ -131,13 +131,6 @@ export class UsersController {
 	}
 
 	@ApiOperation({ summary: 'Get user data by id' })
-	@ApiResponse({
-		status: 200,
-		description: 'The found record',
-		type: User,
-	})
-
-	@ApiOperation({ summary: 'Get user data by id' })
     @ApiResponse({
         status: 200,
         description: 'The found record',
@@ -148,10 +141,5 @@ export class UsersController {
 	 	console.log("the id we received " + query.id);
         return await this.usersService.getUserById(query.id);
     }  
-	// @Get(':id')
-	// getUserData(@Param('id') id : number){
-	// 	console.log("the id we received" + id);
-	// 	return this.usersService.getUserById(id);
-	// }
 
 }

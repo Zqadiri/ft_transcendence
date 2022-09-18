@@ -107,7 +107,7 @@
 }
 
 .live-games li {
-	background-color: #EFEFEF;
+	background-color: white;
 	border-radius: 10px;
 	overflow: hidden;
 	padding: 15px;
@@ -125,6 +125,8 @@
 .live-games li div img {
 	width: 60px;
 	border-radius: 100%;
+	border: 3px solid white;
+	outline: 3px solid #112B3C;
 }
 
 .live-games li div:nth-child(2) h3 {
@@ -133,9 +135,10 @@
 	font-size: 23px
 }
 
-.live-games li div:nth-child(2) {
-	padding-top: 4%
-}
+/* .live-games li div:nth-child(2) {
+	margin: auto;
+	padding-top: 4% 
+} */
 
 .live-games li div:nth-child(1) h3,
 .live-games li div:nth-child(3) h3 {

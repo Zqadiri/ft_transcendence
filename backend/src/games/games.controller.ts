@@ -1,9 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { Game } from './entities/game.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GameRepository } from './game.repository';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateGameDto, EndGameDto, UpdateScoreDto } from './dto/game.dto';
 import { UsersService } from 'src/users/users.service';
 
@@ -38,4 +38,17 @@ export class GameController {
 		await this.userServ.calculateRank(Number(game.secondPlayerID), game.secondPlayerScore);
 		return this.gameServ.endGame(log);
 	}
+
+	@ApiOperation({ summary: 'Live games' })
+    @Get('/live')
+    async getLiveGames() {
+        const games = await this.gameRepo.find({
+            where: {
+                isPlaying: true
+            }
+        });
+        if (!games)
+                throw new HttpException({ message: 'No live game found'}, HttpStatus.BAD_REQUEST);
+        return games;
+    }
 }

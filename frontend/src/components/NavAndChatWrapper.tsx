@@ -22,6 +22,14 @@ const chatSocket = (() => {
 	return io("/chatNamespace", { forceNew: true });
 })();
 
+interface Chat {
+	db_chat_id: number,
+	db_chat_name: string,
+	db_chat_status: string,
+	"number of users": number,
+	ownerName: string
+}
+
 interface ChatMessage {
 	userID: string, avatar: string | null | undefined, message: string
 }
@@ -30,12 +38,12 @@ const NavAndChatWrapper = () => {
 	const { setLoggedIn } = useContext(globalContext);
 	const [userIconDropdown, setUserIconDropdown] = useState(false);
 	const [chatIsOpen, setChatIsOpen] = useState(
-		// false
-		true
+		false
+		// true
 	);
 	const chatRef = useRef<HTMLDivElement>(null);
 	const muteBanDurationRef = useRef<HTMLInputElement>(null);
-	const [activeTab, _setActiveTab] = useState(
+	const [activeTab, _setActiveTab] = useState<"rooms" | "friends" | "chat" | "chatinterface" | "chatinterfaceusers">(
 		// "friends"
 		"rooms"
 	);
@@ -75,8 +83,9 @@ const NavAndChatWrapper = () => {
 			setCreateRoomPassword("");
 	}, [createRoomType])
 	const [textMessage, setTextMessage] = useState("");
-	const [activeChat, _setActiveChat] = useState<any>(null);
+	const [activeChat, _setActiveChat] = useState<Chat | null>(null);
 	const setActiveChat = (newActiveChat: any) => {
+		console.log({newActiveChat});
 		if (newActiveChat) {
 			// setActiveChatMessages([]);
 			console.log("chatsokcet.emit('getroommessages')");
@@ -204,6 +213,7 @@ const NavAndChatWrapper = () => {
 		console.log("listening to messageToRoom");
 		chatSocket.on('messageToRoom', (_msg) => {
 			console.log("messageToRoom caught");
+			console.log({_msg})
 			setActiveChatMessages((x: any) => [...x, _msg
 			/*{
 				user: {
@@ -559,7 +569,7 @@ const NavAndChatWrapper = () => {
 														{
 															msg.userID != cookies.get("name") ?
 																<div className="profilepic flex-center">
-																	<img src={activeChatUsers.find(el => el.username === msg.userID) ? activeChatUsers.find(el => el.username === msg.userID).avatar : ""} alt="user avatar" />
+																	<img src={msg.avatar ? msg.avatar : ""} alt="user avatar" />
 																</div>
 															: <></>
 														}
@@ -590,7 +600,7 @@ const NavAndChatWrapper = () => {
 								<input type="submit" hidden />
 								<div className="submit flex-center" ref={submitRef} onClick={() => {
 									if (textMessage.trim() != "") {
-										chatSocket.emit("saveChatRoom", { userID: cookies.get("name"), roomName: activeChat.db_chat_name, message: textMessage})
+										chatSocket.emit("saveChatRoom", { userID: cookies.get("name"), roomName: activeChat?.db_chat_name, message: textMessage})
 										setTextMessage("");
 									}
 									textAreaRef.current?.focus();
