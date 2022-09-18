@@ -102,3 +102,24 @@ export class BanOrMuteMembersDto
 
 }
 
+
+export class BanOrMuteMembersPlusTokenDto
+{
+	@ApiProperty({ description: "Chat Room name" })
+	RoomID: string;
+
+	@ApiProperty({ description: "Chat Room name" })
+	token: string;
+
+	@ApiProperty({ description: "member of this Chat Room" })
+	userID: number;
+
+	@ApiProperty({ description: "duration of execute mute/ban member" })
+	duration: number;
+
+	@IsEnum(Action)
+	@ApiProperty({ description: "mute/ban member", enum:Action})
+	action: string;
+
+}
+

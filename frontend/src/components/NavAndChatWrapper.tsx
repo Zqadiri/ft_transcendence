@@ -9,27 +9,28 @@ import Home from "./Home";
 import Profile from "./Profile";
 import Settings from "./Settings";
 import UserProfile from "./UserProfile";
-import { cookies, getCookieHeader, globalContext, RRLink, ShowConditionally, useEffectOnce, valDef } from "./util";
+import { capitalize, cookies, getCookieHeader, globalContext, RRLink, ShowConditionally, useEffectOnce, valDef } from "./util";
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
 import GameTabs from "./game/Game"
 import PingPong from "./game/PingPong"
+import MuteBanControls from "./MuteBanControls";
 
 console.log("Global console.log()");
 
-const chatSocket = (() => {
+export const chatSocket = (() => {
 	console.log("connecting to chatNamespace...");
 	return io("/chatNamespace", { forceNew: true });
 })();
 
-interface UserStat {
+export interface UserStat {
 	id: number,
 	username: string,
 	avatar: string,
 	stat: string,
 }
 
-interface Chat {
+export interface Chat {
 	db_chat_id: number,
 	db_chat_name: string,
 	db_chat_status: string,
@@ -37,9 +38,11 @@ interface Chat {
 	ownerName: string
 }
 
-interface ChatMessage {
+export interface ChatMessage {
 	userID: string, avatar: string | null | undefined, message: string
 }
+
+export type ActiveTab = "rooms" | "friends" | "chat" | "chatinterface" | "chatinterfaceusers";
 
 const NavAndChatWrapper = () => {
 	const { setLoggedIn } = useContext(globalContext);
@@ -49,14 +52,13 @@ const NavAndChatWrapper = () => {
 		// true
 	);
 	const chatRef = useRef<HTMLDivElement>(null);
-	const muteBanDurationRef = useRef<HTMLInputElement>(null);
-	const [activeTab, _setActiveTab] = useState<"rooms" | "friends" | "chat" | "chatinterface" | "chatinterfaceusers">(
+	const [activeTab, _setActiveTab] = useState<ActiveTab>(
 		// "friends"
 		"rooms"
 	);
 
 
-	const setActiveTab = (x: any) => {
+	const setActiveTab = (x: ActiveTab) => {
 		if (x === "chat")
 			getAllMyRooms();
 		if (x === "rooms")
@@ -91,13 +93,14 @@ const NavAndChatWrapper = () => {
 	}, [createRoomType])
 	const [textMessage, setTextMessage] = useState("");
 	const [activeChat, _setActiveChat] = useState<Chat | null>(null);
-	const setActiveChat = (newActiveChat: any) => {
+	const setActiveChat = (newActiveChat: Chat | null) => {
 		console.log({newActiveChat});
 		if (newActiveChat) {
 			// setActiveChatMessages([]);
 			console.log("chatsokcet.emit('getroommessages')");
 			chatSocket.emit("GetRoomMessages", newActiveChat.db_chat_name);
 			axios.get("/chat/userStats/" + newActiveChat.db_chat_name).then(res => {
+				console.log({userstats: res.data});
 				setActiveChatUsers(res.data);
 			}).catch((err) => {
 	
@@ -144,7 +147,7 @@ const NavAndChatWrapper = () => {
 		console.log(x);
 		return _setActiveChatMessages(x);
 	}
-	const [activeChatUsers, setActiveChatUsers] = useState<any[]>([]);
+	const [activeChatUsers, setActiveChatUsers] = useState<UserStat[]>([]);
 	const [activeChatMessages, _setActiveChatMessages] = useState<ChatMessage[]>([
 		// {
 		// 	// user: {
@@ -189,43 +192,45 @@ const NavAndChatWrapper = () => {
 		}
 	})
 
-	useEffectOnce(() => {
-		chatSocket.on('connect', () => {
+	useEffect(() => {
+		chatSocket.off('connect').on('connect', () => {
 			console.log("connected");
 		});
 
-		chatSocket.on("connect_error", (err) => {
+		chatSocket.off("connect_error").on("connect_error", (err) => {
 			console.log(`connect_error due to ${err.message}`);
 		});
 
-		chatSocket.on('disconnect', () => {
+		chatSocket.off('disconnect').on('disconnect', () => {
 			console.log("disconnected");
 		});
 
-		chatSocket.on('RoomMessages', (_msgs) => {
+		chatSocket.off('RoomMessages').on('RoomMessages', (_msgs) => {
 			console.log("received room messages... setting them");
 			setActiveChatMessages(_msgs);
 		})
 
 		console.log("listening to joinedRoom");
-		chatSocket.on("joinedRoom", (data) => {
+		chatSocket.off("joinedRoom").on("joinedRoom", (data) => {
 			console.log("joined room...")
 			console.log({data})
 		})
 
+		// socket.to("room").emit("bannedFromRoom", { roomName: "room", releaseTime: })
+
 		console.log("listening to messageToRoom");
-		chatSocket.on('messageToRoom', (_msg) => {
+		chatSocket.off('messageToRoom').on('messageToRoom', (_msg) => {
 			console.log("messageToRoom caught");
 			console.log({_msg})
-			setActiveChatMessages((x: any) => [...x, _msg
-			/*{
-				user: {
-					userID: cookies.get("name"),
-					avatar: cookies.get("avatar")
-				},
-				content: textMessage.trim()
-			} */
-			]);
+			setActiveChatMessages((x: any) => [...x, _msg]);
+		})
+
+		chatSocket.off("Muted").on("Muted", (data: {userID: number, RoomID: string}) => {
+			console.log({muteddata: data, activeChat})
+			if (data.userID.toString() === cookies.get("id") && activeChat?.db_chat_name === data.RoomID) {
+				setActiveChat(activeChat);
+				setActiveTab("chat");
+			}
 		})
 
 		return () => {
@@ -241,6 +246,23 @@ const NavAndChatWrapper = () => {
 		getAllMyRooms();
 	})
 
+	useEffect(() => {
+		console.log({activeChattttttttttttttttttttttttttt:activeChat})
+	}, [activeChat])
+
+	// useEffectOnce(() => {
+	// 	let int = setInterval(() => {
+	// 		axios.get("/chat/userStats/" + activeChat?.db_chat_name).then(res => {
+	// 			console.log({userstats: res.data});
+	// 			setActiveChatUsers(res.data);
+	// 		}).catch((err) => {
+	
+	// 		})
+	// 	}, 1000);
+	// 	return (() => {
+	// 		clearInterval(int);
+	// 	})
+	// })
 	const userIcon: any = {
 		"owner": "fa-solid fa-crown",
 		"user": "fa-solid fa-user",
@@ -253,37 +275,41 @@ const NavAndChatWrapper = () => {
 		<div className="c_wrapper d100">
 			<nav className="navbar flex-jc-sb flex-ai-cr">
 				<div className="navelem left"></div>
-				<RRLink to="/" onClick={() => { setUserIconDropdown(false) }}>
-					<div className="navelem mid">
-						<h1 className="flex-center"><span>P</span><span className="circle">⬤</span><span>NG!</span></h1>
-					</div>
-				</RRLink>
-				<div className="navelem right flex-center" onClick={() => { setUserIconDropdown(x => !x) }}>
-					<div className="name"> {
-						cookies.get("name")
-					} </div>
-					<div className="icon flex-center">
-						<img src={cookies.get("avatar")} alt="avatar" className="avatar" />
-					</div>
-					<div className={"dropdown " + (userIconDropdown ? "visible" : "hidden")}>
-						<RRLink to="/profile" className="profile elem no-underline flex-ai-cr flex-gap5">
-							<i className="fa-solid fa-user"></i>
-							<span>Profile</span>
-						</RRLink>
-						<div className="bar_sickl"></div>
-						<RRLink to="/settings" className="settings elem no-underline flex-ai-cr flex-gap5">
-							<i className="fa-solid fa-gear"></i>
-							<span>Settings</span>
-						</RRLink>
-						<div className="bar_sickl"></div>
-						<div className="logout elem flex-ai-cr flex-gap5"
-							onClick={() => {
-								cookies.remove("_token");
-								setLoggedIn(false);
-							}}
-						>
-							<i className="fa-solid fa-right-from-bracket"></i>
-							<span>Log Out</span>
+				<div className="stretch-container flex-center navelem">
+					<RRLink to="/"  onClick={() => { setUserIconDropdown(false) }}>
+						<div className="mid">
+							<h1 className="flex-center"><span>P</span><span className="circle">⬤</span><span>NG!</span></h1>
+						</div>
+					</RRLink>
+				</div>
+				<div className="navelem flex-jc-fe flex-ai-cr" onClick={() => { setUserIconDropdown(x => !x) }}>
+					<div className="container flex-center right">
+						<div className="name"> {
+							cookies.get("name")
+						} </div>
+						<div className="icon flex-center">
+							<img src={cookies.get("avatar")} alt="avatar" className="avatar" />
+						</div>
+						<div className={"dropdown " + (userIconDropdown ? "visible" : "hidden")}>
+							<RRLink to="/profile" className="profile elem no-underline flex-ai-cr flex-gap5">
+								<i className="fa-solid fa-user"></i>
+								<span>Profile</span>
+							</RRLink>
+							<div className="bar_sickl"></div>
+							<RRLink to="/settings" className="settings elem no-underline flex-ai-cr flex-gap5">
+								<i className="fa-solid fa-gear"></i>
+								<span>Settings</span>
+							</RRLink>
+							<div className="bar_sickl"></div>
+							<div className="logout elem flex-ai-cr flex-gap5"
+								onClick={() => {
+									cookies.remove("_token");
+									setLoggedIn(false);
+								}}
+							>
+								<i className="fa-solid fa-right-from-bracket"></i>
+								<span>Log Out</span>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -338,12 +364,22 @@ const NavAndChatWrapper = () => {
 						<div className="chatscroll d100" style={{display: activeTab === "chat" ? "flex" : "none"}}>
 							<div className="chat w100 flex-column flex-gap10">
 								{
-									chatRooms.map((room: any) => {
+									chatRooms.map((room: Chat) => {
 										return (
 											<div className="room flex-jc-sb flex-ai-cr" onClick={() => {
 												// setActiveChatMessages([]);
-												setActiveTab("chatinterface");
-												setActiveChat(room);
+												axios.get("/chat/userStats/" + room.db_chat_name).then(res => {
+													// console.log({userstats: res.data});
+													let acu: UserStat[] = res.data;
+													console.log({"acu.find(el => el.id === cookies.get(\"id\"))": acu.find(el => el.id === parseInt(cookies.get("id"))), acu})
+													if (acu.find(el => el.id === parseInt(cookies.get("id")))?.stat !== "banned") {
+														setActiveTab("chatinterface");
+														setActiveChat(room);
+													}
+													setActiveChatUsers(res.data);
+												}).catch((err) => {
+										
+												})
 											}}>
 												<div className="left flex-column">
 													<div className="name">{room.db_chat_name}</div>
@@ -497,8 +533,7 @@ const NavAndChatWrapper = () => {
 									Leave Chat
 								</Button>
 								{
-									activeChatUsers.find(el => el.username === cookies.get("name")) &&
-									activeChatUsers.find(el => el.username === cookies.get("name")).stat === "owner" ?
+									activeChatUsers.find(el => el.username === cookies.get("name"))?.stat === "owner" ?
 									<>
 										<div className="setpassword flex-gap10">
 											<label htmlFor="roompassword"></label>
@@ -525,26 +560,19 @@ const NavAndChatWrapper = () => {
 												<div className="controls flex-gap10 flex-ai-cr">
 														<ShowConditionally cond={
 															activeChatUsers.find(el => cookies.get("name") === el.username)
-															&& (activeChatUsers.find(el => cookies.get("name") === el.username).stat === "owner"
-																|| activeChatUsers.find(el => cookies.get("name") === el.username).stat === "admin")
+															&& (activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "owner"
+																|| activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "admin")
 															&& user.stat === "user"
 														}>
 															<>
-																<input type="text" className="duration" ref={muteBanDurationRef} />
-																<div className="iconcontainer">
-																	<i className="fa-solid fa-volume-xmark"></i>
-																</div>
-																<div className="iconcontainer">
-																	<i className="fa-solid fa-circle-xmark"></i>
-																</div>
+																<MuteBanControls activeChat={activeChat} setActiveChat={setActiveChat} userID={user.id}></MuteBanControls>
 															</>
 														</ShowConditionally>
 														<ShowConditionally cond={
-															activeChatUsers.find(el => cookies.get("name") === el.username)
-															&& activeChatUsers.find(el => cookies.get("name") === el.username).stat === "owner"
+															activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "owner"
 															&& user.stat === "user"
 														}>
-															<div className="iconcontainer" onClick={() => {
+															<div className="iconcontainer" title="Add User As Admin" onClick={() => {
 																axios.post("/chat/setUserRoomAsAdmin", { RoomID: activeChat?.db_chat_name, userID: user.id }).then((res) => {
 																	console.log({chatSetUserRoomAsAdmin: res});
 																	setActiveChat(activeChat);
@@ -557,8 +585,11 @@ const NavAndChatWrapper = () => {
 															</div>
 														</ShowConditionally>
 													</div>
-													<div className="iconcontainer">
-														<i className={userIcon[user.stat] + " userstat"}></i>
+													<ShowConditionally cond={user.stat === "mute" || user.stat === "ban"}>
+														{/* <CountDown activeChat={activeChat} setActiveChat={activeChat}></CountDown> */}
+													</ShowConditionally>
+													<div className="iconcontainer" title={capitalize(user.stat)}>
+														<i className={userIcon[user.stat] + " userstat"} ></i>
 													</div>
 												</div>
 										</div>
