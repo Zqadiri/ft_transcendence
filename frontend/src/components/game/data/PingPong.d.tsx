@@ -119,3 +119,29 @@ export const theme2 = {
 		secondColor: "#295c7d"
 	}
 }
+
+export interface Game {
+	id: number,
+	socketRoom: string,
+	isPlaying:boolean,
+	firstPlayerID: string,
+	secondPlayerID: string,
+	firstPlayerScore: number,
+	secondPlayerScore: number,
+	theme: string,
+	createdAt: Date,
+	modifiedAt: Date,
+	finishedAt: Date,
+}
+
+export interface AllGames {
+	user1: string,
+	user2: string,
+	score1: number,
+	score2: number,
+	avatar1: string,
+	avatar2: string,
+	socketRoom: string,
+	theme: string,
+	id: number
+}

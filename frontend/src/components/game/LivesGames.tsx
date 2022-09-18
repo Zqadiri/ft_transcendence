@@ -1,138 +1,141 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
+import { func } from "prop-types";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Socket } from "socket.io-client";
 import "../../styles/game-styling.scss";
-import { GameData, global } from "./data/PingPong.d";
+import { GameData, AllGames, global, Game } from "./data/PingPong.d";
 
-interface Game {
-	id: number,
-	socketRoom: string,
-	isPlaying:boolean,
-	firstPlayerID: string,
-	secondPlayerID: string,
-	firstPlayerScore: number,
-	secondPlayerScore: number,
-	theme: string,
-	createdAt: Date,
-	modifiedAt: Date,
-	finishedAt: Date,
+
+async	function	getGamesDataFromDatabase (setLiveGamesData: React.Dispatch<React.SetStateAction<AllGames[]>>, setNoLiveGamesExist: React.Dispatch<React.SetStateAction<boolean>>) {
+
+	try {
+		let gameResp = await axios.get('/game/live');
+
+		setLiveGamesData([]);
+
+		gameResp.data.map(async (game: Game) => {
+			let firstUserResponse = await axios.get("/users?id=" + game.firstPlayerID);
+			let secondUserResponse = await axios.get("/users?id=" + game.secondPlayerID);
+
+			setLiveGamesData(current => [...current,
+				{
+					user1: firstUserResponse.data.username,
+					user2: secondUserResponse.data.username,
+					score1: game.firstPlayerScore,
+					score2: game.secondPlayerScore,
+					avatar1: firstUserResponse.data.avatar,
+					avatar2: secondUserResponse.data.avatar,
+					socketRoom: game.socketRoom,
+					theme: game.theme,
+					id: game.id
+				}
+			]);
+
+			setNoLiveGamesExist(false);
+		});
+
+	} catch(e) {
+
+		setNoLiveGamesExist(true);
+	}
 }
 
-export function	LiveGames(): JSX.Element
-{
+function			handleNewCoordinates(data: GameData, socketRoom: string, setLiveGamesData: React.Dispatch<React.SetStateAction<AllGames[]>>) {
 
-	const	[liveGamesData, setLiveGamesData] = useState<{
-		user1: string,
-		user2: string,
-		score1: number,
-		score2: number,
-		avatar1: string,
-		avatar2: string,
-		socketRoom: string,
-		theme: string,
-		id: number
-	}[]>([]);
-	const	[noLiveGames, setNoLiveGames] = useState(true);
-	const	[GamesAvailable, setGamesAvailable] = useState<number>(0);
+	setLiveGamesData(current => {
+		current.map(game => {
+
+			if (game.socketRoom === socketRoom) {
+				game.score1 = data.p1.score;
+				game.score2 = data.p2.score;
+			}
+
+			return game;
+		});
+		const	newState = Array.from(current);
+	
+		return newState;
+	});
+}
+
+function			updateLiveGamesScore(liveGamesData: AllGames[], setLiveGamesData: React.Dispatch<React.SetStateAction<AllGames[]>>) {
+
+	let	socketRooms: string[] = liveGamesData.map((game) => game["socketRoom"]);
+
+	global.socket.emit("joinSpecificRoom",  socketRooms);
+	global.socket.off("newCoordinates").on("newCoordinates", (data: GameData, socketRoom) => handleNewCoordinates(data, socketRoom, setLiveGamesData));
+	
+}
+
+function 			updateAvailableGames (setAvailableGames: React.Dispatch<React.SetStateAction<number>>) {
+
+	global.socket.off("newGameIsAvailable").on("newGameIsAvailable", () => {
+		setAvailableGames(current => current + 1);
+	});
+
+	global.socket.off("gameEnded").on("gameEnded", () => {
+		setAvailableGames(current => current - 1);
+	});
+}
+
+function			setNeccessaryDataToJoinLiveGame(socketRoom: string, gameTheme: string) {
+	global.roomName = socketRoom;
+	global.playerId = 3;
+	global.theme = gameTheme;
+	global.secondPlayerExist = true;
+	global.socket.disconnect();
+	global.socket.connect();
+}
+
+function			NoGamesFound(): JSX.Element {
+
+	return (
+		<>
+			<section className="no-live-games flex-center-column">
+				<h1>No Live Games Are Available Right Now!</h1>
+			</section>
+		</>
+	);
+}
+
+export function		LiveGames(): JSX.Element
+{
+	const	[liveGamesData, setLiveGamesData] = useState<AllGames[]>([]);
+	const	[noLiveGamesExist, setNoLiveGamesExist] = useState(true);
+	const	[AvailableGames, setAvailableGames] = useState<number>(0);
 	const 	navigate = useNavigate();
 
-	const update_score = () => {
-		let	roomArray: string[] = liveGamesData.map((game) => game["socketRoom"]);
-		global.socket.emit("joinSpecificRoom",  roomArray);
-
-		global.socket.off("newCoordinates").on("newCoordinates", (data: GameData, socketRoom) => {
-			liveGamesData.map(game => {
-				if (game.socketRoom === socketRoom)
-				{
-					setLiveGamesData(current => {
-						let ret = JSON.parse(JSON.stringify(current));
-						ret[ret.length - 1].score1 = data.p1.score;
-						ret[ret.length - 1].score2 = data.p2.score;
-						return ret;
-					});
-				}
-			});
-		});
-		
-		global.socket.off("newGameIsAvailable").on("newGameIsAvailable", () => {
-			setLiveGamesData([]);
-			setGamesAvailable(current => current + 1);
-		});
-
-		global.socket.off("gameEnded").on("gameEnded", () => {
-			setLiveGamesData([]);
-			setGamesAvailable(current => current - 1);
-		});
-	}
-
-	const getGameData = async () => {
-		try {
-			let gameResp = await axios.get('/game/live');
-			gameResp.data.map(async (game: Game) => {
-				let userOneResp = await axios.get("/users?id=" + game.firstPlayerID);
-				let userTwoResp = await axios.get("/users?id=" + game.secondPlayerID);
-				setLiveGamesData(current => [...current,
-					{
-						user1: userOneResp.data.username,
-						user2: userTwoResp.data.username,
-						score1: game.firstPlayerScore,
-						score2: game.secondPlayerScore,
-						avatar1: userOneResp.data.avatar,
-						avatar2: userTwoResp.data.avatar,
-						socketRoom: game.socketRoom,
-						theme: game.theme,
-						id: game.id
-					}
-				]);
-				setNoLiveGames(false);
-			});
-		} catch(e) {
-			setNoLiveGames(true);
-			console.log("sesco error: " + e)
-		}	
-	}
-
 	useEffect(() => {
-
 		global.socket.connect();
 
-		getGameData();
+		getGamesDataFromDatabase(setLiveGamesData, setNoLiveGamesExist);
 
 		return () => {
 			if (global.secondPlayerExist === false)
 				global.socket.disconnect();
 		};
+	}, [AvailableGames]);
 
-	}, [GamesAvailable]);
+	updateLiveGamesScore(liveGamesData, setLiveGamesData);
+	updateAvailableGames(setAvailableGames);
 
-	update_score();
+	const joinLiveGame = (socketRoom: string, gameTheme: string) => {
 
-	const watchTheGame = (socketRoom: string, gameTheme: string) => {
-			global.roomName = socketRoom;
-			global.playerId = 3;
-			global.theme = gameTheme;
-			global.secondPlayerExist = true;
-			navigate("/play");
+		setNeccessaryDataToJoinLiveGame(socketRoom, gameTheme);
+		global.socket.emit("joinSpecificRoom",  socketRoom);
+
+		navigate("/play");
 	}
 
-	if (noLiveGames)
-	{
-		return (
-			<>
-				<section className="no-live-games flex-center-column">
-					<h1>No Live Games Are Available Right Now!</h1>
-				</section>
-			</>
-		);
-	}
+	if (noLiveGamesExist) return <NoGamesFound />
+
 	return (
 		<>
 			<ul className="live-games">
 				{
 					liveGamesData.map((current) => {
 						return (
-							<li className="flex-jc-sb flex-ai-cr" key={current.id} onClick={() => watchTheGame(current.socketRoom, current.theme)}>
+							<li className="flex-jc-sb flex-ai-cr" key={current.id} onClick={() => joinLiveGame(current.socketRoom, current.theme)}>
 								<div>
 									<img src={current.avatar1} alt="user avatar"/>
 									<h3>{current.user1}</h3>

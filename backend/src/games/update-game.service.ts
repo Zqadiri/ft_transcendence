@@ -57,16 +57,16 @@ export class UpdateGameService {
 			tmp.ball.velocityY = 20;
 		}
 
-		let initialData = new CreateGameDto();
+		axios.post('http://localhost:3000/game/new_game', {
 
-		initialData.isPlaying = true;
-		initialData.firstPlayerID = firstUserID;
-		initialData.secondPlayerID = secondUserID;
-		initialData.theme = theme;
-		initialData.modifiedAt = new Date();
-		initialData.socketRoom = room;
+			isPlaying: true,
+			firstPlayerID: firstUserID,
+			secondPlayerID: secondUserID,
+			theme: theme,
+			socketRoom: room,
+			modifiedAt: new Date(),
 
-		axios.post('http://localhost:3000/game/new_game', initialData).then(resp => {
+		}).then(resp => {
 			tmp.gameID = resp.data.id;
 			this.server.local.emit("newGameIsAvailable");
 		}).catch(e => {
