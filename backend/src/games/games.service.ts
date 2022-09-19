@@ -82,9 +82,9 @@ export class GamesService {
 		return game;
 	}
 
-	async isFlawLessWinStreakAchievementAchieved(userId: number) {
+	async checkUserGamesForStreak(userId: number) {
         let		counter = 0;
-		const	streakCount: number = 3;
+		const	streakCount: number = 5;
         const	games = await this.findGameByUser(userId);
 
         for(let i = 0; i < games.length; i++){
