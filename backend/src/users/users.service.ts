@@ -124,6 +124,15 @@ export class UsersService {
 			return player;
 		}
 
+		async getUserByName(name: string): Promise<User> {
+			const player = await this.userRepository.findOne({
+					where:{
+						username: name,
+					}
+			});
+			return player;
+		}
+
 		async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
 			return this.userRepository.update(userId, {
 				twoFacAuthSecret: secret

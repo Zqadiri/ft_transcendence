@@ -114,17 +114,15 @@ const NavAndChatWrapper = () => {
 		console.log({allRooms});
 	}, [allRooms])
 	const getAllRooms = () => {
-		axios.get("/chat/allRooms", { headers: { cookie: getCookieHeader() } }).then((res) => {
+		axios.get("/chat/allRooms").then((res) => {
 			console.log({res});
 			setAllRooms(res.data);
 		})
 	}
 	const getAllMyRooms = () => {
-		axios.get("/chat/allMyRoom", {
-			headers: {
-				cookie: getCookieHeader()
-			}
-		}).then(res => {
+		let promise = axios.get("/chat/allMyRoom")
+		
+		promise.then(res => {
 			console.log({res})
 			setChatRooms(res.data);
 			res.data.forEach((room: any) => {
@@ -135,6 +133,7 @@ const NavAndChatWrapper = () => {
 		}).catch(err => {
 			console.log({err})
 		})
+		return promise;
 	}
 	const setActiveChatMessages = (x: any) => {
 		console.log(x);
@@ -165,7 +164,6 @@ const NavAndChatWrapper = () => {
 	}, [activeChatUsers])
 
 	useEffectOnce(() => {
-		console.log({getcookie: getCookieHeader() });
 		getAllRooms();
 	})
 
@@ -246,9 +244,6 @@ const NavAndChatWrapper = () => {
 
 	const [passwdMessage, _setPasswdMessage] = useState("");
 	const setPasswdMessage = (pwd: string) => {
-		if (pwd === "") {
-			setActiveChat(activeChat);
-		}
 		return _setPasswdMessage(pwd);
 	}
 
@@ -417,7 +412,7 @@ const NavAndChatWrapper = () => {
 											name: createRoomName,
 											status: createRoomType,
 											...(createRoomType === "protected" && { password: createRoomPassword })
-										}, { headers: {cookie: getCookieHeader() }})
+										})
 										.then(res => {
 											console.log({res})
 											setCreateRoomResponseMessage("Created!");
@@ -479,8 +474,7 @@ const NavAndChatWrapper = () => {
 															<Button onClick={(e: any) => {
 																e.preventDefault();
 																axios.post("/chat/joinRoom",
-																	{ name: room.db_chat_name },
-																	{ headers: { cookie: getCookieHeader() } }
+																	{ name: room.db_chat_name }
 																).then((res: any) => {
 																	getAllRooms();
 																	getAllMyRooms();
@@ -512,6 +506,44 @@ const NavAndChatWrapper = () => {
 											if (prrooms.length == 0) {
 												return <div className="norooms flex-center-column d100">
 													<h1>No Protected Rooms Available</h1>
+												</div>
+											}
+											return prrooms;
+										})()
+									}
+								</div>
+								<div className="d100 publicrooms flex-column flex-gap10" style={{display: roomActiveTab === "private" ? "flex" : "none"}}>
+									{
+										(() => {
+											let prrooms =
+											allRooms.filter((room: any) => room.db_chat_status === "private").map((room: Chat) => {
+												return (
+													<div className="room w100 flex-jc-sb flex-ai-cr">
+														<div className="left flex-column">
+															<div className="name">{room.db_chat_name}</div>
+															<div className="owner">{room.ownerName}</div>
+														</div>
+														<div className="container flex-center flex-gap10">
+															<div className="mid flex-center">
+																<i className="icon fa-solid fa-user"></i>
+																<div className="num">{room["number of users"]}</div>
+															</div>
+															<Button onClick={(e: any) => {
+																e.preventDefault();
+																axios.post("/chat/joinRoom",
+																	{ name: room.db_chat_name }
+																).then((res: any) => {
+																	getAllRooms();
+																	getAllMyRooms();
+																});
+															}}>Join</Button>
+														</div>
+													</div>
+												);
+											})
+											if (prrooms.length == 0) {
+												return <div className="norooms flex-center-column d100">
+													<h1>No Invites To Private Rooms Available</h1>
 												</div>
 											}
 											return prrooms;
@@ -554,16 +586,21 @@ const NavAndChatWrapper = () => {
 														axios.post("/chat/setPassword", { name: activeChat?.db_chat_name, password: CRUDRoomPasswordRef.current?.value })
 														.then((res) => {
 															setPasswdMessage("Success!");
-															setTimeout(() => {
-																setPasswdMessage("")
-															}, 2000);
 														})
 														.catch((err: AxiosError) => {
 															console.log({err})
 															setPasswdMessage("Error :(");
+														}).finally(() => {
 															setTimeout(() => {
 																setPasswdMessage("")
 															}, 2000);
+															getAllMyRooms().then((res) => {
+																let chats: Chat[] = res.data;
+																_setActiveChat(x => {
+																	setActiveChat(chats.find(chat => chat.db_chat_id === x?.db_chat_id) || x);
+																	return chats.find(chat => chat.db_chat_id === x?.db_chat_id) || x;
+																});
+															})
 														})
 													}
 												}}>Set New Password</Button>
@@ -577,35 +614,45 @@ const NavAndChatWrapper = () => {
 													if (CRUDRoomPasswordRef.current?.value
 														&& CRUDRoomPasswordRef.current?.value !== "") {
 														axios.post("/chat/setPassword", { name: activeChat?.db_chat_name, password: CRUDRoomPasswordRef.current?.value })
-														.then((res) => {
-															setPasswdMessage("Success!");
-															setTimeout(() => {
-																setPasswdMessage("")
-															}, 2000);
-														})
-														.catch((err: AxiosError) => {
-															console.log({err})
-															setPasswdMessage("Error :(");
-															setTimeout(() => {
-																setPasswdMessage("")
-															}, 2000);
-														})
+															.then((res) => {
+																setPasswdMessage("Success!");
+															})
+															.catch((err: AxiosError) => {
+																console.log({ err })
+																setPasswdMessage("Error :(");
+															}).finally(() => {
+																setTimeout(() => {
+																	setPasswdMessage("")
+																}, 2000);
+																getAllMyRooms().then((res) => {
+																	let chats: Chat[] = res.data;
+																	_setActiveChat(x => {
+																		setActiveChat(chats.find(chat => chat.db_chat_id === x?.db_chat_id) || x);
+																		return chats.find(chat => chat.db_chat_id === x?.db_chat_id) || x;
+																	});
+																})
+															})
 													}
 												}}>Change Password</Button>
 												<Button onClick={() => {
 													axios.post("/chat/RemovePassword", { name: activeChat?.db_chat_name })
 													.then((res) => {
 														setPasswdMessage("Success!");
-														setTimeout(() => {
-															setPasswdMessage("")
-														}, 2000);
 													})
 													.catch((err: AxiosError) => {
 														console.log({err})
 														setPasswdMessage("Error :(");
+													}).finally(() => {
 														setTimeout(() => {
 															setPasswdMessage("")
 														}, 2000);
+														getAllMyRooms().then((res) => {
+															let chats: Chat[] = res.data;
+															_setActiveChat(x => {
+																setActiveChat(chats.find(chat => chat.db_chat_id === x?.db_chat_id) || x);
+																return chats.find(chat => chat.db_chat_id === x?.db_chat_id) || x;
+															});
+														})
 													})
 												}}>Remove Password</Button>
 											</div>

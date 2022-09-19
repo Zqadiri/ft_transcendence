@@ -130,15 +130,26 @@ export class UsersController {
 		res.send(friends);
 	}
 
-	@ApiOperation({ summary: 'Get user data by id' })
+	// @ApiOperation({ summary: 'Get user data by id' })
+    // @ApiResponse({
+    //     status: 200,
+    //     description: 'The found record',
+    //     type: User,
+    // })
+    // @Get()
+    // async getUserData(@Query() query: { id: number }){
+    //     return await this.usersService.getUserById(query.id);
+    // }  
+
+	@ApiOperation({ summary: 'Get user data by name' })
     @ApiResponse({
         status: 200,
         description: 'The found record',
         type: User,
     })
     @Get()
-    async getUserData(@Query() query: { id: number }){
-        return await this.usersService.getUserById(query.id);
+    async getUserDataByName(@Query() query: { name: string }){
+        return await this.usersService.getUserByName(query.name);
     }  
 
 }
