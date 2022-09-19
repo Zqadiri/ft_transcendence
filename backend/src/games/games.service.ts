@@ -81,4 +81,22 @@ export class GamesService {
 		.getMany();
 		return game;
 	}
+
+	async isFlawLessWinStreakAchievementAchieved(userId: number) {
+        let		counter = 0;
+		const	streakCount: number = 3;
+        const	games = await this.findGameByUser(userId);
+
+        for(let i = 0; i < games.length; i++){
+            if (((Number(games[i].firstPlayerID) == userId && games[i].firstPlayerScore >= 10) 
+            && games[i].secondPlayerScore === 0 ) || 
+            (Number(games[i].secondPlayerID) == userId && games[i].secondPlayerScore >= 10) 
+            && games[i].firstPlayerScore === 0){
+                counter++;
+            }
+        }
+        if (counter === streakCount)
+			return (true);
+		return (false);
+    }
 }

@@ -21,7 +21,8 @@ export class UsersService {
 				avatar : createUserDto.avatar,
 				email : createUserDto.email,
 				FriendsID : [],
-				blockedID : []
+				blockedID : [],
+				achievement: []
 			});
 
 			const _error = await validate(newUser);
@@ -90,11 +91,11 @@ export class UsersService {
 			return this.userRepository.remove(user);
 		}
 
-		#unlockUserAchievements(user: User, currentPlayerScore: number, opponentScore: number){
+		#unlockUserAchievements(user: User, currentPlayerScore: number, opponentScore: number, flawLessWinStreakAchieved: boolean){
 			let		achievements: string[] = user.achievement;
 	
 			if (user.level === 1)
-				!achievements.find(achiev => achiev === "firstGame") ? user.achievement = new Array("firstGame") : null;
+				!achievements.find(achiev => achiev === "firstGame") ? achievements.push("firstGame") : null;
 
 			if (user.level === 3)
 				!achievements.find(achiev => achiev === "levelThree") ? achievements.push("levelThree") : null;
@@ -107,9 +108,12 @@ export class UsersService {
 
 			if (currentPlayerScore === 10 && opponentScore === 0)
 				!achievements.find(achiev => achiev === "flawLessWin") ? achievements.push("flawLessWin") : null;
+			
+			if (flawLessWinStreakAchieved)
+				!achievements.find(achiev => achiev === "flawLessWinStreak") ? achievements.push("flawLessWinStreak") : null;
 		}
 
-		async calculateRank(userID: number, currentPlayerScore: number, opponentScore: number){
+		async calculateRank(userID: number, currentPlayerScore: number, opponentScore: number, flawLessWinStreakAchieved: boolean){
 			const user: User = await this.getUserById(userID);
 
 			if (!user)
@@ -131,7 +135,7 @@ export class UsersService {
 			else if (currentPlayerScore < 10)
 				user.losses += 1;
 
-			this.#unlockUserAchievements(user, currentPlayerScore, opponentScore);
+			this.#unlockUserAchievements(user, currentPlayerScore, opponentScore, flawLessWinStreakAchieved);
 
 			return this.userRepository.update(userID, user);
 		}
