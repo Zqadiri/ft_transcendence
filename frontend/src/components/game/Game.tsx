@@ -1,11 +1,8 @@
-import PingPong from "./PingPong";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "../../styles/game-styling.scss";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useEffect, useRef } from "react";
 import Matching from "./Matching"
 import LiveGames from "./LivesGames";
-
 
 export function useEffectOnce(callback: any): any {
 	const ref = useRef(true);
@@ -37,18 +34,18 @@ export function	GameTabs(): JSX.Element
 	);
 }
 
-function	Game(): JSX.Element
-{
-	return (
-		<>
-			<Router>
-				<Routes>
-					<Route path="/" element={<GameTabs />}></Route>
-					<Route path="/play" element={<PingPong />}></Route>
-				</Routes>
-			</Router>
-		</>
-	);
-}
+// function	Game(): JSX.Element
+// {
+// 	return (
+// 		<>
+// 			<Router>
+// 				<Routes>
+// 					<Route path="/" element={<GameTabs />}></Route>
+// 					<Route path="/play" element={<PingPong />}></Route>
+// 				</Routes>
+// 			</Router>
+// 		</>
+// 	);
+// }
 
 export default GameTabs;

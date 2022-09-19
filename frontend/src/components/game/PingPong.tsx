@@ -1,29 +1,16 @@
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import "../../styles/game-styling.scss";
 import Canvas from './Canvas';
 import Score from './Score';
-import { global, GameData } from './data/PingPong.d';
+import ResultPrompt, { resetGame } from './ResultPrompt';
+import CountDown from './CountDown';
+import { global, GameData, CurrentPlayersType } from './data/PingPong.d';
 import { renderTheme1 } from "./RenderTheme1";
 import { renderTheme2 } from "./RenderTheme2";
 import { useNavigate, NavigateFunction } from 'react-router-dom';
-import { useEffectOnce } from "./Game"
+import axios from 'axios';
 
-const resetGame = (): void => {
-	global.player1X = 0;
-	global.player1Y = global.canvasHeight/2 - global.paddleHeight/2;
-	global.player1Score = 0;
-
-	global.player2X = global.canvasWidth - global.paddleWidth;
-	global.player1Y = global.canvasHeight/2 - global.paddleHeight/2;
-	global.player2Score = 0;
-
-	global.ballX = global.canvasWidth/2;
-	global.ballY = global.canvasHeight/2;
-	global.gameStarted = false;
-	global.roomName = "none"
-	global.playerId = 0;
-	global.secondPlayerExist = false;
-}
+export let gameContext = createContext<any>({});
 
 const render = (): void => {
 	if (global.theme === "theme01")
@@ -32,45 +19,24 @@ const render = (): void => {
 		renderTheme2();
 }
 
-const setUserData = (data: GameData): void => {
+function setReceivedSocketData(data: GameData, setGameScore: Function) {
 	global.player1X = data.p1.x;
 	global.player1Y = data.p1.y;
+	global.player1Score = data.p1.score;
+
 	global.player2X = data.p2.x;
 	global.player2Y = data.p2.y;
+	global.player2Score = data.p2.score;
+
 	global.ballX = data.b.x;
 	global.ballY = data.b.y;
 
-	if (data.p1.score !== global.player1Score)
-	{
-		global.player1Score = data.p1.score;
-		global.setScore1?.(global.player1Score);
-	}
-	else if (data.p2.score !== global.player2Score)
-	{
-		global.player2Score = data.p2.score;
-		global.setScore2?.(global.player2Score);
-	}
+	setGameScore({
+		firstPlayerScore: data.p1.score,
+		secondPlayerScore: data.p2.score
+	});
 }
 
-function CountDown(): JSX.Element {
-	
-	const [countdownDisappear, setCountdownDisappear] = useState(false);
-
-	global.setCountdownDisappear = setCountdownDisappear;
-	return (
-		<section className={`${countdownDisappear ? "count-down-disabled" : "count-down"}`}>
-			 <div className="number">
-				<h2>3</h2>
-			</div>
-			 <div className="number">
-				<h2>2</h2>
-			</div>
-			 <div className="number">
-				<h2>1</h2>
-			</div>
-		</section>
-	);
-}
 
 const game = (current: HTMLCanvasElement | null) => {
 	if (current !== null) {
@@ -111,88 +77,56 @@ const game = (current: HTMLCanvasElement | null) => {
 	}
 }
 
-const setTheWinner = (theWinner: number): void => {
-	global.winnerId = theWinner;
-	global.setForceChange?.(true);
-}
+function	addSocketEventHandlers(setCurrentPlayersData: Function, setGameScore: Function) {
+	global.socket.off("newCoordinates").on("newCoordinates", (data) => {
+		setReceivedSocketData(data, setGameScore);
+		render();
+	});
 
-const goHome = (): void => {
-	setTimeout(() => {
-		global.winnerId = 0;
-		resetGame();
-		global.navigate?.("/");
-	}, 3000)
-}
+	global.socket.off("theWinner").on("theWinner", (theWinner) => {
+		global.winnerId = theWinner;
+		global.setForceChange?.(true);
+	});
 
-function ResultPrompt(): JSX.Element {
-	let		resultMessage: string;
-	let		winnerName: string = "You";
-	let		mainColor: string;
+	global.socket.off("scorePanelData").on("scorePanelData", async (currentPlayersId) => {
+		console.log(`scorePanel is fired ${currentPlayersId}`);
+		try {
+			let firstPlayerData = await axios.get("/users?id=" + currentPlayersId.firstPlayerId);
+			let secondPlayerData = await axios.get("/users?id=" + currentPlayersId.secondPlayerId);
 
-	if (global.playerId > 2)
-	{
-		winnerName = "Player " + global.winnerId;
-		resultMessage = "Won The Game";
-		mainColor = "#f66b0e";
-	}
-	else if (global.playerId === global.winnerId)
-	{
-		resultMessage = "Won The Game";
-		mainColor = "#6a994e";
-	}
-	else 
-	{
-		resultMessage = "Lost The Game";
-		mainColor = "#d62828";
-	}
+			setCurrentPlayersData({
+				firstPlayerName: firstPlayerData.data.username,
+				firstPlayerAvatar: firstPlayerData.data.avatar,
+				secondPlayerName: secondPlayerData.data.username,
+				secondPlayerAvatar: secondPlayerData.data.avatar,
+			});
+		} catch {
 
-	return (
-		<>
-			<section className="result-overlay">
-				<div className="prompt">
-					<span style={{color: mainColor}}>{winnerName}</span>
-					<span style={{backgroundColor: mainColor}}>{resultMessage}</span>
-				</div>
-			</section>
-			{goHome()}
-		</>
-	);
+		}
+	});
 }
 
 function PingPong(): JSX.Element
 {
 	const	navigate: NavigateFunction = useNavigate();
-	const	[score1, setScore1] = useState(global.player1Score);
-	const	[score2, setScore2] = useState(global.player2Score);
-	const	[forceChange, setForceChange] = useState(false);
-	let		[playersUniqueIds, setPlayersUniqueIds] = useState<{firstPlayerId: number, secondPlayerId: number}>({
-		firstPlayerId: 0,
-		secondPlayerId: 0
+	const	[gameScore, setGameScore] = useState({
+		firstPlayerScore: 0,
+		secondPlayerScore: 0
 	});
+	const	[currentPlayersData, setCurrentPlayersData] = useState<CurrentPlayersType>({
+			firstPlayerName: "",
+			firstPlayerAvatar: "",
+			secondPlayerName: "",
+			secondPlayerAvatar: "",
+	});
+	const	[forceChange, setForceChange] = useState(false);
 
-	global.setScore1 = setScore1;
-	global.setScore2 = setScore2;
 	global.setForceChange = setForceChange;
 	global.navigate = navigate;
 
-	useEffectOnce(() => {
-		global.socket.off("newCoordinates").on("newCoordinates", (data) => {
-			setUserData(data);
-			render();
-		});
-
-		global.socket.off("theWinner").on("theWinner", (theWinner) => {
-			setTheWinner(theWinner);
-		});
-
-		global.socket.off("scorePanelData").on("scorePanelData", (scorePanelData) => {
-			setPlayersUniqueIds(scorePanelData);
-		});
-
-	});
-
 	useEffect(() => {
 		window.onbeforeunload = () => { return "" };
+		addSocketEventHandlers(setCurrentPlayersData, setGameScore);
 
 		if (global.secondPlayerExist === false)
 			global.navigate?.("/");
@@ -207,18 +141,19 @@ function PingPong(): JSX.Element
 	if (global.secondPlayerExist === true)
 	{
 		return (
-			<>
-				{forceChange ? <ResultPrompt /> : <CountDown />}
-				<div className="game_canvas_parent_container flex-center-column">
-					<div className="container_sesco flex-center-column flex-gap20">
-						<Score s1={score1} s2={score2} playersID={playersUniqueIds} />
-						<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />
+			<gameContext.Provider value={{currentPlayersData, setCurrentPlayersData}}>
+				<>
+					{forceChange ? <ResultPrompt /> : <CountDown />}
+					<div className="game_canvas_parent_container flex-center-column">
+						<div className="container_sesco flex-center-column flex-gap20">
+							<Score s1={gameScore.firstPlayerScore} s2={gameScore.secondPlayerScore} />
+							<Canvas game={game} width={global.canvasWidth} height={global.canvasHeight} />
+						</div>
 					</div>
-				</div>
-			</>
+				</>
+			</gameContext.Provider>
 		);
 	}
-
 	return (
 		<></>
 	);

@@ -145,3 +145,10 @@ export interface LiveGame {
 	theme: string,
 	id: number
 }
+
+export interface CurrentPlayersType {
+	firstPlayerName: string,
+	secondPlayerName: string,
+	firstPlayerAvatar: string,
+	secondPlayerAvatar: string
+}
