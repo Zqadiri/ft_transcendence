@@ -80,6 +80,7 @@ export class UpdateGameService {
 	{
 		if (score1 === 10 || score2 === 10)
 		{
+			console.log(`insdie checkForTheWinner ${score1} ${score2}`);
 			axios.post('http://localhost:3000/game/end_game', {
 				firstPlayerScore: score1,
 				secondPlayerScore: score2,

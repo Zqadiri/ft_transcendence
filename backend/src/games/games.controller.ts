@@ -32,10 +32,10 @@ export class GameController {
 	@ApiOperation({ summary: 'end game' })
 	@Post('/end_game')
 	async endGame(@Body() log: EndGameDto) {
-		const game: Game = await this.gameServ.findGameByid(log.gameId);
 		await this.gameServ.endGame(log);
-		await this.userServ.calculateRank(Number(game.firstPlayerID), game.firstPlayerScore);
-		await this.userServ.calculateRank(Number(game.secondPlayerID), game.secondPlayerScore);
+		const game: Game = await this.gameServ.findGameByid(log.gameId);
+		await this.userServ.calculateRank(Number(game.firstPlayerID), game.firstPlayerScore, game.secondPlayerScore);
+		await this.userServ.calculateRank(Number(game.secondPlayerID), game.secondPlayerScore, game.firstPlayerScore);
 		return this.gameServ.endGame(log);
 	}
 

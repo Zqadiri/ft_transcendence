@@ -49,9 +49,10 @@ export class User{
 	@Column({default: false})
 	Matched : boolean;
 
-	@Column('integer',{
+	@Column('varchar', {
 		array: true,
-		nullable: true
+		nullable: true,
+		default: []
 	})
 	achievement: string[];
 

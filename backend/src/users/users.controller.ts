@@ -138,17 +138,20 @@ export class UsersController {
     // })
     // @Get()
     // async getUserData(@Query() query: { id: number }){
+	// 	console.log(`the get user by name : ${query.id}`);
     //     return await this.usersService.getUserById(query.id);
     // }  
 
-	@ApiOperation({ summary: 'Get user data by name' })
+	@ApiOperation({ summary: 'Get user data by name or id' })
     @ApiResponse({
         status: 200,
         description: 'The found record',
         type: User,
     })
     @Get()
-    async getUserDataByName(@Query() query: { name: string }){
+    async getUserDataByNameOrId(@Query() query: { name: string | undefined, id: number | undefined }){
+		if (query.id)
+			return await this.usersService.getUserById(query.id);
         return await this.usersService.getUserByName(query.name);
     }  
 

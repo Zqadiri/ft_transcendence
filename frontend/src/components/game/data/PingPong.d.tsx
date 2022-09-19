@@ -134,7 +134,7 @@ export interface Game {
 	finishedAt: Date,
 }
 
-export interface AllGames {
+export interface LiveGame {
 	user1: string,
 	user2: string,
 	score1: number,

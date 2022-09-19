@@ -90,7 +90,26 @@ export class UsersService {
 			return this.userRepository.remove(user);
 		}
 
-		async calculateRank(userID: number, score: number){
+		#unlockUserAchievements(user: User, currentPlayerScore: number, opponentScore: number){
+			let		achievements: string[] = user.achievement;
+	
+			if (user.level === 1)
+				!achievements.find(achiev => achiev === "firstGame") ? user.achievement = new Array("firstGame") : null;
+
+			if (user.level === 3)
+				!achievements.find(achiev => achiev === "levelThree") ? achievements.push("levelThree") : null;
+
+			if (user.level === 6)
+				!achievements.find(achiev => achiev === "levelSix") ? achievements.push("levelSix") : null;
+
+			if (currentPlayerScore === 10 && opponentScore === 9)
+				!achievements.find(achiev => achiev === "closeCall") ? achievements.push("closeCall") : null;
+
+			if (currentPlayerScore === 10 && opponentScore === 0)
+				!achievements.find(achiev => achiev === "flawLessWin") ? achievements.push("flawLessWin") : null;
+		}
+
+		async calculateRank(userID: number, currentPlayerScore: number, opponentScore: number){
 			const user: User = await this.getUserById(userID);
 
 			if (!user)
@@ -101,7 +120,7 @@ export class UsersService {
 				user.xp = 150;
 				user.level = 1;
 			}
-			else if (score === 10)
+			else if (currentPlayerScore === 10)
 			{
 				user.xp += 150;
 				user.wins += 1;
@@ -109,8 +128,10 @@ export class UsersService {
 				if (user.xp < (150 * user.level) * user.level)
 					user.level -= 1;
 			}
-			else if (score < 10)
+			else if (currentPlayerScore < 10)
 				user.losses += 1;
+
+			this.#unlockUserAchievements(user, currentPlayerScore, opponentScore);
 
 			return this.userRepository.update(userID, user);
 		}
