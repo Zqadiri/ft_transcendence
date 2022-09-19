@@ -59,11 +59,11 @@ export class ChatController {
 
     @UseGuards(jwtAuthGuard)
     @Post('/LeaveRoom')
-    async LeaveRoom(@Body() RoomID: string, @Req() req: RequestWithUser)
+    async LeaveRoom(@Body() RoomID: { name: string }, @Req() req: RequestWithUser)
     {
         try {
             console.log("leave room ...", RoomID);
-            await this.chatService.LeaveRoom({RoomID, userID: req.user.id});
+            await this.chatService.LeaveRoom({RoomID: RoomID.name, userID: req.user.id});
         } catch (e) {
             console.error('Failed to leave room', e);
             throw e;

@@ -462,8 +462,8 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
               ownerID: SetRolestoMembersDto.userID
           },
       });
-
       const isUserRoom = await this.findRoom(SetRolestoMembersDto.RoomID);
+	  console.log({SetRolestoMembersDto, isOwner, isUserRoom})
       if (isOwner)
       {
         if (isOwner.AdminsID.length)

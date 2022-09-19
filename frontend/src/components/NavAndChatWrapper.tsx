@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import "../styles/wrapper.scss"
@@ -33,7 +33,7 @@ export interface UserStat {
 export interface Chat {
 	db_chat_id: number,
 	db_chat_name: string,
-	db_chat_status: string,
+	db_chat_status: "public" | "protected" | "private" | "dm",
 	"number of users": number,
 	ownerName: string
 }
@@ -108,14 +108,7 @@ const NavAndChatWrapper = () => {
 		}
 		return _setActiveChat(newActiveChat);
 	}
-	const [chatRooms, setChatRooms] = useState([
-		// {
-		// 	db_chat_name: "testroom",
-		// 	ownerName: cookies.get("name"),
-		// 	"number of users": 1,
-		// 	db_chat_owner_avatar: ""
-		// }
-	]);
+	const [chatRooms, setChatRooms] = useState([]);
 	const [allRooms, setAllRooms] = useState([]);
 	useEffect(() => {
 		console.log({allRooms});
@@ -247,9 +240,19 @@ const NavAndChatWrapper = () => {
 	})
 
 	useEffect(() => {
-		console.log({activeChattttttttttttttttttttttttttt:activeChat})
+		// console.log({activeChattttttttttttttttttttttttttt:activeChat})
 	}, [activeChat])
 
+
+	const [passwdMessage, _setPasswdMessage] = useState("");
+	const setPasswdMessage = (pwd: string) => {
+		if (pwd === "") {
+			setActiveChat(activeChat);
+		}
+		return _setPasswdMessage(pwd);
+	}
+
+	const CRUDRoomPasswordRef = useRef<HTMLInputElement>(null);
 	// useEffectOnce(() => {
 	// 	let int = setInterval(() => {
 	// 		axios.get("/chat/userStats/" + activeChat?.db_chat_name).then(res => {
@@ -529,17 +532,84 @@ const NavAndChatWrapper = () => {
 								</div>
 							</div>
 							<div className="chatinterfaceusers flex-center-column flex-gap5" style={{display: activeTab === "chatinterfaceusers" ? "flex" : "none"}}>
-								<Button className="leave">
+								<Button className="leave" onClick={() => {
+									axios.post("/chat/LeaveRoom", { name: activeChat?.db_chat_name })
+									.finally(() => {
+										setActiveTab("chat");
+										setActiveChat(null);
+									})
+								}}>
 									Leave Chat
 								</Button>
 								{
 									activeChatUsers.find(el => el.username === cookies.get("name"))?.stat === "owner" ?
 									<>
-										<div className="setpassword flex-gap10">
-											<label htmlFor="roompassword"></label>
-											<input type="roompassword" />
-											<Button>Set New Password</Button>
-										</div>
+										<ShowConditionally cond={activeChat?.db_chat_status === "public"}>
+											<div className="setpassword flex-gap10">
+												<label htmlFor="roompassword">{passwdMessage}</label>
+												<input type="password" ref={CRUDRoomPasswordRef}/>
+												<Button onClick={() => {
+													if (CRUDRoomPasswordRef.current?.value
+														&& CRUDRoomPasswordRef.current?.value !== "") {
+														axios.post("/chat/setPassword", { name: activeChat?.db_chat_name, password: CRUDRoomPasswordRef.current?.value })
+														.then((res) => {
+															setPasswdMessage("Success!");
+															setTimeout(() => {
+																setPasswdMessage("")
+															}, 2000);
+														})
+														.catch((err: AxiosError) => {
+															console.log({err})
+															setPasswdMessage("Error :(");
+															setTimeout(() => {
+																setPasswdMessage("")
+															}, 2000);
+														})
+													}
+												}}>Set New Password</Button>
+											</div>
+										</ShowConditionally>
+										<ShowConditionally cond={activeChat?.db_chat_status === "protected"}>
+											<div className="setpassword flex-gap10">
+												<label htmlFor="roompassword">{passwdMessage}</label>
+												<input type="password" ref={CRUDRoomPasswordRef}/>
+												<Button onClick={() => {
+													if (CRUDRoomPasswordRef.current?.value
+														&& CRUDRoomPasswordRef.current?.value !== "") {
+														axios.post("/chat/setPassword", { name: activeChat?.db_chat_name, password: CRUDRoomPasswordRef.current?.value })
+														.then((res) => {
+															setPasswdMessage("Success!");
+															setTimeout(() => {
+																setPasswdMessage("")
+															}, 2000);
+														})
+														.catch((err: AxiosError) => {
+															console.log({err})
+															setPasswdMessage("Error :(");
+															setTimeout(() => {
+																setPasswdMessage("")
+															}, 2000);
+														})
+													}
+												}}>Change Password</Button>
+												<Button onClick={() => {
+													axios.post("/chat/RemovePassword", { name: activeChat?.db_chat_name })
+													.then((res) => {
+														setPasswdMessage("Success!");
+														setTimeout(() => {
+															setPasswdMessage("")
+														}, 2000);
+													})
+													.catch((err: AxiosError) => {
+														console.log({err})
+														setPasswdMessage("Error :(");
+														setTimeout(() => {
+															setPasswdMessage("")
+														}, 2000);
+													})
+												}}>Remove Password</Button>
+											</div>
+										</ShowConditionally>
 									</> : (
 										<></>
 									)
