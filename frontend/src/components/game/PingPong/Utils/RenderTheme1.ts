@@ -1,6 +1,6 @@
-import { global } from './Data/PingPong.d';
-import { canvasHeight, canvasWidth, netHeight, netWidth, netX, paddleHeight, paddleWidth, player1X, player2X } from './Data/PingPong.contants';
-import { theme1 } from './Data/Themes.d';
+import { global } from '../Data/PingPong.d';
+import { canvasHeight, canvasWidth, netHeight, netWidth, netX, paddleHeight, paddleWidth, player1X, player2X } from '../Data/PingPong.contants';
+import { theme1 } from '../Data/Themes.d';
 
 const drawRect = (x: number, y: number, w: number, h: number, color: string): void => {
 	if (global.context !== null)

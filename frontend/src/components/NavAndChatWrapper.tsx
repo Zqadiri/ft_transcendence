@@ -12,8 +12,8 @@ import UserProfile from "./UserProfile";
 import { capitalize, cookies, getCookieHeader, globalContext, RRLink, ShowConditionally, useEffectOnce, valDef } from "./util";
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
-import GameTabs from "./game/Game"
-import PingPong from "./game/PingPong/PingPong"
+import GameTabs from "./Game/Game"
+import PingPong from "./Game/PingPong/PingPong"
 import MuteBanControls from "./MuteBanControls";
 
 console.log("Global console.log()");
