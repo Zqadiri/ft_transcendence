@@ -1,6 +1,6 @@
-import { global } from '../data/PingPong.d';
-import { canvasHeight, canvasWidth, netHeight, netWidth, netX, paddleHeight, paddleWidth, player1X, player2X } from './pingPong.contants';
-import { theme2 } from './theme.d';
+import { global } from './Data/PingPong.d';
+import { canvasHeight, canvasWidth, netHeight, netWidth, netX, paddleHeight, paddleWidth, player1X, player2X } from './Data/PingPong.contants';
+import { theme2 } from './Data/Themes.d';
 
 const drawPlayground = (x: number, y: number, w: number, h: number): void => {
 	if (global.context !== null)

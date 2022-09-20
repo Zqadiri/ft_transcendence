@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import { global } from "../data/PingPong.d"
+import { global } from "./Data/PingPong.d"
 import { gameContext } from "./PingPong";
-import { canvasHeight, canvasWidth, paddleHeight } from "./pingPong.contants";
+import { canvasHeight, canvasWidth, paddleHeight } from "./Data/PingPong.contants";
 
 export function resetGame() {
 	global.player1Y = canvasHeight/2 - paddleHeight/2;

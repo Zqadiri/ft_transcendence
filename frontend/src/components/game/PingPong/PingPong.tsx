@@ -4,11 +4,11 @@ import Canvas from './Canvas';
 import Score from './Score';
 import ResultPrompt, { resetGame } from './ResultPrompt';
 import CountDown from './CountDown';
-import { global } from '../data/PingPong.d';
+import { global } from './Data/PingPong.d';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { addSocketEventHandlers, handleLeftPaddle, handleRightPaddle, renderCanvas } from './tools';
-import { CurrentPlayersData } from './CurrentPlayersData.interface';
-import { canvasHeight, canvasWidth, playerOne, playerTwo, spectator } from './pingPong.contants';
+import { CurrentPlayersData } from '../Types and Interfaces/CurrentPlayersData.interface';
+import { canvasHeight, canvasWidth, playerOne, playerTwo, spectator } from './Data/PingPong.contants';
 
 export let gameContext = createContext<any>({});
 

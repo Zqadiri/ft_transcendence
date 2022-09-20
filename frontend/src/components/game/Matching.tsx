@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import MoonLoader from 'react-spinners/MoonLoader';
 import { ReactComponent as GameTheme01 } from '../../img/theme#01.svg';
 import { ReactComponent as GameTheme02 } from '../../img/theme#02.svg';
-import { global } from "./data/PingPong.d"
+import { global } from "./PingPong/Data/PingPong.d"
 
 function GameRules(): JSX.Element {
 	return (
@@ -78,7 +78,7 @@ function Selection({ setSwitchContent }: InferProps<typeof Selection.propTypes>)
 				</div>
 			</div>
 			<div className={`${activeTheme !== "none" ? "match-me" : "match-me-disabled"}`}>
-				<button onClick={joinRoom}>Match Me</button>
+				<button onClick={joinRoom}>Play</button>
 			</div>
 			<GameRules />
 		</>

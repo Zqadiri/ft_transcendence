@@ -2,7 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/game-styling.scss";
-import { GameData, LiveGame, global, Game } from "./data/PingPong.d";
+import { global } from "./PingPong/Data/PingPong.d";
+import { Game } from "./Types and Interfaces/Game.type";
+import { GameData } from "./Types and Interfaces/GameData.type";
+import { LiveGame } from "./Types and Interfaces/LiveGame.type";
 
 
 async	function	getGamesDataFromDatabase (setLiveGamesData: Function, setNoLiveGamesExist: Function)

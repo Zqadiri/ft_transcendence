@@ -130,6 +130,7 @@
 
 .live-games li div img {
 	width: 60px;
+	height: 60px;
 	border-radius: 100%;
 	border: 3px solid white;
 	outline: 3px solid #112B3C;
@@ -140,11 +141,6 @@
 	float: left;
 	font-size: 23px
 }
-
-/* .live-games li div:nth-child(2) {
-	margin: auto;
-	padding-top: 4% 
-} */
 
 .live-games li div:nth-child(1) h3,
 .live-games li div:nth-child(3) h3 {

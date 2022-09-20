@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { global } from "../data/PingPong.d"
+import { global } from "./Data/PingPong.d"
 
 function CountDown(): JSX.Element {
 	

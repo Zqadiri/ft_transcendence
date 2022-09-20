@@ -1,8 +1,9 @@
 import axios from 'axios';
-import { global, GameData } from '../data/PingPong.d';
-import { paddleHeight } from './pingPong.contants';
+import { global } from './Data/PingPong.d';
+import { paddleHeight } from './Data/PingPong.contants';
 import { renderTheme1 } from "./RenderTheme1";
 import { renderTheme2 } from "./RenderTheme2";
+import { GameData } from '../Types and Interfaces/GameData.type';
 
 export function		handleLeftPaddle()
 {

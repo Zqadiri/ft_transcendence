@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react'
-import { global } from '../data/PingPong.d';
+import { global } from './Data/PingPong.d';
 import { splitPaddleControl } from './PingPong';
 
 function Canvas( {width, height}: {width: number; height: number} ): JSX.Element {
