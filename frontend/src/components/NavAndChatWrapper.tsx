@@ -13,7 +13,7 @@ import { capitalize, cookies, getCookieHeader, globalContext, RRLink, ShowCondit
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
 import GameTabs from "./game/Game"
-import PingPong from "./game/PingPong"
+import PingPong from "./game/PingPong/PingPong"
 import MuteBanControls from "./MuteBanControls";
 
 console.log("Global console.log()");

@@ -84,7 +84,7 @@ export class GamesService {
 
 	async checkUserGamesForStreak(userId: number) {
         let		counter = 0;
-		const	streakCount: number = 5;
+		const	streak: number = 5;
         const	games = await this.findGameByUser(userId);
 
         for(let i = 0; i < games.length; i++){
@@ -95,7 +95,7 @@ export class GamesService {
                 counter++;
             }
         }
-        if (counter === streakCount)
+        if (counter === streak)
 			return (true);
 		return (false);
     }

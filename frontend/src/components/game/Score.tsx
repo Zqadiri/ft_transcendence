@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import { gameContext } from "./PingPong";
+import { gameContext } from "./PingPong/PingPong";
 
 function	Score( {s1, s2}: {s1: number, s2: number} ): JSX.Element
 {	
-	const {currentPlayersData, setCurrentPlayersData} = useContext(gameContext);
+	const {currentPlayersData} = useContext(gameContext);
 
 	return (
 		<div className="score-panel flex-gap20 flex-jc-se flex-ai-cr" >

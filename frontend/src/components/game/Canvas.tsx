@@ -1,11 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react'
+import { global } from './data/PingPong.d';
 
-function Canvas( {game, width, height}: {game: (context: HTMLCanvasElement | null) => void; width: number; height: number} ): JSX.Element {
+function Canvas( {width, height}: {width: number; height: number} ): JSX.Element {
 	const canvas: React.RefObject<HTMLCanvasElement> = React.useRef(null);
 
 	React.useEffect(() => {
-		game(canvas.current);
+		if (canvas.current)
+		{
+			global.canvasRef = canvas.current;
+			global.context = canvas.current.getContext("2d");
+			splitaddleControl();
+		}
 	});
 
 	return (
@@ -14,9 +20,12 @@ function Canvas( {game, width, height}: {game: (context: HTMLCanvasElement | nul
 }
 
 Canvas.propTypes = {
-	game: PropTypes.func.isRequired,
 	width: PropTypes.number.isRequired,
 	height: PropTypes.number.isRequired
 }
 
 export default Canvas;
+
+function splitaddleControl() {
+	throw new Error('Function not implemented.');
+}

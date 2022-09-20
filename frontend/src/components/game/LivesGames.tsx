@@ -5,18 +5,17 @@ import "../../styles/game-styling.scss";
 import { GameData, LiveGame, global, Game } from "./data/PingPong.d";
 
 
-async	function	getGamesDataFromDatabase (setLiveGamesData: React.Dispatch<React.SetStateAction<LiveGame[]>>,
-											  setNoLiveGamesExist: React.Dispatch<React.SetStateAction<boolean>>)
+async	function	getGamesDataFromDatabase (setLiveGamesData: Function, setNoLiveGamesExist: Function)
 {
 	try {
-		let gameResp = await axios.get('/game/live');
+		let		gameResp = await axios.get('/game/live');
 
 		setLiveGamesData([]);
 		gameResp.data.map(async (game: Game) => {
 			let firstUserResponse = await axios.get("/users?id=" + game.firstPlayerID);
 			let secondUserResponse = await axios.get("/users?id=" + game.secondPlayerID);
 
-			setLiveGamesData(current => [...current,
+			setLiveGamesData((current: LiveGame[]) => [...current,
 				{
 					user1: firstUserResponse.data.username,
 					user2: secondUserResponse.data.username,
@@ -37,10 +36,9 @@ async	function	getGamesDataFromDatabase (setLiveGamesData: React.Dispatch<React.
 	}
 }
 
-function			handleNewCoordinates(data: GameData, socketRoom: string,
-										 setLiveGamesData: React.Dispatch<React.SetStateAction<LiveGame[]>>)
+function			handleNewCoordinates(data: GameData, socketRoom: string, setLiveGamesData: Function)
 {
-	setLiveGamesData(current => {
+	setLiveGamesData((current: LiveGame[]) => {
 		current.map(game => {
 			if (game.socketRoom === socketRoom) {
 				game.score1 = data.p1.score;
@@ -55,8 +53,7 @@ function			handleNewCoordinates(data: GameData, socketRoom: string,
 	});
 }
 
-function			updateLiveGamesScore(liveGamesData: LiveGame[],
-										 setLiveGamesData: React.Dispatch<React.SetStateAction<LiveGame[]>>)
+function			updateLiveGamesScore(liveGamesData: LiveGame[], setLiveGamesData: Function)
 {
 	let	socketRooms: string[] = liveGamesData.map((game) => game["socketRoom"]);
 
@@ -65,18 +62,18 @@ function			updateLiveGamesScore(liveGamesData: LiveGame[],
 	
 }
 
-function 			updateAvailableGames (setAvailableGames: React.Dispatch<React.SetStateAction<number>>)
+function 			updateAvailableGames(setAvailableGames: Function)
 {
 	global.socket.off("newGameIsAvailable").on("newGameIsAvailable", () => {
-		setAvailableGames(current => current + 1);
+		setAvailableGames((current: number) => current + 1);
 	});
 
 	global.socket.off("gameEnded").on("gameEnded", () => {
-		setAvailableGames(current => current - 1);
+		setAvailableGames((current: number) => current - 1);
 	});
 }
 
-function			setNeccessaryDataToJoinLiveGame(socketRoom: string, gameTheme: string)
+function			setDataToJoinLiveGame(socketRoom: string, gameTheme: string)
 {
 	global.roomName = socketRoom;
 	global.playerId = 3;
@@ -98,12 +95,12 @@ export function		LiveGames(): JSX.Element
 {
 	const	[liveGamesData, setLiveGamesData] = useState<LiveGame[]>([]);
 	const	[noLiveGamesExist, setNoLiveGamesExist] = useState(true);
-	const	[AvailableGames, setAvailableGames] = useState<number>(0);
+	const	[availableGames, setAvailableGames] = useState<number>(0);
 	const 	navigate = useNavigate();
 
 	function joinLiveGame(socketRoom: string, gameTheme: string) {
 
-		setNeccessaryDataToJoinLiveGame(socketRoom, gameTheme);
+		setDataToJoinLiveGame(socketRoom, gameTheme);
 		global.socket.emit("joinSpecificRoom",  socketRoom);
 
 		navigate("/play");
@@ -118,7 +115,7 @@ export function		LiveGames(): JSX.Element
 			if (global.secondPlayerExist === false)
 				global.socket.disconnect();
 		};
-	}, [AvailableGames]);
+	}, [availableGames]);
 
 	updateLiveGamesScore(liveGamesData, setLiveGamesData);
 	updateAvailableGames(setAvailableGames);

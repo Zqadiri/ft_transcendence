@@ -36,6 +36,7 @@ type Global = {
 	setCountdownDisappear?: React.Dispatch<React.SetStateAction<boolean>>,
 	setForceChange?: React.Dispatch<React.SetStateAction<boolean>>,
 	navigate?: NavigateFunction,
+	canvasRef?: HTMLCanvasElement,
 	gameStarted: boolean,
 	winnerId: number;
 	roomName: string,
@@ -44,6 +45,19 @@ type Global = {
 	theme: string,
 	secondPlayerExist: boolean,
 	switchContent: boolean
+}
+
+export const	globalConstants = {
+	canvasWidth: 1000,
+	canvasHeight: 600,
+	player1X: 0,
+	player2X: 1000 - 20,
+	paddleWidth: 20,
+	paddleHeight: 150,
+	netX: 1000/2 - 2/2,
+	netY: 0,
+	netWidth: 3,
+	netHeight: 10,
 }
 
 export const global: Global = {
@@ -144,11 +158,4 @@ export interface LiveGame {
 	socketRoom: string,
 	theme: string,
 	id: number
-}
-
-export interface CurrentPlayersType {
-	firstPlayerName: string,
-	secondPlayerName: string,
-	firstPlayerAvatar: string,
-	secondPlayerAvatar: string
 }

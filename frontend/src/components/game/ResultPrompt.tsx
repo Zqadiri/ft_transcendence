@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { global } from "./data/PingPong.d"
-import { gameContext } from "./PingPong";
+import { gameContext } from "./PingPong/PingPong";
 
 export function resetGame() {
 	global.player1X = 0;
