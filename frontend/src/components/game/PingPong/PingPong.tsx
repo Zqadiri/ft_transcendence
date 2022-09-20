@@ -35,7 +35,6 @@ export function splitPaddleControl()
 
 function	PingPong(): JSX.Element
 {
-	const	navigate: NavigateFunction = useNavigate();
 	const	[gameScore, setGameScore] = useState({
 		firstPlayerScore: 0,
 		secondPlayerScore: 0
@@ -47,6 +46,7 @@ function	PingPong(): JSX.Element
 			secondPlayerAvatar: "",
 	});
 	const	[gameFinished, setGameFinished] = useState(false);
+	const	navigate: NavigateFunction = useNavigate();
 
 	useEffect(() => {
 		window.onbeforeunload = () => { return "" };
