@@ -28,7 +28,8 @@ async	function	getGamesDataFromDatabase (setLiveGamesData: Function, setNoLiveGa
 					avatar2: secondUserResponse.data.avatar,
 					socketRoom: game.socketRoom,
 					theme: game.theme,
-					id: game.id
+					id: game.id,
+					createdAt: game.createdAt
 				}
 			]);
 			setNoLiveGamesExist(false);
@@ -94,6 +95,32 @@ function			NoGamesFound(): JSX.Element
 	);
 }
 
+function			Timer( {gameCreatedAt}: {gameCreatedAt: Date} ): JSX.Element
+{
+	const [minutes, setMinutes] = useState(0);
+	const [seconds, setSeconds] = useState(0);
+
+
+	function getTime()
+	{
+		const time = Date.now() - Date.parse(String(gameCreatedAt));
+		setMinutes(Math.floor((time / 1000 / 60) % 60));
+		setSeconds(Math.floor((time / 1000) % 60));	
+	}
+
+	useEffect(() => {
+		const interval = setInterval(() => getTime(), 1000);
+	
+		return () => clearInterval(interval);
+	  }, []);
+
+	return (
+		<div className="timer">
+			<span>{minutes}:{seconds < 10 ? '0' + seconds: seconds}</span>
+		</div>
+	);
+}
+
 export function		LiveGames(): JSX.Element
 {
 	const	[liveGamesData, setLiveGamesData] = useState<LiveGame[]>([]);
@@ -137,6 +164,7 @@ export function		LiveGames(): JSX.Element
 							<div className="scoreplusloader">
 								<h3>{current.score1}</h3>
 								<h3 style={{width: "100px"}}>
+									<Timer gameCreatedAt={current.createdAt} />
 									<div className="animation-container">
 										<div className="bar"></div>
 									</div>

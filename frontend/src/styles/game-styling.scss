@@ -141,6 +141,7 @@
 }
 
 .live-games li div img {
+	display: inline-block;
 	width: 60px;
 	height: 60px;
 	border-radius: 100%;
@@ -158,6 +159,15 @@
 .live-games li div:nth-child(3) h3 {
 	margin-top: 5px;
 	font-size: 14px;
+}
+
+.live-games li .scoreplusloader .timer {
+	font-size: 15px;
+	font-weight: 600;
+	width: 100px;
+	display: flex;
+	justify-content: center;
+	color: #f66b0e;
 }
 
 .scoreplusloader {

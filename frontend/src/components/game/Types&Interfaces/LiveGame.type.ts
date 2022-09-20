@@ -7,5 +7,6 @@ export interface LiveGame {
 	avatar2: string,
 	socketRoom: string,
 	theme: string,
-	id: number
+	id: number,
+	createdAt: Date
 }

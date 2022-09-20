@@ -63,7 +63,7 @@ export class UpdateGameService {
 			secondPlayerID: secondUserID,
 			theme: theme,
 			socketRoom: room,
-			modifiedAt: new Date(),
+			createdAt: new Date(),
 
 		}).then(resp => {
 			tmp.gameID = resp.data.id;

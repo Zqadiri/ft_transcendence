@@ -20,7 +20,7 @@ export class GamesService {
 		game.firstPlayerID = createGameDto.firstPlayerID;
 		game.secondPlayerID = createGameDto.secondPlayerID;
 		game.theme = createGameDto.theme;
-		game.modifiedAt = createGameDto.modifiedAt;
+		game.createdAt = createGameDto.createdAt;
 		game.socketRoom = createGameDto.socketRoom;
 		const _error = validate(game);
 		if ((await _error).length)
