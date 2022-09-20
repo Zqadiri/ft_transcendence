@@ -1,14 +1,14 @@
 import { createContext, useEffect, useState } from 'react';
-import "../../styles/game-styling.scss";
-import Canvas from '../Canvas';
-import Score from '../Score';
-import ResultPrompt, { resetGame } from '../ResultPrompt';
-import CountDown from '../CountDown';
+import "../../../styles/game-styling.scss";
+import Canvas from './Canvas';
+import Score from './Score';
+import ResultPrompt, { resetGame } from './ResultPrompt';
+import CountDown from './CountDown';
 import { global } from '../data/PingPong.d';
 import { useNavigate, NavigateFunction } from 'react-router-dom';
 import { addSocketEventHandlers, handleLeftPaddle, handleRightPaddle, renderCanvas } from './tools';
 import { CurrentPlayersData } from './CurrentPlayersData.interface';
-import { playerOne, playerTwo, spectator } from './pingPong.contants';
+import { canvasHeight, canvasWidth, playerOne, playerTwo, spectator } from './pingPong.contants';
 
 export let gameContext = createContext<any>({});
 
@@ -44,8 +44,6 @@ function	PingPong(): JSX.Element
 	});
 	const	[gameFinished, setGameFinished] = useState(false);
 
-	global.navigate = navigate;
-
 	useEffect(() => {
 		window.onbeforeunload = () => { return "" };
 		addSocketEventHandlers(setCurrentPlayersData, setGameScore, setGameFinished);
@@ -62,13 +60,13 @@ function	PingPong(): JSX.Element
 
 	if (global.secondPlayerExist === false) return (<></>);
 	return (
-		<gameContext.Provider value={{currentPlayersData, setCurrentPlayersData}}>
+		<gameContext.Provider value={{currentPlayersData, setCurrentPlayersData, navigate}}>
 			<>
 				{gameFinished ? <ResultPrompt /> : <CountDown />}
 				<div className="game_canvas_parent_container flex-center-column">
 					<div className="container_sesco flex-center-column flex-gap20">
 						<Score s1={gameScore.firstPlayerScore} s2={gameScore.secondPlayerScore} />
-						<Canvas width={global.canvasWidth} height={global.canvasHeight} />
+						<Canvas width={canvasWidth} height={canvasHeight} />
 					</div>
 				</div>
 			</>

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { gameContext } from "./PingPong/PingPong";
+import { gameContext } from "./PingPong";
 
 function	Score( {s1, s2}: {s1: number, s2: number} ): JSX.Element
 {	

@@ -1,18 +1,17 @@
 import { useContext } from "react";
-import { global } from "./data/PingPong.d"
-import { gameContext } from "./PingPong/PingPong";
+import { global } from "../data/PingPong.d"
+import { gameContext } from "./PingPong";
+import { canvasHeight, canvasWidth, paddleHeight } from "./pingPong.contants";
 
 export function resetGame() {
-	global.player1X = 0;
-	global.player1Y = global.canvasHeight/2 - global.paddleHeight/2;
+	global.player1Y = canvasHeight/2 - paddleHeight/2;
 	global.player1Score = 0;
 
-	global.player2X = global.canvasWidth - global.paddleWidth;
-	global.player1Y = global.canvasHeight/2 - global.paddleHeight/2;
+	global.player1Y = canvasHeight/2 - paddleHeight/2;
 	global.player2Score = 0;
 
-	global.ballX = global.canvasWidth/2;
-	global.ballY = global.canvasHeight/2;
+	global.ballX = canvasWidth/2;
+	global.ballY = canvasHeight/2;
 
 	global.gameStarted = false;
 	global.roomName = "none"
@@ -26,12 +25,12 @@ function ResultPrompt(): JSX.Element {
 	let		winnerName: string = "You";
 	let		mainColor: string;
 
-	const {currentPlayersData, setCurrentPlayersData} = useContext(gameContext);
+	const {currentPlayersData, navigate} = useContext(gameContext);
 
 	function goHomeComponent() {
 		setTimeout(() => {
 			resetGame();
-			global.navigate?.("/");
+			navigate("/");
 		}, 3000)
 	}
 

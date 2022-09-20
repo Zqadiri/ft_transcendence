@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react'
-import { global } from './data/PingPong.d';
+import { global } from '../data/PingPong.d';
+import { splitPaddleControl } from './PingPong';
 
 function Canvas( {width, height}: {width: number; height: number} ): JSX.Element {
 	const canvas: React.RefObject<HTMLCanvasElement> = React.useRef(null);
@@ -10,7 +11,7 @@ function Canvas( {width, height}: {width: number; height: number} ): JSX.Element
 		{
 			global.canvasRef = canvas.current;
 			global.context = canvas.current.getContext("2d");
-			splitaddleControl();
+			splitPaddleControl();
 		}
 	});
 
@@ -25,7 +26,3 @@ Canvas.propTypes = {
 }
 
 export default Canvas;
-
-function splitaddleControl() {
-	throw new Error('Function not implemented.');
-}

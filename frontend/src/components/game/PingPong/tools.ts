@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { global, GameData } from '../data/PingPong.d';
-import { renderTheme1 } from "../RenderTheme1";
-import { renderTheme2 } from "../RenderTheme2";
+import { paddleHeight } from './pingPong.contants';
+import { renderTheme1 } from "./RenderTheme1";
+import { renderTheme2 } from "./RenderTheme2";
 
 export function		handleLeftPaddle()
 {
@@ -15,7 +16,7 @@ export function		handleLeftPaddle()
 	global.canvasRef?.addEventListener("mousemove", (event: MouseEvent) => {
 		let rect = global.canvasRef?.getBoundingClientRect();
 
-		global.player1Y = event.clientY - rect!.top - global.paddleHeight/2;
+		global.player1Y = event.clientY - rect!.top - paddleHeight/2;
 		global.socket.emit("updatePaddlePosition", {
 			roomName: global.roomName,
 			playerId: global.playerId,
@@ -33,7 +34,7 @@ export function		handleRightPaddle()
 	global.canvasRef?.addEventListener("mousemove", (event: MouseEvent) => {
 		let rect = global.canvasRef?.getBoundingClientRect();
 	
-		global.player2Y = event.clientY - rect!.top - global.paddleHeight/2;
+		global.player2Y = event.clientY - rect!.top - paddleHeight/2;
 		global.socket.emit("updatePaddlePosition", {
 			roomName: global.roomName,
 			playerId: global.playerId,
@@ -51,11 +52,9 @@ export function		renderCanvas()
 }
 
 function			setReceivedSocketData(data: GameData, setGameScore: Function) {
-	global.player1X = data.p1.x;
 	global.player1Y = data.p1.y;
 	global.player1Score = data.p1.score;
 
-	global.player2X = data.p2.x;
 	global.player2Y = data.p2.y;
 	global.player2Score = data.p2.score;
 

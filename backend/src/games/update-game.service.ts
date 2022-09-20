@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { GameCoor, GameData, Directions, Ball, Paddle } from "./game.interface"
-import { CreateGameDto, UpdateScoreDto } from './dto/game.dto';
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 
 @Injectable()
 export class UpdateGameService {
@@ -112,13 +111,11 @@ export class UpdateGameService {
 			const		gameCoordinates: GameData = {
 				p1: {
 					userId: this.gameCoordinates.get(room).player1.userId,
-					x: this.gameCoordinates.get(room).player1.x,
 					y: this.gameCoordinates.get(room).player1.y,
 					score: this.gameCoordinates.get(room).player1.score
 				},
 				p2: {
 					userId: this.gameCoordinates.get(room).player2.userId,
-					x: this.gameCoordinates.get(room).player2.x,
 					y: this.gameCoordinates.get(room).player2.y,
 					score: this.gameCoordinates.get(room).player2.score
 				},

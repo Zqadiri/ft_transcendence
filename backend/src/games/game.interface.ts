@@ -1,7 +1,7 @@
 export type Paddle = {
 	socketId?: string,
 	userId: number,
-	x: number,
+	x?: number,
 	y: number,
 	score: number
 }

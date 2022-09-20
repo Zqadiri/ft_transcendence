@@ -112,7 +112,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	@SubscribeMessage("updatePaddlePosition")
-	handleUpdatePaddlePosition(client: Socket, {roomName, playerId, y}): void {
-		this.updateGame.updatePaddlePosition(y, roomName, playerId);
+	handleUpdatePaddlePosition(client: Socket, {roomName, playerId, paddleY}): void {
+		this.updateGame.updatePaddlePosition(paddleY, roomName, playerId);
 	}
 }
