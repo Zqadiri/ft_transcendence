@@ -1,3 +1,5 @@
+@import "./palette.scss";
+
 .test {
 	background-color: #112B3C;
 	background-color: #205375;
@@ -62,37 +64,47 @@
 	border: 1px solid #fff;
 }
 
-.match-me,
-.match-me-disabled {
+.play,
+.play-disabled {
 	text-align: center;
 	margin-top: 45px;
 }
 
-.match-me button {
-	border: 3px solid #F66B0E;
+.play button {
+	border: none;
+    border-bottom: 3px solid #F66B0E;
+	padding: 10px 20px;
+
+	// border: 3px solid #F66B0E;
 	color: #F66B0E;
-	padding: 18px 25px;
+	// padding: 15px 35px;
 	background-color: rgba(255, 255, 255, 0);
 	font-size: 18px;
 	font-weight: bold;
-	border-radius: 15px;
+	// border-radius: 15px;
 	cursor: pointer;
-	transition: 0.3s;
+	// transition: 0.3s;
 }
 
-.match-me button:hover {
-	background-color: #F66B0E;
-	color: #efefef
+.play button:hover {
+	// background-color: #F66B0E;
+	// color: #efefef
+	border: none;
+	padding-bottom: 13px;
 }
 
-.match-me-disabled button {
-	border: 3px solid #fbbf97;
+.play-disabled button {
+	border: none;
+    border-bottom: 3px solid #fbbf97;
+	padding: 10px 20px;
+
+	// border: 3px solid #fbbf97;
 	color: #fbbf97;
-	padding: 18px 25px;
+	// padding: 15px 35px;
 	background-color: rgba(255, 255, 255, 0);
 	font-size: 18px;
 	font-weight: bold;
-	border-radius: 15px;
+	// border-radius: 15px;
 	transition: 0.3s;
 }
 
@@ -229,25 +241,23 @@
 /* Game Rules Section */
 
 .game-rules {
-	width: 500px;
+	width: 515px;
 	overflow: hidden;
-	margin: auto;
-	margin-top: 150px;
-	margin-bottom: 35px;
-	text-align: center;
+	margin: 150px auto 35px;
+	text-align: left;
 }
 
-.game-rules h2 {
-	margin-bottom: 18px;
+.game-rules .rules-list h2 {
+	margin-bottom: 6px;
 	color: #F66B0E;
-	font-weight: bold;
-	text-decoration: underline;
+	font-weight: 600;
+	font-size: 25px;
 }
 
 .game-rules .rules-list {
 	background-color: #d7e5ff;
 	border-radius: 20px;
-	padding: 20px
+	padding: 20px 30px;
 }
 
 .game-rules .rules-list ol {
@@ -257,17 +267,19 @@
 }
 
 .game-rules .rules-list ol li {
-	padding: 10px 0;
+	padding: 8px 0;
+	font-size: 15px;
 }
+
+// .game-rules .rules-list ol li:last-child {
+// 	padding-bottom: 8;
+// }
 
 .game-rules .rules-list ol li span {
 	color: #F66B0E;
+	margin: 0 5px 0 10px;
 }
 
-.game-rules .rules-list ol li:last-child {
-	margin-bottom: 0;
-	border-bottom: none;
-}
 
 /* Canvas & Score Section */
 .game_canvas_parent_container {

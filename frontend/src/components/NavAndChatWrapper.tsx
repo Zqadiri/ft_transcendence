@@ -12,7 +12,7 @@ import UserProfile from "./UserProfile";
 import { capitalize, cookies, getCookieHeader, globalContext, RRLink, ShowConditionally, useEffectOnce, valDef } from "./util";
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
-import GameTabs from "./Game/Game"
+import GameTabs from "./Game/GameTabs"
 import PingPong from "./Game/PingPong/PingPong"
 import MuteBanControls from "./MuteBanControls";
 

@@ -1,4 +1,4 @@
-import { useEffectOnce } from "./Game";
+import { useEffectOnce } from "./GameTabs";
 import { useNavigate } from 'react-router-dom';
 import PropTypes, { InferProps } from "prop-types";
 import { useState, useEffect } from "react";
@@ -10,14 +10,15 @@ import { global } from "./PingPong/Data/PingPong.d"
 function GameRules(): JSX.Element {
 	return (
 		<section className="game-rules">
-			<h2>Game Rules</h2>
 			<div className="rules-list">
+				<h2>Game Rules:</h2>
 				<ol>
-					<li><span>(1)</span> To win you need to score 10 balls against your opponent.</li>
-					<li><span>(2)</span> You will play with your mouse.</li>
-					<li><span>(3)</span> To move your paddle you need to point the cursor inside the game canvas.</li>
-					<li><span>(4)</span> While you play the speed of the ball increases.</li>
-					<li><span>(5)</span> Second theme starting speed is higher than the first theme.</li>
+					<li><span>(1)</span> To play choose your playground theme and click play.</li>
+					<li><span>(2)</span> To win you need to score 10 balls against your opponent.</li>
+					<li><span>(3)</span> You will play with your mouse.</li>
+					<li><span>(4)</span> To move your paddle point the cursor inside the game canvas.</li>
+					<li><span>(5)</span> While you play the speed of the ball increases.</li>
+					<li><span>(6)</span> Second theme starting speed is higher than the first theme.</li>
 				</ol>
 			</div>
 		</section>
@@ -77,8 +78,8 @@ function Selection({ setSwitchContent }: InferProps<typeof Selection.propTypes>)
 					<GameTheme02 />
 				</div>
 			</div>
-			<div className={`${activeTheme !== "none" ? "match-me" : "match-me-disabled"}`}>
-				<button onClick={joinRoom}>Play</button>
+			<div className={`${activeTheme !== "none" ? "play" : "play-disabled"}`}>
+				<button onClick={joinRoom}>PLAY</button>
 			</div>
 			<GameRules />
 		</>
