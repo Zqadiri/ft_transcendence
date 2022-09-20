@@ -1,24 +1,7 @@
 import { useContext } from "react";
 import { global } from "./Data/PingPong.d"
 import { gameContext } from "./PingPong";
-import { canvasHeight, canvasWidth, paddleHeight } from "./Data/PingPong.contants";
-
-export function resetGame() {
-	global.player1Y = canvasHeight/2 - paddleHeight/2;
-	global.player1Score = 0;
-
-	global.player1Y = canvasHeight/2 - paddleHeight/2;
-	global.player2Score = 0;
-
-	global.ballX = canvasWidth/2;
-	global.ballY = canvasHeight/2;
-
-	global.gameStarted = false;
-	global.roomName = "none"
-	global.playerId = 0;
-	global.winnerId = 0;
-	global.secondPlayerExist = false;
-}
+import { resetGame } from "./Utils/tools";
 
 function ResultPrompt(): JSX.Element {
 	let		resultMessage: string;

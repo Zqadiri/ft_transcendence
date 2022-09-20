@@ -22,7 +22,7 @@ const drawCircle = (x: number, y: number, r: number, color: string): void => {
 
 const drawNet = (): void => {
 	for (let i: number = 0; i < canvasHeight; i += (netHeight + 15))
-	drawRect(netX, i, netWidth, netHeight, theme1.net.color);
+		drawRect(netX, i, netWidth, netHeight, theme1.net.color);
 }
 
 export const renderTheme1 = (): void => {

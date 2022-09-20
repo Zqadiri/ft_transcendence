@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import { canvasHeight, canvasWidth, paddleHeight } from './PingPong.contants';
-import { Global } from "../../Types and Interfaces/Global.type";
+import { Global } from "../../Types&Interfaces/Global.type";
 
 export const global: Global = {
 	player1Y: canvasHeight/2 - paddleHeight/2,

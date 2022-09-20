@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/game-styling.scss";
 import { global } from "./PingPong/Data/PingPong.d";
-import { Game } from "./Types and Interfaces/Game.type";
-import { GameData } from "./Types and Interfaces/GameData.type";
-import { LiveGame } from "./Types and Interfaces/LiveGame.type";
+import { Game } from "./Types&Interfaces/Game.type";
+import { GameData } from "./Types&Interfaces/GameData.type";
+import { LiveGame } from "./Types&Interfaces/LiveGame.type";
 
 
 async	function	getGamesDataFromDatabase (setLiveGamesData: Function, setNoLiveGamesExist: Function)

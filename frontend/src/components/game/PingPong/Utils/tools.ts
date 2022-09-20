@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { global } from '../Data/PingPong.d';
-import { paddleHeight } from '../Data/PingPong.contants';
+import { canvasHeight, canvasWidth, paddleHeight } from '../Data/PingPong.contants';
 import { renderTheme1 } from "./RenderTheme1";
 import { renderTheme2 } from "./RenderTheme2";
-import { GameData } from '../../Types and Interfaces/GameData.type';
+import { GameData } from '../../Types&Interfaces/GameData.type';
 
 export function		handleLeftPaddle()
 {
@@ -50,6 +50,23 @@ export function		renderCanvas()
 		renderTheme1();
 	else if (global.theme === "theme02")
 		renderTheme2();
+}
+
+export function resetGame() {
+	global.player1Y = canvasHeight/2 - paddleHeight/2;
+	global.player1Score = 0;
+
+	global.player1Y = canvasHeight/2 - paddleHeight/2;
+	global.player2Score = 0;
+
+	global.ballX = canvasWidth/2;
+	global.ballY = canvasHeight/2;
+
+	global.gameStarted = false;
+	global.roomName = "none"
+	global.playerId = 0;
+	global.winnerId = 0;
+	global.secondPlayerExist = false;
 }
 
 function			setReceivedSocketData(data: GameData, setGameScore: Function) {

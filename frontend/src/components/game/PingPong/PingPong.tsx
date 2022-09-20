@@ -1,14 +1,18 @@
-import { createContext, useEffect, useState } from 'react';
 import "../../../styles/game-styling.scss";
+
+import { createContext, useEffect, useState } from 'react';
+import { useNavigate, NavigateFunction } from 'react-router-dom';
+
 import Canvas from './Canvas';
 import Score from './Score';
-import ResultPrompt, { resetGame } from './ResultPrompt';
+import ResultPrompt from './ResultPrompt';
 import CountDown from './CountDown';
+
 import { global } from './Data/PingPong.d';
-import { useNavigate, NavigateFunction } from 'react-router-dom';
-import { addSocketEventHandlers, handleLeftPaddle, handleRightPaddle, renderCanvas } from './Utils/tools';
-import { CurrentPlayersData } from '../Types and Interfaces/CurrentPlayersData.interface';
+import { addSocketEventHandlers, handleLeftPaddle, handleRightPaddle, renderCanvas, resetGame } from './Utils/tools';
+import { CurrentPlayersData } from '../Types&Interfaces/CurrentPlayersData.interface';
 import { canvasHeight, canvasWidth, playerOne, playerTwo, spectator } from './Data/PingPong.contants';
+
 
 export let gameContext = createContext<any>({});
 
