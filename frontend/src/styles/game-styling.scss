@@ -243,8 +243,10 @@
 .game-rules {
 	width: 515px;
 	overflow: hidden;
-	margin: 150px auto 35px;
-	text-align: left;
+	position: absolute;
+	top: 850px;
+	left: 50%;
+	transform: translate(-50%, 0);
 }
 
 .game-rules .rules-list h2 {
@@ -255,7 +257,6 @@
 }
 
 .game-rules .rules-list {
-	// background-color: #d7e5ff;
 	background-color: #e6e6e6;
 	border-radius: 20px;
 	padding: 20px 30px;
@@ -265,6 +266,7 @@
 	color: black;
 	font-weight: 500;
 	list-style: none;
+	text-align: left;
 }
 
 .game-rules .rules-list ol li {

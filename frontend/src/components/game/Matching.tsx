@@ -81,7 +81,6 @@ function Selection({ setSwitchContent }: InferProps<typeof Selection.propTypes>)
 			<div className={`${activeTheme !== "none" ? "play" : "play-disabled"}`}>
 				<button onClick={joinRoom}>PLAY</button>
 			</div>
-			<GameRules />
 		</>
 	);
 }
@@ -145,6 +144,7 @@ function	Matching(): JSX.Element
 	return (
 		<>
 			{switchContent ? <Selection setSwitchContent={setSwitchContent}/> : <Waiting setSwitchContent={setSwitchContent}/>}
+			<GameRules />
 		</>
 	);
 }
