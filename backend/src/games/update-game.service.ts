@@ -255,6 +255,7 @@ export class UpdateGameService {
 		this.gameCoordinates.set(room, tmp);
 	}
 
+	// change its name
 	OnePlayerDisconnect(playerId: string): void
 	{
 		for (const [key, value] of this.gameCoordinates) {

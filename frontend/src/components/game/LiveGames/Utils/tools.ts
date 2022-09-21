@@ -73,7 +73,11 @@ export	function			updateLiveGamesScore(liveGamesData: LiveGame[], setLiveGamesDa
 	let	socketRooms: string[] = liveGamesData.map((game) => game["socketRoom"]);
 
 	global.socket.emit("joinSpecificRoom",  socketRooms);
-	global.socket.off("newCoordinates").on("newCoordinates", (data: GameData, socketRoom) => handleNewScore(data, socketRoom, setLiveGamesData));
+	global.socket.off("newCoordinates")
+	.on(
+		"newCoordinates", 
+		(data: GameData, socketRoom: string) => handleNewScore(data, socketRoom, setLiveGamesData)
+	);
 	
 }
 
