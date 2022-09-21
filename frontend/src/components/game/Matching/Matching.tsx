@@ -36,7 +36,6 @@ function	addMatchingSocketEventHandler(navigate: Function, setActiveComponent: F
 
 	global.socket.off("secondPlayerJoined").on("secondPlayerJoined", () => {
 		global.secondPlayerExist = true;
-		// setActiveComponent(selectionComponent);
 		navigate("/play");
 	});
 }

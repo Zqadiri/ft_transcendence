@@ -20,9 +20,9 @@ export async	function	getGamesDataFromDatabase(setLiveGamesData: Function, setNo
 			gamesSecondPlayer.push(secondResp);
 		}
 
+		setLiveGamesData([]);
 		if (gameResp.data)
 		{
-			setLiveGamesData([]);
 			for (let i = 0; i < gameResp.data.length; i++)
 			{
 				setLiveGamesData((current: LiveGame[]) => [...current,
@@ -42,10 +42,10 @@ export async	function	getGamesDataFromDatabase(setLiveGamesData: Function, setNo
 			}
 			setNoLiveGamesExist(false);
 		}
-
-	} catch(e) {
+		else
 			setNoLiveGamesExist(true);
-	}
+
+	} catch {}
 }
 
 export	function			handleNewScore(data: GameData, socketRoom: string, setLiveGamesData: Function)

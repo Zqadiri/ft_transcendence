@@ -14,13 +14,14 @@ function	Selection(): JSX.Element {
 	{
 		if (activeTheme === "theme01" || activeTheme === "theme02")
 		{
+			const	currentUserId = cookies.get("id");
 			global.socket.connect();
-			const	currentUserId: any = cookies.get("id");
 
 			if (activeTheme === "theme01")
 				global.socket.emit("joinTheme1", currentUserId);
 			else if (activeTheme === "theme02")
 				global.socket.emit("joinTheme2", currentUserId);
+
 			setActiveComponent(waitingComponent);
 		}
 		global.theme = activeTheme;

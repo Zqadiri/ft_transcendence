@@ -12,7 +12,6 @@ function	Waiting(): JSX.Element
 	{
 		setActiveComponent(selectionComponent);
 		activeComponent = selectionComponent;
-		global.socket.disconnect();
 	}
 
 	useEffect(() => {
