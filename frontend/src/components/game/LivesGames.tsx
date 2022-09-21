@@ -1,59 +1,77 @@
-import axios from "axios";
+import axios, { AxiosResponse, AxiosStatic } from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/game-styling.scss";
 import { global } from "./PingPong/Data/PingPong.d";
-import { Game } from "./Types&Interfaces/Game.type";
-import { GameData } from "./Types&Interfaces/GameData.type";
-import { LiveGame } from "./Types&Interfaces/LiveGame.type";
+import { Game } from "./Interfaces/Game.interface";
+import { GameData } from "./Interfaces/GameData.interface";
+import { LiveGame } from "./Interfaces/LiveGame.interface";
 
 
 async	function	getGamesDataFromDatabase (setLiveGamesData: Function, setNoLiveGamesExist: Function)
 {
 	try {
 		let		gameResp = await axios.get('/game/live');
+		let		gamesFirstPlayer: AxiosResponse<any, any>[] = [];
+		let		gamesSecondPlayer: AxiosResponse<any, any>[] = [];
 
-		setLiveGamesData([]);
-		gameResp.data.map(async (game: Game) => {
-			let firstUserResponse = await axios.get("/users?id=" + game.firstPlayerID);
-			let secondUserResponse = await axios.get("/users?id=" + game.secondPlayerID);
 
-			setLiveGamesData((current: LiveGame[]) => [...current,
-				{
-					user1: firstUserResponse.data.username,
-					user2: secondUserResponse.data.username,
-					score1: game.firstPlayerScore,
-					score2: game.secondPlayerScore,
-					avatar1: firstUserResponse.data.avatar,
-					avatar2: secondUserResponse.data.avatar,
-					socketRoom: game.socketRoom,
-					theme: game.theme,
-					id: game.id,
-					createdAt: game.createdAt
-				}
-			]);
+		for (let i = 0; i < gameResp.data.length; i++)
+		{
+			const firstResp = await axios.get("/users?id=" + gameResp.data[i].firstPlayerID);
+			gamesFirstPlayer.push(firstResp);
+
+			const secondResp = await axios.get("/users?id=" + gameResp.data[i].secondPlayerID);
+			gamesSecondPlayer.push(secondResp);
+		}
+		// gameResp.data.map(async (game: Game) => {
+		// });
+
+		if (gameResp.data)
+		{
+			setLiveGamesData([]);
+			for (let i = 0; i < gameResp.data.length; i++)
+			{
+				setLiveGamesData((current: LiveGame[]) => [...current,
+					{
+						user1: gamesFirstPlayer[i].data.username,
+						user2: gamesSecondPlayer[i].data.username,
+						score1: gameResp.data[i].firstPlayerScore,
+						score2: gameResp.data[i].secondPlayerScore,
+						avatar1: gamesFirstPlayer[i].data.avatar,
+						avatar2: gamesSecondPlayer[i].data.avatar,
+						socketRoom: gameResp.data[i].socketRoom,
+						theme: gameResp.data[i].theme,
+						id: gameResp.data[i].id,
+						createdAt: gameResp.data[i].createdAt
+					}
+				]);
+			}	
 			setNoLiveGamesExist(false);
-		});
+		}
 
 	} catch(e) {
 		setNoLiveGamesExist(true);
 	}
 }
 
-function			handleNewCoordinates(data: GameData, socketRoom: string, setLiveGamesData: Function)
+function			handleNewScore(data: GameData, socketRoom: string, setLiveGamesData: Function)
 {
 	setLiveGamesData((current: LiveGame[]) => {
+		let		newScore: boolean = false;
+
 		current.map(game => {
-			if (game.socketRoom === socketRoom) {
+			if (game.socketRoom === socketRoom && game.score1 !== data.p1.score || game.score2 !== data.p2.score) {
 				game.score1 = data.p1.score;
 				game.score2 = data.p2.score;
+				newScore = true;
 			}
 
 			return game;
 		});
-		const	newState = Array.from(current);
+		if (newScore) return Array.from(current);
 
-		return newState;
+		return current;
 	});
 }
 
@@ -62,7 +80,7 @@ function			updateLiveGamesScore(liveGamesData: LiveGame[], setLiveGamesData: Fun
 	let	socketRooms: string[] = liveGamesData.map((game) => game["socketRoom"]);
 
 	global.socket.emit("joinSpecificRoom",  socketRooms);
-	global.socket.off("newCoordinates").on("newCoordinates", (data: GameData, socketRoom) => handleNewCoordinates(data, socketRoom, setLiveGamesData));
+	global.socket.off("newCoordinates").on("newCoordinates", (data: GameData, socketRoom) => handleNewScore(data, socketRoom, setLiveGamesData));
 	
 }
 
@@ -109,6 +127,7 @@ function			Timer( {gameCreatedAt}: {gameCreatedAt: Date} ): JSX.Element
 	}
 
 	useEffect(() => {
+		getTime();
 		const interval = setInterval(() => getTime(), 1000);
 	
 		return () => clearInterval(interval);
@@ -150,7 +169,8 @@ export function		LiveGames(): JSX.Element
 	updateLiveGamesScore(liveGamesData, setLiveGamesData);
 	updateAvailableGames(setAvailableGames);
 
-	if (noLiveGamesExist) return <NoGamesFound />
+	console.log(`available games: ${availableGames}`);
+	if (availableGames == 0 || noLiveGamesExist) return <NoGamesFound />
 	return (
 		<ul className="live-games">
 			{
@@ -165,9 +185,9 @@ export function		LiveGames(): JSX.Element
 								<h3>{current.score1}</h3>
 								<h3 style={{width: "100px"}}>
 									<Timer gameCreatedAt={current.createdAt} />
-									<div className="animation-container">
+									{/* <div className="animation-container">
 										<div className="bar"></div>
-									</div>
+									</div> */}
 								</h3>	
 								<h3>{current.score2}</h3>
 							</div>

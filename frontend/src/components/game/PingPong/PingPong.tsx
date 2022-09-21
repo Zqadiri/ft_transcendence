@@ -10,7 +10,7 @@ import CountDown from './CountDown';
 
 import { global } from './Data/PingPong.d';
 import { addSocketEventHandlers, handleLeftPaddle, handleRightPaddle, renderCanvas, resetGame } from './Utils/tools';
-import { CurrentPlayersData } from '../Types&Interfaces/CurrentPlayersData.interface';
+import { CurrentPlayersData } from '../Interfaces/CurrentPlayersData.interface';
 import { canvasHeight, canvasWidth, playerOne, playerTwo, spectator } from './Data/PingPong.contants';
 
 

@@ -3,7 +3,7 @@ import { global } from '../Data/PingPong.d';
 import { canvasHeight, canvasWidth, paddleHeight } from '../Data/PingPong.contants';
 import { renderTheme1 } from "./renderTheme1";
 import { renderTheme2 } from "./renderTheme2";
-import { GameData } from '../../Types&Interfaces/GameData.type';
+import { GameData } from '../../Interfaces/GameData.interface';
 
 export function		handleLeftPaddle()
 {
