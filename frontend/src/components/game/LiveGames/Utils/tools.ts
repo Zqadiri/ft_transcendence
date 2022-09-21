@@ -3,7 +3,7 @@ import { GameData } from "../../Interfaces/GameData.interface";
 import { LiveGame } from "../../Interfaces/LiveGame.interface";
 import { global } from "../../PingPong/Data/PingPong.d";
 
-export async	function	getGamesDataFromDatabase (setLiveGamesData: Function, setNoLiveGamesExist: Function)
+export async	function	getGamesDataFromDatabase(setLiveGamesData: Function, setNoLiveGamesExist: Function)
 {
 	try {
 		let		gameResp = await axios.get('/game/live');
@@ -39,22 +39,22 @@ export async	function	getGamesDataFromDatabase (setLiveGamesData: Function, setN
 						createdAt: gameResp.data[i].createdAt
 					}
 				]);
-			}	
+			}
 			setNoLiveGamesExist(false);
 		}
 
 	} catch(e) {
-		setNoLiveGamesExist(true);
+			setNoLiveGamesExist(true);
 	}
 }
 
-export function			handleNewScore(data: GameData, socketRoom: string, setLiveGamesData: Function)
+export	function			handleNewScore(data: GameData, socketRoom: string, setLiveGamesData: Function)
 {
 	setLiveGamesData((current: LiveGame[]) => {
 		let		newScore: boolean = false;
 
 		current.map(game => {
-			if (game.socketRoom === socketRoom && game.score1 !== data.p1.score || game.score2 !== data.p2.score) {
+			if (game.socketRoom === socketRoom && (game.score1 !== data.p1.score || game.score2 !== data.p2.score)) {
 				game.score1 = data.p1.score;
 				game.score2 = data.p2.score;
 				newScore = true;
@@ -68,7 +68,7 @@ export function			handleNewScore(data: GameData, socketRoom: string, setLiveGame
 	});
 }
 
-export function			updateLiveGamesScore(liveGamesData: LiveGame[], setLiveGamesData: Function)
+export	function			updateLiveGamesScore(liveGamesData: LiveGame[], setLiveGamesData: Function)
 {
 	let	socketRooms: string[] = liveGamesData.map((game) => game["socketRoom"]);
 
@@ -77,7 +77,7 @@ export function			updateLiveGamesScore(liveGamesData: LiveGame[], setLiveGamesDa
 	
 }
 
-export function 			updateAvailableGames(setAvailableGames: Function)
+export	function 			updateAvailableGames(setAvailableGames: Function)
 {
 	global.socket.off("newGameIsAvailable").on("newGameIsAvailable", () => {
 		setAvailableGames((current: number) => current + 1);

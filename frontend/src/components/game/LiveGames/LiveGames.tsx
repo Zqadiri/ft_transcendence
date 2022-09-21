@@ -43,14 +43,16 @@ export function		LiveGames(): JSX.Element
 
 		getGamesDataFromDatabase(setLiveGamesData, setNoLiveGamesExist);
 
-		if (global.secondPlayerExist === false) return () => {global.socket.disconnect()};
+		return () => {
+			if (global.secondPlayerExist === false)
+				global.socket.disconnect();
+		};
 	}, [availableGames]);
 
 	updateLiveGamesScore(liveGamesData, setLiveGamesData);
 	updateAvailableGames(setAvailableGames);
 
-	console.log(`available games: ${availableGames}`);
-	if (availableGames == 0 || noLiveGamesExist) return <NoGamesFound />
+	if (noLiveGamesExist) return <NoGamesFound />
 	return (
 		<ul className="live-games">
 			{
