@@ -7,15 +7,20 @@
 	background-color: #EFEFEF;
 }
 
+html {
+	background-color: $pastel_white;
+}
+
 /* Tabs Section */
 
 .react-tabs__tab-list {
-	margin-top: 8.5%;
+	margin-top: clamp(8em, 8.5%, 10em);;
 	text-align: center;
 }
 
 .react-tabs__tab {
 	text-decoration: none;
+	width: 19.11rem;
 	color: #fff;
 	font-size: 25px;
 	background-color: #205375;
@@ -26,13 +31,36 @@
 	cursor: pointer
 }
 
-.react-tabs__tab:hover {
-	background-color: #F66B0E;
+.react-tabs__tab:first-child {
+	border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
 }
 
 .react-tabs__tab:last-child {
-
+	border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
 	border-left: 1px solid #fff;
+}
+
+@media (max-width: 733px)
+{
+	.react-tabs__tab {
+		margin-inline: auto;
+		display: block;
+;
+	}
+	.react-tabs__tab:first-child,
+	.react-tabs__tab:last-child {
+		border-radius: 0;
+		border: none;
+	}
+	.react-tabs__tab:last-child {
+		border-top: 1px solid #fff;
+	}
+}
+
+.react-tabs__tab:hover {
+	background-color: #F66B0E;
 }
 
 .react-tabs__tab--selected {
@@ -251,12 +279,15 @@
 /* Game Rules Section */
 
 .game-rules {
-	width: 515px;
+	width: 100%;
 	overflow: hidden;
 	position: absolute;
-	top: 850px;
-	left: 50%;
-	transform: translate(-50%, 0);
+	top: 115%;
+	display: flex;
+	justify-content: center;
+
+	// left: 50%;
+	// transform: translate(-50%, 0);
 }
 
 .game-rules .rules-list h2 {
@@ -270,6 +301,7 @@
 	background-color: #e6e6e6;
 	border-radius: 20px;
 	padding: 20px 30px;
+	margin-bottom: 4em;
 }
 
 .game-rules .rules-list ol {
