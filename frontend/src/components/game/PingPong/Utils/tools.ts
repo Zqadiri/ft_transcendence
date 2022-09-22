@@ -3,7 +3,7 @@ import { global } from '../Data/PingPong.d';
 import { canvasHeight, canvasWidth, paddleHeight } from '../Data/PingPong.contants';
 import { renderTheme1 } from './RenderTheme1';
 import { renderTheme2 } from './RenderTheme2';
-import { GameData } from '../../Types&Interfaces/GameData.type';
+import { GameData } from '../../Interfaces/GameData.interface';
 
 export function		handleLeftPaddle()
 {
@@ -80,8 +80,8 @@ function			setReceivedSocketData(data: GameData, setGameScore: Function) {
 	global.ballY = data.b.y;
 
 	setGameScore({
-		firstPlayerScore: data.p1.score,
-		secondPlayerScore: data.p2.score
+		firstPlayer: data.p1.score,
+		secondPlayer: data.p2.score
 	});
 }
 

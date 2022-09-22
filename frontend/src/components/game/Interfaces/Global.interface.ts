@@ -1,6 +1,6 @@
 import { Socket } from "socket.io-client";
 
-export type Global = {
+export interface Global {
 	player1Y: number,
 	player2Y: number,
 	ballX: number,

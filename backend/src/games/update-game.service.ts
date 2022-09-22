@@ -215,7 +215,7 @@ export class UpdateGameService {
 		tmp.ball.x += tmp.ball.velocityX;
 		tmp.ball.y += tmp.ball.velocityY;
 
-		if (Math.abs(tmp.ball.y) + tmp.ball.radius >= this.global.canvasHeight || Math.abs(tmp.ball.y) - tmp.ball.radius <= 0) {
+		if (tmp.ball.y < 0 || tmp.ball.y + tmp.ball.radius >= this.global.canvasHeight || tmp.ball.y - tmp.ball.radius <= 0) {
 			tmp.ball.velocityY = -tmp.ball.velocityY;
 			this.gameCoordinates.set(room, tmp);
 		}
@@ -255,6 +255,7 @@ export class UpdateGameService {
 		this.gameCoordinates.set(room, tmp);
 	}
 
+	// change its name
 	OnePlayerDisconnect(playerId: string): void
 	{
 		for (const [key, value] of this.gameCoordinates) {

@@ -1,8 +1,8 @@
 import "../../styles/game-styling.scss";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useEffect, useRef } from "react";
-import Matching from "./Matching"
-import LiveGames from "./LivesGames";
+import Matching from "./Matching/Matching"
+import LiveGames from "./LiveGames/LiveGames";
 
 export function useEffectOnce(callback: any): any {
 	const ref = useRef(true);

@@ -7,15 +7,20 @@
 	background-color: #EFEFEF;
 }
 
+html {
+	background-color: $pastel_white;
+}
+
 /* Tabs Section */
 
 .react-tabs__tab-list {
-	margin-top: 8.5%;
+	margin-top: clamp(8em, 8.5%, 10em);;
 	text-align: center;
 }
 
 .react-tabs__tab {
 	text-decoration: none;
+	width: 19.11rem;
 	color: #fff;
 	font-size: 25px;
 	background-color: #205375;
@@ -26,13 +31,44 @@
 	cursor: pointer
 }
 
-.react-tabs__tab:hover {
-	background-color: #F66B0E;
+.react-tabs__tab:first-child {
+	border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
 }
 
 .react-tabs__tab:last-child {
-
+	border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
 	border-left: 1px solid #fff;
+}
+
+@media (max-width: 733px)
+{
+	.react-tabs__tab {
+		margin-inline: auto;
+		display: block;
+	}
+
+	.react-tabs__tab:first-child,
+	.react-tabs__tab:last-child {
+		border-radius: 0;
+		border: none;
+	}
+
+	.react-tabs__tab:first-child {
+		border-top-right-radius: 20px;
+		border-top-left-radius: 20px;
+	}
+
+	.react-tabs__tab:last-child {
+		border-top: 1px solid #fff;
+		border-bottom-right-radius: 20px;
+		border-bottom-left-radius: 20px;
+	}
+}
+
+.react-tabs__tab:hover {
+	background-color: #F66B0E;
 }
 
 .react-tabs__tab--selected {
@@ -43,7 +79,7 @@
 
 .matching-container {
 	text-align: center;
-	margin-top: 95px;
+	margin-top: clamp(95px, 4%, 130px);
 }
 
 .matching-container div {
@@ -56,8 +92,34 @@
 }
 
 .matching-container div:last-child {
-	margin-left: 40px
+	margin-left: 2.5em
 }
+
+@media (max-width: 960px)
+{
+	.matching-container div {
+		display: block;
+		margin: 0;
+		margin-inline: auto !important;
+	}
+
+	.matching-container div:last-child {
+		margin-top: 2em;
+	}
+}
+
+@media (max-width: 733px)
+{
+	.matching-container div {
+		width: 22em;
+		height: 13.2em;
+	}
+
+	.matching-container div:last-child {
+		margin: 2em 0 0 0;
+	}
+}
+
 
 .matching-container .active-theme {
 	outline: 5px solid #F66B0E;
@@ -75,20 +137,14 @@
     border-bottom: 3px solid #F66B0E;
 	padding: 10px 20px;
 
-	// border: 3px solid #F66B0E;
 	color: #F66B0E;
-	// padding: 15px 35px;
 	background-color: rgba(255, 255, 255, 0);
 	font-size: 18px;
 	font-weight: bold;
-	// border-radius: 15px;
 	cursor: pointer;
-	// transition: 0.3s;
 }
 
 .play button:hover {
-	// background-color: #F66B0E;
-	// color: #efefef
 	border: none;
 	padding-bottom: 13px;
 }
@@ -98,13 +154,10 @@
     border-bottom: 3px solid #fbbf97;
 	padding: 10px 20px;
 
-	// border: 3px solid #fbbf97;
 	color: #fbbf97;
-	// padding: 15px 35px;
 	background-color: rgba(255, 255, 255, 0);
 	font-size: 18px;
 	font-weight: bold;
-	// border-radius: 15px;
 	transition: 0.3s;
 }
 
@@ -218,9 +271,27 @@
 
 /* Cancel Section */
 
-.spinner-container {
+.waiting-container {
+	margin-top: 13em
+}
+
+.spinner {
 	width: 33px;
-	margin: 10% auto 0;
+	margin-inline: auto;
+}
+
+
+@media (max-width: 960px)
+{
+	.waiting-container {
+		margin-top: 36em
+	}
+}
+
+@media (max-width: 733px) {
+	.waiting-container {
+		margin-top: 33em
+	}
 }
 
 .cancel-button {
@@ -251,12 +322,18 @@
 /* Game Rules Section */
 
 .game-rules {
-	width: 515px;
-	overflow: hidden;
+	width: 100%;
 	position: absolute;
-	top: 850px;
-	left: 50%;
-	transform: translate(-50%, 0);
+	top: 853px;
+	display: flex;
+	justify-content: center;
+}
+
+@media (max-width: 960px)
+{
+	.game-rules {
+		top: 1109px;
+	}
 }
 
 .game-rules .rules-list h2 {
@@ -270,6 +347,7 @@
 	background-color: #e6e6e6;
 	border-radius: 20px;
 	padding: 20px 30px;
+	margin: 0 1.5em 3em;
 }
 
 .game-rules .rules-list ol {
@@ -280,19 +358,15 @@
 }
 
 .game-rules .rules-list ol li {
-	padding: 8px 0;
+	padding: 10px 0;
 	font-size: 15px;
+	display: flex;
 }
-
-// .game-rules .rules-list ol li:last-child {
-// 	padding-bottom: 8;
-// }
 
 .game-rules .rules-list ol li span {
 	color: #F66B0E;
-	margin: 0 5px 0 10px;
+	padding: 0 1em 0 0.5em
 }
-
 
 /* Canvas & Score Section */
 .game_canvas_parent_container {
@@ -350,11 +424,6 @@
 	color: #F66B0E
 }
 
-/* .container_sesco .score-panel .the-score div {
-	width: 33.33%;
-	float: left;
-} */
-
 .container_sesco canvas {
 	border-radius: 20px;
 }
@@ -363,9 +432,11 @@
 
 .result-overlay {
 	background-color: rgba(0, 0, 0, 0.516);
-	position: absolute;
-	width: 100%;
-	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	z-index: 100;
 }
 
@@ -416,9 +487,11 @@
 
 .count-down {
 	background-color: rgba(0, 0, 0, 0.516);
-	position: absolute;
-	width: 100%;
-	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	z-index: 100;
 }
 
@@ -452,7 +525,6 @@
 .count-down .number h2 {
 	font-size: 200px;
 	color: #F66B0E;
-	// color: #57bcff;
 }
 
 @keyframes numberThree  {
