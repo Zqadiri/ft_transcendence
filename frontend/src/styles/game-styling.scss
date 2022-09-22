@@ -79,7 +79,7 @@ html {
 
 .matching-container {
 	text-align: center;
-	margin-top: 95px;
+	margin-top: clamp(95px, 4%, 130px);
 }
 
 .matching-container div {
@@ -100,12 +100,11 @@ html {
 	.matching-container div {
 		display: block;
 		margin: 0;
-		margin-inline: auto;
+		margin-inline: auto !important;
 	}
 
 	.matching-container div:last-child {
 		margin-top: 2em;
-		margin-inline: auto;
 	}
 }
 
@@ -114,7 +113,6 @@ html {
 	.matching-container div {
 		width: 22em;
 		height: 13.2em;
-		margin-inline: auto !important;
 	}
 
 	.matching-container div:last-child {
@@ -273,9 +271,27 @@ html {
 
 /* Cancel Section */
 
-.spinner-container {
+.waiting-container {
+	margin-top: 13em
+}
+
+.spinner {
 	width: 33px;
-	margin: 10% auto 0;
+	margin-inline: auto;
+}
+
+
+@media (max-width: 960px)
+{
+	.waiting-container {
+		margin-top: 36em
+	}
+}
+
+@media (max-width: 733px) {
+	.waiting-container {
+		margin-top: 33em
+	}
 }
 
 .cancel-button {
@@ -307,11 +323,17 @@ html {
 
 .game-rules {
 	width: 100%;
-	overflow: hidden;
 	position: absolute;
-	top: 115%;
+	top: 853px;
 	display: flex;
 	justify-content: center;
+}
+
+@media (max-width: 960px)
+{
+	.game-rules {
+		top: 1109px;
+	}
 }
 
 .game-rules .rules-list h2 {
@@ -325,7 +347,7 @@ html {
 	background-color: #e6e6e6;
 	border-radius: 20px;
 	padding: 20px 30px;
-	margin: 0 1.5em 4em;
+	margin: 0 1.5em 3em;
 }
 
 .game-rules .rules-list ol {
@@ -338,7 +360,6 @@ html {
 .game-rules .rules-list ol li {
 	padding: 10px 0;
 	font-size: 15px;
-	overflow: hidden;
 	display: flex;
 }
 
@@ -403,11 +424,6 @@ html {
 	color: #F66B0E
 }
 
-/* .container_sesco .score-panel .the-score div {
-	width: 33.33%;
-	float: left;
-} */
-
 .container_sesco canvas {
 	border-radius: 20px;
 }
@@ -421,8 +437,6 @@ html {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	// width: 100%;
-	// height: 100%;
 	z-index: 100;
 }
 
@@ -478,8 +492,6 @@ html {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	// width: 100%;
-	// height: calc(100vh - 85px - 0.5%);
 	z-index: 100;
 }
 
@@ -513,7 +525,6 @@ html {
 .count-down .number h2 {
 	font-size: 200px;
 	color: #F66B0E;
-	// color: #57bcff;
 }
 
 @keyframes numberThree  {

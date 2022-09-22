@@ -23,20 +23,22 @@ function	Waiting(): JSX.Element
 
 			if (global.secondPlayerExist === false)
 				global.socket.disconnect();
-
+			window.onbeforeunload = null;
 		};
 	}, []);
 
 	return (
 		<>
-			<div className="spinner-container" >
-				<MoonLoader color={'#F66B0E	'} speedMultiplier={0.4} size={25} />
-			</div>
-			<div className="cancel-button">
-				<p>
-					Waiting for the second player...
-				</p>
-				<button onClick={cancelRoom}>Cancel</button>
+			<div className="waiting-container">
+				<div className="spinner" >
+					<MoonLoader color={'#F66B0E	'} speedMultiplier={0.4} size={25} />
+				</div>
+				<div className="cancel-button">
+					<p>
+						Waiting for the second player...
+					</p>
+					<button onClick={cancelRoom}>Cancel</button>
+				</div>
 			</div>
 		</>
 	);

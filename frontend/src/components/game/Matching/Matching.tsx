@@ -27,7 +27,7 @@ function GameRules(): JSX.Element {
 }
 
 
-function	addMatchingSocketEventHandler(navigate: Function, setActiveComponent: Function)
+function	addMatchingSocketEventHandler(navigate: Function)
 {
 	global.socket.off("joinedRoom").on("joinedRoom", (room, playerId) => {
 		global.roomName = room;
@@ -46,7 +46,7 @@ function	Matching(): JSX.Element
 	const 	navigate = useNavigate();
 
 	useEffectOnce(() => {
-		addMatchingSocketEventHandler(navigate, setActiveComponent);
+		addMatchingSocketEventHandler(navigate);
 	});
 
 	return (
