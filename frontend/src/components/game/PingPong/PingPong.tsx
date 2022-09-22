@@ -36,8 +36,8 @@ export function splitPaddleControl()
 function	PingPong(): JSX.Element
 {
 	const	[gameScore, setGameScore] = useState({
-		firstPlayerScore: 0,
-		secondPlayerScore: 0
+		firstPlayer: 0,
+		secondPlayer: 0
 	});
 	const	[currentPlayersData, setCurrentPlayersData] = useState<CurrentPlayersData>({
 			firstPlayerName: "",
@@ -69,7 +69,7 @@ function	PingPong(): JSX.Element
 				{gameFinished ? <ResultPrompt /> : <CountDown />}
 				<div className="game_canvas_parent_container flex-center-column">
 					<div className="container_sesco flex-center-column flex-gap20">
-						<Score s1={gameScore.firstPlayerScore} s2={gameScore.secondPlayerScore} />
+						<Score s1={gameScore.firstPlayer} s2={gameScore.secondPlayer} />
 						<Canvas width={canvasWidth} height={canvasHeight} />
 					</div>
 				</div>

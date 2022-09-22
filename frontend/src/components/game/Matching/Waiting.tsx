@@ -19,10 +19,11 @@ function	Waiting(): JSX.Element
 
 		return () => {
 			if (activeComponent === waitingComponent && global.secondPlayerExist === false)
-			{
 				alert("You matching is about to be canceled");
+
+			if (global.secondPlayerExist === false)
 				global.socket.disconnect();
-			}
+
 		};
 	}, []);
 

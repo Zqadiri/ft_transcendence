@@ -363,9 +363,13 @@
 
 .result-overlay {
 	background-color: rgba(0, 0, 0, 0.516);
-	position: absolute;
-	width: 100%;
-	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	// width: 100%;
+	// height: 100%;
 	z-index: 100;
 }
 
@@ -416,9 +420,13 @@
 
 .count-down {
 	background-color: rgba(0, 0, 0, 0.516);
-	position: absolute;
-	width: 100%;
-	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	// width: 100%;
+	// height: calc(100vh - 85px - 0.5%);
 	z-index: 100;
 }
 

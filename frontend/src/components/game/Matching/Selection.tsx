@@ -56,7 +56,7 @@ function	Selection(): JSX.Element {
 				</div>
 			</section>
 			<section className={handlePlayButton()}>
-				<button onClick={joinRoom}>PLAY</button>
+				<button onClick={joinRoom} title="choose a theme to play with">PLAY</button>
 			</section>
 		</>
 	);

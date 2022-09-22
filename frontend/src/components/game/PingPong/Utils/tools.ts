@@ -80,8 +80,8 @@ function			setReceivedSocketData(data: GameData, setGameScore: Function) {
 	global.ballY = data.b.y;
 
 	setGameScore({
-		firstPlayerScore: data.p1.score,
-		secondPlayerScore: data.p2.score
+		firstPlayer: data.p1.score,
+		secondPlayer: data.p2.score
 	});
 }
 
