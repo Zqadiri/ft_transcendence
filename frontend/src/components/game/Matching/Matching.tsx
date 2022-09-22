@@ -14,12 +14,12 @@ function GameRules(): JSX.Element {
 			<div className="rules-list">
 				<h2>Game Rules:</h2>
 				<ol>
-					<li><span>(1)</span> To play choose your playground theme and click play.</li>
-					<li><span>(2)</span> To win you need to score 10 balls against your opponent.</li>
-					<li><span>(3)</span> You will play with your mouse.</li>
-					<li><span>(4)</span> To move your paddle point the cursor inside the game canvas.</li>
-					<li><span>(5)</span> While you play the speed of the ball increases.</li>
-					<li><span>(6)</span> Second theme starting speed is higher than the first theme.</li>
+					<li><span>(1)</span><p>To play choose your playground theme and click play.</p></li>
+					<li><span>(2)</span><p>To win you need to score 10 balls against your opponent.</p></li>
+					<li><span>(3)</span><p>You will play with your mouse.</p></li>
+					<li><span>(4)</span><p>To move your paddle point the cursor inside the game canvas.</p></li>
+					<li><span>(5)</span><p>While you play the speed of the ball increases.</p></li>
+					<li><span>(6)</span><p>Second theme starting speed is higher than the first theme.</p></li>
 				</ol>
 			</div>
 		</section>
