@@ -34,6 +34,7 @@ const UserProfile = () => {
 		axios.get("/users?name=" + params.userId)
 		.then((res) => {
 			console.log(res);
+			setUser(res.data);
 		})
 		.catch((err) => {
 			console.log({err});
@@ -44,9 +45,17 @@ const UserProfile = () => {
 		return <Navigate to={"/profile"}></Navigate>
 	}
 	return (
-		<>
-			<h1>user profile of: {params.userId}</h1>
-		</>
+		<div className="userprofile">
+			<div className="leftpannel">
+				<div className="imagecontainer">
+					<div className="image" style={{background: `url(${user?.avatar})`}}></div>
+				</div>
+				<div className="namecontainer"><h2 className="name">{user?.username}</h2></div>
+			</div>
+			<div className="rightpannel">
+				
+			</div>
+		</div>
 	);
 }
  
