@@ -3,6 +3,12 @@ import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayDisconnec
 import { Server, Socket } from 'socket.io';
 import { UpdateGameService } from './update-game.service';
 
+interface	MatchingData {
+	clients: string[];
+	usersId: string[];
+	roomCounter: number;
+}
+
 @WebSocketGateway({
 	namespace: "game",
 	cors: {
@@ -11,12 +17,8 @@ import { UpdateGameService } from './update-game.service';
 })
 export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 
-	private	themeOneUsers: string[] = [];
-	private	roomCounter1: number;
-	private	themeTwoUsers: string[] = [];
-	private	roomCounter2: number;
-	private	themeOneUserID: string;
-	private	themeTwoUserID: string;
+	private	themeOne: MatchingData;
+	private	themeTwo: MatchingData;
 
 	@WebSocketServer()
 	server: Server;
@@ -24,8 +26,16 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	private logger: Logger = new Logger("GameGateway");
 
 	constructor(private updateGame: UpdateGameService) {
-		this.roomCounter1 = 1;
-		this.roomCounter2 = 1000000000;
+		this.themeOne = {
+			clients: [],
+			usersId: [],
+			roomCounter: 1
+		};
+		this.themeTwo = {
+			clients: [],
+			usersId: [],
+			roomCounter: 1000000000
+		};
 	}
 
 	handleConnection(client: any, ...args: any[]) {
@@ -33,73 +43,72 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	handleDisconnect(client: any) {
-
-		let		index1: number = this.themeOneUsers.indexOf(client.id);
-		let		index2: number = this.themeTwoUsers.indexOf(client.id);
-
-		if (this.themeOneUsers.length === 1 && index1 !== -1)
-			this.themeOneUsers.pop();
-		else if (this.themeTwoUsers.length === 1 && index2 !== -1)
-			this.themeTwoUsers.pop();
+		if (this.themeOne.clients.indexOf(client.id) > 0 && this.themeOne.clients.length === 1)
+		{
+			this.themeOne.clients.pop();
+		}
+		else if (this.themeTwo.clients.indexOf(client.id) > 0 && this.themeTwo.clients.length === 1)
+		{
+			this.themeTwo.clients.pop();
+		}
 		
-		this.updateGame.OnePlayerDisconnect(client.id);
+		this.updateGame.setWinnerAfterDisconnect(client.id);
 		this.logger.log(client.id + " Disconnected");
 	}
 
-	@SubscribeMessage("joinTheme1")
-	handleJoinTheme1(client: Socket, userID: string): void {
-		let roomName: string = "Room #" + this.roomCounter1;
-
-		this.themeOneUsers.push(client.id);
-		client.join(roomName);
-		client.emit("joinedRoom", roomName, this.themeOneUsers.length);
-		if (this.themeOneUsers.length === 2)
+	#checkSecondPlayer(room: string, currentMatch: MatchingData, theme: string): boolean {
+		if (currentMatch.clients.length === 2)
 		{
-			this.roomCounter1 = (this.roomCounter1 + 1) % 1000000000;
 			this.updateGame.initializeServerObject(this.server);
-			this.updateGame.create(roomName, "theme01", this.themeOneUsers[0], this.themeOneUsers[1], this.themeOneUserID, userID);
-			this.themeOneUsers.splice(0, 2);
-			this.server.to(roomName).emit("secondPlayerJoined");
+			this.updateGame.create(room, theme, currentMatch.clients[0], currentMatch.clients[1], currentMatch.usersId[0], currentMatch.usersId[1]);
+			currentMatch.clients = [];
+			currentMatch.usersId = [];
+			currentMatch.roomCounter++;
+			this.server.to(room).emit("secondPlayerJoined");
+			return (true);
 		}
-		else
-			this.themeOneUserID = userID;
+		return (false);
+	}
+
+	@SubscribeMessage("joinTheme1")
+	handleJoinTheme1(client: Socket, userId: string): void {
+		const	roomName = "Room #" + this.themeOne.roomCounter;
+
+		this.themeOne.clients.push(client.id);
+		this.themeOne.usersId.push(userId);
+
+		client.join(roomName);
+		client.emit("joinedRoom", roomName, this.themeOne.clients.length);
+
+		if (this.#checkSecondPlayer(roomName, this.themeOne, "theme01"))
+			this.themeOne.roomCounter = this.themeOne.roomCounter % 1000000000;
+
 		this.logger.log(client.id + " joined Theme 1 & roomName " + roomName);
 	}
 
 	@SubscribeMessage("joinTheme2")
-	handleJoinTheme2(client: Socket, userID: string): void {
-		let roomName: string = "Room #" + this.roomCounter2;
+	handleJoinTheme2(client: Socket, userId: string): void {
+		const	roomName = "Room #" + this.themeTwo.roomCounter;
 
-		this.themeTwoUsers.push(client.id);
+		this.themeTwo.clients.push(client.id);
+		this.themeTwo.usersId.push(userId);
+
 		client.join(roomName);
-		client.emit("joinedRoom", roomName, this.themeTwoUsers.length);
-		if (this.themeTwoUsers.length === 2)
+		client.emit("joinedRoom", roomName, this.themeTwo.clients.length);
+	
+		if (this.#checkSecondPlayer(roomName, this.themeTwo, "theme02"))
 		{
-			this.roomCounter2++;
-			if (this.roomCounter2 > 2000000000)
-				this.roomCounter2 = 1000000000;
-			this.updateGame.initializeServerObject(this.server);
-			this.updateGame.create(roomName, "theme02", this.themeTwoUsers[0], this.themeTwoUsers[1], this.themeTwoUserID, userID);
-			this.themeTwoUsers.splice(0, 2);
-			this.server.to(roomName).emit("secondPlayerJoined");
+			if (this.themeTwo.roomCounter > 2000000000)
+				this.themeTwo.roomCounter = 1000000000;
 		}
-		else
-			this.themeTwoUserID = userID;
-		this.logger.log(client.id + " joined Theme 2 & roomName " + roomName);
-	}
 
-	@SubscribeMessage("joinLiveGame")
-	handleJoinLiveGame(client: Socket, roomName: string): void {
-		client.emit("joinedRoom", roomName, 3);
-		client.join(roomName);
-		this.server.to(roomName).emit("secondPlayerJoined");
+		this.logger.log(client.id + " joined Theme 2 & roomName " + roomName);
 	}
 
 	@SubscribeMessage("joinSpecificRoom")
 	handleJoinSpecificRoom(client: Socket, roomName: string[]): void {
 		client.join(roomName);
 	}
-
 
 	@SubscribeMessage("gameIsStarted")
 	handleGameIsStarted(client: Socket, roomName: string): void {
