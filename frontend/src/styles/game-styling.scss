@@ -102,7 +102,6 @@ html {
 		margin: 0;
 		margin-inline: auto !important;
 	}
-
 	.matching-container div:last-child {
 		margin-top: 2em;
 	}
@@ -133,32 +132,69 @@ html {
 }
 
 .play button {
-	border: none;
-    border-bottom: 3px solid #F66B0E;
-	padding: 10px 20px;
 
-	color: #F66B0E;
-	background-color: rgba(255, 255, 255, 0);
-	font-size: 18px;
-	font-weight: bold;
+    // border: none;
+    // /* border: 3px solid #fbbf97; */
+    // padding: 15px 30px;
+    // color: #d3d3d3;
+    // background-color: #fff0;
+    // font-size: 18px;
+    // font-weight: 700;
+    // transition: .3s;
+    // border-radius: 70%;
+    // box-shadow: inset 0 0 7px #bfbebe;
+
+	border: none;
+    /* border: 3px solid #fbbf97; */
+    padding: 15px 30px;
+    color: #efefef;
+    background-color: #fff0;
+    font-size: 18px;
+    font-weight: 700;
+    transition: .3s;
+    border-radius: 45%;
+    box-shadow: inset 0 0 48px #f66b0e;
+
+	// border: none;
+    // border-bottom: 3px solid #F66B0E;
+	// padding: 10px 20px;
+
+	// color: #F66B0E;
+	// background-color: rgba(255, 255, 255, 0);
+	// font-size: 18px;
+	// font-weight: bold;
 	cursor: pointer;
 }
 
 .play button:hover {
 	border: none;
-	padding-bottom: 13px;
+	transform: scale(97%);
+	// padding-bottom: 13px;
 }
 
 .play-disabled button {
-	border: none;
-    border-bottom: 3px solid #fbbf97;
-	padding: 10px 20px;
 
-	color: #fbbf97;
-	background-color: rgba(255, 255, 255, 0);
-	font-size: 18px;
-	font-weight: bold;
-	transition: 0.3s;
+    border: none;
+    /* border: 3px solid #fbbf97; */
+    padding: 15px 30px;
+    color: #efefef;
+    background-color: #fff0;
+    font-size: 18px;
+    font-weight: 700;
+    transition: .3s;
+    border-radius: 45%;
+    box-shadow: inset 0 0 48px #bfbebe;
+	text-shadow: 0 2px 5px #ababab;
+
+	// border: none;
+    // border-bottom: 3px solid #fbbf97;
+	// padding: 10px 20px;
+
+	// color: #fbbf97;
+	// background-color: rgba(255, 255, 255, 0);
+	// font-size: 18px;
+	// font-weight: bold;
+	// transition: 0.3s;
 }
 
 /* Live Games Section */
