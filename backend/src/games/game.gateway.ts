@@ -43,11 +43,11 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	handleDisconnect(client: any) {
-		if (this.themeOne.clients.indexOf(client.id) > 0 && this.themeOne.clients.length === 1)
+		if (this.themeOne.clients.indexOf(client.id) !== -1 && this.themeOne.clients.length === 1)
 		{
 			this.themeOne.clients.pop();
 		}
-		else if (this.themeTwo.clients.indexOf(client.id) > 0 && this.themeTwo.clients.length === 1)
+		else if (this.themeTwo.clients.indexOf(client.id) !== -1 && this.themeTwo.clients.length === 1)
 		{
 			this.themeTwo.clients.pop();
 		}

@@ -9,6 +9,8 @@ function Canvas( {width, height}: {width: number; height: number} ): JSX.Element
 	React.useEffect(() => {
 		if (canvas.current)
 		{
+			canvas.current.style.width ='100%';
+			canvas.current.width = canvas.current.offsetWidth;
 			global.canvasRef = canvas.current;
 			global.context = canvas.current.getContext("2d");
 			splitPaddleControl();
@@ -16,7 +18,7 @@ function Canvas( {width, height}: {width: number; height: number} ): JSX.Element
 	});
 
 	return (
-		<canvas ref={canvas} width={width} height={height}></canvas>
+		<canvas ref={canvas} height={height}></canvas>
 	);
 }
 
