@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { global } from '../Data/PingPong.d';
 import { canvasHeight, canvasWidth, paddleHeight } from '../Data/PingPong.contants';
+import { GameData } from '../../Interfaces/GameData.interface';
 import { renderTheme1 } from './RenderTheme1';
 import { renderTheme2 } from './RenderTheme2';
-import { GameData } from '../../Interfaces/GameData.interface';
 
 export function		handleLeftPaddle()
 {

@@ -1,10 +1,10 @@
-import { useEffectOnce } from "../GameTabs";
 import { useNavigate } from 'react-router-dom';
 import { useState, createContext } from "react";
 import { global } from "../PingPong/Data/PingPong.d"
 import Waiting from "./Waiting";
 import Selection from "./Selection";
 import { selectionComponent } from "./Data/Matching.constants";
+import { useEffectOnce } from '../GameTabs';
 
 export	const	matchingContext = createContext<any>({});
 

@@ -108,11 +108,11 @@ html {
 	}
 }
 
-@media (max-width: 733px)
+@media (max-width: 500px)
 {
 	.matching-container div {
-		width: 22em;
-		height: 13.2em;
+		width: 21em;
+		height: 12.65em;
 	}
 
 	.matching-container div:last-child {
@@ -166,6 +166,8 @@ html {
 .no-live-games {
 	color: #cccccc;
 	min-height: 60vh;
+	text-align: center;
+	padding: 0 2em;
 }
 
 .live-games {
@@ -246,6 +248,12 @@ html {
 	.live-games li div:nth-child(1) h3,
 	.live-games li div:nth-child(3) h3 {
 		margin-top: 10px;
+	}
+	.live-games li div img {
+		width: 45px;
+		height: 45px;
+		border: 2px solid white;
+		outline: 2px solid #112B3C;
 	}
 }
 
@@ -467,7 +475,7 @@ html {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 100;
+	z-index: 7;
 }
 
 .result-overlay .prompt {
@@ -522,7 +530,7 @@ html {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 100;
+	z-index: 7;
 }
 
 .count-down .number {
