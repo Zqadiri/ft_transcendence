@@ -62,7 +62,7 @@ export class User{
 	})
 	FriendsID: number[]; 
 
-	@Column('varchar',{
+	@Column('int',{
 		array: true,
 		nullable: true
 	})

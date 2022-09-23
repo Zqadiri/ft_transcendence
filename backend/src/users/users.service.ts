@@ -1,4 +1,4 @@
-import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
+import { Injectable, HttpStatus, HttpException, BadRequestException } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -179,6 +179,25 @@ export class UsersService {
 				username: newUsername
 			});
 			await this.userRepository.save(user);
+		}
+
+		async blockedFriend(id : number)
+		{
+			const user = this.getUserById(id); //! switch it to req.user.id
+			if (!user)
+				throw new BadRequestException("user does not exist");
+			// const friends = await this.userRepository
+			// .createQueryBuilder("db_user")
+			// .select(['db_user.username', 'db_user.avatar' ,'db_user.id', 'db_user.status'])
+			// .where(":id = ANY (db_user.blockedID)", {id})
+			// .getMany()
+
+			const friends = await this.userRepository
+			.createQueryBuilder("db_user")
+			.select(['db_user.blockedID'])
+			.where("db_user.id = :id", {id})
+			.getOne()
+			return (friends);
 		}
 
 }

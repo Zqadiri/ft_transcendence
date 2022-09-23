@@ -169,10 +169,10 @@ html {
 }
 
 .live-games {
-	width: 700px;
+	width: clamp(338px, 90vw, 700px);
 	margin: auto;
 	list-style: none;
-	margin-top: 5%;
+	margin-top: 5em;
 	color: #112B3C;
 }
 
@@ -180,7 +180,7 @@ html {
 	background-color: white;
 	border-radius: 10px;
 	overflow: hidden;
-	padding: 15px;
+	padding: 18px 15px 15px;
 	font-weight: 0;
 	margin-bottom: 3%;
 	box-shadow: 0px 20px 20px #cccccc;
@@ -214,7 +214,13 @@ html {
 	font-size: 14px;
 }
 
-.live-games li .scoreplusloader .timer {
+.live-games li div h3 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.live-games li .live-score-panel .timer {
 	font-size: 15px;
 	font-weight: 600;
 	width: 100px;
@@ -223,10 +229,34 @@ html {
 	color: #f66b0e;
 }
 
-.scoreplusloader {
+@media (max-width: 733px)
+{
+	.live-games li div h3 {
+		font-size: 0.8rem !important;
+	}
+	.live-games li div:nth-child(2) h3 {
+		font-size: 1.2rem !important;
+	}
+	.live-games li .live-score-panel .timer {
+		font-size: 0.8rem;
+	}
+	.live-games li {
+		padding: 23px 20px 20px;
+	}
+	.live-games li div:nth-child(1) h3,
+	.live-games li div:nth-child(3) h3 {
+		margin-top: 10px;
+	}
+}
+
+.live-score-panel {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.live-score-panel > * {
+	flex-basis: 1;
 }
 
 .animation-container {
@@ -445,7 +475,7 @@ html {
 	font-size: 20px;
 	color: white;
 	position: absolute;
-	top: 0;
+	top: 2em;
 	left: 0;
 	right: 0;
 	bottom: 0;
@@ -475,11 +505,11 @@ html {
 @keyframes announcement {
 	from {
 		opacity: 0;
-		top: -5%;
+		top: -6%;
 	}
 	to {
 		opacity: 1;
-		top: 0%;
+		top: 2em;
 	}
 }
 
@@ -497,7 +527,7 @@ html {
 
 .count-down .number {
 	position: absolute;
-	top: 0;
+	top: 2em;
 	left: 0;
 	right: 0;
 	bottom: 0;

@@ -5,6 +5,7 @@ import { global } from "../../PingPong/Data/PingPong.d";
 
 export async	function	getGamesDataFromDatabase(setLiveGamesData: Function, setNoLiveGamesExist: Function)
 {
+	
 	try {
 		let		gameResp = await axios.get('/game/live');
 		let		gamesFirstPlayer: AxiosResponse<any, any>[] = [];

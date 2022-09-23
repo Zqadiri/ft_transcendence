@@ -63,14 +63,12 @@ export function		LiveGames(): JSX.Element
 								<img src={current.avatar1} alt="user avatar"/>
 								<h3>{current.user1}</h3>
 							</div>
-							<div className="scoreplusloader">
+							<div className="live-score-panel">
 								<h3>{current.score1}</h3>
-								<h3 style={{width: "100px"}}>
-									<Timer gameCreatedAt={current.createdAt} />
-									{/* <div className="animation-container">
-										<div className="bar"></div>
-									</div> */}
-								</h3>	
+								<Timer gameCreatedAt={current.createdAt} />
+								{/* <div className="animation-container">
+									<div className="bar"></div>
+								</div> */}
 								<h3>{current.score2}</h3>
 							</div>
 							<div>

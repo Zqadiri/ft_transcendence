@@ -16,6 +16,7 @@ import { AvatarDto } from './dto/upload.dto';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
+import RequestWithUser from 'src/two-factor-authentication/dto/requestWithUser.interface';
 
 @ApiTags('users')
 @Controller('users')
@@ -116,19 +117,35 @@ export class UsersController {
 		res.send(friends);
 	}
 
+	// @ApiOperation({ summary: 'get friends list'})
+	// @Get('/blocked_list')
+	// async blockedFriend(@Req() req: any, @Res() res: any){
+	// 	const user = this.usersService.getUserById(58526); //! switch it to req.user.id
+	// 	if (!user)
+	// 		throw new BadRequestException("user does not exist");
+	// 	const friends = await this.userRepo
+	// 	.createQueryBuilder("db_user")
+	// 	.select(['db_user.username', 'db_user.avatar' ,'db_user.id', 'db_user.status'])
+	// 	.where(":id = ANY (db_user.blockedID)", {id: 58526})
+	// 	.getMany()
+	// 	res.send(friends);
+	// }
+
+	@UseGuards(jwtAuthGuard)
 	@ApiOperation({ summary: 'get friends list'})
-	@Get('/blocked_list')
-	async blockedFriend(@Req() req: any, @Res() res: any){
-		const user = this.usersService.getUserById(58526); //! switch it to req.user.id
-		if (!user)
-			throw new BadRequestException("user does not exist");
-		const friends = await this.userRepo
-		.createQueryBuilder("db_user")
-		.select(['db_user.username', 'db_user.avatar' ,'db_user.id', 'db_user.status'])
-		.where(":id = ANY (db_user.blockedID)", {id: 58526})
-		.getMany()
-		res.send(friends);
-	}
+    @Get('/blocked_list')
+    async blockedFriend(@Req() req: RequestWithUser,  @Res() res: any)
+    {
+        try {
+            console.log("get friends list ...");
+            const friends = await this.usersService.blockedFriend(req.user.id);
+			res.send(friends);
+         } catch (e) {
+             console.error('get friends list', e);
+             throw e;
+         }
+    }
+
 
 	// @ApiOperation({ summary: 'Get user data by id' })
     // @ApiResponse({
