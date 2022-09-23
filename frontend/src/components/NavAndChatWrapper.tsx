@@ -1,4 +1,3 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosError } from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Link, Route, Routes } from "react-router-dom";
@@ -13,7 +12,7 @@ import { capitalize, cookies, getCookieHeader, globalContext, RRLink, ShowCondit
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
 import GameTabs from "./game/GameTabs"
-import PingPong from "./game/PingPong/PingPong"
+import PingPong from "./game/PingPong/PingPong";
 import MuteBanControls from "./MuteBanControls";
 
 console.log("Global console.log()");

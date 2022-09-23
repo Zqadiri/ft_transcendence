@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
 import { matchingContext } from "./Matching";
 import { global } from "../PingPong/Data/PingPong.d"
-import { ReactComponent as GameTheme01 } from '../../../img/theme#01.svg';
-import { ReactComponent as GameTheme02 } from '../../../img/theme#02.svg';
+import { ReactComponent as GameTheme01 } from '../../../img/theme1.svg';
+import { ReactComponent as GameTheme02 } from '../../../img/theme2.svg';
 import { waitingComponent } from "./Data/Matching.constants";
 import { cookies } from "../../util";
 

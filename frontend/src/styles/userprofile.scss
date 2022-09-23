@@ -1,0 +1,14 @@
+@import url('./palette.scss');
+
+.userprofile {
+	.leftpannel {
+		.imagecontainer {
+			.image {
+				border-radius: 100%;
+				$dim: 50px;
+				height: $dim;
+				width: $dim;
+			}
+		}
+	}
+}

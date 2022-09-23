@@ -35,7 +35,7 @@ require('dotenv').config();
 	imports: 
 		[
 			ServeStaticModule.forRoot({
-				rootPath: join(__dirname, "../..", "frontend/build"),
+				rootPath: join(__dirname, "../..", "frontend/dist"),
 			}),
 			PassportModule.register({ defaultStrategy: 'jwt' }),
 			ConfigModule.forRoot({
