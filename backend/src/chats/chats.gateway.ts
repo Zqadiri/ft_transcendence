@@ -56,27 +56,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
         return user.userID === finduser.id;
       })    
     }
-   // if the user who send the message, included in blocked list of the current user then emit the message to roomName except current user
-
-    // let id : string;
-  
-    // console.log("parse(client.handshake.headers.cookie)", parse(client.handshake.headers.cookie).id);
-
-    // id = parse(client.handshake.headers.cookie).id;
-
 	  if (!user) {
 		  await this.chatLogsService.savechat(createChatDto);
-
-      // const blockedfriend = await this.UsersService.blockedFriend(finduser.id);
-
-      // console.log('blockedfriend', blockedfriend);
-      // console.log('id ', finduser.id, 'name', finduser.username);
-      // const found = findroom.userID.some(r => !blockedfriend.blockedID.includes(r))
-
-      // console.log("found", found);
-
-      // if (found)
-        this.server.to(createChatDto.roomName).emit('messageToRoom', { ...createChatDto, avatar: findavatar.avatar });
+      this.server.to(createChatDto.roomName).emit('messageToRoom', { ...createChatDto, avatar: findavatar.avatar });
 	  }
   }
 

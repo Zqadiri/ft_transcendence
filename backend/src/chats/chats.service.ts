@@ -563,7 +563,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           },
         });
         
-        if (check && check.userID.includes(user.id) && !check.AdminsID.includes(user.id))
+        if (check && check.userID.includes(user.id))
         {
           /** 
            * You could use Array.find() method to check if the array includes the object as 
