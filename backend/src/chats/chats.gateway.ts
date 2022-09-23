@@ -5,8 +5,10 @@ import { parse } from 'cookie';
 import { Bind, Logger, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogsService } from 'src/chat-logs/chat-logs.service';
+import { UsersService } from 'src/users/users.service';
 import { CreateRoomDto , RoomDto, SetRolestoMembersDto, RoomNamedto, CreateDmDto, BanOrMuteMembersDto, BanOrMuteMembersPlusTokenDto} from './dto/create-chat.dto';
 import { Transform } from 'class-transformer';
+import { request } from 'express';
 
 
 @WebSocketGateway(
@@ -22,7 +24,8 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
 
   private logger: Logger = new Logger('ChatsGateway');
 
-  constructor(private readonly chatsService: ChatsService, private readonly chatLogsService: ChatLogsService) {}
+  constructor(private readonly chatsService: ChatsService, private readonly chatLogsService: ChatLogsService,
+    private readonly UsersService : UsersService ) {}
 
 
   afterInit(server: Server) {
@@ -38,7 +41,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   }
 
   @SubscribeMessage('saveChatRoom')
-  async create(client: Socket, @MessageBody() createChatDto: ChatLogsDto) {
+  async create(@ConnectedSocket() client: Socket, @MessageBody() createChatDto: ChatLogsDto) {
 
 	  // emit the message just to specific roomz
 	  
@@ -46,13 +49,34 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
 	  const finduser = await this.chatLogsService.findUser(createChatDto.userID);
 	  const findroom = await this.chatsService.findRoom(createChatDto.roomName);
 	  
-	  let user: { action: string; userID: number; current_time: number; duration: number;} | undefined = findroom.MutedAndBannedID.find((user) => {
-		  return user.userID === finduser.id;
-		})
-		
+	  let user: { action: string; userID: number; current_time: number; duration: number;} | undefined;
+    if (findroom)
+    {
+      user = findroom.MutedAndBannedID.find((user) => {
+        return user.userID === finduser.id;
+      })    
+    }
+   // if the user who send the message, included in blocked list of the current user then emit the message to roomName except current user
+
+    // let id : string;
+  
+    // console.log("parse(client.handshake.headers.cookie)", parse(client.handshake.headers.cookie).id);
+
+    // id = parse(client.handshake.headers.cookie).id;
+
 	  if (!user) {
 		  await this.chatLogsService.savechat(createChatDto);
-		  this.server.to(createChatDto.roomName).emit('messageToRoom', { ...createChatDto, avatar: findavatar.avatar });
+
+      // const blockedfriend = await this.UsersService.blockedFriend(finduser.id);
+
+      // console.log('blockedfriend', blockedfriend);
+      // console.log('id ', finduser.id, 'name', finduser.username);
+      // const found = findroom.userID.some(r => !blockedfriend.blockedID.includes(r))
+
+      // console.log("found", found);
+
+      // if (found)
+        this.server.to(createChatDto.roomName).emit('messageToRoom', { ...createChatDto, avatar: findavatar.avatar });
 	  }
   }
 
@@ -68,7 +92,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   async handleJoinDM(client: Socket, CreateDmDto: CreateDmDto)
   {
     let id : string;
-    id = parse(client.handshake.headers.cookie).id;
+  
     console.log("parse(client.handshake.headers.cookie)", parse(client.handshake.headers.cookie).id);
     const dm = await this.chatsService.CreateDm(CreateDmDto, +id);
   
