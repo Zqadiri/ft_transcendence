@@ -154,6 +154,7 @@ html {
     transition: .3s;
     border-radius: 45%;
     box-shadow: inset 0 0 48px #f66b0e;
+	text-shadow: 0 2px 5px #e79a6d;
 
 	// border: none;
     // border-bottom: 3px solid #F66B0E;
@@ -167,7 +168,7 @@ html {
 }
 
 .play button:hover {
-	border: none;
+	// border: none;
 	transform: scale(97%);
 	// padding-bottom: 13px;
 }
