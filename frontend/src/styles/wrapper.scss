@@ -6,7 +6,7 @@
 		padding: 10px;
 		background-color: $rich_orange;
 		position: relative;
-		z-index: 200;
+		z-index: 9;
 		.navelem {
 			flex-basis: 0px;
 			flex-grow: 1;
@@ -87,6 +87,7 @@
 		pointer-events: none;
 		overflow: hidden;
 		position: fixed;
+		z-index: 10;
 		bottom: 0;
 		left: 0;
 		width: 100%;

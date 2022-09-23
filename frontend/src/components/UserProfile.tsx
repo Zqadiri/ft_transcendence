@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { cookies } from "./util";
+import '../styles/userprofile.scss'
 
 export interface User {
 	id: number;
