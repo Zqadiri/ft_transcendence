@@ -64,7 +64,7 @@ export class User{
 
 	@Column('int',{
 		array: true,
-		nullable: true
+		default: []
 	})
 	blockedID: number[];
 
