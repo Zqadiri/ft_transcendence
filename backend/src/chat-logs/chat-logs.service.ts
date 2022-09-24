@@ -72,16 +72,16 @@ export class ChatLogsService {
   async findUser(userID: string)
   {
     // findOneBy - Finds the first entity that matches given FindOptionsWhere.
-    return await this.repo.findOneBy({ username: userID });
+    const id = await this.repo.findOneBy({ username: userID });
+    if (!id)
+      throw new BadRequestException({code: 'invalid username', message: `User with '${userID}' does not exist`})
+    return id;
   }
 
   async FindAvatar(userID: string)
   {
     const user = await this.findUser(userID);
-    if (!user){
-      throw new BadRequestException({code: 'invalid username', message: `User with '${userID}' does not exist`})
-    }
-    
+   
     const av = await this.repo
     .createQueryBuilder('db_user')
     .select('db_user.avatar', 'avatar')
