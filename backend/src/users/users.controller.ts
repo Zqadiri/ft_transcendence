@@ -78,9 +78,16 @@ export class UsersController {
 		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
-		if (!user.addFriendID.includes(newFriend.id))
-			user.addFriendID.push(newFriend.id);
+		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
+			if (!user.outgoingFRID.includes(newFriend.id)) {
+				user.outgoingFRID.push(newFriend.id);
+			}
+			if (!newFriend.incomingFRID.includes(user.id)) {
+				newFriend.incomingFRID.push(user.id);
+			}
+		}
 		await this.userRepo.save(user);
+		await this.userRepo.save(newFriend);
 		res.end();
 	}
 
@@ -94,29 +101,93 @@ export class UsersController {
 		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
-		if (user.addFriendID.includes(newFriend.id)) {
-			user.FriendsID.push(newFriend.id);
-			user.addFriendID = user.addFriendID.filter(el => el === newFriend.id);
+		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
+			if (user.incomingFRID.includes(newFriend.id)) {
+				user.FriendsID.push(newFriend.id);
+				newFriend.FriendsID.push(user.id);
+				user.incomingFRID = user.incomingFRID.filter(el => el === newFriend.id);
+				newFriend.outgoingFRID = newFriend.outgoingFRID.filter(el => el === user.id);
+			}
 		}
 		await this.userRepo.save(user);
+		await this.userRepo.save(newFriend);
+		res.end();
+	}
+
+	@ApiOperation({ summary: 'Accept friend request' })
+	@Post('/decline_friend')
+	async DeclineFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
+		const newFriend = await this.usersService.getUserById(userID);
+		console.log(newFriend);
+		if (!newFriend)	
+			throw new UnauthorizedException('NOT a User');
+		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		if (!user)
+			throw new UnauthorizedException('NOT a User');
+		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
+			if (user.incomingFRID.includes(newFriend.id)) {
+				user.incomingFRID = user.incomingFRID.filter(el => el === newFriend.id);
+				newFriend.outgoingFRID = newFriend.outgoingFRID.filter(el => el === user.id);
+			}
+		}
+		await this.userRepo.save(user);
+		await this.userRepo.save(newFriend);
+		res.end();
+	}
+
+	@ApiOperation({ summary: 'Accept friend request' })
+	@Post('/remove_friend')
+	async RemoveFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
+		const newFriend = await this.usersService.getUserById(userID);
+		console.log(newFriend);
+		if (!newFriend)	
+			throw new UnauthorizedException('NOT a User');
+		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		if (!user)
+			throw new UnauthorizedException('NOT a User');
+		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
+			if (user.FriendsID.includes(newFriend.id)) {
+				user.FriendsID = user.FriendsID.filter(el => el === newFriend.id);
+				newFriend.FriendsID = newFriend.FriendsID.filter(el => el === user.id);
+			}
+		}
+		await this.userRepo.save(user);
+		await this.userRepo.save(newFriend);
 		res.end();
 	}
 
 	@ApiOperation({ summary: 'Add a friend to a user' })
-	@Post('/block_friend')
+	@Post('/block_user')
 	async BlockFriend(@Body('id') userID : number, @Req() req: any, @Res() res: any){
 		const newFriend = await this.usersService.getUserById(userID);
 		console.log(newFriend);
 		if (!newFriend)
 			throw new UnauthorizedException('NOT a User');
-		const user = await this.usersService.getUserById(58526); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
-		if (!user.FriendsID.includes(newFriend.id))
-			throw new UnauthorizedException('User is not Friend OR Already blocked');
-		await this.usersService.removeFriend(user, newFriend.id);
-		if (!user.blockedID.includes(newFriend.id))
-			user.blockedID.push(newFriend.id);
+		user.FriendsID.filter(el => el === newFriend.id);
+		user.outgoingFRID.filter(el => el === newFriend.id);
+		newFriend.FriendsID.filter(el => el === user.id);
+		newFriend.incomingFRID.filter(el => el === user.id);
+		user.blockedID = user.blockedID.filter(el => el === newFriend.id);
+		user.blockedID.push(newFriend.id);
+		await this.userRepo.save(user);
+		await this.userRepo.save(newFriend);
+		res.end();
+	}
+
+	@ApiOperation({ summary: 'Add a friend to a user' })
+	@Post('/unblock_user')
+	async UnblockFriend(@Body('id') userID : number, @Req() req: any, @Res() res: any){
+		const newFriend = await this.usersService.getUserById(userID);
+		console.log(newFriend);
+		if (!newFriend)
+			throw new UnauthorizedException('NOT a User');
+		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		if (!user)
+			throw new UnauthorizedException('NOT a User');
+		user.blockedID = user.blockedID.filter(el => el === newFriend.id);
 		await this.userRepo.save(user);
 		res.end();
 	}
@@ -124,7 +195,7 @@ export class UsersController {
 	@ApiOperation({ summary: 'get friends list'})
 	@Get('/friends_list')
 	async friendsList(@Req() req: any, @Res() res: any){
-		const user = await this.usersService.getUserById(58526); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
 		if (!user)
 			throw new BadRequestException("user does not exist");
 		const friends = await this.userRepo

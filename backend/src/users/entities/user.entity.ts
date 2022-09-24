@@ -72,7 +72,13 @@ export class User{
 		array: true,
 		default: []
 	})
-	addFriendID: number[];
+	outgoingFRID: number[];
+
+	@Column('int',{
+		array: true,
+		default: []
+	})
+	incomingFRID: number[];
 
 	@Column({ 
 		type: 'timestamp', 
