@@ -8,7 +8,7 @@ import { cookies } from "../../util";
 
 function	Selection(): JSX.Element {
 	const [activeTheme, setActiveTheme] = useState("none");
-	const {activeComponent, setActiveComponent} = useContext(matchingContext);
+	const {setActiveComponent} = useContext(matchingContext);
 
 	function	joinRoom()
 	{
