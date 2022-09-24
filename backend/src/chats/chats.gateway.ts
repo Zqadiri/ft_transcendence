@@ -6,9 +6,13 @@ import { Bind, Logger, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogsService } from 'src/chat-logs/chat-logs.service';
 import { UsersService } from 'src/users/users.service';
-import { CreateRoomDto , RoomDto, SetRolestoMembersDto, RoomNamedto, CreateDmDto, BanOrMuteMembersDto, BanOrMuteMembersPlusTokenDto} from './dto/create-chat.dto';
+import { CreateRoomDto , RoomDto, SetRolestoMembersDto, RoomNamedto, CreateDmDto, BanOrMuteMembersDto, BanOrMuteMembersPlusTokenDto, RoomStatus} from './dto/create-chat.dto';
 import { Transform } from 'class-transformer';
-import { request } from 'express';
+import e, { request } from 'express';
+import { find } from 'rxjs';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Chat } from './entities/chat.entity';
+import { Repository } from 'typeorm/repository/Repository';
 
 
 @WebSocketGateway(
@@ -19,6 +23,9 @@ import { request } from 'express';
 )
 export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGatewayDisconnect{
 
+  @InjectRepository(Chat)
+  private readonly Chatrepository: Repository<Chat>;
+  
   @WebSocketServer()
   server: Server;
 
@@ -56,10 +63,21 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
         return user.userID === finduser.id;
       })    
     }
+
 	  if (!user) {
-		  await this.chatLogsService.savechat(createChatDto);
-      this.server.to(createChatDto.roomName).emit('messageToRoom', { ...createChatDto, avatar: findavatar.avatar });
+		  const msg = await this.chatLogsService.savechat(createChatDto);
+      this.server.to(createChatDto.roomName).emit('messageToRoomSyn', { id: msg.id });
 	  }
+    
+  }
+  
+  @SubscribeMessage('getMessageToRoom')
+  async handleGetMessageToRoom(client: Socket, data: {userID: number, messageID: number})
+  {
+    const message = await this.chatLogsService.GetMessage(data.messageID);
+    const blockedlist = await this.UsersService.blockedFriend(data.userID);
+    if (!blockedlist.blockedID.find(elm => elm === data.userID))
+      client.emit('messageToRoomAck', {message});
   }
 
   @SubscribeMessage('socketJoinRoom')

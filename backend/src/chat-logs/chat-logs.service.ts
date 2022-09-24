@@ -47,6 +47,21 @@ export class ChatLogsService {
 
   }
 
+  async GetMessage(messageID: number)
+  {
+    const message = await this.ChatLogsrepository
+    .createQueryBuilder()
+    .select("ChatLogs.userID", "userID")
+    .addSelect("ChatLogs.roomName", "roomName")
+    .addSelect("ChatLogs.message", "message")
+    .leftJoin(User, 'db_user', 'db_user.username = ChatLogs.userID')
+    .addSelect('db_user.avatar', 'avatar')
+    .where ("ChatLogs.id = :id", {id: messageID})
+    .getRawOne()
+
+    return message;
+  }
+
   async findUser(userID: string)
   {
     // findOneBy - Finds the first entity that matches given FindOptionsWhere.

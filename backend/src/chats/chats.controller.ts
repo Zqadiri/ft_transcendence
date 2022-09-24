@@ -33,7 +33,7 @@ export class ChatController {
         try {
             //const newRoom = await this.chatService.createRoom(roomDto, "oum");
             const newRoom = await this.chatService.createRoom(roomDto, req.user.id);
-            return newRoom;
+            return newRoom  ;
         } catch (e) {
             console.error('Failed to initiate room', e);
             throw e;
