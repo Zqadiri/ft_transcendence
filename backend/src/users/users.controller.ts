@@ -20,7 +20,7 @@ import RequestWithUser from 'src/two-factor-authentication/dto/requestWithUser.i
 
 @ApiTags('users')
 @Controller('users')
-// @UseGuards(jwtAuthGuard)
+@UseGuards(jwtAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
 
@@ -67,9 +67,10 @@ export class UsersController {
 		}
 		return result;
 	}
-
+	
 	@ApiOperation({ summary: 'Add a friend to a user' })
 	@Post('/add_friend')
+	@UseGuards(jwtAuthGuard)
 	async AddFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
 		console.log(newFriend);
@@ -93,6 +94,7 @@ export class UsersController {
 
 	@ApiOperation({ summary: 'Accept friend request' })
 	@Post('/accept_friend')
+	@UseGuards(jwtAuthGuard)
 	async AcceptFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
 		console.log(newFriend);
@@ -116,6 +118,7 @@ export class UsersController {
 
 	@ApiOperation({ summary: 'Accept friend request' })
 	@Post('/decline_friend')
+	@UseGuards(jwtAuthGuard)
 	async DeclineFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
 		console.log(newFriend);
@@ -137,6 +140,7 @@ export class UsersController {
 
 	@ApiOperation({ summary: 'Accept friend request' })
 	@Post('/remove_friend')
+	@UseGuards(jwtAuthGuard)
 	async RemoveFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
 		console.log(newFriend);
@@ -158,6 +162,7 @@ export class UsersController {
 
 	@ApiOperation({ summary: 'Add a friend to a user' })
 	@Post('/block_user')
+	@UseGuards(jwtAuthGuard)
 	async BlockFriend(@Body('id') userID : number, @Req() req: any, @Res() res: any){
 		const newFriend = await this.usersService.getUserById(userID);
 		console.log(newFriend);
@@ -179,6 +184,7 @@ export class UsersController {
 
 	@ApiOperation({ summary: 'Add a friend to a user' })
 	@Post('/unblock_user')
+	@UseGuards(jwtAuthGuard)
 	async UnblockFriend(@Body('id') userID : number, @Req() req: any, @Res() res: any){
 		const newFriend = await this.usersService.getUserById(userID);
 		console.log(newFriend);
@@ -194,6 +200,7 @@ export class UsersController {
 
 	@ApiOperation({ summary: 'get friends list'})
 	@Get('/friends_list')
+	@UseGuards(jwtAuthGuard)
 	async friendsList(@Req() req: any, @Res() res: any){
 		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
 		if (!user)
