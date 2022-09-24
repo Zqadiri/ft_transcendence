@@ -68,7 +68,7 @@ function	PingPong(): JSX.Element
 			<>
 				{gameFinished ? <ResultPrompt /> : <CountDown />}
 				<div className="game_canvas_parent_container flex-center-column">
-					<div className="container_sesco flex-center-column flex-gap20">
+					<div className="container_sesco flex-center-column">
 						<Score s1={gameScore.firstPlayer} s2={gameScore.secondPlayer} />
 						<Canvas />
 					</div>
