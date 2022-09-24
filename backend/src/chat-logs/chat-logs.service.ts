@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { ChatLogsDto } from './dto/chat-logs.dto';
 import { ChatLogs } from './entities/chat-log.entity';
 import { User } from 'src/users/entities/user.entity';
+import { ChatsService } from 'src/chats/chats.service';
 
 @Injectable()
 export class ChatLogsService {
@@ -13,6 +14,8 @@ export class ChatLogsService {
 
   @InjectRepository(User)
   private readonly repo: Repository<User>;
+
+  constructor(private readonly chatsService: ChatsService){}
 
   /** simple real time chat functions */
 
@@ -31,20 +34,24 @@ export class ChatLogsService {
 
   async DisplayRoomMessages(roomName: string)
   {
-    const roommessages = await this.ChatLogsrepository
-    .createQueryBuilder()
-    .select("ChatLogs.userID", "userID")
-    .addSelect("ChatLogs.roomName", "roomName")
-    .addSelect("ChatLogs.message", "message")
-    .leftJoin(User, 'db_user', 'db_user.username = ChatLogs.userID')
-    .addSelect('db_user.avatar', 'avatar')
-    .orderBy({'ChatLogs.createdAt': 'ASC'})
-    .where ("ChatLogs.roomName = :roomName", {roomName: roomName})
-    .getRawMany()
+    let roommessages;
+    const room = this.chatsService.findRoom(roomName);
 
-
+    if (room)
+    {
+      roommessages = await this.ChatLogsrepository
+      .createQueryBuilder()
+      .select("ChatLogs.userID", "userID")
+      .addSelect("ChatLogs.roomName", "roomName")
+      .addSelect("ChatLogs.message", "message")
+      .leftJoin(User, 'db_user', 'db_user.username = ChatLogs.userID')
+      .addSelect('db_user.avatar', 'avatar')
+      .orderBy({'ChatLogs.createdAt': 'ASC'})
+      .where ("ChatLogs.roomName = :roomName", {roomName: roomName})
+      .getRawMany()
+    }
+   
     return roommessages;
-
   }
 
   async GetMessage(messageID: number)
