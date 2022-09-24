@@ -214,6 +214,7 @@ export class UsersController {
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
 		user.blockedID = user.blockedID.filter(el => el === newFriend.id);
+		console.log(user);
 		await this.userRepo.save(user);
 		res.end();
 	}
