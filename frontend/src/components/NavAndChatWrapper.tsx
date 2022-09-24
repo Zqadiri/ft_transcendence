@@ -14,6 +14,7 @@ import ProtectedRoom from "./ProtectedRoom";
 import GameTabs from "./game/GameTabs"
 import PingPong from "./game/PingPong/PingPong";
 import MuteBanControls from "./MuteBanControls";
+import UserProfileIcon from "./UserProfileIcon";
 
 console.log("Global console.log()");
 
@@ -125,38 +126,21 @@ const NavAndChatWrapper = () => {
 			console.log({res})
 			setChatRooms(res.data);
 			res.data.forEach((room: any) => {
-				let roomName: string = room.db_chat_name;
-				console.log(`joining room, roomName: ${roomName}`);
-				chatSocket.emit("socketJoinRoom", roomName);
+				// let roomName: string = room.db_chat_name;
+				// console.log(`joining room, roomName: ${roomName}`);
+				// chatSocket.emit("socketJoinRoom", roomName);
 			});
 		}).catch(err => {
 			console.log({err})
 		})
 		return promise;
 	}
-	const setActiveChatMessages = (x: any) => {
-		console.log(x);
+	const [activeChatUsers, setActiveChatUsers] = useState<UserStat[]>([]);
+	const [activeChatMessages, _setActiveChatMessages] = useState<ChatMessage[]>([]);
+	const setActiveChatMessages = (x: ChatMessage[] | ((msgs: ChatMessage[]) => ChatMessage[])) => {
+		console.log({newValueMessages: x});
 		return _setActiveChatMessages(x);
 	}
-	const [activeChatUsers, setActiveChatUsers] = useState<UserStat[]>([]);
-	const [activeChatMessages, _setActiveChatMessages] = useState<ChatMessage[]>([
-		// {
-		// 	// user: {
-		// 		userID: "test",
-		// 		avatar: "https://picsum.photos/40/40?grayscale"
-		// 	// }
-		// 	,
-		// 	message: "hellooo\nasdfasdf\ndsfgsdfg\nasdfasdfa\nasdfasdfasd"
-		// },
-		// {
-		// 	// user: {
-		// 		userID: cookies.get("name"),
-		// 		avatar: cookies.get("avatar")
-		// 	// }
-		// 	,
-		// 	message: "salam cv?"
-		// }
-	]);
 
 	useEffect(() => {
 		console.log(activeChatUsers);
@@ -208,11 +192,15 @@ const NavAndChatWrapper = () => {
 
 		// socket.to("room").emit("bannedFromRoom", { roomName: "room", releaseTime: })
 
+		chatSocket.off("messageToRoomSyn").on("messageToRoomSyn", (data) => {
+			chatSocket.emit("getMessageToRoom", { userID: cookies.get("id"), messageID: data.id });
+		})
+
 		console.log("listening to messageToRoom");
-		chatSocket.off('messageToRoom').on('messageToRoom', (_msg) => {
+		chatSocket.off('messageToRoomAck').on('messageToRoomAck', (_msg: ChatMessage) => {
 			console.log("messageToRoom caught");
 			console.log({_msg})
-			setActiveChatMessages((x: any) => [...x, _msg]);
+			_setActiveChatMessages((x: ChatMessage[]) => [...x, _msg]);
 		})
 
 		chatSocket.off("Muted").on("Muted", (data: {userID: number, RoomID: string}) => {
@@ -365,6 +353,9 @@ const NavAndChatWrapper = () => {
 										return (
 											<div className="room flex-jc-sb flex-ai-cr" onClick={() => {
 												// setActiveChatMessages([]);
+												if (activeChat?.db_chat_name)
+													chatSocket.emit("socketLeaveRoom", activeChat?.db_chat_name);
+												chatSocket.emit("socketJoinRoom", room.db_chat_name);
 												axios.get("/chat/userStats/" + room.db_chat_name).then(res => {
 													// console.log({userstats: res.data});
 													let acu: UserStat[] = res.data;
@@ -562,7 +553,7 @@ const NavAndChatWrapper = () => {
 									<i className="fa-solid fa-user"></i>
 								</div>
 							</div>
-							<div className="chatinterfaceusers flex-center-column flex-gap5" style={{display: activeTab === "chatinterfaceusers" ? "flex" : "none"}}>
+							<div className="chatinterfaceusers flex-jc-fs flex-ai-cr flex-column flex-gap5" style={{display: activeTab === "chatinterfaceusers" ? "flex" : "none"}}>
 								<Button className="leave" onClick={() => {
 									axios.post("/chat/LeaveRoom", { name: activeChat?.db_chat_name })
 									.finally(() => {
@@ -665,7 +656,8 @@ const NavAndChatWrapper = () => {
 										return <>
 										<div className="user flex-ai-cr flex-jc-sb">
 											<div className="right flex-gap5 flex-ai-cr">
-												<img src={user.avatar} alt="" className="avatar" />
+												{/* <img src={user.avatar} alt="" className="avatar" /> */}
+												<UserProfileIcon avatar={user.avatar} className="avatar" ></UserProfileIcon>
 												<div className="left container flex-column">
 													<div className="name">{user.username}</div>
 													<div className="id">{user.id}</div>

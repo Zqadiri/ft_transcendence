@@ -76,8 +76,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   {
     const message = await this.chatLogsService.GetMessage(data.messageID);
     const blockedlist = await this.UsersService.blockedFriend(data.userID);
+	console.log({blockedppl: blockedlist.blockedID, data});
     if (!blockedlist.blockedID.find(elm => elm === data.userID))
-      client.emit('messageToRoomAck', {message});
+      client.emit('messageToRoomAck', message);
   }
 
   @SubscribeMessage('socketJoinRoom')
