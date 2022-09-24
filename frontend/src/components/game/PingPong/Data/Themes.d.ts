@@ -10,7 +10,6 @@ export const theme1 = {
 	},
 	ball: {
 		color: "#EEEEEE",
-		radius: 15
 	},
 	net: {
 		color: "#EEEEEE"
@@ -33,7 +32,6 @@ export const theme2 = {
 	ball: {
 		firstColor: "#f69b5e",
 		secondColor: "#F66B0E",
-		radius: 15
 	},
 	net: {
 		firstColor: "#4c81a5",

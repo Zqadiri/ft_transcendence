@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { global } from '../Data/PingPong.d';
-import { canvasHeight, canvasWidth, paddleHeight } from '../Data/PingPong.contants';
+import { canvas, global } from '../Data/PingPong.d';
 import { GameData } from '../../Interfaces/GameData.interface';
 import { renderTheme1 } from './RenderTheme1';
 import { renderTheme2 } from './RenderTheme2';
+import { backendCanvasWidth } from '../Data/PingPong.contants';
 
 export function		handleLeftPaddle()
 {
@@ -15,13 +15,14 @@ export function		handleLeftPaddle()
 	}, 3000);
 
 	global.canvasRef?.addEventListener("mousemove", (event: MouseEvent) => {
-		let rect = global.canvasRef?.getBoundingClientRect();
+		const	rect = global.canvasRef?.getBoundingClientRect();
+		const	backfrontOffset = backendCanvasWidth / canvas.width;
 
-		global.player1Y = event.clientY - rect!.top - paddleHeight/2;
+		global.player1Y = event.clientY - rect!.top - canvas.paddleHeight/2;
 		global.socket.emit("updatePaddlePosition", {
 			roomName: global.roomName,
 			playerId: global.playerId,
-			paddleY: global.player1Y
+			paddleY: global.player1Y * backfrontOffset
 		});
 	});
 }
@@ -33,13 +34,14 @@ export function		handleRightPaddle()
 	}, 3000);
 
 	global.canvasRef?.addEventListener("mousemove", (event: MouseEvent) => {
-		let rect = global.canvasRef?.getBoundingClientRect();
+		const	rect = global.canvasRef?.getBoundingClientRect();
+		const	backfrontOffset = backendCanvasWidth / canvas.width;
 	
-		global.player2Y = event.clientY - rect!.top - paddleHeight/2;
+		global.player2Y = event.clientY - rect!.top - canvas.paddleHeight/2;
 		global.socket.emit("updatePaddlePosition", {
 			roomName: global.roomName,
 			playerId: global.playerId,
-			paddleY: global.player2Y
+			paddleY: global.player2Y * backfrontOffset
 		});
 	});
 }
@@ -53,14 +55,14 @@ export function		renderCanvas()
 }
 
 export function resetGame() {
-	global.player1Y = canvasHeight/2 - paddleHeight/2;
+	global.player1Y = canvas.height/2 - canvas.paddleHeight/2;
 	global.player1Score = 0;
 
-	global.player1Y = canvasHeight/2 - paddleHeight/2;
+	global.player1Y = canvas.height/2 - canvas.paddleHeight/2;
 	global.player2Score = 0;
 
-	global.ballX = canvasWidth/2;
-	global.ballY = canvasHeight/2;
+	global.ballX = canvas.width/2;
+	global.ballY = canvas.height/2;
 
 	global.gameStarted = false;
 	global.roomName = "none"
@@ -70,14 +72,16 @@ export function resetGame() {
 }
 
 function			setReceivedSocketData(data: GameData, setGameScore: Function) {
-	global.player1Y = data.p1.y;
+	const		backfrontOffset = canvas.width / backendCanvasWidth;
+
+	global.player1Y = data.p1.y * backfrontOffset;
 	global.player1Score = data.p1.score;
 
-	global.player2Y = data.p2.y;
+	global.player2Y = data.p2.y * backfrontOffset;
 	global.player2Score = data.p2.score;
 
-	global.ballX = data.b.x;
-	global.ballY = data.b.y;
+	global.ballX = data.b.x * backfrontOffset;
+	global.ballY = data.b.y * backfrontOffset;
 
 	setGameScore({
 		firstPlayer: data.p1.score,

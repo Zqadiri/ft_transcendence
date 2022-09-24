@@ -11,7 +11,7 @@ import CountDown from './CountDown';
 import { global } from './Data/PingPong.d';
 import { addSocketEventHandlers, handleLeftPaddle, handleRightPaddle, renderCanvas, resetGame } from './Utils/tools';
 import { CurrentPlayersData } from '../Interfaces/CurrentPlayersData.interface';
-import { canvasHeight, canvasWidth, playerOne, playerTwo, spectator } from './Data/PingPong.contants';
+import { playerOne, playerTwo, spectator } from './Data/PingPong.contants';
 
 
 export let gameContext = createContext<any>({});
@@ -70,7 +70,7 @@ function	PingPong(): JSX.Element
 				<div className="game_canvas_parent_container flex-center-column">
 					<div className="container_sesco flex-center-column flex-gap20">
 						<Score s1={gameScore.firstPlayer} s2={gameScore.secondPlayer} />
-						<Canvas width={canvasWidth} height={canvasHeight} />
+						<Canvas />
 					</div>
 				</div>
 			</>

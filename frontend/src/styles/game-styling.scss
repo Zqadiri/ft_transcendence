@@ -450,7 +450,7 @@ html {
 
 .container_sesco {
 	margin: 50px 0px;
-	width: 1000px;
+	width: min(1000px, 75vw);
 }
 
 .container_sesco .score-panel {
