@@ -21,7 +21,11 @@ export class ChatsService {
   @InjectRepository(User)
   private readonly Userrepository: Repository<User>;
 
+  @InjectRepository(ChatLogs)
+  private readonly ChatLogsrepository: Repository<ChatLogs>;
+
   private readonly logger = new Logger(ChatsService.name);
+
 
   async findUser(userID: number)
   {
@@ -511,7 +515,17 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           .from(Chat)
           .andWhere("name = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
+         
+          //delete messages from ChatLogs
+          const del = await this.ChatLogsrepository
+          .createQueryBuilder()
+          .delete()
+          .from(ChatLogs)
+          .where("roomName = :name", {name: SetRolestoMembersDto.RoomID})
+          .execute()
+          
           console.log("the Room is deleted ");
+       
         }
       }
       else if (isUserRoom)
@@ -531,6 +545,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           .set({userID: isUserRoom.userID, AdminsID: isUserRoom.AdminsID})
           .where("name = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
+
           console.log("Simple user Leaving this room", isUserRoom);
         }
         else
