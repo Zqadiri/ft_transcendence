@@ -39,8 +39,9 @@
 			.icon {
 				width: 40px;
 				.avatar {
+					border-radius: 99px;
+					background-color: white;
 					.image {
-						background-color: white;
 						height: 40px;
 						width: 40px;
 						border-radius: 99px;
@@ -227,9 +228,12 @@
 							height: 40px;
 							width: 100%;
 							.avatar {
-								width: 30px;
-								height: 30px;
-								border-radius: 999px;
+								.image {
+									background-color: white;
+									width: 30px;
+									height: 30px;
+									border-radius: 999px;
+								}
 							}
 							.container {
 								.id {
