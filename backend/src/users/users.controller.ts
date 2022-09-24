@@ -92,6 +92,26 @@ export class UsersController {
 		res.end();
 	}
 
+	@ApiOperation({ summary: 'Add a friend to a user' })
+	@Post('/cancel_friend')
+	@UseGuards(jwtAuthGuard)
+	async CancelFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
+		const newFriend = await this.usersService.getUserById(userID);
+		console.log(newFriend);
+		if (!newFriend)	
+			throw new UnauthorizedException('NOT a User');
+		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		if (!user)
+			throw new UnauthorizedException('NOT a User');
+		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
+			user.outgoingFRID = user.outgoingFRID.filter(el => el === newFriend.id);
+			newFriend.incomingFRID = newFriend.incomingFRID.filter(el => el === user.id);
+		}
+		await this.userRepo.save(user);
+		await this.userRepo.save(newFriend);
+		res.end();
+	}
+
 	@ApiOperation({ summary: 'Accept friend request' })
 	@Post('/accept_friend')
 	@UseGuards(jwtAuthGuard)
