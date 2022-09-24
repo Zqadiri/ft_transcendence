@@ -412,7 +412,6 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     .leftJoin(User, 'db_user', 'db_user.id = db_chat.ownerID')
     .addSelect('db_user.username', 'ownerName')
     .where("(:id = ANY (db_chat.userID))", { id })
-    .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .groupBy("db_chat.id")
     .addGroupBy("db_user.id")
     .addGroupBy("db_chat.name")
@@ -523,7 +522,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           .from(ChatLogs)
           .where("roomName = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
-          
+
           console.log("the Room is deleted ");
        
         }

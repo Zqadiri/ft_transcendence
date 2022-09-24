@@ -70,16 +70,34 @@ export class UsersController {
 
 	@ApiOperation({ summary: 'Add a friend to a user' })
 	@Post('/add_friend')
-	async AddFriend(@Body('id') userID : number, @Req() req: any, @Res() res: any){
+	async AddFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
 		console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
-		const user = await this.usersService.getUserById(58526); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
-		if (!user.FriendsID.includes(newFriend.id))
+		if (!user.addFriendID.includes(newFriend.id))
+			user.addFriendID.push(newFriend.id);
+		await this.userRepo.save(user);
+		res.end();
+	}
+
+	@ApiOperation({ summary: 'Accept friend request' })
+	@Post('/accept_friend')
+	async AcceptFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
+		const newFriend = await this.usersService.getUserById(userID);
+		console.log(newFriend);
+		if (!newFriend)	
+			throw new UnauthorizedException('NOT a User');
+		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		if (!user)
+			throw new UnauthorizedException('NOT a User');
+		if (user.addFriendID.includes(newFriend.id)) {
 			user.FriendsID.push(newFriend.id);
+			user.addFriendID = user.addFriendID.filter(el => el === newFriend.id);
+		}
 		await this.userRepo.save(user);
 		res.end();
 	}

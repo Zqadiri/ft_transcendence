@@ -58,7 +58,7 @@ export class User{
 
 	@Column('int',{
 		array: true,
-		nullable: true
+		default: []
 	})
 	FriendsID: number[]; 
 
@@ -68,11 +68,11 @@ export class User{
 	})
 	blockedID: number[];
 
-	@Column('varchar',{
+	@Column('int',{
 		array: true,
-		nullable: true
+		default: []
 	})
-	addFriendID: string[];
+	addFriendID: number[];
 
 	@Column({ 
 		type: 'timestamp', 
