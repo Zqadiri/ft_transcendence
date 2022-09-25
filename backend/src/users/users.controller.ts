@@ -251,7 +251,7 @@ export class UsersController {
 		const friends = await this.userRepo
 		.createQueryBuilder("db_user")
 		.select(['db_user.username', 'db_user.avatar' ,'db_user.id', 'db_user.status'])
-		.where(":id = ANY (db_user.incomingFRID)", {id: user.id})
+		.where(":id = ANY (db_user.outgoingFRID)", {id: user.id})
 		.getMany()
 		res.send(friends);
 	}

@@ -73,6 +73,20 @@ export class ChatsService {
     return (ret);
   }
 
+  async checkIfDmExistedUsername(username1: string, username2: string)
+  {
+    const ret = await this.Chatrepository
+    .createQueryBuilder()
+    .where('type=:type', { type: ChatTypes.DM })
+    .andWhere('name=:name or name=:name2', {
+      name: `${username1},${username2}`,
+      name2: `${username2},${username1}`,
+    })
+    .getMany();
+
+    return (ret);
+  }
+
   async CreateDm(dm: CreateDmDto)
   {
     //TODO
@@ -103,18 +117,17 @@ export class ChatsService {
 
   async RemoveDm(dm: CreateDmDto)
   {
-    const userid2 = dm.userID2;
     const user1 = await this.findUser(dm.userID1);
     if (!user1){
       throw new BadRequestException({code: 'invalid id', message: `User with '${dm.userID1}' does not exist`})
     }
 
-    const user2 = await this.findUser(userid2);
+    const user2 = await this.findUser(dm.userID2);
     if (!user2){
-      throw new BadRequestException({code: 'invalid id', message: `User with '${userid2}' does not exist`})
+      throw new BadRequestException({code: 'invalid id', message: `User with '${dm.userID2}' does not exist`})
     }
 
-    const existeddm = await this.checkIfDmExisted(user1.id, user2.id);
+    const existeddm = await this.checkIfDmExistedUsername(user1.username, user2.username);
     if (existeddm.length)
     {
       await this.Chatrepository

@@ -86,7 +86,7 @@ export class AuthService {
 		let {access_token} = await this.loginWithCredentials(user);
 		console.log(`access token :  ` + access_token);
 		response.cookie('_token', access_token,{
-			maxAge: 1000 * 60 * 15,
+			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "lax",
@@ -94,7 +94,7 @@ export class AuthService {
 			path: '/'
 		});
 		response.cookie('name', user.username,{
-			maxAge: 1000 * 60 * 15,
+			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "lax",
@@ -102,7 +102,7 @@ export class AuthService {
 			path: '/'
 		});
 		response.cookie('id', user.id,{
-			maxAge: 1000 * 60 * 15,
+			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "lax",
@@ -110,7 +110,7 @@ export class AuthService {
 			path: '/'
 		});
 		response.cookie('avatar', user.avatar,{
-			maxAge: 1000 * 60 * 15,
+			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,
 			domain: 'localhost',
 			sameSite: "lax",
