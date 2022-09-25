@@ -29,6 +29,7 @@ import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path';
 import { GameController } from './games/games.controller';
 import { ChatsService } from './chats/chats.service';
+import { StatusGateway } from './status.gateway';
 
 require('dotenv').config();
 
@@ -63,7 +64,7 @@ require('dotenv').config();
 			ChatLogsModule
 		],
 		controllers: [AuthController, UsersController, AppController, GameController],
-		providers: [UsersService, JwtStrategy, AuthService,  AppService, GamesService, ChatsService],
+		providers: [UsersService, JwtStrategy, AuthService,  AppService, GamesService, ChatsService, StatusGateway],
 		exports: [
 			AuthService, PassportModule 
 		  ],

@@ -5,6 +5,14 @@ import Waiting from "./Waiting";
 import Selection from "./Selection";
 import { selectionComponent } from "./Data/Matching.constants";
 import { useEffectOnce } from '../GameTabs';
+import { cookies } from "../../util";
+import { io } from 'socket.io-client';
+
+export const statusSocket = io('/status', {
+	forceNew: true,
+});
+
+statusSocket.emit('userId', cookies.get('id'));
 
 export	const	matchingContext = createContext<any>({});
 
@@ -36,6 +44,7 @@ function	addMatchingSocketEventHandler(navigate: Function)
 
 	global.socket.off("secondPlayerJoined").on("secondPlayerJoined", () => {
 		global.secondPlayerExist = true;
+		statusSocket.emit('inGame', {userId: cookies.get('id'), status: "ingame"});
 		navigate("/play");
 	});
 }

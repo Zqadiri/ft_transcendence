@@ -24,7 +24,7 @@ export class User{
 
 	@Column({
 		enum:['online', 'offline', 'ingame'],
-		default: 'online'
+		default: 'offline'
 	})
 	status: string;
 

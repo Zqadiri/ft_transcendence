@@ -46,6 +46,21 @@ export class UsersService {
 			return this.userRepository.update(userID, updatedUser);
 		}
 
+		async	updateStatus(userId: number, status: string)
+		{
+			const	updateUserStatus = await this.getUserById(userId);
+
+			if (updateUserStatus)
+			{
+				await this.userRepository
+				.createQueryBuilder()
+				.update(User)
+				.set({status: status})
+				.where("id = :id", {id: updateUserStatus.id})
+				.execute()
+			}
+		}
+
 		async updateAfterGame(userID: number, updateAfterGame: UpdateAfterGameDto){
 			const updatedUser = new User();
 			updatedUser.status = updateAfterGame.status;

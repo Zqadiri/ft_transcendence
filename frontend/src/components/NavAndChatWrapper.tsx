@@ -15,6 +15,7 @@ import GameTabs from "./game/GameTabs"
 import PingPong from "./game/PingPong/PingPong";
 import MuteBanControls from "./MuteBanControls";
 import UserProfileIcon from "./UserProfileIcon";
+import { statusSocket } from "./game/Matching/Matching";
 
 console.log("Global console.log()");
 
@@ -299,6 +300,7 @@ const NavAndChatWrapper = () => {
 								onClick={() => {
 									cookies.remove("_token");
 									setLoggedIn(false);
+									statusSocket.disconnect();
 								}}
 							>
 								<i className="fa-solid fa-right-from-bracket"></i>

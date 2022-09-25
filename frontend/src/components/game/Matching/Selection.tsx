@@ -6,6 +6,7 @@ import { ReactComponent as GameTheme02 } from '../../../img/theme2.svg';
 import { waitingComponent } from "./Data/Matching.constants";
 import { cookies } from "../../util";
 
+
 function	Selection(): JSX.Element {
 	const [activeTheme, setActiveTheme] = useState("none");
 	const {setActiveComponent} = useContext(matchingContext);
