@@ -22,12 +22,11 @@ export enum Action {
 
 export class CreateDmDto
 {
-	@ApiProperty({ description: "dm type" })
-	@Equals(ChatTypes.DM)
-	type: string;
+	@ApiProperty({ description: "userID1 of the reciver" })
+	userID1: number;
 
-	@ApiProperty({ description: "userID of the reciver" })
-	reciver: number;
+	@ApiProperty({ description: "userID2 of the reciver" })
+	userID2: number;
 }
 
 export class CreateRoomDto

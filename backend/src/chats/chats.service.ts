@@ -75,13 +75,13 @@ export class ChatsService {
     return (ret);
   }
 
-  async CreateDm(dm: CreateDmDto, userid1: number)
+  async CreateDm(dm: CreateDmDto)
   {
     //TODO
-    const userid2 = dm.reciver;
-    const user1 = await this.findUser(userid1);
+    const userid2 = dm.userID2;
+    const user1 = await this.findUser(dm.userID1);
     if (!user1){
-      throw new BadRequestException({code: 'invalid id', message: `User with '${userid1}' does not exist`})
+      throw new BadRequestException({code: 'invalid id', message: `User with '${dm.userID1}' does not exist`})
     }
 
     const user2 = await this.findUser(userid2);
@@ -101,6 +101,35 @@ export class ChatsService {
       return await this.Chatrepository.save(directmessage);
     }
     return existeddm[0];
+  }
+
+  async RemoveDm(dm: CreateDmDto)
+  {
+    const userid2 = dm.userID2;
+    const user1 = await this.findUser(dm.userID1);
+    if (!user1){
+      throw new BadRequestException({code: 'invalid id', message: `User with '${dm.userID1}' does not exist`})
+    }
+
+    const user2 = await this.findUser(userid2);
+    if (!user2){
+      throw new BadRequestException({code: 'invalid id', message: `User with '${userid2}' does not exist`})
+    }
+
+    const existeddm = await this.checkIfDmExisted(user1.id, user2.id);
+    if (existeddm.length)
+    {
+      await this.Chatrepository
+      .createQueryBuilder()
+      .delete()
+      .from(Chat)
+      .where('type=:type', { type: ChatTypes.DM })
+      .andWhere('name=:name or name=:name2', {
+        name: `${user1.id},${userid2}`,
+        name2: `${userid2},${user1.id}`,
+      })
+      .execute()
+    }
   }
 
   /** Create ROOM */

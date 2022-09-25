@@ -17,6 +17,8 @@ import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import RequestWithUser from 'src/two-factor-authentication/dto/requestWithUser.interface';
+import { ChatsService } from 'src/chats/chats.service';
+import { ChatTypes } from 'src/chats/dto/create-chat.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -28,6 +30,7 @@ export class UsersController {
 		@InjectRepository(User)
 		private readonly userRepo : UserRepository,
 		private readonly usersService: UsersService,
+		private readonly chatsService: ChatsService
 	){}
 
 	@ApiOperation({ summary: 'Change a user\'s avatar' })
@@ -129,6 +132,7 @@ export class UsersController {
 				newFriend.FriendsID.push(user.id);
 				user.incomingFRID.splice(user.incomingFRID.findIndex(el => el === newFriend.id));
 				newFriend.outgoingFRID.splice(newFriend.outgoingFRID.findIndex(el => el === user.id));
+				await this.chatsService.CreateDm({userID1: user.id, userID2: newFriend.id});
 			}
 		}
 		await this.userRepo.save(user);
@@ -173,6 +177,7 @@ export class UsersController {
 			if (user.FriendsID.includes(newFriend.id)) {
 				user.FriendsID.splice(user.FriendsID.findIndex(el => el === newFriend.id));
 				newFriend.FriendsID.splice(newFriend.FriendsID.findIndex(el => el === user.id));
+				await this.chatsService.RemoveDm({userID1: user.id, userID2: newFriend.id});
 			}
 		}
 		await this.userRepo.save(user);
@@ -191,6 +196,7 @@ export class UsersController {
 		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
+		await this.chatsService.RemoveDm({userID1: user.id, userID2: newFriend.id});
 		user.FriendsID.splice(user.FriendsID.findIndex(el => el === newFriend.id));
 		user.outgoingFRID.splice(user.outgoingFRID.findIndex(el => el === newFriend.id));
 		newFriend.FriendsID.splice(newFriend.FriendsID.findIndex(el => el === user.id));

@@ -91,18 +91,18 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     client.emit('joinedRoom', roomName);
   }
 
-  @SubscribeMessage('socketJoinDM')
-  async handleJoinDM(client: Socket, CreateDmDto: CreateDmDto)
-  {
-    let id : string;
+  // @SubscribeMessage('socketJoinDM')
+  // async handleJoinDM(client: Socket, CreateDmDto: CreateDmDto)
+  // {
+  //   // let id : string;
   
-    console.log("parse(client.handshake.headers.cookie)", parse(client.handshake.headers.cookie).id);
-    const dm = await this.chatsService.CreateDm(CreateDmDto, +id);
+  //   // console.log("parse(client.handshake.headers.cookie)", parse(client.handshake.headers.cookie).id);
+  //   // const dm = await this.chatsService.CreateDm(CreateDmDto, +id);
   
-    client.join(dm.name);
-    //emit to specific client
-    client.emit('joinedDm', dm.name);
-  }
+  //   client.join(dm.name);
+  //   //emit to specific client
+  //   client.emit('joinedDm', dm.name);
+  // }
 
   @SubscribeMessage('socketleaveRoom')
   async handleLeaveRoom(@ConnectedSocket() client: Socket, roomName: string)

@@ -28,6 +28,7 @@ import { GamesService } from './games/games.service';
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path';
 import { GameController } from './games/games.controller';
+import { ChatsService } from './chats/chats.service';
 
 require('dotenv').config();
 
@@ -43,7 +44,7 @@ require('dotenv').config();
 				isGlobal: true
 			}),
 			TypeOrmModule.forFeature([User, UserRepository,
-							Game, GameRepository]),
+							Game, GameRepository, Chat, ChatLogs]),
 			TypeOrmModule.forRoot({
 				type: 'postgres',
 				url: process.env.DATABASE_URL,
@@ -62,7 +63,7 @@ require('dotenv').config();
 			ChatLogsModule
 		],
 		controllers: [AuthController, UsersController, AppController, GameController],
-		providers: [UsersService, JwtStrategy, AuthService,  AppService, GamesService],
+		providers: [UsersService, JwtStrategy, AuthService,  AppService, GamesService, ChatsService],
 		exports: [
 			AuthService, PassportModule 
 		  ],

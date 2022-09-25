@@ -11,19 +11,19 @@ export class ChatController {
 
     constructor(private readonly chatService : ChatsService) {}
         
-    @UseGuards(jwtAuthGuard)
-    @Post('/Dm')
-    @HttpCode(201)
-    async createDm(@Req() req: RequestWithUser, @Body() dm: CreateDmDto) {
-        console.log("Creating direct messsage ...", dm);
-        try {
-            //const newRoom = await this.chatService.createRoom(roomDto, "oum");
-            await this.chatService.CreateDm(dm, req.user.id);
-        } catch (e) {
-            console.error('Failed to create dm message', e);
-            throw e;
-        }
-    }
+    // @UseGuards(jwtAuthGuard)
+    // @Post('/Dm')
+    // @HttpCode(201)
+    // async createDm(@Req() req: RequestWithUser, @Body() dm: CreateDmDto) {
+    //     console.log("Creating direct messsage ...", dm);
+    //     try {
+    //         //const newRoom = await this.chatService.createRoom(roomDto, "oum");
+    //         await this.chatService.CreateDm(dm, req.user.id);
+    //     } catch (e) {
+    //         console.error('Failed to create dm message', e);
+    //         throw e;
+    //     }
+    // }
 
     @UseGuards(jwtAuthGuard)
     @Post('/CreateRoom')
