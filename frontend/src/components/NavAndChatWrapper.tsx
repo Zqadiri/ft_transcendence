@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import "../styles/wrapper.scss"
@@ -7,7 +7,7 @@ import FourOFour from "./FourOFour";
 import Home from "./Home";
 import Profile from "./Profile";
 import Settings from "./Settings";
-import UserProfile from "./UserProfile";
+import UserProfile, { User } from "./UserProfile";
 import { capitalize, cookies, getCookieHeader, globalContext, RRLink, ShowConditionally, useEffectOnce, valDef } from "./util";
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
@@ -31,6 +31,7 @@ export interface UserStat {
 }
 
 export interface Chat {
+	db_chat_type: string | undefined,
 	db_chat_id: number,
 	db_chat_name: string,
 	db_chat_status: "public" | "protected" | "private" | "dm",
@@ -63,6 +64,8 @@ const NavAndChatWrapper = () => {
 			getAllMyRooms();
 		if (x === "rooms")
 			getAllRooms();
+		if (x === "friends")
+			getFriends();
 		return _setActiveTab(x);
 	}
 	const [roomActiveTab, _setRoomActiveTab] = useState(
@@ -217,8 +220,14 @@ const NavAndChatWrapper = () => {
 		};
 	});
 
-	const [friends, setFriends] = useState([
-	]);
+	const getFriends = () => {
+		axios.get("/users/friends_list")
+		.then((res: AxiosResponse) => {
+			setFriends(res.data);
+		})
+	}
+
+	const [friends, setFriends] = useState<User[]>([]);
 
 	useEffectOnce(() => {
 		getAllMyRooms();
@@ -344,7 +353,25 @@ const NavAndChatWrapper = () => {
 					</div>
 					<div className="body">
 						<div className="friends" style={{display: activeTab === "friends" ? "block" : "none"}}>
-							friends
+							{
+								friends.map(fr => {
+									return (
+										<div className="friend" onClick={() => {
+
+										}}>
+											<div className="left flex-ai-cr flex-gap5">
+												<div className="avatar flex-center">
+													<img src={fr.avatar} alt="" style={{width: 30, height: 30}} />
+												</div>
+												<div className="info flex-column flex-gap5">
+													<div className="username">{fr.username}</div>
+													<div className="id">{fr.id}</div>
+												</div>
+											</div>
+										</div>
+									)
+								})
+							}
 						</div>
 						<div className="chatscroll d100" style={{display: activeTab === "chat" ? "flex" : "none"}}>
 							<div className="chat w100 flex-column flex-gap10">
@@ -356,27 +383,33 @@ const NavAndChatWrapper = () => {
 												if (activeChat?.db_chat_name)
 													chatSocket.emit("socketLeaveRoom", activeChat?.db_chat_name);
 												chatSocket.emit("socketJoinRoom", room.db_chat_name);
-												axios.get("/chat/userStats/" + room.db_chat_name).then(res => {
-													// console.log({userstats: res.data});
-													let acu: UserStat[] = res.data;
-													console.log({"acu.find(el => el.id === cookies.get(\"id\"))": acu.find(el => el.id === parseInt(cookies.get("id"))), acu})
-													if (acu.find(el => el.id === parseInt(cookies.get("id")))?.stat !== "banned") {
-														setActiveTab("chatinterface");
-														setActiveChat(room);
-													}
-													setActiveChatUsers(res.data);
-												}).catch((err) => {
-										
-												})
+												// if (room.db_chat_type !== "dm")
+													axios.get("/chat/userStats/" + room.db_chat_name).then(res => {
+														// console.log({userstats: res.data});
+														let acu: UserStat[] = res.data;
+														console.log({"acu.find(el => el.id === cookies.get(\"id\"))": acu.find(el => el.id === parseInt(cookies.get("id"))), acu})
+														if (acu.find(el => el.id === parseInt(cookies.get("id")))?.stat !== "banned") {
+															setActiveTab("chatinterface");
+															setActiveChat(room);
+														}
+														setActiveChatUsers(res.data);
+													}).catch((err) => {
+											
+													})
+												// else {
+
+												// }
 											}}>
 												<div className="left flex-column">
-													<div className="name">{room.db_chat_name}</div>
+													<div className="name">{room.db_chat_type === "dm" ? room.db_chat_name : room.db_chat_name}</div>
 													<div className="owner">{room.ownerName}</div>
 												</div>
-												<div className="right flex-center">
-													<i className="icon fa-solid fa-user"></i>
-													<div className="num">{room["number of users"]}</div>
-												</div>
+												<ShowConditionally cond={room.db_chat_type === "dm"}>
+													<div className="right flex-center">
+														<i className="icon fa-solid fa-user"></i>
+														<div className="num">{room["number of users"]}</div>
+													</div>
+												</ShowConditionally>
 											</div>
 										);
 									})
@@ -567,7 +600,7 @@ const NavAndChatWrapper = () => {
 									activeChatUsers.find(el => el.username === cookies.get("name"))?.stat === "owner" ?
 									<>
 										<ShowConditionally cond={activeChat?.db_chat_status === "public"}>
-											<div className="setpassword flex-gap10">
+											<div className="setpassword flex-ai-cr flex-gap10">
 												<label htmlFor="roompassword">{passwdMessage}</label>
 												<input type="password" ref={CRUDRoomPasswordRef}/>
 												<Button onClick={() => {
@@ -597,7 +630,7 @@ const NavAndChatWrapper = () => {
 											</div>
 										</ShowConditionally>
 										<ShowConditionally cond={activeChat?.db_chat_status === "protected"}>
-											<div className="setpassword flex-gap10">
+											<div className="setpassword flex-ai-cr flex-gap10">
 												<label htmlFor="roompassword">{passwdMessage}</label>
 												<input type="password" ref={CRUDRoomPasswordRef}/>
 												<Button onClick={() => {

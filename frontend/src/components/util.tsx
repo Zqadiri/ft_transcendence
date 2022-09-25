@@ -58,8 +58,8 @@ export function isLoggedIn() {
 }
 
 export function RRLink(props: LinkProps & React.RefAttributes<HTMLAnchorElement>) {
-	console.log("RRLink props:")
-	console.log({props});
+	// console.log("RRLink props:")
+	// console.log({props});
 	return <Link {...{...props, className: "no-underline no-colors " + props.className}}></Link>
 }
 
