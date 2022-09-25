@@ -436,7 +436,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     }
     const Myrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
-    .select(['db_chat.name', 'db_chat.id', 'db_chat.status'])
+    .select(['db_chat.name', 'db_chat.id', 'db_chat.status', 'db_chat.type'])
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
     .leftJoin(User, 'db_user', 'db_user.id = db_chat.ownerID')
     .addSelect('db_user.username', 'ownerName')
