@@ -1,14 +1,12 @@
 import { Injectable, ConflictException, BadRequestException, UnauthorizedException, ForbiddenException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
-import { Repository, createQueryBuilder, In } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes, RoomDto, SetRolestoMembersDto, BanOrMuteMembersDto, RoomNamedto, Action, RoomWoUserDto } from './dto/create-chat.dto';
 import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
-import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { useImperativeHandle } from 'react';
 
 
 // import { Cron, CronExpression } from '@nestjs/schedule';

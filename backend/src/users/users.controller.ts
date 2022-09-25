@@ -241,6 +241,22 @@ export class UsersController {
 		res.send(friends);
 	}
 
+	@ApiOperation({ summary: 'get friends list'})
+	@Get('/friend_req')
+	@UseGuards(jwtAuthGuard)
+	async friendReq(@Req() req: any, @Res() res: any){
+		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		if (!user)
+			throw new BadRequestException("user does not exist");
+		const friends = await this.userRepo
+		.createQueryBuilder("db_user")
+		.select(['db_user.username', 'db_user.avatar' ,'db_user.id', 'db_user.status'])
+		.where(":id = ANY (db_user.incomingFRID)", {id: user.id})
+		.getMany()
+		res.send(friends);
+	}
+
+
 	// @ApiOperation({ summary: 'get friends list'})
 	// @Get('/blocked_list')
 	// async blockedFriend(@Req() req: any, @Res() res: any){
