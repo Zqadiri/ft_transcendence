@@ -238,9 +238,9 @@ export class UpdateGameService {
 	#updateBallPosition(game: GameCoor): void
 	{ 
 		game.ball.x += game.ball.velocityX;
-		game.ball.y += game.ball.velocityY;
+		game.ball.y = Math.abs(game.ball.y + game.ball.velocityY);
 
-		if (game.ball.y < 0 || game.ball.y + game.ball.radius >= this.global.canvasHeight || game.ball.y - game.ball.radius <= 0)
+		if (game.ball.y + game.ball.radius >= this.global.canvasHeight || game.ball.y - game.ball.radius <= 0)
 			game.ball.velocityY = -game.ball.velocityY;
 
 		let player: Paddle = game.ball.x < this.global.canvasWidth / 2 ? game.player1 : game.player2;
