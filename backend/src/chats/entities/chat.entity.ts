@@ -43,23 +43,23 @@ export class Chat{
 	
 	@Column('int',{
 		array: true,
-		nullable: false
+		default: []
 	})
 	userID: number[];
 
 	@Column('int',{
 		array: true,
-		nullable: true
+		default: []
 	})
 	AdminsID: number[];
 
 	@Column('int',{
         array: true,
-        nullable: true
+		default: []
     })
     InvitedUserID: number[];
 	
-	@Column({ type: "simple-json", nullable: true })
+	@Column({ type: "simple-json", default: [] })
     MutedAndBannedID: {
 		action: string;
         userID: number;
