@@ -95,7 +95,7 @@ export class ChatsService {
       const directmessage = this.Chatrepository.create({
         ownerID: user1.id,
         userID: [user1.id, user2.id],
-        name:`${user1.id},${user2.id}`,
+        name:`${user1.username},${user2.username}`,
         type: ChatTypes.DM,
       });
       return await this.Chatrepository.save(directmessage);
@@ -125,8 +125,8 @@ export class ChatsService {
       .from(Chat)
       .where('type=:type', { type: ChatTypes.DM })
       .andWhere('name=:name or name=:name2', {
-        name: `${user1.id},${userid2}`,
-        name2: `${userid2},${user1.id}`,
+        name: `${user1.username},${user2.username}`,
+        name2: `${user2.username},${user1.username}`,
       })
       .execute()
     }
