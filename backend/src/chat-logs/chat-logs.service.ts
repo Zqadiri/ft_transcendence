@@ -5,6 +5,7 @@ import { ChatLogsDto } from './dto/chat-logs.dto';
 import { ChatLogs } from './entities/chat-log.entity';
 import { User } from 'src/users/entities/user.entity';
 import { ChatsService } from 'src/chats/chats.service';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class ChatLogsService {
@@ -34,12 +35,11 @@ export class ChatLogsService {
 
   async DisplayRoomMessages(roomName: string)
   {
-    let roommessages;
     const room = this.chatsService.findRoom(roomName);
+    if (!room)
+      throw new WsException({code: 'invalid chat room name', message: `Room with '${roomName}' does not exist`})
 
-    if (room)
-    {
-      roommessages = await this.ChatLogsrepository
+    const roommessages = await this.ChatLogsrepository
       .createQueryBuilder()
       .select("ChatLogs.userID", "userID")
       .addSelect("ChatLogs.roomName", "roomName")
@@ -49,7 +49,7 @@ export class ChatLogsService {
       .orderBy({'ChatLogs.createdAt': 'ASC'})
       .where ("ChatLogs.roomName = :roomName", {roomName: roomName})
       .getRawMany()
-    }
+  
    
     return roommessages;
   }
@@ -74,7 +74,7 @@ export class ChatLogsService {
     // findOneBy - Finds the first entity that matches given FindOptionsWhere.
     const id = await this.repo.findOneBy({ username: userID });
     if (!id)
-      throw new BadRequestException({code: 'invalid username', message: `User with '${userID}' does not exist`})
+      throw new WsException({code: 'invalid username', message: `User with '${userID}' does not exist`})
     return id;
   }
 

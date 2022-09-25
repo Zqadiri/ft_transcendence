@@ -214,6 +214,6 @@ export class UsersService {
 			.getOne()
 			return (friends);
 		}
-
+		
 }
 

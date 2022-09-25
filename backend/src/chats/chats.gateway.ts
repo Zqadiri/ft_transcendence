@@ -51,8 +51,6 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   async create(@ConnectedSocket() client: Socket, @MessageBody() createChatDto: ChatLogsDto) {
 
 	  // emit the message just to specific roomz
-	  
-	  const findavatar = await this.chatLogsService.FindAvatar(createChatDto.userID);
 	  const finduser = await this.chatLogsService.findUser(createChatDto.userID);
 	  const findroom = await this.chatsService.findRoom(createChatDto.roomName);
 	  
@@ -122,14 +120,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   @SubscribeMessage('SocketMuteUser')
   async Mute(client: Socket, @MessageBody() setRolesDto: BanOrMuteMembersPlusTokenDto) {
 
-    // let id : string;
-    
-    // id = parse(setRolesDto.token).id;
     try {
-    //   console.log("mute user room ...");
-
-    //   const ret = await this.chatsService.BanOrMuteUser(+id, setRolesDto);
-    //   console.log("ret", ret);
       this.server.to(setRolesDto.RoomID).emit('Muted', setRolesDto);
     } catch (e) {
         console.error('Failed to mute this user in this chat room', e);

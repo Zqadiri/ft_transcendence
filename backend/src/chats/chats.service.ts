@@ -1,14 +1,12 @@
 import { Injectable, ConflictException, BadRequestException, UnauthorizedException, ForbiddenException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
-import { Repository, createQueryBuilder, In } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes, RoomDto, SetRolestoMembersDto, BanOrMuteMembersDto, RoomNamedto, Action, RoomWoUserDto } from './dto/create-chat.dto';
 import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
-import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { useImperativeHandle } from 'react';
 
 
 // import { Cron, CronExpression } from '@nestjs/schedule';
@@ -95,7 +93,7 @@ export class ChatsService {
       const directmessage = this.Chatrepository.create({
         ownerID: user1.id,
         userID: [user1.id, user2.id],
-        name:`${user1.id},${user2.id}`,
+        name:`${user1.username},${user2.username}`,
         type: ChatTypes.DM,
       });
       return await this.Chatrepository.save(directmessage);
@@ -125,8 +123,8 @@ export class ChatsService {
       .from(Chat)
       .where('type=:type', { type: ChatTypes.DM })
       .andWhere('name=:name or name=:name2', {
-        name: `${user1.id},${userid2}`,
-        name2: `${userid2},${user1.id}`,
+        name: `${user1.username},${user2.username}`,
+        name2: `${user2.username},${user1.username}`,
       })
       .execute()
     }
