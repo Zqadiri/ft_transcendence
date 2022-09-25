@@ -5,17 +5,33 @@ import { ReactComponent as GameTheme01 } from '../../../img/theme1.svg';
 import { ReactComponent as GameTheme02 } from '../../../img/theme2.svg';
 import { waitingComponent } from "./Data/Matching.constants";
 import { cookies } from "../../util";
+import axios from "axios";
 
 
 function	Selection(): JSX.Element {
 	const [activeTheme, setActiveTheme] = useState("none");
 	const {setActiveComponent} = useContext(matchingContext);
 
-	function	joinRoom()
+	async function	getUserStatus()
 	{
-		if (activeTheme === "theme01" || activeTheme === "theme02")
+		const	userId = cookies.get('id');
+		const	currentUser = await axios(`/users?id=${Number(userId)}`);
+
+		if (currentUser.data.status === "ingame")
+			return (true);
+		return (false);
+	}
+	
+	async function	joinRoom()
+	{
+		if (activeTheme !== "none" && await getUserStatus())
+		{
+			alert("You're already playing a game");
+		}
+		else if (activeTheme === "theme01" || activeTheme === "theme02")
 		{
 			const	currentUserId = cookies.get("id");
+
 			global.socket.connect();
 
 			if (activeTheme === "theme01")

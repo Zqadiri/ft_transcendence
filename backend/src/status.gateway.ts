@@ -9,13 +9,11 @@ import { UsersService } from './users/users.service';
 })
 export class StatusGateway implements OnGatewayDisconnect {
 
-	constructor(
-		private readonly userServ: UsersService
-	) {
-	}
+	constructor( private readonly userServ: UsersService ) {}
+
 	private	users = {};
 
-	checkInUsers(userId: number): boolean
+	hasUserid(userId: number): boolean
 	{
 		let		found: boolean = false;
 
@@ -33,7 +31,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		const	userId: number = this.users[client.id];
 
 		delete this.users[client.id];
-		if (!this.checkInUsers(userId))
+		if (!this.hasUserid(userId))
 			this.userServ.updateStatus(userId, "offline");
 	}
 
@@ -43,7 +41,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		if (userId)
 		{
 			this.users[client.id] = userId;
-			if (!this.checkInUsers(Number(userId)))
+			if (!this.hasUserid(Number(userId)))
 				this.userServ.updateStatus(Number(userId), "online");
 		}
 	}

@@ -74,6 +74,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	handleJoinTheme1(client: Socket, userId: string): void {
 		const	roomName = "Room #" + this.themeOne.roomCounter;
 
+		if (this.themeOne.usersId.length === 1 && this.themeOne.usersId[0] === userId)
+			return;
 		this.themeOne.clients.push(client.id);
 		this.themeOne.usersId.push(userId);
 
@@ -90,6 +92,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	handleJoinTheme2(client: Socket, userId: string): void {
 		const	roomName = "Room #" + this.themeTwo.roomCounter;
 
+		if (this.themeTwo.usersId.length === 1 && this.themeTwo.usersId[0] === userId)
+			return;
 		this.themeTwo.clients.push(client.id);
 		this.themeTwo.usersId.push(userId);
 
