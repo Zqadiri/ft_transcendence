@@ -5,7 +5,7 @@ import { UsersService } from "src/users/users.service";
 
 function cookieExtractor(req: any) : string {
 	var token = null;
-	console.log(` return test aasdf ${req.headers.cookie}`);
+	// console.log(` return test aasdf ${req.headers.cookie}`);
 	// if (req && req.headers.cookie){
 	// 	token = req.headers.cookie.split(';').find((cookie: string) => cookie.startsWith('_token')).split('=')[1]
 	// }
