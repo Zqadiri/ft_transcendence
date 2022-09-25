@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { GameCoor, GameData, Directions, Ball, Paddle } from "./game.interface"
-import axios from "axios";
+import { GamesService } from './games.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class UpdateGameService {
@@ -13,6 +14,10 @@ export class UpdateGameService {
 		paddleHeight: 150,
 		isSimulationInitiated: false
 	};
+	constructor (
+		private readonly gameServ: GamesService,
+		private readonly userServ: UsersService
+	) {}
 	private server: Server;
 
 	initializeServerObject(server: Server): void
@@ -20,7 +25,7 @@ export class UpdateGameService {
 		this.server = server;
 	}
 
-	create(room: string, theme: string, player1Id: string, player2Id: string, firstUserID: string, secondUserID: string)
+	async create(room: string, theme: string, player1Id: string, player2Id: string, firstUserID: string, secondUserID: string)
 	{
 		const tmp: GameCoor = {
 			player1: {
@@ -57,40 +62,45 @@ export class UpdateGameService {
 			tmp.ball.velocityY = 20;
 		}
 
-		axios.post('http://127.0.0.1:3000/game/new_game', {
-
+		const response = await this.gameServ.createGame({
 			isPlaying: true,
 			firstPlayerID: firstUserID,
 			secondPlayerID: secondUserID,
 			theme: theme,
 			socketRoom: room,
 			createdAt: new Date(),
-
-		}).then(resp => {
-			tmp.gameID = resp.data.id;
-			this.server.local.emit("newGameIsAvailable");
-		}).catch(e => {
-			console.log("sesco error: " + e);
 		});
-
+		tmp.gameID = response.id;
+		this.server.local.emit("newGameIsAvailable");
+	
 		this.gameCoordinates.set(room, tmp);
 	}
 
-	#checkForTheWinner(score1: number, score2: number, room: string): void
+	async #updateUsersAchievements(gameId)
+	{
+		const	game = await this.gameServ.findGameByid(gameId);
+		let		flawLessWinStreakAchieved: boolean;
+	
+		flawLessWinStreakAchieved = await this.gameServ.checkUserGamesForStreak(Number(game.firstPlayerID));
+		await this.userServ.calculateRank(Number(game.firstPlayerID), game.firstPlayerScore, game.secondPlayerScore, flawLessWinStreakAchieved);
+
+		flawLessWinStreakAchieved = await this.gameServ.checkUserGamesForStreak(Number(game.secondPlayerID));
+		await this.userServ.calculateRank(Number(game.secondPlayerID), game.secondPlayerScore, game.firstPlayerScore, flawLessWinStreakAchieved);
+	}
+
+	async #checkForTheWinner(score1: number, score2: number, room: string)
 	{
 		if (score1 === 10 || score2 === 10)
 		{
-			axios.post('http://127.0.0.1:3000/game/end_game', {
+			const response = await this.gameServ.endGame({
 				firstPlayerScore: score1,
 				secondPlayerScore: score2,
 				gameId: this.gameCoordinates.get(room).gameID,
 				finishedAt: new Date()
-			}).then(() => {
-				this.server.local.emit("gameEnded");
-			}).catch(e => {
-				console.log("sesco error: " + e);
 			});
-		
+			this.server.local.emit("gameEnded");
+			this.#updateUsersAchievements(this.gameCoordinates.get(room).gameID);
+
 			if (score1 == 10)
 				this.server.to(room).emit("theWinner", 1);
 			else if (score2 == 10)
@@ -155,10 +165,13 @@ export class UpdateGameService {
 
 	initializeScorePanel(room: string): void
 	{
-		this.server.to(room).emit("scorePanelData", {
-			firstPlayerId: this.gameCoordinates.get(room).player1.userId,
-			secondPlayerId: this.gameCoordinates.get(room).player2.userId,
-		});
+		if (this.gameCoordinates.get(room))
+		{
+			this.server.to(room).emit("scorePanelData", {
+				firstPlayerId: this.gameCoordinates.get(room).player1.userId,
+				secondPlayerId: this.gameCoordinates.get(room).player2.userId,
+			});
+		}
 	}
 
 	 // false === FirstPlayer and true === SecondPlayer
@@ -167,26 +180,20 @@ export class UpdateGameService {
 		if (game.ball.x + game.ball.radius < 0) {
 			game.player2.score += 1;
 
-			axios.post('http://127.0.0.1:3000/game/update_game', {
-				gameId: game.gameID,
-				PlayerScore: game.player2.score,
-				player: true
-			}).catch(e => {
-				console.log("sesco error: " + e);
-			});
-
+			this.gameServ.updateOneScore(
+				game.gameID,
+				game.player2.score,
+				true
+			);
 		}
 		else if (game.ball.x - game.ball.radius > this.global.canvasWidth) {
 			game.player1.score += 1;
 
-			axios.post('http://127.0.0.1:3000/game/update_game', {
-				gameId: game.gameID,
-				PlayerScore: game.player1.score,
-				player: false
-			}).catch(e => {
-				console.log("sesco error: " + e);
-			});
-
+			this.gameServ.updateOneScore(
+				game.gameID,
+				game.player1.score,
+				false
+			);
 		}
 
 		if (game.ball.x + game.ball.radius < 0 || game.ball.x - game.ball.radius > this.global.canvasWidth) {
