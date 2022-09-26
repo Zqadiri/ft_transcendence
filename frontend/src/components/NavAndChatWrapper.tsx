@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import "../styles/wrapper.scss"
 import Button from "./Button";
 import FourOFour from "./FourOFour";
@@ -59,15 +59,25 @@ const NavAndChatWrapper = () => {
 		"rooms"
 	);
 
+	const getFriendsTab = () => {
+		getFriendRequests();
+		getFriends();
+	}
 
 	const setActiveTab = (x: ActiveTab) => {
-		if (x === "chat")
-			getAllMyRooms();
-		if (x === "rooms")
-			getAllRooms();
-		if (x === "friends")
-			getFriends();
-		return _setActiveTab(x);
+		if (x === "chat") {
+			Promise.all([getFriends(), getAllMyRooms()]).finally(() => {
+				_setActiveTab(x);
+			})
+		}
+		else {
+			if (x === "rooms")
+				getAllRooms();
+			if (x === "friends") {
+				getFriendsTab();
+			}
+			return _setActiveTab(x);
+		}
 	}
 	const [roomActiveTab, _setRoomActiveTab] = useState(
 		// "public"
@@ -77,6 +87,8 @@ const NavAndChatWrapper = () => {
 		getAllRooms();
 		return _setRoomActiveTab(x);
 	}
+
+	const navigater = useNavigate();
 
 	const messagesRef = useRef<HTMLDivElement>(null);
 	const submitRef = useRef<HTMLDivElement>(null);
@@ -112,7 +124,7 @@ const NavAndChatWrapper = () => {
 		}
 		return _setActiveChat(newActiveChat);
 	}
-	const [chatRooms, setChatRooms] = useState([]);
+	const [chatRooms, setChatRooms] = useState<Chat[]>([]);
 	const [allRooms, setAllRooms] = useState([]);
 	useEffect(() => {
 		console.log({allRooms});
@@ -222,13 +234,22 @@ const NavAndChatWrapper = () => {
 	});
 
 	const getFriends = () => {
-		axios.get("/users/friends_list")
-		.then((res: AxiosResponse) => {
+		let prom = axios.get("/users/friends_list")
+		prom.then((res: AxiosResponse) => {
 			setFriends(res.data);
+		})
+		return prom;
+	}
+
+	const getFriendRequests = () => {
+		axios.get("/users/friend_req")
+		.then((res: AxiosResponse) => {
+			setFriendRequests(res.data);
 		})
 	}
 
 	const [friends, setFriends] = useState<User[]>([]);
+	const [friendRequests, setFriendRequests] = useState<User[]>([]);
 
 	useEffectOnce(() => {
 		getAllMyRooms();
@@ -265,7 +286,28 @@ const NavAndChatWrapper = () => {
 		"muted": "fa-solid fa-comment-slash",
 		"banned": "fa-solid fa-ban"
 	}
+	const roomOnClick = (room: Chat) => {
+		// setActiveChatMessages([]);
+		if (activeChat?.db_chat_name)
+			chatSocket.emit("socketLeaveRoom", activeChat?.db_chat_name);
+		chatSocket.emit("socketJoinRoom", room.db_chat_name);
+		// if (room.db_chat_type !== "dm")
+		axios.get("/chat/userStats/" + room.db_chat_name).then(res => {
+			// console.log({userstats: res.data});
+			let acu: UserStat[] = res.data;
+			console.log({ "acu.find(el => el.id === cookies.get(\"id\"))": acu.find(el => el.id === parseInt(cookies.get("id"))), acu })
+			if (acu.find(el => el.id === parseInt(cookies.get("id")))?.stat !== "banned") {
+				setActiveTab("chatinterface");
+				setActiveChat(room);
+			}
+			setActiveChatUsers(res.data);
+		}).catch((err) => {
 
+		})
+	// else {
+
+	// }
+	}
 	return (
 		<div className="c_wrapper d100">
 			<nav className="navbar flex-jc-sb flex-ai-cr">
@@ -355,58 +397,109 @@ const NavAndChatWrapper = () => {
 					</div>
 					<div className="body">
 						<div className="friends" style={{display: activeTab === "friends" ? "block" : "none"}}>
-							{
-								friends.map(fr => {
-									return (
-										<div className="friend" onClick={() => {
-
-										}}>
-											<div className="left flex-ai-cr flex-gap5">
-												<div className="avatar flex-center">
-													<img src={fr.avatar} alt="" style={{width: 30, height: 30}} />
-												</div>
-												<div className="info flex-column flex-gap5">
-													<div className="username">{fr.username}</div>
-													<div className="id">{fr.id}</div>
-												</div>
-											</div>
-										</div>
-									)
-								})
-							}
+							<div className="friendsscroll">
+								<div className="friendscontainer">
+									<h2 className="title">Friends</h2>
+									<div className="container flex-column flex-gap5 flex-wrap">
+										{
+											friends.length ?
+											friends.map(fr => {
+												return (
+													<div className="friend flex-jc-sb" onClick={() => {
+														getAllMyRooms()
+														.finally(() => {
+															let cht = chatRooms.find(el => el.db_chat_type === "dm" && el.db_chat_name.split(",").includes(fr.username))
+															if (cht)
+																roomOnClick(cht);
+														})
+													}}>
+														<div className="left flex-ai-cr flex-gap5">
+															<img src={fr.avatar} className="avatar" alt="" style={{ width: 45, height: 45 }} />
+															<div className="info flex-column">
+																<div className="name">{fr.username}</div>
+																<div className="status" style={{ color: { online: "green", offline: "gray", ingame: "orange" }[fr.status] }}>{fr.status}</div>
+															</div>
+														</div>
+														<div className="right flex-ai-cr flex-gap5">
+															<Button className="view" onClick={(e) => {
+																e.stopPropagation();
+																navigater(`/profile/${fr.username}`);
+																setChatIsOpen(false);
+															}}>View Profile</Button>
+															<Button className="invite" onClick={(e) => {
+																e.stopPropagation();
+															}}>Invite To Play</Button>
+														</div>
+													</div>
+												)
+											}) : <div className="empty flex-center"><div className="inner">You Have No Friends {":("}</div></div>
+										}
+									</div>
+								</div>
+								<div className="fr_req">
+									<h2 className="title">Friend Requests</h2>
+									<div className="container flex-column flex-gap5">
+										{
+											friendRequests.length ?
+											friendRequests.map(frr => {
+												return (
+													<div className="friend_request flex-ai-cr flex-jc-sb">
+														<div className="left flex-gap5 flex-ai-cr">
+															<img src={frr.avatar} alt="" className="avatar" style={{ width: 45, height: 45 }}/>
+															<div className="name">{frr.username}</div>
+														</div>
+														<div className="right flex-gap5 flex-ai-cr">
+															<Button onClick={() => {
+																axios.post("/users/accept_friend", { id: frr.id })
+																.finally(() => {
+																	getFriendsTab();
+																})
+															}}>Accept</Button>
+															<Button className="decline" onClick={() => {
+																axios.post("/users/decline_friend", { id: frr.id })
+																.finally(() => {
+																	getFriendsTab();
+																})
+															}}>Decline</Button>
+														</div>
+													</div>
+												)
+											}) : <div className="empty flex-center"><div className="inner">You Have No New Friend Requests</div></div>
+										}
+									</div>
+								</div>
+							</div>
 						</div>
 						<div className="chatscroll d100" style={{display: activeTab === "chat" ? "flex" : "none"}}>
 							<div className="chat w100 flex-column flex-gap10">
 								{
 									chatRooms.map((room: Chat) => {
 										return (
-											<div className="room flex-jc-sb flex-ai-cr" onClick={() => {
-												// setActiveChatMessages([]);
-												if (activeChat?.db_chat_name)
-													chatSocket.emit("socketLeaveRoom", activeChat?.db_chat_name);
-												chatSocket.emit("socketJoinRoom", room.db_chat_name);
-												// if (room.db_chat_type !== "dm")
-													axios.get("/chat/userStats/" + room.db_chat_name).then(res => {
-														// console.log({userstats: res.data});
-														let acu: UserStat[] = res.data;
-														console.log({"acu.find(el => el.id === cookies.get(\"id\"))": acu.find(el => el.id === parseInt(cookies.get("id"))), acu})
-														if (acu.find(el => el.id === parseInt(cookies.get("id")))?.stat !== "banned") {
-															setActiveTab("chatinterface");
-															setActiveChat(room);
-														}
-														setActiveChatUsers(res.data);
-													}).catch((err) => {
-											
-													})
-												// else {
-
-												// }
-											}}>
-												<div className="left flex-column">
-													<div className="name">{room.db_chat_type === "dm" ? room.db_chat_name : room.db_chat_name}</div>
-													<div className="owner">{room.ownerName}</div>
-												</div>
+											<div className={"room flex-ai-cr flex-gap5 " + (room.db_chat_type === "dm" ? "dm" : "flex-jc-sb")} onClick={() => {roomOnClick(room)}}>
 												<ShowConditionally cond={room.db_chat_type === "dm"}>
+													<img src={friends.find(el => {
+														return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
+													})?.avatar} alt="" style={{ width: 45, height: 45, backgroundColor: "white", borderRadius: "100%" }} />
+												</ShowConditionally>
+												<div className="left flex-column flex-gap5">
+													<div className="name">{room.db_chat_type === "dm" ? room.db_chat_name.split(",").filter(el => el !== cookies.get("name")) : room.db_chat_name}</div>
+													<div className={"owner " + (room.db_chat_type === "dm" ? "dm " + friends.find(el => {
+														return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
+													})?.status : "")}>
+														{
+															room.db_chat_type === "dm" ?
+																friends.find(el => {
+																	return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
+																})?.status : room.ownerName
+														}
+														<ShowConditionally cond={room.db_chat_type !== "dm"}>
+															<>
+																&nbsp;<i className={userIcon.owner}></i>
+															</>
+														</ShowConditionally>
+													</div>
+												</div>
+												<ShowConditionally cond={room.db_chat_type !== "dm"}>
 													<div className="right flex-center">
 														<i className="icon fa-solid fa-user"></i>
 														<div className="num">{room["number of users"]}</div>
@@ -430,7 +523,7 @@ const NavAndChatWrapper = () => {
 								</Button>
 							</section>
 							<section className="roomsbody">
-								<div className="container d100 flex-center-column" style={{display: roomActiveTab === "create" ? "flex" : "none"}}>
+								<div className="container d100 flex-center-column" style={{display: roomActiveTab === "create" ? "flex" : "none", minHeight: "fit-content"}}>
 									<form action="" className="create-room-form h100 flex-column flex-jc-cr flex-gap10" onSubmit={e => {
 										e.preventDefault();
 										axios.post("/chat/CreateRoom/", {
@@ -580,13 +673,16 @@ const NavAndChatWrapper = () => {
 						<div className="chatinterface d100 flex-column" style={{display: activeTab.startsWith("chatinterface") ? "flex" : "none"}}>
 							<div className="header flex-jc-sb flex-ai-cr">
 								<i className="fa-solid fa-arrow-left back" onClick={() => { setActiveTab("chat") }}></i>
-								<div className="name" onClick={() => setActiveTab("chatinterface")}>{activeChat?.db_chat_name}</div>
-								<div className="users" onClick={() => {
-									setActiveTab("chatinterfaceusers");
-									setActiveChat(activeChat);
-								}}>
-									<i className="fa-solid fa-user"></i>
-								</div>
+								<div className="name" onClick={() => setActiveTab("chatinterface")}>{activeChat?.db_chat_type === "dm" ? activeChat.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0] : activeChat?.db_chat_name}</div>
+								<ShowConditionally cond={activeChat?.db_chat_type !== "dm"}>
+									<div className="users" onClick={() => {
+										setActiveTab("chatinterfaceusers");
+										setActiveChat(activeChat);
+									}}>
+										<i className="fa-solid fa-user"></i>
+									</div>
+									<div></div>
+								</ShowConditionally>
 							</div>
 							<div className="chatinterfaceusers flex-jc-fs flex-ai-cr flex-column flex-gap5" style={{display: activeTab === "chatinterfaceusers" ? "flex" : "none"}}>
 								<Button className="leave" onClick={() => {

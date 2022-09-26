@@ -171,18 +171,46 @@
 						overflow-y: auto;
 						.room {
 							cursor: pointer;
-							padding: 10px;
+							padding: 10px 20px;
 							background-color: $darker_blue;
-							border-radius: 7px;
+							border-radius: 99px;
 							min-height: fit-content;
 							.name {
 								color: $less_pastel_white;
 								font-size: 24px;
 								font-weight: 600;
+								line-height: 100%;
+							}
+							&.dm {
+								padding-inline: 10px;
+								.name {
+									font-weight: 700;
+									font-size: 16px;
+								}
+								.left {
+									justify-content: center;
+								}
+							}
+							.left {
+								height: 45px
 							}
 							.owner {
 								color: $less_pastel_white;
 								font-size: 12px;
+								&.dm {
+									font-size: 16px;
+									font-weight: 500;
+									line-height: 100%;
+								}
+								&.online {
+									color: rgb(27, 161, 27);
+								}
+								&.ingame {
+									color: orange;
+								}
+								&.offline {
+									color: gray;
+								}
 							}
 							.icon {
 								color: $less_pastel_white;
@@ -202,7 +230,7 @@
 					max-width: 100%;
 					border: 2px solid $darker_blue;
 					// background-color: $dark_blue;
-					border-radius: 10px;
+					border-radius: 13px;
 					.header {
 						padding: 5px 10px;
 						border-top-left-radius: 7px;
@@ -429,6 +457,86 @@
 									color: $less_pastel_white;
 									font-weight: 600;
 									font-size: 16px;
+								}
+							}
+						}
+					}
+				}
+				.friends {
+					overflow-y: auto;
+					height: 100%;
+					.empty {
+						height: 80px;
+						width: 100%;
+						.inner {
+							font-size: 150%;
+							color: rgba(#000, 0.2);
+							font-weight: 700;
+						}
+					}
+					padding-inline: 10px;
+					.title {
+						font-size: 200%;
+						padding-block: 20px;
+					}
+					.friendscontainer {
+						.friend {
+							padding: 10px;
+							cursor: pointer;
+							border-radius: 99px;
+							background-color: $darker_blue;
+							.right {
+								padding-right: 10px;
+								.invite {
+									background-color: yellow;
+								}
+								.invite:active {
+									background-color: orange;
+								}
+								.view {
+									
+								}
+							}
+							.avatar {
+								border-radius: 100%;
+								background-color: white;
+							}
+							.name {
+								color: $less_pastel_white;
+							}
+							.status {
+								font-weight: 700;
+							}
+						}
+					}
+					.fr_req {
+						.container {
+							.friend_request {
+								padding: 10px;
+								cursor: pointer;
+								border-radius: 99px;
+								background-color: $darker_blue;
+								.right {
+									padding-right: 10px;
+									.decline {
+										background-color: orangered;
+									}
+									.decline:active {
+										background-color: red
+									}
+									.view {
+										
+									}
+								}
+								.avatar {
+									border-radius: 100%;
+									background-color: white;
+								}
+								.name {
+									color: $less_pastel_white;
+								}
+								.status {
+									font-weight: 700;
 								}
 							}
 						}
