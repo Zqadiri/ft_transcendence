@@ -14,7 +14,7 @@ html {
 /* Tabs Section */
 
 .react-tabs__tab-list {
-	margin-top: clamp(8em, 8.5%, 10em);;
+	margin-top: clamp(8em, 8.5%, 10em);
 	text-align: center;
 }
 
@@ -36,10 +36,15 @@ html {
     border-bottom-left-radius: 20px;
 }
 
+.react-tabs__tab:nth-child(2)
+{
+	border-right: 1px solid #fff;
+	border-left: 1px solid #fff;
+}
+
 .react-tabs__tab:last-child {
 	border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
-	border-left: 1px solid #fff;
 }
 
 @media (max-width: 733px)

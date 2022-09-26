@@ -18,7 +18,6 @@ export class StatusGateway implements OnGatewayDisconnect {
 		let		found: boolean = false;
 
 		for (const property in this.users) {
-			// console.log(`the user ID in user is ${this.users[property]} userid passed to the function ${userId}`);
 			if (this.users[property][0] === userId)
 			{
 				found = true;
@@ -59,7 +58,6 @@ export class StatusGateway implements OnGatewayDisconnect {
 	@SubscribeMessage("userId")
 	async handleUserId(client: any, userId: number)
 	{
-		// console.log(`in handle User Id ${userId}`);
 		if (userId)
 		{
 			if (!this.hasUserid(userId))

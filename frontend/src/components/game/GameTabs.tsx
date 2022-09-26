@@ -1,8 +1,9 @@
 import "../../styles/game-styling.scss";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Matching from "./Matching/Matching"
 import LiveGames from "./LiveGames/LiveGames";
+import Leaderboard from "./Leaderboard/Leaderboard";
 
 export function useEffectOnce(callback: any): any {
 	const ref = useRef(true);
@@ -14,17 +15,22 @@ export function useEffectOnce(callback: any): any {
 	}, []);
 }
 
-export function	GameTabs(): JSX.Element
+function	GameTabs(): JSX.Element
 {
+	const	[tabIndex, setTabIndex] = useState(1);
 	return (
 		<>
-			<Tabs className="Tabs">
+			<Tabs label="Tabs" selectedIndex={tabIndex} onSelect={tabIndex => setTabIndex(tabIndex)}>
 				<TabList>
 					<Tab>Play a Game</Tab>
+					<Tab>Leaderboard</Tab>
 					<Tab>Live Games</Tab>
 				</TabList>
 				<TabPanel>
 					<Matching />
+				</TabPanel>
+				<TabPanel>
+					<Leaderboard />
 				</TabPanel>
 				<TabPanel>
 					<LiveGames />

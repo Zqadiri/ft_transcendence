@@ -1,0 +1,60 @@
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+	color: #F66B0E;
+	opacity: 1; /* Firefox */
+  }
+  
+  :-ms-input-placeholder { /* Internet Explorer 10-11 */
+	color: #F66B0E;
+  }
+  
+  ::-ms-input-placeholder { /* Microsoft Edge */
+	color: #F66B0E;
+  }
+
+.leaderboard {
+	width: 70vw;
+	margin-inline: auto;
+	margin-top: 8em;
+	height: 60vh;
+	background-color: white;
+	overflow: scroll;
+	padding: 5em;
+	border-radius: 20px;
+}
+
+.search-container {
+	text-align: center;
+	margin-bottom: 3em;
+}
+
+.ld-search {
+	background-color: transparent;
+	border: none;
+	border-bottom: 2px solid #F66B0E;
+	color: #F66B0E;
+	padding: 0.7em 1em;
+    font-size: 1em;
+}
+
+.ld-search:focus {
+	outline: none;
+}
+
+.ld-content {
+	width: 100%
+}
+
+.ld-content tr {
+	display: flex;
+}
+
+
+.ld-content tr td {
+	flex-shrink: 0;
+	flex-grow: 1;
+}
+
+.ld-content thead td {
+	font-weight: 700;
+	font-size: 1.2em;
+}
