@@ -16,7 +16,7 @@
   }
 
 .leaderboard {
-	width: 70vw;
+	width: min(1760px, 70vw);
 	margin-inline: auto;
 	margin-top: 8em;
 	height: 60vh;
@@ -53,6 +53,7 @@
 .ld-content tr {
 	display: flex;
 	align-items: center;
+	gap: 1.2em
 }
 
 .ld-content tr > * {
@@ -89,6 +90,10 @@
 .ld-content tbody .ld-player {
 	display: flex;
 	align-items: center;
+}
+
+.ld-content .ld-player {
+	flex-basis: 30%;
 }
 
 .ld-content .avatar {

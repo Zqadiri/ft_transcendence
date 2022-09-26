@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./leaderboard.css"
 
 const	leaderboardUsers = [
@@ -9,10 +10,17 @@ const	leaderboardUsers = [
 
 function	Leaderboard(): JSX.Element
 {
+	const	[searchTerm, setSearchTerm] = useState("");
+
+	function search(e: React.ChangeEvent<HTMLInputElement>)
+	{
+		setSearchTerm(e.target.value);
+	}
+
 	return (
 		<section className="leaderboard">
 			<header className="search-container">
-				<input className="ld-search" placeholder="Search for a player here" id="lb-search"/>
+				<input className="ld-search" placeholder="Search for a player here" id="lb-search" onChange={search}/>
 			</header>
 			<table className="ld-content">
 				<thead>
@@ -26,7 +34,9 @@ function	Leaderboard(): JSX.Element
 				</thead>
 				<tbody>
 					{
-						leaderboardUsers.map(player => {
+						leaderboardUsers.filter(player => 
+								player.username.toLowerCase().includes(searchTerm.toLowerCase())
+							).map(player => {
 							return (
 								<tr key={player.rank}>
 									<td className="ld-rank"><h3>{player.rank}</h3></td>
