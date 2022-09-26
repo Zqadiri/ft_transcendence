@@ -1,14 +1,18 @@
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-	color: #F66B0E;
+	color: #f66b0e8f;
 	opacity: 1; /* Firefox */
   }
   
   :-ms-input-placeholder { /* Internet Explorer 10-11 */
-	color: #F66B0E;
+	color: #f66b0e8f;
   }
   
   ::-ms-input-placeholder { /* Microsoft Edge */
-	color: #F66B0E;
+	color: #f66b0e8f;
+  }
+
+  :root {
+	--padding: 2em
   }
 
 .leaderboard {
@@ -17,23 +21,25 @@
 	margin-top: 8em;
 	height: 60vh;
 	background-color: white;
-	overflow: scroll;
-	padding: 5em;
+	overflow: auto;
+	padding: 2em;
 	border-radius: 20px;
 }
 
 .search-container {
 	text-align: center;
-	margin-bottom: 3em;
+	margin: 3em 0 4em;
 }
 
 .ld-search {
 	background-color: transparent;
-	border: none;
-	border-bottom: 2px solid #F66B0E;
-	color: #F66B0E;
-	padding: 0.7em 1em;
-    font-size: 1em;
+    border: none;
+    border: 2px solid #F66B0E;
+    color: #f66b0e;
+    padding: .7em 1.2em;
+    font-size: 1.05em;
+    font-weight: 500;
+	border-radius: 20px;
 }
 
 .ld-search:focus {
@@ -46,15 +52,70 @@
 
 .ld-content tr {
 	display: flex;
+	align-items: center;
 }
 
+.ld-content tr > * {
+	flex: 1;
+}
 
 .ld-content tr td {
 	flex-shrink: 0;
 	flex-grow: 1;
 }
 
+.ld-content thead {
+	margin-bottom: 2em;
+	display: block;
+	padding: 0 var(--padding);
+}
+
 .ld-content thead td {
 	font-weight: 700;
 	font-size: 1.2em;
+	color: #205375
+}
+
+.ld-content tbody tr {
+	background-color: #e4eaf4;
+	padding: 1.2em var(--padding);
+	margin-bottom: 2em;
+	border-radius: 20px;
+	font-weight: 500;
+	font-size: .95em;
+	color: #205375
+}
+
+.ld-content tbody .ld-player {
+	display: flex;
+	align-items: center;
+}
+
+.ld-content .avatar {
+	width: 3.5em;
+	height: 3.5em;
+}
+
+.ld-content .avatar img {
+	width: 100%;
+	border-radius: 100%;
+	background-color: white;
+	border: 2px solid white;
+	outline: 1px solid #205375;
+}
+
+.ld-content .username {
+	margin-left: 1.3em;
+	line-height: 1;
+}
+
+.ld-content .username h3 {
+	font-weight: 500;
+}
+
+.ld-content tbody .ld-rank h3 {
+    font-size: 1.2em;
+    font-weight: 800;
+    line-height: 1;
+    margin-left: 1.1em;
 }

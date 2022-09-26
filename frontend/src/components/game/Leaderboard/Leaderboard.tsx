@@ -1,10 +1,10 @@
 import "./leaderboard.css"
 
 const	leaderboardUsers = [
-	{rank: 1, avatar: "https://avatars.dicebear.com/api/identicon/aamzouar.svg", username: "user", wins: 15, xp: 3500, level: 5},
-	{rank: 2, avatar: "https://avatars.dicebear.com/api/identicon/aamzouar.svg", username: "user", wins: 11, xp: 2500, level: 4},
-	{rank: 3, avatar: "https://avatars.dicebear.com/api/identicon/aamzouar.svg", username: "user", wins: 8, xp: 1500, level: 2},
-	{rank: 4, avatar: "https://avatars.dicebear.com/api/identicon/aamzouar.svg", username: "user", wins: 5, xp: 500, level: 1},
+	{rank: 1, avatar: "https://avatars.dicebear.com/api/identicon/aamzouar.svg", username: "aamzouar", wins: 15, xp: 3500, level: 5},
+	{rank: 2, avatar: "https://avatars.dicebear.com/api/identicon/abel-haj.svg", username: "abel-haj", wins: 11, xp: 2500, level: 4},
+	{rank: 3, avatar: "https://avatars.dicebear.com/api/identicon/ynoam.svg", username: "ynoam", wins: 8, xp: 1500, level: 2},
+	{rank: 4, avatar: "https://avatars.dicebear.com/api/identicon/zoizmer.svg", username: "zoizmer", wins: 5, xp: 500, level: 1},
 ];
 
 function	Leaderboard(): JSX.Element
@@ -29,10 +29,10 @@ function	Leaderboard(): JSX.Element
 						leaderboardUsers.map(player => {
 							return (
 								<tr key={player.rank}>
-									<td className="ld-rank">{player.rank}</td>
+									<td className="ld-rank"><h3>{player.rank}</h3></td>
 									<td className="ld-player">
-										<img src={player.avatar} alt="avatar" />
-										<span>{player.username}</span>
+										<div className="avatar"><img src={player.avatar} alt="avatar" /></div>
+										<div className="username"><h3>{player.username}</h3></div>
 									</td>
 									<td className="ld-wins">{player.wins}</td>
 									<td className="ld-xp">{player.xp}</td>
