@@ -340,6 +340,7 @@ const NavAndChatWrapper = () => {
 							<div className="bar_sickl"></div>
 							<div className="logout elem flex-ai-cr flex-gap5"
 								onClick={() => {
+									statusSocket.emit("logOut", cookies.get("id"));
 									cookies.remove("_token");
 									setLoggedIn(false);
 									statusSocket.disconnect();

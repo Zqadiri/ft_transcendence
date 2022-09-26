@@ -134,6 +134,7 @@ export class UsersService {
 			if (!user)
 				throw new HttpException({ message: 'User Not Found'}, HttpStatus.BAD_REQUEST);
 
+			user.gameCounter += 1;
 			if (user.level === 0)
 			{
 				user.xp = 150;

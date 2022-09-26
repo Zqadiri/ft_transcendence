@@ -18,7 +18,8 @@ export class StatusGateway implements OnGatewayDisconnect {
 		let		found: boolean = false;
 
 		for (const property in this.users) {
-			if (this.users[property] === userId)
+			// console.log(`the user ID in user is ${this.users[property]} userid passed to the function ${userId}`);
+			if (this.users[property][0] === userId)
 			{
 				found = true;
 				break ;
@@ -27,22 +28,43 @@ export class StatusGateway implements OnGatewayDisconnect {
 		return (found);
 	}
 
-	handleDisconnect(client: any) {
-		const	userId: number = this.users[client.id];
+	getUserStatus(userId: number): string
+	{
+		let		status: string;
 
-		delete this.users[client.id];
-		if (!this.hasUserid(userId))
-			this.userServ.updateStatus(userId, "offline");
+		for (const property in this.users)
+		{
+			if (this.users[property][0] === userId)
+			{
+				status = this.users[property][1];
+				break ;
+			}
+		}
+		return (status);
+	}
+
+	handleDisconnect(client: any) {
+		if (this.users[client.id])
+		{
+			const	userId: number = this.users[client.id][0];
+
+			delete this.users[client.id];
+			if (!this.hasUserid(userId))
+				this.userServ.updateStatus(userId, "offline");
+			else
+				this.userServ.updateStatus(userId, this.getUserStatus(userId));
+		}
 	}
 
 	@SubscribeMessage("userId")
-	async handleUserId(client: any, userId: string)
+	async handleUserId(client: any, userId: number)
 	{
+		// console.log(`in handle User Id ${userId}`);
 		if (userId)
 		{
-			this.users[client.id] = userId;
-			if (!this.hasUserid(Number(userId)))
-				this.userServ.updateStatus(Number(userId), "online");
+			if (!this.hasUserid(userId))
+				this.userServ.updateStatus(userId, "online");
+			this.users[client.id] = [userId, "online"];
 		}
 	}
 
@@ -50,7 +72,24 @@ export class StatusGateway implements OnGatewayDisconnect {
 	async handleInGame(client: any, {userId, status})
 	{
 		if (userId)
+		{
+			this.users[client.id][1] = status;
 			this.userServ.updateStatus(Number(userId), status);
+		}
+	}
+
+	@SubscribeMessage("logOut")
+	handleLogOut(client: any, userId)
+	{
+		if (userId)
+		{
+			for (const property in this.users)
+			{
+				if (this.users[property][0] === userId)
+					this.users[property][1] = "offline";
+			}
+			this.userServ.updateStatus(userId, "offline");
+		}
 	}
 
 }
