@@ -1,29 +1,16 @@
-::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
-	color: #f66b0e8f;
-	opacity: 1; /* Firefox */
-  }
-  
-  :-ms-input-placeholder { /* Internet Explorer 10-11 */
-	color: #f66b0e8f;
-  }
-  
-  ::-ms-input-placeholder { /* Microsoft Edge */
-	color: #f66b0e8f;
-  }
-
-  :root {
+:root {
 	--padding: 2em
-  }
+}
 
 .leaderboard {
-	width: min(1760px, 70vw);
+	width: min(1760px, 90vw);
 	margin-inline: auto;
 	margin-top: 8em;
 	height: 60vh;
 	background-color: white;
-	overflow: auto;
-	padding: 2em;
+	padding: 2em 2em 0;
 	border-radius: 20px;
+	overflow: auto;
 }
 
 .search-container {
@@ -33,13 +20,30 @@
 
 .ld-search {
 	background-color: transparent;
-    border: none;
-    border: 2px solid #F66B0E;
-    color: #f66b0e;
-    padding: .7em 1.2em;
-    font-size: 1.05em;
-    font-weight: 500;
+	border: none;
+	border: 2px solid #F66B0E;
+	color: #f66b0e;
+	padding: .7em 1.2em;
+	font-size: 1.05em;
+	font-weight: 500;
 	border-radius: 20px;
+}
+
+.ld-search::placeholder {
+	/* Chrome, Firefox, Opera, Safari 10.1+ */
+	color: #f66b0e8f;
+	opacity: 1;
+	/* Firefox */
+}
+
+.ld-search:-ms-input-placeholder {
+	/* Internet Explorer 10-11 */
+	color: #f66b0e8f;
+}
+
+.ld-search::-ms-input-placeholder {
+	/* Microsoft Edge */
+	color: #f66b0e8f;
 }
 
 .ld-search:focus {
@@ -123,4 +127,29 @@
     font-weight: 800;
     line-height: 1;
     margin-left: 1.1em;
+}
+
+@media (max-width: 980px)
+{
+	.ld-level {
+		display: none;
+	}
+}
+
+@media (max-width: 600px)
+{
+	.ld-wins {
+		display: none;
+	}
+}
+
+@media (max-width: 490px)
+{
+	.ld-xp {
+		display: none;
+	}
+
+	.ld-content .ld-player {
+		flex-basis: 1;
+	}
 }

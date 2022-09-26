@@ -47,6 +47,30 @@ html {
     border-bottom-right-radius: 20px;
 }
 
+@media (max-width: 955px)
+{
+	.react-tabs__tab:first-child {
+		border-radius: 0;
+		border-top-left-radius: 20px;
+	}
+	.react-tabs__tab:nth-child(2)
+	{
+		border-radius: 0;
+		border-top-right-radius: 20px;
+		border: none;
+		border-left: 1px solid #fff;
+	}
+	.react-tabs__tab:last-child {
+		border-radius: 0;
+		display: block;
+		width: 612px;
+		margin-inline: auto;
+		border-top: 1px solid #fff;
+		border-bottom-right-radius: 20px;
+		border-bottom-left-radius: 20px;
+	}
+}
+
 @media (max-width: 733px)
 {
 	.react-tabs__tab {
@@ -65,8 +89,16 @@ html {
 		border-top-left-radius: 20px;
 	}
 
-	.react-tabs__tab:last-child {
+	.react-tabs__tab:nth-child(2)
+	{
+		border-radius: 0;
+		border: none;
 		border-top: 1px solid #fff;
+		border-bottom: 1px solid #fff;
+	}
+
+	.react-tabs__tab:last-child {
+		width: 19.11rem;
 		border-bottom-right-radius: 20px;
 		border-bottom-left-radius: 20px;
 	}
