@@ -263,7 +263,8 @@ html {
 	padding: 18px 15px 15px;
 	font-weight: 0;
 	margin-bottom: 3%;
-	box-shadow: 0px 20px 20px #cccccc;
+	// box-shadow: 0px 20px 20px #cccccc;
+	box-shadow: 0px 10px 20px #e0e0e0;
 	cursor: pointer;
 }
 
@@ -395,7 +396,6 @@ html {
 	width: 33px;
 	margin-inline: auto;
 }
-
 
 @media (max-width: 960px)
 {

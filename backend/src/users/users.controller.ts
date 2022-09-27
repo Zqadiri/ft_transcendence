@@ -310,6 +310,21 @@ export class UsersController {
 		if (query.id)
 			return await this.usersService.getUserById(query.id);
         return await this.usersService.getUserByName(query.name);
-    }  
+    }
+
+	@ApiOperation({ summary: 'Get all users' })
+    @Get('/all')
+    async getLiveGames() {
+        // const users = await this.userRepo.find({
+        //     where: {
+        //         isPlaying: true
+        //     }
+        // });
+        const users = await this.userRepo.find();
+        if (!users.length)
+			return null;
+
+        return users;
+    }
 
 }

@@ -1,16 +1,55 @@
-import { useState } from "react";
-import "./leaderboard.css"
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { BounceLoader } from "react-spinners";
+import { LeaderboardUser } from "../Interfaces/LeaderboardUser";
+import "./leaderboard.css";
+import LeaderboardPlayers from "./LeaderboardPlayers";
 
-const	leaderboardUsers = [
-	{rank: 1, avatar: "https://avatars.dicebear.com/api/identicon/aamzouar.svg", username: "aamzouar", wins: 15, xp: 3500, level: 5},
-	{rank: 2, avatar: "https://avatars.dicebear.com/api/identicon/abel-haj.svg", username: "abel-haj", wins: 11, xp: 2500, level: 4},
-	{rank: 3, avatar: "https://avatars.dicebear.com/api/identicon/ynoam.svg", username: "ynoam", wins: 8, xp: 1500, level: 2},
-	{rank: 4, avatar: "https://avatars.dicebear.com/api/identicon/zoizmer.svg", username: "zoizmer", wins: 5, xp: 500, level: 1},
-];
+async function	getLeaderboardUsers(setLeaderboardUsers: Function)
+{
+	const	users = await axios.get("/users/all");
+
+	users.data.sort((a: any, b: any) => b.xp - a.xp);
+
+	setLeaderboardUsers([]);
+	users.data.map((user: any) => {
+		setLeaderboardUsers((current: LeaderboardUser[]) => [...current,
+			{
+				id: user.id,
+				avatar: user.avatar,
+				username: user.username,
+				wins: user.wins,
+				xp: user.xp,
+				level: user.level
+			}
+		]);
+	});
+}
+
+function	LeaderboardLoading(): JSX.Element
+{
+	return (
+		<div className="bounce-loader">
+			<BounceLoader color={'#205375'} speedMultiplier={1} size={45} />
+		</div>
+	);
+}
 
 function	Leaderboard(): JSX.Element
 {
 	const	[searchTerm, setSearchTerm] = useState("");
+	const	[leaderboardUsers, setLeaderboardUsers] = useState<LeaderboardUser[]>([]);
+
+	useEffect(() => {
+		getLeaderboardUsers(setLeaderboardUsers);
+		const myTimer = setInterval(() => {
+			getLeaderboardUsers(setLeaderboardUsers);
+		}, 1000 * 30)
+
+		return () => {
+			clearInterval(myTimer);
+		};
+	}, []);
 
 	function search(e: React.ChangeEvent<HTMLInputElement>)
 	{
@@ -32,26 +71,12 @@ function	Leaderboard(): JSX.Element
 				<header className="search-container">
 					<input className="ld-search" placeholder="Search for a player here" id="lb-search" onChange={search}/>
 				</header>
-				<tbody>
-					{
-						leaderboardUsers.filter(player => 
-								player.username.toLowerCase().includes(searchTerm.toLowerCase())
-							).map(player => {
-							return (
-								<tr key={player.rank}>
-									<td className="ld-rank"><h3>{player.rank}</h3></td>
-									<td className="ld-player">
-										<div className="avatar"><img src={player.avatar} alt="avatar" /></div>
-										<div className="username"><h3>{player.username}</h3></div>
-									</td>
-									<td className="ld-wins">{player.wins}</td>
-									<td className="ld-xp">{player.xp}</td>
-									<td className="ld-level">{player.level}</td>
-								</tr>
-							)
-						})
-					}
-				</tbody>
+				{
+					leaderboardUsers.length === 0 ?
+						<LeaderboardLoading />
+							: 
+						<LeaderboardPlayers ldPlayers={leaderboardUsers} searchTerm={searchTerm} />
+				}
 			</table>
 		</section>
 	);
