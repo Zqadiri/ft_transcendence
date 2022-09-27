@@ -71,7 +71,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 	@SubscribeMessage("inGame")
 	async handleInGame(client: any, {userId, status})
 	{
-		if (userId)
+		if (userId && this.users[client.id])
 		{
 			this.users[client.id][1] = status;
 			this.userServ.updateStatus(Number(userId), status);

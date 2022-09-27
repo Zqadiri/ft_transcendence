@@ -35,6 +35,8 @@ export function		handleRightPaddle()
 		global.setCountdownDisappear?.(true);
 	}, 3000);
 
+	global.socket.emit("initializeScorePanel", global.roomName);
+
 	global.canvasRef?.addEventListener("mousemove", (event: MouseEvent) => {
 		const	rect = global.canvasRef?.getBoundingClientRect();
 		const	backfrontOffset = backendCanvasWidth / canvas.width;
@@ -102,10 +104,16 @@ export function		addSocketEventHandlers(setCurrentPlayersData: Function, setGame
 		setGameFinished(true);
 	});
 
+
 	global.socket.off("scorePanelData").on("scorePanelData", async (currentPlayersId) => {
 		try {
-			let firstPlayerData = await axios.get("/users?id=" + currentPlayersId.firstPlayerId);
-			let secondPlayerData = await axios.get("/users?id=" + currentPlayersId.secondPlayerId);
+			let		firstPlayerData;
+			let		secondPlayerData;
+	
+			axios.all([
+				firstPlayerData = await axios.get("/users?id=" + currentPlayersId.firstPlayerId),
+				secondPlayerData = await axios.get("/users?id=" + currentPlayersId.secondPlayerId)
+			]);
 
 			setCurrentPlayersData({
 				firstPlayerName: firstPlayerData.data.username,
@@ -114,7 +122,7 @@ export function		addSocketEventHandlers(setCurrentPlayersData: Function, setGame
 				secondPlayerAvatar: secondPlayerData.data.avatar,
 			});
 		} catch {
-
+			console.log("getting socre panel data failed");
 		}
 	});
 }

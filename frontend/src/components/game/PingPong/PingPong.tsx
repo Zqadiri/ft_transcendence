@@ -28,9 +28,11 @@ export function splitPaddleControl()
 		else if (global.playerId === playerTwo)
 			handleRightPaddle();
 		else if (global.playerId === spectator)
+		{
 			global.setCountdownDisappear?.(true);
+			global.socket.emit("initializeScorePanel", global.roomName);
+		}
 
-		global.socket.emit("initializeScorePanel", global.roomName);
 		global.gameStarted = true;
 	}
 }

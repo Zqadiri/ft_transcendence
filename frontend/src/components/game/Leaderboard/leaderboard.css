@@ -82,7 +82,7 @@
 .ld-content tbody tr {
 	background-color: white;
 	padding: 1.2em var(--padding);
-	margin-bottom: 2em;
+	margin-bottom: 1.5em;
 	border-radius: 20px;
 	font-weight: 500;
 	font-size: .95em;
