@@ -36,6 +36,8 @@ export class StatusGateway implements OnGatewayDisconnect {
 			if (this.users[property][0] === userId)
 			{
 				status = this.users[property][1];
+				if (status === "offline")
+					delete this.users[property];
 				break ;
 			}
 		}
