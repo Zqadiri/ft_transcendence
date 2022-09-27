@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { GameCoor, GameData, Directions, Ball, Paddle } from "./game.interface"
 import { GamesService } from './games.service';
@@ -25,19 +25,19 @@ export class UpdateGameService {
 		this.server = server;
 	}
 
-	async create(room: string, theme: string, player1Id: string, player2Id: string, firstUserID: string, secondUserID: string)
+	async create(room: string, theme: string, player1Id: string, player2Id: string, firstUserID: number, secondUserID: number)
 	{
 		const tmp: GameCoor = {
 			player1: {
 				socketId: player1Id,
-				userId: Number(firstUserID),
+				userId: firstUserID,
 				x: 0,
 				y: this.global.canvasHeight/2 - this.global.paddleHeight/2,
 				score: 0
 			},
 			player2: {
 				socketId: player2Id,
-				userId: Number(secondUserID),
+				userId: secondUserID,
 				x: this.global.canvasWidth - this.global.paddleWidth,
 				y: this.global.canvasHeight/2 - this.global.paddleHeight/2,
 				score: 0
@@ -62,18 +62,20 @@ export class UpdateGameService {
 			tmp.ball.velocityY = 20;
 		}
 
+		this.gameCoordinates.set(room, tmp);
+	
 		const response = await this.gameServ.createGame({
 			isPlaying: true,
-			firstPlayerID: firstUserID,
-			secondPlayerID: secondUserID,
+			firstPlayerID: String(firstUserID),
+			secondPlayerID: String(secondUserID),
 			theme: theme,
 			socketRoom: room,
 			createdAt: new Date(),
 		});
 		tmp.gameID = response.id;
-		this.server.local.emit("newGameIsAvailable");
-	
 		this.gameCoordinates.set(room, tmp);
+
+		this.server.local.emit("newGameIsAvailable");
 	}
 
 	async #updateUsersAchievements(gameId)
@@ -88,25 +90,25 @@ export class UpdateGameService {
 		await this.userServ.calculateRank(Number(game.secondPlayerID), game.secondPlayerScore, game.firstPlayerScore, flawLessWinStreakAchieved);
 	}
 
-	async #checkForTheWinner(score1: number, score2: number, room: string)
+	async #checkForTheWinner(score1: number, score2: number, room: string, id: number)
 	{
 		if (score1 === 10 || score2 === 10)
 		{
-			const response = await this.gameServ.endGame({
-				firstPlayerScore: score1,
-				secondPlayerScore: score2,
-				gameId: this.gameCoordinates.get(room).gameID,
-				finishedAt: new Date()
-			});
-			this.server.local.emit("gameEnded");
-			this.#updateUsersAchievements(this.gameCoordinates.get(room).gameID);
-
 			if (score1 == 10)
 				this.server.to(room).emit("theWinner", 1);
 			else if (score2 == 10)
 				this.server.to(room).emit("theWinner", 2);
 
 			this.gameCoordinates.delete(room);
+
+			await this.gameServ.endGame({
+				firstPlayerScore: score1,
+				secondPlayerScore: score2,
+				gameId: id,
+				finishedAt: new Date()
+			});
+			this.server.local.emit("gameEnded");
+			this.#updateUsersAchievements(id);
 		}
 	}
 
@@ -150,10 +152,10 @@ export class UpdateGameService {
 					gameCoordinates = this.#setGameCoordinates(game);
 
 					this.server.to(room).emit("newCoordinates", gameCoordinates, room);
-					this.#checkForTheWinner(game.player1.score, game.player2.score, room);
+					this.#checkForTheWinner(game.player1.score, game.player2.score, room, game.gameID);
 				}
 			}
-		}, 1000/60);
+		}, 1000/50);
 	}
 
 	activateGame(room: string)
@@ -238,9 +240,12 @@ export class UpdateGameService {
 	#updateBallPosition(game: GameCoor): void
 	{ 
 		game.ball.x += game.ball.velocityX;
-		game.ball.y = Math.abs(game.ball.y + game.ball.velocityY);
+		game.ball.y += game.ball.velocityY;
 
-		if ((game.ball.y + game.ball.radius + 3) >= this.global.canvasHeight || (game.ball.y - game.ball.radius - 3) <= 0)
+		console.log(`ball x: ${game.ball.x} velocity x: ${game.ball.velocityX}`);
+		console.log(`ball y: ${game.ball.y} velocity y: ${game.ball.velocityY}`);
+
+		if (game.ball.y + game.ball.radius >= this.global.canvasHeight || game.ball.y - game.ball.radius <= 0)
 			game.ball.velocityY = -game.ball.velocityY;
 
 		let player: Paddle = game.ball.x < this.global.canvasWidth / 2 ? game.player1 : game.player2;
@@ -254,8 +259,8 @@ export class UpdateGameService {
 
 			game.ball.speed += 0.5;
 
-			game.ball.velocityX = ((game.ball.speed * Math.cos(angle)) * direction) * 1.2;
-			game.ball.velocityY = (game.ball.speed * Math.sin(angle)) * 1.2;
+			game.ball.velocityX = (game.ball.speed * Math.cos(angle)) * direction;
+			game.ball.velocityY = game.ball.speed * Math.sin(angle);
 		}
 		else {
 			this.#updateScore(game);
@@ -282,12 +287,12 @@ export class UpdateGameService {
 		for (const [key, value] of this.gameCoordinates) {
 			if (value.player1.socketId === playerId)
 			{
-				this.#checkForTheWinner(value.player1.score, 10, key);
+				this.#checkForTheWinner(value.player1.score, 10, key, value.gameID);
 				break ;
 			}
 			else if (value.player2.socketId === playerId)
 			{
-				this.#checkForTheWinner(10, value.player2.score, key);
+				this.#checkForTheWinner(10, value.player2.score, key, value.gameID);
 				break ;
 			}
 		}

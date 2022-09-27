@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import { playerOne, spectator } from "./Data/PingPong.contants";
 import { global } from "./Data/PingPong.d"
 import { gameContext } from "./PingPong";
 import { resetGame } from "./Utils/tools";
@@ -17,9 +18,9 @@ function ResultPrompt(): JSX.Element {
 		}, 3000)
 	}
 
-	if (global.playerId > 2)
+	if (global.playerId === spectator)
 	{
-		winnerName = (global.winnerId === 1) ? currentPlayersData.firstPlayerName : currentPlayersData.secondPlayerName;
+		winnerName = (global.winnerId === playerOne) ? currentPlayersData.firstPlayerName : currentPlayersData.secondPlayerName;
 		resultMessage = "Won The Game";
 		mainColor = "#f66b0e";
 	}

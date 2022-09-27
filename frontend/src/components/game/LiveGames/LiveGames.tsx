@@ -5,11 +5,12 @@ import { global } from "../PingPong/Data/PingPong.d";
 import { LiveGame } from "../Interfaces/LiveGame.interface";
 import { getGamesDataFromDatabase, updateAvailableGames, updateLiveGamesScore } from "./Utils/tools";
 import Timer from "./Timer";
+import { spectator } from "../PingPong/Data/PingPong.contants";
 
 function			setDataToJoinLiveGame(socketRoom: string, gameTheme: string)
 {
 	global.roomName = socketRoom;
-	global.playerId = 3;
+	global.playerId = spectator;
 	global.theme = gameTheme;
 	global.secondPlayerExist = true;
 	global.socket.disconnect().connect();

@@ -5,7 +5,7 @@ import { UpdateGameService } from './update-game.service';
 
 interface	MatchingData {
 	clients: string[];
-	usersId: string[];
+	usersId: number[];
 	roomCounter: number;
 }
 
@@ -46,10 +46,12 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 		if (this.themeOne.clients.indexOf(client.id) !== -1 && this.themeOne.clients.length === 1)
 		{
 			this.themeOne.clients.pop();
+			this.themeOne.usersId.pop();
 		}
 		else if (this.themeTwo.clients.indexOf(client.id) !== -1 && this.themeTwo.clients.length === 1)
 		{
 			this.themeTwo.clients.pop();
+			this.themeTwo.usersId.pop();
 		}
 		
 		this.updateGame.setWinnerAfterDisconnect(client.id);
@@ -71,7 +73,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	@SubscribeMessage("joinTheme1")
-	handleJoinTheme1(client: Socket, userId: string): void {
+	handleJoinTheme1(client: Socket, userId: number): void {
 		const	roomName = "Room #" + this.themeOne.roomCounter;
 
 		if (this.themeOne.usersId.length === 1 && this.themeOne.usersId[0] === userId)
@@ -89,7 +91,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	@SubscribeMessage("joinTheme2")
-	handleJoinTheme2(client: Socket, userId: string): void {
+	handleJoinTheme2(client: Socket, userId: number): void {
 		const	roomName = "Room #" + this.themeTwo.roomCounter;
 
 		if (this.themeTwo.usersId.length === 1 && this.themeTwo.usersId[0] === userId)
