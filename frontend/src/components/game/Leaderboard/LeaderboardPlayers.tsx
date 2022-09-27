@@ -7,6 +7,8 @@ interface LeaderboardProps {
 
 function	LeaderboardPlayers({ldPlayers, searchTerm}: LeaderboardProps): JSX.Element
 {
+	let		found: number = 0;
+
 	return (
 		<tbody>
 			{
@@ -14,6 +16,7 @@ function	LeaderboardPlayers({ldPlayers, searchTerm}: LeaderboardProps): JSX.Elem
 						player.username.toLowerCase().includes(searchTerm.toLowerCase())
 					).map((player, index) => {
 						index += 1;
+						found += 1;
 					return (
 						<tr key={player.id}>
 							<td className={`ld-rank rank${index}`}><h3>{index}</h3></td>
@@ -27,6 +30,12 @@ function	LeaderboardPlayers({ldPlayers, searchTerm}: LeaderboardProps): JSX.Elem
 						</tr>
 					)
 				})
+			}
+			{
+				found === 0 &&
+					<tr>
+						<td>User Doesn't Exist!</td>
+					</tr>
 			}
 		</tbody>
 	);
