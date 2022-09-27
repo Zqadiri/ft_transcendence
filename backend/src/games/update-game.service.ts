@@ -242,8 +242,8 @@ export class UpdateGameService {
 		game.ball.x += game.ball.velocityX;
 		game.ball.y += game.ball.velocityY;
 
-		console.log(`ball x: ${game.ball.x} velocity x: ${game.ball.velocityX}`);
-		console.log(`ball y: ${game.ball.y} velocity y: ${game.ball.velocityY}`);
+		// console.log(`ball x: ${game.ball.x} velocity x: ${game.ball.velocityX}`);
+		// console.log(`ball y: ${game.ball.y} velocity y: ${game.ball.velocityY}`);
 
 		if (game.ball.y + game.ball.radius >= this.global.canvasHeight || game.ball.y - game.ball.radius <= 0)
 			game.ball.velocityY = -game.ball.velocityY;
