@@ -19,9 +19,6 @@ function	Leaderboard(): JSX.Element
 
 	return (
 		<section className="leaderboard">
-			<header className="search-container">
-				<input className="ld-search" placeholder="Search for a player here" id="lb-search" onChange={search}/>
-			</header>
 			<table className="ld-content">
 				<thead>
 					<tr>
@@ -32,6 +29,9 @@ function	Leaderboard(): JSX.Element
 						<td className="ld-level">Level</td>
 					</tr>
 				</thead>
+				<header className="search-container">
+					<input className="ld-search" placeholder="Search for a player here" id="lb-search" onChange={search}/>
+				</header>
 				<tbody>
 					{
 						leaderboardUsers.filter(player => 

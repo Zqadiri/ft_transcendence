@@ -31,6 +31,10 @@ html {
 	cursor: pointer
 }
 
+.react-tabs__tab:focus {
+	outline: none;
+}
+
 .react-tabs__tab:first-child {
 	border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
