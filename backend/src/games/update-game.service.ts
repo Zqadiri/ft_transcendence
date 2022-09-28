@@ -45,9 +45,9 @@ export class UpdateGameService {
 			ball: {
 				x: this.global.canvasWidth / 2,
 				y: this.global.canvasHeight / 2,
-				speed: 12,
-				velocityX: 12,
-				velocityY: 12,
+				speed: 10,
+				velocityX: 10,
+				velocityY: 10,
 				radius: 15
 			},
 			theme: theme,
@@ -57,15 +57,14 @@ export class UpdateGameService {
 
 		if (tmp.theme === "theme02")
 		{
-			tmp.ball.speed = 20;
-			tmp.ball.velocityX = 20;
-			tmp.ball.velocityY = 20;
+			tmp.ball.speed = 14;
+			tmp.ball.velocityX = 14;
+			tmp.ball.velocityY = 14;
 		}
 
 		this.gameCoordinates.set(room, tmp);
 	
 		const response = await this.gameServ.createGame({
-			isPlaying: true,
 			firstPlayerID: String(firstUserID),
 			secondPlayerID: String(secondUserID),
 			theme: theme,
@@ -135,6 +134,7 @@ export class UpdateGameService {
 	#sendDataToFrontend()
 	{
 		this.global.isSimulationInitiated = true;
+		let		gameCoordinates: GameData;
 
 		const intervalRet = setInterval(() => {
 			if (this.gameCoordinates.size === 0)
@@ -146,16 +146,13 @@ export class UpdateGameService {
 			{
 				if (game.pause === false)
 				{
-					let		gameCoordinates: GameData;
-		
 					this.#updateBallPosition(game);
-					gameCoordinates = this.#setGameCoordinates(game);
-
-					this.server.to(room).emit("newCoordinates", gameCoordinates, room);
 					this.#checkForTheWinner(game.player1.score, game.player2.score, room, game.gameID);
 				}
+				gameCoordinates = this.#setGameCoordinates(game);
+				this.server.to(room).emit("newCoordinates", gameCoordinates, room);
 			}
-		}, 1000/50);
+		}, 1000/60);
 	}
 
 	activateGame(room: string)
@@ -203,15 +200,15 @@ export class UpdateGameService {
 			game.ball.y = this.global.canvasHeight / 2;
 			if (game.theme === "theme01")
 			{
-				game.ball.speed = 12;
-				game.ball.velocityX = game.ball.velocityX < 0 ? 12 : -12;
-				game.ball.velocityY = 12;
+				game.ball.speed = 10;
+				game.ball.velocityX = game.ball.velocityX < 0 ? 10 : -10;
+				game.ball.velocityY = 10;
 			}
 			else if (game.theme === "theme02")
 			{
-				game.ball.speed = 16;
-				game.ball.velocityX = game.ball.velocityX < 0 ? 16 : -16;
-				game.ball.velocityY = 16;
+				game.ball.speed = 14;
+				game.ball.velocityX = game.ball.velocityX < 0 ? 14 : -14;
+				game.ball.velocityY = 14;
 			}
 			game.pause = true;
 			setTimeout(() => {

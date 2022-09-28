@@ -1,6 +1,5 @@
 
 export class CreateGameDto{
-    public isPlaying: boolean;
     // public isFinished: boolean;
     public firstPlayerID : string;
     public secondPlayerID : string;

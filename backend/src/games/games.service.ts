@@ -10,12 +10,10 @@ import { Brackets } from 'typeorm';
 export class GamesService {
 	constructor(
 		@InjectRepository(Game)
-		private readonly GameRepo : GameRepository
-	){}
-
+		private readonly GameRepo : GameRepository){}
 	async createGame(createGameDto: CreateGameDto){
 		const game = new Game();
-		game.isPlaying = createGameDto.isPlaying;
+		game.isPlaying = true;
 		// game.isFinished = createGameDto.isFinished;
 		game.firstPlayerID = createGameDto.firstPlayerID;
 		game.secondPlayerID = createGameDto.secondPlayerID;
@@ -43,6 +41,8 @@ export class GamesService {
 	async endGame(end: EndGameDto){
         const game = await this.findGameByid(end.gameId);
 	
+		console.log(`game data ${JSON.stringify(game)}`);
+		console.log(`game data ${JSON.stringify(game)}`);
 		game.firstPlayerScore = end.firstPlayerScore;
 		game.secondPlayerScore = end.secondPlayerScore;
         game.isPlaying = false;

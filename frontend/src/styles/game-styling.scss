@@ -452,6 +452,13 @@ html {
 	}
 }
 
+@media (max-width: 733px)
+{
+	.game-rules {
+		top: 1185px;
+	}
+}
+
 .game-rules .rules-list h2 {
 	margin-bottom: 6px;
 	color: #F66B0E;
