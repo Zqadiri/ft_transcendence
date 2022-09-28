@@ -109,6 +109,7 @@ export class ChatsService {
         userID: [user1.id, user2.id],
         name:`${user1.username},${user2.username}`,
         type: ChatTypes.DM,
+        status: RoomStatus.PRIVATE
       });
       return await this.Chatrepository.save(directmessage);
     }
