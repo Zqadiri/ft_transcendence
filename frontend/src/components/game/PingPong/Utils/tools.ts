@@ -4,8 +4,6 @@ import { GameData } from '../../Interfaces/GameData.interface';
 import { renderTheme1 } from './RenderTheme1';
 import { renderTheme2 } from './RenderTheme2';
 import { backendCanvasWidth } from '../Data/PingPong.contants';
-import { statusSocket } from '../../Matching/Matching';
-import { cookies } from '../../../util';
 
 export function		handleLeftPaddle()
 {
@@ -34,7 +32,6 @@ export function		handleRightPaddle()
 	setTimeout(() => {
 		global.setCountdownDisappear?.(true);
 	}, 3000);
-
 	global.socket.emit("initializeScorePanel", global.roomName);
 
 	global.canvasRef?.addEventListener("mousemove", (event: MouseEvent) => {

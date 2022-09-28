@@ -15,7 +15,7 @@ function	Selection(): JSX.Element {
 	async function	getUserStatus()
 	{
 		const	userId = cookies.get('id');
-		const	currentUser = await axios(`/users?id=${Number(userId)}`);
+		const	currentUser = await axios.get(`/users?id=${Number(userId)}`);
 
 		if (currentUser.data.status === "ingame")
 			return (true);
@@ -30,14 +30,13 @@ function	Selection(): JSX.Element {
 		}
 		else if (activeTheme === "theme01" || activeTheme === "theme02")
 		{
-			const	currentUserId = cookies.get("id");
 
 			global.socket.connect();
 
 			if (activeTheme === "theme01")
-				global.socket.emit("joinTheme1", currentUserId);
+				global.socket.emit("joinTheme1", Number(cookies.get("id")));
 			else if (activeTheme === "theme02")
-				global.socket.emit("joinTheme2", currentUserId);
+				global.socket.emit("joinTheme2", Number(cookies.get("id")));
 
 			setActiveComponent(waitingComponent);
 		}

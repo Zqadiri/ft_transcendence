@@ -139,6 +139,10 @@ export class UsersService {
 			{
 				user.xp = 150;
 				user.level = 1;
+				if (currentPlayerScore === 10)
+					user.wins += 1;
+				else
+					user.losses += 1;
 			}
 			else if (currentPlayerScore === 10)
 			{
