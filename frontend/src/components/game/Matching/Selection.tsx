@@ -8,28 +8,24 @@ import { cookies } from "../../util";
 import axios from "axios";
 
 
-function	Selection(): JSX.Element {
+async function		getUserStatus() {
+	const userId = cookies.get('id');
+	const currentUser = await axios.get(`/users?id=${Number(userId)}`);
+
+	if (currentUser.data.status === "ingame")
+		return (true);
+	return (false);
+}
+
+function			Selection(): JSX.Element {
 	const [activeTheme, setActiveTheme] = useState("none");
-	const {setActiveComponent} = useContext(matchingContext);
+	const { setActiveComponent } = useContext(matchingContext);
 
-	async function	getUserStatus()
-	{
-		const	userId = cookies.get('id');
-		const	currentUser = await axios.get(`/users?id=${Number(userId)}`);
-
-		if (currentUser.data.status === "ingame")
-			return (true);
-		return (false);
-	}
-	
-	async function	joinRoom()
-	{
-		if (activeTheme !== "none" && await getUserStatus())
-		{
+	async function joinRoom() {
+		if (activeTheme !== "none" && await getUserStatus()) {
 			alert("You're already playing a game");
 		}
-		else if (activeTheme === "theme01" || activeTheme === "theme02")
-		{
+		else if (activeTheme === "theme01" || activeTheme === "theme02") {
 
 			global.socket.connect();
 
@@ -43,20 +39,17 @@ function	Selection(): JSX.Element {
 		global.theme = activeTheme;
 	}
 
-	function	handleOnClick(theme: string)
-	{
+	function		handleOnClick(theme: string) {
 		if (activeTheme === theme) setActiveTheme("none");
 		else setActiveTheme(theme);
 	}
 
-	function	handleClassName(theme: string): string
-	{
+	function		handleClassName(theme: string): string {
 		if (activeTheme === theme) return "active-theme";
 		return "";
 	}
 
-	function	handlePlayButton(): string
-	{
+	function		handlePlayButton(): string {
 		if (activeTheme === "none") return "play-disabled";
 		return "play";
 	}
