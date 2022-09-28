@@ -421,7 +421,6 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     if (!user){
       throw new BadRequestException({code: 'invalid id', message: `User with '${id}' does not exist`})
     }
-    
 
     const allrooms = await this.Chatrepository
     .createQueryBuilder("db_chat")
@@ -429,7 +428,8 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     .addSelect("array_length (db_chat.userID, 1)", "number of users")
     .leftJoin(User, 'db_user', 'db_user.id = db_chat.ownerID')
     .addSelect('db_user.username', 'ownerName')
-    .where("NOT (:id = ANY (db_chat.userID)) OR (:id = ANY (db_chat.InvitedUserID)) ", { id })
+    .where("(db_chat.status != :status AND NOT (:id = ANY (db_chat.userID)) ) OR (:id = ANY (db_chat.InvitedUserID)) ",
+      { id, status: RoomStatus.PRIVATE })
     .andWhere("db_chat.type = :type", { type: ChatTypes.CHATROOM})
     .groupBy("db_chat.id")
     .addGroupBy("db_user.id")
