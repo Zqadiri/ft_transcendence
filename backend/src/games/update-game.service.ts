@@ -242,11 +242,10 @@ export class UpdateGameService {
 		game.ball.x += game.ball.velocityX;
 		game.ball.y += game.ball.velocityY;
 
-		// console.log(`ball x: ${game.ball.x} velocity x: ${game.ball.velocityX}`);
-		// console.log(`ball y: ${game.ball.y} velocity y: ${game.ball.velocityY}`);
-
-		if (game.ball.y + game.ball.radius >= this.global.canvasHeight || game.ball.y - game.ball.radius <= 0)
-			game.ball.velocityY = -game.ball.velocityY;
+		if (game.ball.y + game.ball.radius >= this.global.canvasHeight)
+			game.ball.velocityY = -Math.abs(game.ball.velocityY);
+		else if (game.ball.y - game.ball.radius < 0)
+			game.ball.velocityY = Math.abs(game.ball.velocityY);
 
 		let player: Paddle = game.ball.x < this.global.canvasWidth / 2 ? game.player1 : game.player2;
 
@@ -259,8 +258,8 @@ export class UpdateGameService {
 
 			game.ball.speed += 0.5;
 
-			game.ball.velocityX = (game.ball.speed * Math.cos(angle)) * direction;
-			game.ball.velocityY = game.ball.speed * Math.sin(angle);
+			game.ball.velocityX = ((game.ball.speed * Math.cos(angle)) * direction) * 1.3;
+			game.ball.velocityY = (game.ball.speed * Math.sin(angle)) * 1.3;
 		}
 		else {
 			this.#updateScore(game);

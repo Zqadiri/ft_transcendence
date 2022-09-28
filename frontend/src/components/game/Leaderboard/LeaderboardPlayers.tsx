@@ -14,12 +14,11 @@ function	LeaderboardPlayers({ldPlayers, searchTerm}: LeaderboardProps): JSX.Elem
 			{
 				ldPlayers.filter(player => 
 						player.username.toLowerCase().includes(searchTerm.toLowerCase())
-					).map((player, index) => {
-						index += 1;
+					).map((player) => {
 						found += 1;
 					return (
 						<tr key={player.id}>
-							<td className={`ld-rank rank${index}`}><h3>{index}</h3></td>
+							<td className={`ld-rank rank${player.rank}`}><h3>{player.rank}</h3></td>
 							<td className="ld-player">
 								<div className="avatar"><img src={player.avatar} alt="avatar" /></div>
 								<div className="username"><h3>{player.username}</h3></div>
