@@ -3,10 +3,10 @@ import { useState } from "react";
 import Button from "./Button";
 import { getCookieHeader } from "./util";
 
-const ProtectedRoom = ({ room, getAllRooms, getAllMyRooms }: any) => {
+const ProtectedRoom = ({ room, getAllRooms, getAllMyRooms, key }: any) => {
 	const [roomPasswordInput, setRoomPasswordInput] = useState("");
 	return (
-		<div className="room w100 flex-jc-sb flex-ai-cr">
+		<div className="room w100 flex-jc-sb flex-ai-cr" key={key}>
 			<div className="left flex-column">
 				<div className="name">{room.db_chat_name}</div>
 				<div className="owner">{room.ownerName}</div>

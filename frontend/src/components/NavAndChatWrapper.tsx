@@ -678,9 +678,9 @@ const NavAndChatWrapper = () => {
 									{
 										(() => {
 											let prrooms =
-											allRooms.filter((room: any) => room.db_chat_status === "protected").map((room: any) => {
+											allRooms.filter((room: any) => room.db_chat_status === "protected").map((room: Chat) => {
 												return (
-													<ProtectedRoom {...{room, getAllRooms, getAllMyRooms}}></ProtectedRoom>
+													<ProtectedRoom {...{room, getAllRooms, getAllMyRooms}} key={room.db_chat_id}></ProtectedRoom>
 												);
 											})
 											if (prrooms.length == 0) {
