@@ -194,6 +194,19 @@ export class ChatController {
         }
     }
 
+    @UseGuards(jwtAuthGuard)
+    @Post('/kickUser')
+    async KickUser(@Req() req: RequestWithUser, @Body() setRolesDto: SetRolestoMembersDto)
+    {
+        try {
+            console.log("kick user from room ...");
+            return await this.chatService.KickUser(req.user.id, setRolesDto);
+        } catch (e) {
+            console.error('Failed to execute kick user operation', e);
+            throw e;
+        }
+    }
+
     // @Get('/ListMutedID/:RoomName')
     // async ListMutedID(@Param('RoomName') RoomName: string)
     // {

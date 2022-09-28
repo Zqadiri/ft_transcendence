@@ -517,7 +517,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           },
       });
       const isUserRoom = await this.findRoom(SetRolestoMembersDto.RoomID);
-	  console.log({SetRolestoMembersDto, isOwner, isUserRoom})
+	    console.log({SetRolestoMembersDto, isOwner, isUserRoom})
       if (isOwner)
       {
         if (isOwner.AdminsID.length)
@@ -604,6 +604,70 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
         throw new ForbiddenException({code: 'Forbidden', message: `cannot execute this operation {LeaveOwnerRoom}`})
     }
 
+    /** Kick user */
+
+    async KickUser(administrator: number, SetRolestoMembersDto: SetRolestoMembersDto)
+    {
+      const user = await this.findUser(SetRolestoMembersDto.userID);
+
+      if (!user){
+        throw new BadRequestException({code: 'invalid id', message: `User with '${SetRolestoMembersDto.userID}' does not exist`})
+      }
+
+      const check = await this.Chatrepository.findOne({
+        where: {
+            name: SetRolestoMembersDto.RoomID,
+            ownerID: administrator,
+          },
+        });
+
+      const checkadmin = await this.Chatrepository.findOne({
+        where: {
+            name: SetRolestoMembersDto.RoomID
+          },
+        });
+
+        if (check && check.userID.includes(user.id))
+        {
+          if (check.AdminsID.includes(user.id))
+          {
+            check.AdminsID = check.AdminsID.filter(item => item !== SetRolestoMembersDto.userID);
+            console.log("Admin kicked from this room");
+          }
+          check.userID = check.userID.filter(item => item !== SetRolestoMembersDto.userID);
+
+          await this.Chatrepository
+          .createQueryBuilder()
+          .update(Chat)
+          .set({userID: check.userID, AdminsID: check.AdminsID})
+          .where("name = :name", {name: SetRolestoMembersDto.RoomID})
+          .execute()
+
+          console.log("the owner kicked this {user/admin} from this room", check);
+        }
+        else if (checkadmin && checkadmin.userID.includes(user.id) && checkadmin.ownerID !== user.id)
+        {
+          if (checkadmin.AdminsID.includes(administrator))
+          {
+            check.userID = check.userID.filter(item => item !== SetRolestoMembersDto.userID);
+
+            await this.Chatrepository
+            .createQueryBuilder()
+            .update(Chat)
+            .set({userID: check.userID})
+            .where("name = :name", {name: SetRolestoMembersDto.RoomID})
+            .execute()
+  
+            console.log("the admin kicked this user from this room", check);
+          }
+          else
+            throw new ForbiddenException({code: 'Forbidden', message: `cannot execute this operation {KickUser}`});
+        }
+        else
+          throw new ForbiddenException({code: 'Forbidden', message: `cannot execute this operation {KickUser}`});
+
+    }
+
     /** The administrators of a channel can ban or mute users for a limited time */
 
     async BanOrMuteUser(administrator: number, BanOrMuteMembersDto: BanOrMuteMembersDto)
@@ -656,7 +720,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
               checkadmin.MutedAndBannedID.push({action: BanOrMuteMembersDto.action, userID: user.id, current_time: Date.now(), duration: BanOrMuteMembersDto.duration});
               await this.Chatrepository.save(checkadmin);
                user_data.push({RoomID: BanOrMuteMembersDto.RoomID, userID: user.id, releasetime: (Date.now() + BanOrMuteMembersDto.duration * 1000), action: BanOrMuteMembersDto.action});
-               return (user_data);
+              return (user_data);
             }
             else
               throw new ForbiddenException({code: 'Forbidden', message: `this user is already muted/banned for a specific time!!`})
