@@ -87,7 +87,7 @@
 	position: relative;
 	#chat-container {
 		pointer-events: none;
-		overflow: hidden;
+		overflow: visible;
 		position: fixed;
 		z-index: 10;
 		bottom: 0;
@@ -247,6 +247,64 @@
 					.chatinterfaceusers {
 						overflow-y: auto;
 						padding: 5px;
+						.tabuser {
+							padding: 7px;
+							border-radius: 99px;
+							background-color: $darker_blue;
+							color: $less_pastel_white;
+							.left {
+								.status {
+									&.online {
+										color: rgb(27, 161, 27);
+									}
+									&.ingame {
+										color: orange;
+									}
+									&.offline {
+										color: gray;
+									}
+								}
+								.avatar {
+									background-color: white;
+									border-radius: 100%;
+									$dim: 45px;
+									width: $dim;
+									height: $dim;
+								}
+							}
+							.right {
+								padding-right: 10px;
+							}
+						}
+						.selectusertype {
+							.c_button {
+								background-color: $darker_blue;
+								&:active {
+									background-color: $dark_blue;
+								}
+								&.active {
+									background-color: $dark_blue;
+								}
+								$button_border_radius: 99px;
+								border-radius: 0;
+								color: $less_pastel_white;
+								&:first-child {
+									border-top-left-radius: $button_border_radius;
+									border-bottom-left-radius: $button_border_radius;
+								}
+								&:last-child {
+									border-top-right-radius: $button_border_radius;
+									border-bottom-right-radius: $button_border_radius;
+								}
+							}
+						}
+						input {
+							border: 2px solid $darker_blue;
+							border-radius: 5px;
+						}
+						.changeroompassword {
+							align-items: stretch;
+						}
 						.leave {
 							width: fit-content;
 							background-color: rgb(230, 52, 52);
@@ -275,6 +333,39 @@
 								display: flex;
 								align-items: center;
 								justify-content: center;
+								// position: relative;
+								p {
+									white-space: nowrap;
+									display: none;
+								}
+								&:hover {
+									p {
+										display: flex;
+										justify-content: center;
+										padding: 3px;
+										transform: translateY(-28px);
+										font-size: 12px;
+										border-radius: 3px;
+										display: inline-block;
+										position: absolute;
+										color: $less_pastel_white;
+										background-color: $darker_blue;
+										// border: 1px solid gray;
+										pointer-events: none;
+										width: fit-content;
+										&::before {
+											content: "";
+											position: absolute;
+											left: calc(50% - 5px);
+											top: 100%;
+											border: 5px solid;
+											border-color:	$darker_blue
+															rgba($darker_blue, 0)
+															rgba($darker_blue, 0)
+															rgba($darker_blue, 0);
+										}
+									}
+								}
 							}
 							.addadmin {
 								.plus {

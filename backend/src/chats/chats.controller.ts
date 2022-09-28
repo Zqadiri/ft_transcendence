@@ -82,6 +82,13 @@ export class ChatController {
              throw e;
          }
     }
+
+	@UseGuards(jwtAuthGuard)
+    @Post('/GetRoomInfo')
+    async GetRoomInfo(@Req() req: RequestWithUser, @Body() room: { id: number })
+    {
+		return this.chatService.Room(room.id);
+    }
     
     @UseGuards(jwtAuthGuard)
     @Get('/users/:RoomName')

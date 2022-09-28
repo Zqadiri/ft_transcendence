@@ -9,7 +9,9 @@ const MuteBanControls = ({ activeChat, userID, setActiveChat }: { activeChat: Ch
 		<>
 			<input type="number" min={1} className="duration" defaultValue={1} ref={muteBanDurationRef} />
 			<label htmlFor="duration">sec(s)</label>
-			<div className="iconcontainer" title="Mute User Temporarily" onClick={() => {
+			<div className="iconcontainer"
+			// title="Mute User Temporarily"
+			onClick={() => {
 				axios.post("/chat/MuteUser", {
 					RoomID: activeChat?.db_chat_name,
 					userID,
@@ -24,8 +26,11 @@ const MuteBanControls = ({ activeChat, userID, setActiveChat }: { activeChat: Ch
 				})
 			}}>
 				<i className="fa-solid fa-volume-xmark"></i>
+				<p>{"Mute User Temporarily"}</p>
 			</div>
-			<div className="iconcontainer" title="Ban User Temporarily" onClick={() => {
+			<div className="iconcontainer"
+			// title="Ban User Temporarily"
+			onClick={() => {
 				axios.post("/chat/MuteUser", {
 					RoomID: activeChat?.db_chat_name,
 					userID,
@@ -47,6 +52,7 @@ const MuteBanControls = ({ activeChat, userID, setActiveChat }: { activeChat: Ch
 				})
 			}}>
 				<i className="fa-solid fa-circle-xmark"></i>
+				<p>{"Ban User Temporarily"}</p>
 			</div>
 		</>
 	)

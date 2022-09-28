@@ -31,6 +31,18 @@ export interface UserStat {
 	stat: string,
 }
 
+export interface RawRoom {
+	AdminsID: number[],
+	InvitedUserID: number[],
+	id: number,
+	name: string,
+	ownerID: number,
+	password: null,
+	status: string,
+	type: string,
+	userID: number[],
+} 
+
 export interface Chat {
 	db_chat_type: string | undefined,
 	db_chat_id: number,
@@ -47,7 +59,31 @@ export interface ChatMessage {
 export type ActiveTab = "rooms" | "friends" | "chat" | "chatinterface" | "chatinterfaceusers";
 
 const NavAndChatWrapper = () => {
+	const [userType, _setUserType] = useState<"invite" | "invited" | "users">("users");
+	const setUserType = (ut: "invite" | "invited" | "users") => {
+		axios.get("/chat/userStats/" + activeChat?.db_chat_name).then(res => {
+			// console.log({userstats: res.data});
+			setActiveChatUsers(res.data);
+		}).catch((err) => {
+
+		})
+		getFriends();
+		getCurrentRoomData();
+		return _setUserType(ut);
+	}
 	const { setLoggedIn } = useContext(globalContext);
+	const navigater = useNavigate();
+	useEffect(() => {
+		axios.get("/users?name=" + cookies.get("name")).then(() => {})
+		.catch(() => {
+			cookies.remove("_token");
+			cookies.remove("avatar");
+			cookies.remove("id");
+			cookies.remove("name");
+			setLoggedIn(false);
+		})
+		
+	})
 	const [userIconDropdown, setUserIconDropdown] = useState(false);
 	const [chatIsOpen, setChatIsOpen] = useState(
 		false
@@ -64,7 +100,27 @@ const NavAndChatWrapper = () => {
 		getFriends();
 	}
 
+	const getCurrentRoomData = () => {
+		let prom = axios.post("/chat/GetRoomInfo", { id: activeChat?.db_chat_id });
+		prom.then(res => {
+			console.log({getroominfo: res.data});
+			setCurrentChatRoomData(res.data);
+		})
+		return prom;
+	}
+
+	const [currentChatRoomData, setCurrentChatRoomData] = useState<RawRoom>();
+
+	useEffect(() => {
+		console.log({currentChatRoomData});
+	}, [currentChatRoomData])
+
 	const setActiveTab = (x: ActiveTab) => {
+		if (x === "chatinterfaceusers") {
+			setUserType("users");
+			getCurrentRoomData();
+			getFriends();
+		}
 		if (x === "chat") {
 			Promise.all([getFriends(), getAllMyRooms()]).finally(() => {
 				_setActiveTab(x);
@@ -75,6 +131,12 @@ const NavAndChatWrapper = () => {
 				getAllRooms();
 			if (x === "friends") {
 				getFriendsTab();
+			}
+			if (x === "chatinterface") {
+				setTimeout(() => {
+					_setActiveTab(x);
+				}, 50)
+				return ;
 			}
 			return _setActiveTab(x);
 		}
@@ -88,7 +150,6 @@ const NavAndChatWrapper = () => {
 		return _setRoomActiveTab(x);
 	}
 
-	const navigater = useNavigate();
 
 	const messagesRef = useRef<HTMLDivElement>(null);
 	const submitRef = useRef<HTMLDivElement>(null);
@@ -524,7 +585,7 @@ const NavAndChatWrapper = () => {
 								</Button>
 							</section>
 							<section className="roomsbody">
-								<div className="container d100 flex-center-column" style={{display: roomActiveTab === "create" ? "flex" : "none", minHeight: "fit-content"}}>
+								<div className="container d100 flex-center-column" style={{display: roomActiveTab === "create" ? "flex" : "none", minHeight: 208}}>
 									<form action="" className="create-room-form h100 flex-column flex-jc-cr flex-gap10" onSubmit={e => {
 										e.preventDefault();
 										axios.post("/chat/CreateRoom/", {
@@ -677,8 +738,10 @@ const NavAndChatWrapper = () => {
 								<div className="name" onClick={() => setActiveTab("chatinterface")}>{activeChat?.db_chat_type === "dm" ? activeChat.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0] : activeChat?.db_chat_name}</div>
 								<ShowConditionally cond={activeChat?.db_chat_type !== "dm"}>
 									<div className="users" onClick={() => {
-										setActiveTab("chatinterfaceusers");
-										setActiveChat(activeChat);
+										getFriends().finally(() => {
+											setActiveTab("chatinterfaceusers");
+											setActiveChat(activeChat);
+										})
 									}}>
 										<i className="fa-solid fa-user"></i>
 									</div>
@@ -699,8 +762,10 @@ const NavAndChatWrapper = () => {
 									activeChatUsers.find(el => el.username === cookies.get("name"))?.stat === "owner" ?
 									<>
 										<ShowConditionally cond={activeChat?.db_chat_status === "public"}>
-											<div className="setpassword flex-ai-cr flex-gap10">
-												<label htmlFor="roompassword">{passwdMessage}</label>
+											<div className="setpassword flex-ai-cr flex-gap10 changeroompassword">
+												<div className="flex-center-column">
+													<label htmlFor="roompassword">{passwdMessage}</label>
+												</div>
 												<input type="password" ref={CRUDRoomPasswordRef}/>
 												<Button onClick={() => {
 													if (CRUDRoomPasswordRef.current?.value
@@ -729,8 +794,10 @@ const NavAndChatWrapper = () => {
 											</div>
 										</ShowConditionally>
 										<ShowConditionally cond={activeChat?.db_chat_status === "protected"}>
-											<div className="setpassword flex-ai-cr flex-gap10">
-												<label htmlFor="roompassword">{passwdMessage}</label>
+											<div className="setpassword flex-ai-cr flex-gap10 changeroompassword">
+												<div className="flex-center-column">
+													<label htmlFor="roompassword">{passwdMessage}</label>
+												</div>
 												<input type="password" ref={CRUDRoomPasswordRef}/>
 												<Button onClick={() => {
 													if (CRUDRoomPasswordRef.current?.value
@@ -779,63 +846,130 @@ const NavAndChatWrapper = () => {
 												}}>Remove Password</Button>
 											</div>
 										</ShowConditionally>
+										<ShowConditionally cond={activeChat?.db_chat_status === "private"}>
+											<>
+												<div className="selectusertype w100 flex-center">
+													<Button className={"elem flex-center flex-grow flex-basis-0 " + (userType === "users" ? "active" : "")}  onClick={() => { setUserType("users")}}>
+														Users
+													</Button>
+													<Button className={"elem flex-center flex-grow flex-basis-0 " + (userType === "invite" ? "active" : "")} onClick={() => { setUserType("invite")}}>
+														Invite Friends
+													</Button>
+													<Button className={"elem flex-center flex-grow flex-basis-0 " + (userType === "invited" ? "active" : "")}  onClick={() => { setUserType("invited")}}>
+														Invited
+													</Button>
+												</div>
+												<div className="flex-column w100" style={{display: userType === "invite" ? "flex" : "none"}}>
+													{
+														friends.filter(fr => !activeChatUsers.some(el => el.id === fr.id) && !currentChatRoomData?.InvitedUserID?.some(id => id === fr.id)).map(fr => {
+															return (
+																<div className="tabuser invitable flex-jc-sb flex-ai-cr w100">
+																	<div className="left flex-gap5 flex-ai-cr">
+																		<img src={fr.avatar} alt="" className="avatar" />
+																		<div className="info flex-column">
+																			<div className="name">{fr.username}</div>
+																			<div className={"status " + fr.status}>{fr.status}</div>
+																		</div>
+																	</div>
+																	<div className="right">
+																		<Button className="invitefriendtoprivateroom" onClick={() => {
+																			axios.post("/chat/Invite", { RoomID: activeChat?.db_chat_name, userID: fr.id })
+																				.finally(() => {
+																					getCurrentRoomData();
+																				})
+																		}}>
+																			Invite
+																		</Button>
+																	</div>
+																</div>
+															)
+														})
+													}
+												</div>
+												<div className="flex-column w100" style={{display: userType === "invited" ? "flex" : "none"}}>
+													{
+														friends.filter(fr => currentChatRoomData?.InvitedUserID.some(id => id === fr.id)).map(fr => {
+															return (
+																<div className="tabuser invited w100">
+																	<div className="left flex-gap5 flex-ai-cr">
+																		<img src={fr.avatar} alt="" className="avatar" />
+																		<div className="info flex-column">
+																			<div className="name">{fr.username}</div>
+																			<div className={"status " + fr.status}>{fr.status}</div>
+																		</div>
+																	</div>
+																</div>
+															)
+														})
+													}
+												</div>
+											</>
+										</ShowConditionally>
 									</> : (
 										<></>
 									)
 								}
-								{
-									activeChatUsers.map((user: UserStat) => {
-										return <>
-										<div className="user flex-ai-cr flex-jc-sb">
-											<div className="right flex-gap5 flex-ai-cr">
-												{/* <img src={user.avatar} alt="" className="avatar" /> */}
-												<UserProfileIcon avatar={user.avatar} className="avatar" ></UserProfileIcon>
-												<div className="left container flex-column">
-													<div className="name">{user.username}</div>
-													<div className="id">{user.id}</div>
+								<div className="d100 flex-jc-fs flex-ai-cr flex-column flex-gap5" style={{display: userType === "users" ? "flex" : "none"}}>
+									{
+										activeChatUsers.map((user: UserStat) => {
+											return <>
+											<div className="user flex-ai-cr flex-jc-sb">
+												<div className="right flex-gap5 flex-ai-cr">
+													{/* <img src={user.avatar} alt="" className="avatar" /> */}
+													<UserProfileIcon avatar={user.avatar} className="avatar" ></UserProfileIcon>
+													<div className="left container flex-column">
+														<div className="name">{user.username}</div>
+														<div className="id">{user.id}</div>
+													</div>
 												</div>
+												{/* <div className="stat">{user.stat}</div> */}
+												<div className="left flex-gap20 flex-ai-cr">
+													<div className="controls flex-gap10 flex-ai-cr">
+															<ShowConditionally cond={
+																activeChatUsers.find(el => cookies.get("name") === el.username)
+																&& (activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "owner"
+																	|| activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "admin")
+																&& user.stat === "user"
+															}>
+																<>
+																	<MuteBanControls activeChat={activeChat} setActiveChat={setActiveChat} userID={user.id}></MuteBanControls>
+																</>
+															</ShowConditionally>
+															<ShowConditionally cond={
+																activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "owner"
+																&& user.stat === "user"
+															}>
+																<div className="iconcontainer"
+																// title="Add User As Admin"
+																onClick={() => {
+																	axios.post("/chat/setUserRoomAsAdmin", { RoomID: activeChat?.db_chat_name, userID: user.id }).then((res) => {
+																		console.log({chatSetUserRoomAsAdmin: res});
+																		setActiveChat(activeChat);
+																	}).catch((err) => {
+																		console.log({chatSetUserRoomAsAdminERROR: err});
+																		setActiveChat(activeChat);
+																	})
+																}}>
+																	<i className="fa-solid fa-shield flex-center addadmin"><div className="plus">+</div></i>
+																	<p>{"Add User As Admin"}</p>
+																</div>
+															</ShowConditionally>
+														</div>
+														<ShowConditionally cond={user.stat === "mute" || user.stat === "ban"}>
+															{/* <CountDown activeChat={activeChat} setActiveChat={activeChat}></CountDown> */}
+														</ShowConditionally>
+														<div className="iconcontainer"
+														// title={capitalize(user.stat)}
+														>
+															<i className={userIcon[user.stat] + " userstat"} ></i>
+															<p>{capitalize(user.stat)}</p>
+														</div>
+													</div>
 											</div>
-											{/* <div className="stat">{user.stat}</div> */}
-											<div className="left flex-gap20 flex-ai-cr">
-												<div className="controls flex-gap10 flex-ai-cr">
-														<ShowConditionally cond={
-															activeChatUsers.find(el => cookies.get("name") === el.username)
-															&& (activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "owner"
-																|| activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "admin")
-															&& user.stat === "user"
-														}>
-															<>
-																<MuteBanControls activeChat={activeChat} setActiveChat={setActiveChat} userID={user.id}></MuteBanControls>
-															</>
-														</ShowConditionally>
-														<ShowConditionally cond={
-															activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "owner"
-															&& user.stat === "user"
-														}>
-															<div className="iconcontainer" title="Add User As Admin" onClick={() => {
-																axios.post("/chat/setUserRoomAsAdmin", { RoomID: activeChat?.db_chat_name, userID: user.id }).then((res) => {
-																	console.log({chatSetUserRoomAsAdmin: res});
-																	setActiveChat(activeChat);
-																}).catch((err) => {
-																	console.log({chatSetUserRoomAsAdminERROR: err});
-																	setActiveChat(activeChat);
-																})
-															}}>
-																<i className="fa-solid fa-shield flex-center addadmin"><div className="plus">+</div></i>
-															</div>
-														</ShowConditionally>
-													</div>
-													<ShowConditionally cond={user.stat === "mute" || user.stat === "ban"}>
-														{/* <CountDown activeChat={activeChat} setActiveChat={activeChat}></CountDown> */}
-													</ShowConditionally>
-													<div className="iconcontainer" title={capitalize(user.stat)}>
-														<i className={userIcon[user.stat] + " userstat"} ></i>
-													</div>
-												</div>
-										</div>
-										</>
-									})
-								}
+											</>
+										})
+									}
+								</div>
 							</div>
 							<div className="messages" ref={messagesRef} style={{display: activeTab === "chatinterface" ? "block" : "none"}}>
 								<div className="msgcontainer flex-column flex-jc-fe">

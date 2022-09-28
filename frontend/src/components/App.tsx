@@ -10,7 +10,7 @@ import { useState } from 'react';
 function App() {
 	const [loggedIn, setLoggedIn] = useState(isLoggedIn());
 	useEffectOnce(() => {
-		console.log({cookie: isLoggedIn()});
+		console.log({"loggedIn?": isLoggedIn()});
 	})
 	return (
 		<div className="app w100 h100">

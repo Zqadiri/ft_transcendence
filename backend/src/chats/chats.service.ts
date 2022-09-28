@@ -438,6 +438,16 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     return allrooms; 
   }
 
+  async Room(id: number)
+  {
+    const room = await this.Chatrepository
+    .createQueryBuilder("db_chat")
+    .select(['*'])
+    .where("id=:id", { id })
+    .getRawOne()
+    return room; 
+  }
+
   // display all my rooms exist in the database
   async AllMyRooms(id: number)
   {
