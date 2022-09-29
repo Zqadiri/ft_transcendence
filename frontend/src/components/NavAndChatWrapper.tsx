@@ -73,17 +73,6 @@ const NavAndChatWrapper = () => {
 	}
 	const { setLoggedIn } = useContext(globalContext);
 	const navigater = useNavigate();
-	useEffect(() => {
-		axios.get("/users?name=" + cookies.get("name")).then(() => {})
-		.catch(() => {
-			cookies.remove("_token");
-			cookies.remove("avatar");
-			cookies.remove("id");
-			cookies.remove("name");
-			setLoggedIn(false);
-		})
-		
-	})
 	const [userIconDropdown, setUserIconDropdown] = useState(false);
 	const [chatIsOpen, setChatIsOpen] = useState(
 		false
@@ -535,41 +524,47 @@ const NavAndChatWrapper = () => {
 						<div className="chatscroll d100" style={{display: activeTab === "chat" ? "flex" : "none"}}>
 							<div className="chat w100 flex-column flex-gap10">
 								{
-									chatRooms.map((room: Chat) => {
-										return (
-											<div className={"room flex-ai-cr flex-gap5 " + (room.db_chat_type === "dm" ? "dm" : "flex-jc-sb")} onClick={() => {roomOnClick(room)}}>
-												<ShowConditionally cond={room.db_chat_type === "dm"}>
-													<img src={friends.find(el => {
-														return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
-													})?.avatar} alt="" style={{ width: 45, height: 45, backgroundColor: "white", borderRadius: "100%" }} />
-												</ShowConditionally>
-												<div className="left flex-column flex-gap5">
-													<div className="name">{room.db_chat_type === "dm" ? room.db_chat_name.split(",").filter(el => el !== cookies.get("name")) : room.db_chat_name}</div>
-													<div className={"owner " + (room.db_chat_type === "dm" ? "dm " + friends.find(el => {
-														return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
-													})?.status : "")}>
-														{
-															room.db_chat_type === "dm" ?
-																friends.find(el => {
-																	return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
-																})?.status : room.ownerName
-														}
-														<ShowConditionally cond={room.db_chat_type !== "dm"}>
-															<>
-																&nbsp;<i className={userIcon.owner}></i>
-															</>
-														</ShowConditionally>
+									(() => {
+
+										let ret = chatRooms.map((room: Chat) => {
+											return (
+												<div className={"room flex-ai-cr flex-gap5 " + (room.db_chat_type === "dm" ? "dm" : "flex-jc-sb")} onClick={() => {roomOnClick(room)}}>
+													<ShowConditionally cond={room.db_chat_type === "dm"}>
+														<img src={friends.find(el => {
+															return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
+														})?.avatar} alt="" style={{ width: 45, height: 45, backgroundColor: "white", borderRadius: "100%" }} />
+													</ShowConditionally>
+													<div className="left flex-column flex-gap5">
+														<div className="name">{room.db_chat_type === "dm" ? room.db_chat_name.split(",").filter(el => el !== cookies.get("name")) : room.db_chat_name}</div>
+														<div className={"owner " + (room.db_chat_type === "dm" ? "dm " + friends.find(el => {
+															return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
+														})?.status : "")}>
+															{
+																room.db_chat_type === "dm" ?
+																	friends.find(el => {
+																		return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
+																	})?.status : room.ownerName
+															}
+															<ShowConditionally cond={room.db_chat_type !== "dm"}>
+																<>
+																	&nbsp;<i className={userIcon.owner}></i>
+																</>
+															</ShowConditionally>
+														</div>
 													</div>
+													<ShowConditionally cond={room.db_chat_type !== "dm"}>
+														<div className="right flex-center">
+															<i className="icon fa-solid fa-user"></i>
+															<div className="num">{room["number of users"]}</div>
+														</div>
+													</ShowConditionally>
 												</div>
-												<ShowConditionally cond={room.db_chat_type !== "dm"}>
-													<div className="right flex-center">
-														<i className="icon fa-solid fa-user"></i>
-														<div className="num">{room["number of users"]}</div>
-													</div>
-												</ShowConditionally>
-											</div>
-										);
-									})
+											);
+										})
+										if (ret.length)
+											return ret;
+										return <div className="empty flex-center d100"><div className="inner">No Chats Available</div></div>
+									})()
 								}
 							</div>
 						</div>

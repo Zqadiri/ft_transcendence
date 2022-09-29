@@ -169,6 +169,13 @@
 				.chatscroll {
 					.chat {
 						overflow-y: auto;
+						.empty {
+							.inner {
+								font-size: 150%;
+								font-weight: 700;
+								color: rgba(black, 0.2);
+							}
+						}
 						.room {
 							cursor: pointer;
 							padding: 10px 20px;
