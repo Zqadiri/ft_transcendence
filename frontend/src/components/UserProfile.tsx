@@ -31,10 +31,10 @@ export interface User {
 
 const UserProfile = () => {
 	let params = useParams();
-	const [user, setUser] = useState<User | null>(null);
-	const [thisuser, setThisUser] = useState<User | null>(null);
+	const [user, setUser] = useState<User | null | undefined>(null);
+	const [thisuser, setThisUser] = useState<User | null | undefined>(null);
 
-	const friendOp = (endpoint: string, u: User | null) => {
+	const friendOp = (endpoint: string, u: User | null | undefined) => {
 		if (u) {
 			axios.post("/users" + endpoint, { id: u.id })
 			.finally(() => {
@@ -51,6 +51,7 @@ const UserProfile = () => {
 		})
 		.catch((err) => {
 			console.log({err});
+			setUser(undefined);
 		})
 		axios.get("/users?name=" + cookies.get("name"))
 		.then((res) => {
@@ -59,28 +60,33 @@ const UserProfile = () => {
 		})
 		.catch((err) => {
 			console.log({err});
+			setUser(undefined);
 		})
 	}
 
 	useEffect(() => {
 		updateUserProfile(params);
 	}, [params])
-	console.log({"cookies.get(\"name\")": cookies.get("name")})
+
+	useEffect(() => {
+		console.log({user, thisuser})
+	}, [user, thisuser])
+	// console.log({"cookies.get(\"name\")": cookies.get("name")})
 	if (params.userId === cookies.get("name")) {
 		return <Navigate to={"/profile"}></Navigate>
 	}
 	return (
-		<div className="userprofile">
-			<div className="leftpannel">
-				<div className="imagecontainer">
-					<div className="image" style={{background: `url(${user?.avatar})`}}></div>
-				</div>
-				<div className="namecontainer"><h2 className="name">{user?.username}</h2></div>
-			</div>
-			<div className="rightpannel">
-				{/* <Button>Add Friend</Button> */}
-				<ShowConditionally cond={user && thisuser}>
-					<>
+		<div className="userprofile d100">
+			{/* <Button>Add Friend</Button> */}
+			<ShowConditionally cond={user && thisuser}>
+				<>
+					<div className="leftpannel">
+						<div className="imagecontainer">
+							<div className="image" style={{ background: `url(${user?.avatar})` }}></div>
+						</div>
+						<div className="namecontainer"><h2 className="name">{user?.username}</h2></div>
+					</div>
+					<div className="rightpannel">
 						<ShowConditionally cond={!user?.blockedID.includes(parseInt(cookies.get("id")))}>
 							<>
 								<ShowConditionally cond={!thisuser?.blockedID.includes(user?.id ? user.id : 0)}>
@@ -123,9 +129,17 @@ const UserProfile = () => {
 							</>
 							<Button>This User Has Blocked You</Button>
 						</ShowConditionally>
-					</>
+					</div>
+				</>
+				<ShowConditionally cond={user === undefined}>
+					<div className="notfound d100 flex-center">
+						<div className="dotinner">
+							No Such User
+						</div>
+					</div>
+					<div>Loading</div>
 				</ShowConditionally>
-			</div>
+			</ShowConditionally>
 		</div>
 	);
 }

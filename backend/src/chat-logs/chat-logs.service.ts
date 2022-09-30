@@ -27,7 +27,8 @@ export class ChatLogsService {
     const msg = this.ChatLogsrepository.create({
         userID: chatlogsdto.userID,
         roomName: chatlogsdto.roomName,
-        message: chatlogsdto.message
+        message: chatlogsdto.message,
+		username: chatlogsdto.username
     });
 
     return await this.ChatLogsrepository.save(msg);
@@ -44,7 +45,7 @@ export class ChatLogsService {
       .select("ChatLogs.userID", "userID")
       .addSelect("ChatLogs.roomName", "roomName")
       .addSelect("ChatLogs.message", "message")
-      .leftJoin(User, 'db_user', 'db_user.username = ChatLogs.userID')
+      .leftJoin(User, 'db_user', 'db_user.id = ChatLogs.userID')
       .addSelect('db_user.avatar', 'avatar')
       .orderBy({'ChatLogs.createdAt': 'ASC'})
       .where ("ChatLogs.roomName = :roomName", {roomName: roomName})
@@ -61,7 +62,7 @@ export class ChatLogsService {
     .select("ChatLogs.userID", "userID")
     .addSelect("ChatLogs.roomName", "roomName")
     .addSelect("ChatLogs.message", "message")
-    .leftJoin(User, 'db_user', 'db_user.username = ChatLogs.userID')
+    .leftJoin(User, 'db_user', 'db_user.id = ChatLogs.userID')
     .addSelect('db_user.avatar', 'avatar')
     .where ("ChatLogs.id = :id", {id: messageID})
     .getRawOne()
@@ -75,6 +76,15 @@ export class ChatLogsService {
     const id = await this.repo.findOneBy({ username: userID });
     if (!id)
       throw new WsException({code: 'invalid username', message: `User with '${userID}' does not exist`})
+    return id;
+  }
+
+  async findUserUsingID(userID: number)
+  {
+    // findOneBy - Finds the first entity that matches given FindOptionsWhere.
+    const id = await this.repo.findOneBy({ id: userID });
+    if (!id)
+      throw new WsException({code: 'invalid id', message: `User with '${userID}' does not exist`})
     return id;
   }
 

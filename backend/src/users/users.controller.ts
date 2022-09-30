@@ -1,5 +1,5 @@
 import { Controller, ClassSerializerInterceptor,Get, UnauthorizedException,
-	BadRequestException, Param, HttpCode, UseGuards, Body, Res, Query } from '@nestjs/common';
+	BadRequestException, Param, HttpCode, UseGuards, Body, Res, Query, NotFoundException } from '@nestjs/common';
 import { UseInterceptors } from '@nestjs/common';
 import { UploadedFile } from '@nestjs/common';
 import { Post, Req } from '@nestjs/common';
@@ -307,9 +307,14 @@ export class UsersController {
     })
     @Get()
     async getUserDataByNameOrId(@Query() query: { name: string | undefined, id: number | undefined }){
+		let ret;
 		if (query.id)
-			return await this.usersService.getUserById(query.id);
-        return await this.usersService.getUserByName(query.name);
+			ret = await this.usersService.getUserById(query.id);
+		else
+			ret = await this.usersService.getUserByName(query.name);
+		if (!ret)
+			throw new NotFoundException({message: "no such user"});
+		return ret;
     }
 
 	@ApiOperation({ summary: 'Get all users' })

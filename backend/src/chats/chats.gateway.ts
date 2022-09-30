@@ -51,7 +51,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   async create(@ConnectedSocket() client: Socket, @MessageBody() createChatDto: ChatLogsDto) {
 
 	  // emit the message just to specific roomz
-	  const finduser = await this.chatLogsService.findUser(createChatDto.userID);
+	  const finduser = await this.chatLogsService.findUserUsingID(createChatDto.userID);
 	  const findroom = await this.chatsService.findRoom(createChatDto.roomName);
 	  
 	  let user: { action: string; userID: number; current_time: number; duration: number;} | undefined;
@@ -63,6 +63,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
     }
 
 	  if (!user) {
+		  createChatDto.username = finduser.username;
 		  const msg = await this.chatLogsService.savechat(createChatDto);
       this.server.to(createChatDto.roomName).emit('messageToRoomSyn', { id: msg.id });
 	  }
@@ -74,12 +75,11 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   {
     const message = await this.chatLogsService.GetMessage(data.messageID);
     const blockedlist = await this.UsersService.blockedFriend(data.userID);
-	  console.log({blockedppl: blockedlist.blockedID, data});
-    const user = await this.chatLogsService.findUser(message.userID);
+    const user = await this.chatLogsService.findUserUsingID(message.userID);
   
     if (!blockedlist.blockedID.find(elm => elm === user.id))
-      client.emit('messageToRoomAck', message);
-  }
+		client.emit('messageToRoomAck', message);
+	}
 
   @SubscribeMessage('socketJoinRoom')
   async handleJoinRoom(client: Socket, roomName: string)

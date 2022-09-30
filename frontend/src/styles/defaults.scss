@@ -177,6 +177,12 @@ a.no-colors {
 	color: inherit;
 }
 
+.dotinner {
+	font-size: 150%;
+	font-weight: 700;
+	color: rgba(black, 0.2);
+}
+
 /* utiliy classes end */
 
 /* default styles start */
@@ -212,11 +218,11 @@ html {
 }
 
 body {
-	min-height: 100vh;
+	height: 100%;
 }
 
 #root {
-	min-height: 100vh;
+	height: 100%;
 	background-color: $pastel_white;
 }
 

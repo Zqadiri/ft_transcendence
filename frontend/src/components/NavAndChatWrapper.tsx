@@ -53,7 +53,10 @@ export interface Chat {
 }
 
 export interface ChatMessage {
-	userID: string, avatar: string | null | undefined, message: string
+	username: string,
+	userID: number,
+	avatar: string | null | undefined,
+	message: string
 }
 
 export type ActiveTab = "rooms" | "friends" | "chat" | "chatinterface" | "chatinterfaceusers";
@@ -245,9 +248,33 @@ const NavAndChatWrapper = () => {
 			console.log("disconnected");
 		});
 
-		chatSocket.off('RoomMessages').on('RoomMessages', (_msgs) => {
+		chatSocket.off('RoomMessages').on('RoomMessages', (_msgs: ChatMessage[]) => {
 			console.log("received room messages... setting them");
-			setActiveChatMessages(_msgs);
+			axios.get("/users?id=" + cookies.get("id"))
+			.then((resMyself: AxiosResponse<User>) => {
+				// let buNames: string[] = [];
+				// let promises: Promise<AxiosResponse<User>>[] = [];
+				// resMyself.data.blockedID.forEach(id => {
+				// 	let prom = axios.get("/users?id=" + id)
+				// 	prom
+				// 	.then((res: AxiosResponse<User>) => {
+				// 		buNames.push(res.data.username);
+				// 	})
+				// 	promises.push(prom);
+				// })
+				// Promise.all(promises).then(() => {
+				// 	console.log({buNames});
+
+				
+				// })
+
+					let msgs = _msgs.filter(el => !resMyself.data.blockedID.includes(el.userID));
+					console.log(msgs)
+					setActiveChatMessages(msgs);
+			})
+			.catch(() => {
+				setActiveChatMessages(_msgs);
+			})
 		})
 
 		console.log("listening to joinedRoom");
@@ -743,7 +770,7 @@ const NavAndChatWrapper = () => {
 									<div></div>
 								</ShowConditionally>
 							</div>
-							<div className="chatinterfaceusers flex-jc-fs flex-ai-cr flex-column flex-gap5" style={{display: activeTab === "chatinterfaceusers" ? "flex" : "none"}}>
+							<div className="chatinterfaceusers d100 flex-jc-fs flex-ai-cr flex-column flex-gap5" style={{display: activeTab === "chatinterfaceusers" ? "flex" : "none"}}>
 								<Button className="leave" onClick={() => {
 									axios.post("/chat/LeaveRoom", { name: activeChat?.db_chat_name })
 									.finally(() => {
@@ -854,48 +881,58 @@ const NavAndChatWrapper = () => {
 														Invited
 													</Button>
 												</div>
-												<div className="flex-column w100" style={{display: userType === "invite" ? "flex" : "none"}}>
+												<div className="flex-column d100" style={{display: userType === "invite" ? "flex" : "none"}}>
 													{
-														friends.filter(fr => !activeChatUsers.some(el => el.id === fr.id) && !currentChatRoomData?.InvitedUserID?.some(id => id === fr.id)).map(fr => {
-															return (
-																<div className="tabuser invitable flex-jc-sb flex-ai-cr w100">
-																	<div className="left flex-gap5 flex-ai-cr">
-																		<img src={fr.avatar} alt="" className="avatar" />
-																		<div className="info flex-column">
-																			<div className="name">{fr.username}</div>
-																			<div className={"status " + fr.status}>{fr.status}</div>
+														(() => {
+															let ret = friends.filter(fr => !activeChatUsers.some(el => el.id === fr.id) && !currentChatRoomData?.InvitedUserID?.some(id => id === fr.id)).map(fr => {
+																return (
+																	<div className="tabuser invitable flex-jc-sb flex-ai-cr w100">
+																		<div className="left flex-gap5 flex-ai-cr">
+																			<img src={fr.avatar} alt="" className="avatar" />
+																			<div className="info flex-column">
+																				<div className="name">{fr.username}</div>
+																				<div className={"status " + fr.status}>{fr.status}</div>
+																			</div>
+																		</div>
+																		<div className="right">
+																			<Button className="invitefriendtoprivateroom" onClick={() => {
+																				axios.post("/chat/Invite", { RoomID: activeChat?.db_chat_name, userID: fr.id })
+																					.finally(() => {
+																						getCurrentRoomData();
+																					})
+																			}}>
+																				Invite
+																			</Button>
 																		</div>
 																	</div>
-																	<div className="right">
-																		<Button className="invitefriendtoprivateroom" onClick={() => {
-																			axios.post("/chat/Invite", { RoomID: activeChat?.db_chat_name, userID: fr.id })
-																				.finally(() => {
-																					getCurrentRoomData();
-																				})
-																		}}>
-																			Invite
-																		</Button>
-																	</div>
-																</div>
-															)
-														})
+																)
+															})
+															if (ret.length)
+																return ret;
+															return <div className="empty d100 flex-center"><div className="inner">You Have No Friends To Invite</div></div>
+														})()
 													}
 												</div>
-												<div className="flex-column w100" style={{display: userType === "invited" ? "flex" : "none"}}>
+												<div className="flex-column d100" style={{display: userType === "invited" ? "flex" : "none"}}>
 													{
-														friends.filter(fr => currentChatRoomData?.InvitedUserID.some(id => id === fr.id)).map(fr => {
-															return (
-																<div className="tabuser invited w100">
-																	<div className="left flex-gap5 flex-ai-cr">
-																		<img src={fr.avatar} alt="" className="avatar" />
-																		<div className="info flex-column">
-																			<div className="name">{fr.username}</div>
-																			<div className={"status " + fr.status}>{fr.status}</div>
+														(() => {
+															let ret = friends.filter(fr => currentChatRoomData?.InvitedUserID.some(id => id === fr.id)).map(fr => {
+																return (
+																	<div className="tabuser invited w100">
+																		<div className="left flex-gap5 flex-ai-cr">
+																			<img src={fr.avatar} alt="" className="avatar" />
+																			<div className="info flex-column">
+																				<div className="name">{fr.username}</div>
+																				<div className={"status " + fr.status}>{fr.status}</div>
+																			</div>
 																		</div>
 																	</div>
-																</div>
-															)
-														})
+																)
+															})
+															if (ret.length)
+																return ret;
+															return <div className="empty d100 flex-center"><div className="inner">You Have No Friends With Pending Invites</div></div>
+														})()
 													}
 												</div>
 											</>
@@ -973,19 +1010,19 @@ const NavAndChatWrapper = () => {
 										// console.log({msg})
 										// console.log({other: msg.user.userID, ana: cookies.get("name"), ft: msg.user.userID == cookies.get("name")})
 										return (
-											<div className={"message " + (msg.userID != cookies.get("name") ? "notmine" : "mine")}>
+											<div className={"message " + (msg.userID != cookies.get("id") ? "notmine" : "mine")}>
 												{
 													<div className={"container flex flex-ai-fs flex-gap10"}>
 														{
-															msg.userID != cookies.get("name") ?
+															msg.userID != cookies.get("id") ?
 																<div className="profilepic flex-center">
 																	<img src={msg.avatar ? msg.avatar : ""} alt="user avatar" />
 																</div>
 															: <></>
 														}
 														<div className="message_text">
-															<ShowConditionally cond={msg.userID != cookies.get("name")}>
-																<p className="username">{msg.userID}</p>
+															<ShowConditionally cond={msg.userID != cookies.get("id")}>
+																<p className="username">{msg.username}</p>
 															</ShowConditionally>
 															{
 																msg.message
@@ -1010,7 +1047,7 @@ const NavAndChatWrapper = () => {
 								<input type="submit" hidden />
 								<div className="submit flex-center" ref={submitRef} onClick={() => {
 									if (textMessage.trim() != "") {
-										chatSocket.emit("saveChatRoom", { userID: cookies.get("name"), roomName: activeChat?.db_chat_name, message: textMessage})
+										chatSocket.emit("saveChatRoom", { username: cookies.get("name"), userID: cookies.get("id"), roomName: activeChat?.db_chat_name, message: textMessage })
 										setTextMessage("");
 									}
 									textAreaRef.current?.focus();
