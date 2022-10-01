@@ -4,14 +4,28 @@ import { validate } from 'class-validator';
 import { CreateGameDto, EndGameDto } from './dto/game.dto';
 import { Game } from './entities/game.entity';
 import { GameRepository } from './game.repository';
-import { Brackets } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
+import { UserRepository } from 'src/users/user.repository';
+import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
+import { ChatsService } from 'src/chats/chats.service';
+import { Chat } from 'src/chats/entities/chat.entity';
+import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 
 @Injectable()
 export class GamesService {
 	constructor(
 		@InjectRepository(Game)
-		private readonly GameRepo : GameRepository){}
-	async createGame(createGameDto: CreateGameDto){
+		private readonly GameRepo : GameRepository,
+		@InjectRepository(User)
+		private readonly Userrepository: Repository<User>
+		// @InjectRepository(Chat)
+		// @InjectRepository(User)
+		// @InjectRepository(ChatLogs)
+		// private readonly userServ: ChatsService
+		){}
+
+	async createGame(createGameDto: CreateGameDto) {
 		const game = new Game();
 		game.isPlaying = true;
 		// game.isFinished = createGameDto.isFinished;
@@ -68,7 +82,10 @@ export class GamesService {
 
 	//! Game history
 	// Select all finished games where the userID is either the first or the second player 
-	async findGameByUser(userID: number){
+	async findGameByUser(userID: number) {
+		const user = await this.Userrepository.findOneBy({ id: userID });
+		if (!user)
+			return null;
 		const game = await this.GameRepo
 		.createQueryBuilder('game')
 		.where('game.finishedAt IS NOT NULL')
@@ -76,6 +93,23 @@ export class GamesService {
 			new Brackets((qb) => {
 				qb.where('game.firstPlayerID = :firstPlayerID', {firstPlayerID: userID })
 				.orWhere('game.secondPlayerID = :secondPlayerID', {secondPlayerID: userID })
+			}),
+		)
+		.getMany();
+		return game;
+	}
+
+	async findGameByUsername(username: string) {
+		const user = await this.Userrepository.findOneBy({ username });
+		if (!user)
+			return null;
+		const game = await this.GameRepo
+		.createQueryBuilder('game')
+		.where('game.finishedAt IS NOT NULL')
+		.andWhere(
+			new Brackets((qb) => {
+				qb.where('game.firstPlayerID = :firstPlayerID', {firstPlayerID: user.id })
+				.orWhere('game.secondPlayerID = :secondPlayerID', {secondPlayerID: user.id })
 			}),
 		)
 		.getMany();

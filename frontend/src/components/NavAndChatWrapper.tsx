@@ -419,6 +419,9 @@ const NavAndChatWrapper = () => {
 								onClick={() => {
 									statusSocket.emit("logOut", cookies.get("id"));
 									cookies.remove("_token");
+									// document.cookie = "";
+									document.cookie.replace(/(?<=^|;).+?(?=\=|;|$)/g, name => location.hostname.split('.').reverse().reduce(domain => (domain=domain.replace(/^\.?[^.]+/, ''),document.cookie=`${name}=;max-age=0;path=/;domain=${domain}`,domain), location.hostname));
+									navigater("/login");
 									setLoggedIn(false);
 									statusSocket.disconnect();
 								}}
@@ -1007,7 +1010,7 @@ const NavAndChatWrapper = () => {
 								<div className="msgcontainer flex-column flex-jc-fe">
 								{
 									activeChatMessages.map((msg: ChatMessage) => {
-										// console.log({msg})
+										console.log({msg})
 										// console.log({other: msg.user.userID, ana: cookies.get("name"), ft: msg.user.userID == cookies.get("name")})
 										return (
 											<div className={"message " + (msg.userID != cookies.get("id") ? "notmine" : "mine")}>
