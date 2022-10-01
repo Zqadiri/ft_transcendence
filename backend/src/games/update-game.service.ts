@@ -98,6 +98,7 @@ export class UpdateGameService {
 			else if (score2 == 10)
 				this.server.to(room).emit("theWinner", 2);
 
+			this.server.local.emit("gameEnded");
 			this.gameCoordinates.delete(room);
 
 			await this.gameServ.endGame({
@@ -106,7 +107,6 @@ export class UpdateGameService {
 				gameId: id,
 				finishedAt: new Date()
 			});
-			this.server.local.emit("gameEnded");
 			this.#updateUsersAchievements(id);
 		}
 	}
