@@ -66,7 +66,7 @@ export class GameController {
         type: Game,
     })
     @Get()
-    async getGameById(@Query() query: {id: number | undefined }){
-		return await this.gameServ.findGameByid(query.id);
+    async getGameByUserId(@Query() query: {userId: number | undefined }){
+		return await this.gameServ.findGameByUserid(query.userId);
     }
 }

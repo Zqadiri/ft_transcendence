@@ -64,6 +64,17 @@ export class GamesService {
 		return game;
 	}
 
+	async findGameByUserid(userId: number) {
+
+		const game = await this.GameRepo
+		  .createQueryBuilder('game')
+		  .where("game.firstPlayerID = :id OR game.secondPlayerID = :id", { id: userId })
+		  .andWhere('game.isPlaying = :value', { value: true })
+		  .getOne();
+
+		return game;
+	}
+
 	//! Game history
 	// Select all finished games where the userID is either the first or the second player 
 	async findGameByUser(userID: number){
