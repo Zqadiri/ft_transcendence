@@ -1,16 +1,15 @@
 import axios, { AxiosResponse } from "axios";
 import { GameData } from "../../Interfaces/GameData.interface";
 import { LiveGame } from "../../Interfaces/LiveGame.interface";
+import { spectator } from "../../PingPong/Data/PingPong.contants";
 import { global } from "../../PingPong/Data/PingPong.d";
 
 export async	function	getGamesDataFromDatabase(setLiveGamesData: Function, setNoLiveGamesExist: Function)
 {
-	
 	try {
 		let		gameResp = await axios.get('/game/live');
 		let		gamesFirstPlayer: AxiosResponse<any, any>[] = [];
 		let		gamesSecondPlayer: AxiosResponse<any, any>[] = [];
-
 
 		for (let i = 0; i < gameResp.data.length; i++)
 		{
@@ -91,4 +90,24 @@ export	function 			updateAvailableGames(setAvailableGames: Function)
 	global.socket.off("gameEnded").on("gameEnded", () => {
 		setAvailableGames((current: number) => current - 1);
 	});
+}
+
+
+export function				setDataToJoinLiveGame(socketRoom: string, gameTheme: string)
+{
+	global.roomName = socketRoom;
+	global.playerId = spectator;
+	global.theme = gameTheme;
+	global.secondPlayerExist = true;
+	global.socket.disconnect().connect();
+}
+
+export	async	function	spectateGameFromChat(userId: number, navigate: Function)
+{
+	const	gameResp = await axios.get("/game?id=" + userId);
+
+	setDataToJoinLiveGame(gameResp.data.socketRoom, gameResp.data.theme);
+	global.socket.emit("joinSpecificRoom",  gameResp.data.socketRoom);
+
+	navigate("/play");
 }

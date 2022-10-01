@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Query } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { Game } from './entities/game.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -57,5 +57,16 @@ export class GameController {
 			return null;
 
         return games;
+    }
+
+	@ApiOperation({ summary: 'Get game data by id' })
+    @ApiResponse({
+        status: 200,
+        description: 'The found record',
+        type: Game,
+    })
+    @Get()
+    async getGameById(@Query() query: {id: number | undefined }){
+		return await this.gameServ.findGameByid(query.id);
     }
 }

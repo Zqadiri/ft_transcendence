@@ -3,18 +3,9 @@ import { useNavigate } from "react-router-dom";
 import "../../../styles/game-styling.scss";
 import { global } from "../PingPong/Data/PingPong.d";
 import { LiveGame } from "../Interfaces/LiveGame.interface";
-import { getGamesDataFromDatabase, updateAvailableGames, updateLiveGamesScore } from "./Utils/tools";
+import { getGamesDataFromDatabase, setDataToJoinLiveGame, updateAvailableGames, updateLiveGamesScore } from "./Utils/tools";
 import Timer from "./Timer";
 import { spectator } from "../PingPong/Data/PingPong.contants";
-
-function			setDataToJoinLiveGame(socketRoom: string, gameTheme: string)
-{
-	global.roomName = socketRoom;
-	global.playerId = spectator;
-	global.theme = gameTheme;
-	global.secondPlayerExist = true;
-	global.socket.disconnect().connect();
-}
 
 function			NoGamesFound(): JSX.Element
 {

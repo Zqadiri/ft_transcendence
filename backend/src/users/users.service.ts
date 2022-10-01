@@ -136,15 +136,8 @@ export class UsersService {
 
 			user.gameCounter += 1;
 			if (user.level === 0)
-			{
-				user.xp = 150;
 				user.level = 1;
-				if (currentPlayerScore === 10)
-					user.wins += 1;
-				else
-					user.losses += 1;
-			}
-			else if (currentPlayerScore === 10)
+			if (currentPlayerScore === 10)
 			{
 				user.xp += 150;
 				user.wins += 1;
@@ -153,7 +146,11 @@ export class UsersService {
 					user.level -= 1;
 			}
 			else if (currentPlayerScore < 10)
+			{
+				if (user.level === 0)
+					user.xp = 150;
 				user.losses += 1;
+			}
 
 			this.#unlockUserAchievements(user, currentPlayerScore, opponentScore, flawLessWinStreakAchieved);
 
