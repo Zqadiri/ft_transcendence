@@ -41,14 +41,12 @@ export class GamesService {
 	async endGame(end: EndGameDto){
         const game = await this.findGameByid(end.gameId);
 	
-		console.log(`game data ${JSON.stringify(game)}`);
-		console.log(`game data ${JSON.stringify(game)}`);
 		game.firstPlayerScore = end.firstPlayerScore;
 		game.secondPlayerScore = end.secondPlayerScore;
         game.isPlaying = false;
         game.finishedAt = end.finishedAt;
 
-        return this.GameRepo.update(end.gameId, game);
+        return await this.GameRepo.save(game);
     }
 
 	async remove(gameID: number){
