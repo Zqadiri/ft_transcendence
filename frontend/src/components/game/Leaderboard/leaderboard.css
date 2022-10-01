@@ -1,0 +1,180 @@
+:root {
+	--padding: 2em
+}
+
+.leaderboard {
+	width: clamp(318px, 85vw, 1760px);
+	margin-inline: auto;
+	margin-top: 8em;
+	min-height: 60vh;
+	border-radius: 20px;
+}
+
+.search-container {
+	width: 100%;
+	text-align: center;
+	margin: 0 auto 1em;
+}
+
+.ld-search {
+	background-color: transparent;
+	border: none;
+	color: #205375;
+	padding: .7em 1.2em;
+	font-size: 1.05em;
+	font-weight: 500;
+}
+
+.ld-search::placeholder {
+	/* Chrome, Firefox, Opera, Safari 10.1+ */
+	color: #2053758d;
+	opacity: 1;
+	/* Firefox */
+}
+
+.ld-search:-ms-input-placeholder {
+	/* Internet Explorer 10-11 */
+	color: #2053758d;
+}
+
+.ld-search::-ms-input-placeholder {
+	/* Microsoft Edge */
+	color: #2053758d;
+}
+
+.ld-search:focus {
+	outline: none;
+}
+
+.ld-content {
+	width: 100%
+}
+
+.ld-content tr {
+	display: flex;
+	align-items: center;
+	gap: 1.2em
+}
+
+.ld-content tr > * {
+	flex: 1;
+}
+
+.ld-content tr td {
+	flex-shrink: 0;
+	flex-grow: 1;
+}
+
+.ld-content thead {
+	margin-bottom: 1em;
+	display: block;
+	background-color: #205375;
+	padding: .7em var(--padding);
+	border-radius: 20px;
+}
+
+.ld-content thead td {
+	font-weight: 700;
+	font-size: 1.2em;
+	color: white
+}
+
+.ld-content tbody tr {
+	background-color: white;
+	padding: 1.2em var(--padding);
+	margin-bottom: 1.5em;
+	border-radius: 20px;
+	font-weight: 500;
+	font-size: .95em;
+	color: #205375;
+	box-shadow: 0px 10px 20px #e0e0e0;
+}
+
+.ld-content tbody .ld-player {
+	display: flex;
+	align-items: center;
+}
+
+.ld-content .ld-player {
+	flex-basis: 30%;
+}
+
+.ld-content .avatar {
+	width: 3.5em;
+	height: 3.5em;
+}
+
+.ld-content .avatar img {
+	width: 100%;
+	border-radius: 100%;
+	background-color: white;
+	border: 2px solid white;
+	outline: 1px solid #205375;
+}
+
+.ld-content .username {
+	margin-left: 1.3em;
+	line-height: 1;
+	width: 52%
+}
+
+.ld-content .username h3 {
+	font-weight: 500;
+	text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+	max-width: 12ch;
+}
+
+.ld-content tbody .ld-rank h3 {
+    font-size: 1.2em;
+    font-weight: 800;
+    line-height: 1;
+    margin-left: 1.1em;
+}
+
+.bounce-loader {
+	min-height: 50vh;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ld-content tbody .rank1 h3 {
+	color: #e9ce2c;
+	text-shadow: 0 0 10px #e9ce2c;
+}
+
+.ld-content tbody .rank2 h3 {
+	color: #adb5bd;
+	text-shadow: 0 0 10px #adb5bd;
+}
+
+.ld-content tbody .rank3 h3 {
+	color: #bc8a5f;
+	text-shadow: 0 0 10px #bc8a5f;
+}
+
+@media (max-width: 980px)
+{
+	.ld-level {
+		display: none;
+	}
+}
+
+@media (max-width: 600px)
+{
+	.ld-wins {
+		display: none;
+	}
+}
+
+@media (max-width: 490px)
+{
+	.ld-xp {
+		display: none;
+	}
+	.ld-content .username h3 {
+		max-width: 8ch;
+	}
+}

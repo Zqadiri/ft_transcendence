@@ -1,0 +1,15 @@
+@import './palette.scss';
+
+.userprofile {
+	padding: 10px;
+	.leftpannel {
+		.imagecontainer {
+			.image {
+				$dim: 100px;
+				height: $dim;
+				width: $dim;
+				border-radius: 100%;
+			}
+		}
+	}
+}

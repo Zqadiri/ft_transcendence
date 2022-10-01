@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Websockets Client</title>
+    <link href="/style.css" rel="stylesheet">
+    <link href="https://unpkg.com/vue-simple-notify/dist/vue-simple-notify.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-simple-notify/dist/vue-simple-notify.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <main id="v-app">
+        <section class="chat">
+       
+            <!-- Tabs -->
+            <div class="left-panel">
+                            <!-- Create room test -->
+                <!-- <div class="container">
+                    <form action="action_page.php">
+                    
+                        <label>Room Name</label>
+                        <input v-model="name" type="text" placeholder="Chat room name..">
+                    
+                    
+                        <label for="status">Status</label>
+                        <select v-model="status" id="status" name="status">
+                        <option value="public">Public</option>
+                        <option value="protected">Protected</option>
+                        <option value="private">Private</option>
+                        </select>
+
+                        <label>password</label>
+                        <input v-model="password" type="password">
+                    
+                    
+                        <button type="submit" @click.prevent="createchatroom()">Create</button>
+                    
+                    </form>
+                </div> -->
+
+                <h1>Rooms</h1>
+                <div class="tab-row">
+                    <button class="tab-btn" :class="{ active: activeRoom == 'general' }" @click="activeRoom = 'general'">General</button>
+                    <button class="tab-btn" :class="{ active: activeRoom == 'random' }" @click="activeRoom = 'random'">Random</button>
+                    <button class="tab-btn" :class="{ active: activeRoom == 'food' }" @click="activeRoom = 'food'">food</button>
+                </div>
+
+                <div class="tab-row">
+                    Status: {{ isMemberOfActiveRoom ? 'Joined' : 'NOT Joined' }} <button @click="toggleRoomMembership()">{{ isMemberOfActiveRoom ? 'Leave' : 'Join' }}</button>
+                </div>
+
+            </div>
+            
+            <div class= "right-panel"> 
+                <div class="messagee-container">
+                  <div v-for="msg of messages[activeRoom]">
+                    <strong>{{ msg.userID }}:</strong> {{ msg.message }}
+                  </div>
+            </div>
+          
+            <div class="message-input">
+                <form>
+                  <label>Message: </label>
+                  <input v-model="text" type="text"/>
+        
+                  <button type="submit" @click.prevent="sendChatMessage()">Send</button>
+                </form>
+              </div>
+
+            <!-- /Tabs -->
+        </section>
+    </main>
+    <script>
+        Vue.component('alerts-component', VueSimpleNotify.VueSimpleNotify);
+        var app = new Vue({
+            el: '#v-app',
+            data: {
+                name: '',
+                status: '',
+                password: '',
+                username: '',
+                text: '',
+                messages: {
+                    general: [],
+                    random: [],
+                    food: []
+                },
+                socket: { chat: null },
+                activeRoom: '',
+                rooms: {
+                    general: false,
+                    random: false,
+                    food: false
+                }
+            },
+            methods: {
+                sendChatMessage() {
+                    if (this.isMemberOfActiveRoom) {
+                        this.socket.chat.emit('saveChatRoom', { userID: this.username, roomName: this.activeRoom, message: this.text });
+                        this.text = "";
+                    } else {
+                        alert('You must join the room before sending messages!');
+                    }
+                },
+                receiveChatMessage(msg) {
+                    this.messages[msg.roomName].push(msg);
+                },
+                toggleRoomMembership() {
+                    if (this.isMemberOfActiveRoom) {
+                        // this.socket.chat.emit('leaveRoom', this.activeRoom);
+                        this.socket.chat.emit('leaveRoom', {RoomID: this.activeRoom, username: this.username });
+                    } else {
+                        this.socket.chat.emit('joinRoom', { name: this.activeRoom, password: null, username: this.username });
+                        console.log(this.activeRoom);
+                        //this.socket.chat.emit('joinRoom', this.activeRoom);
+
+                        this.socket.chat.emit('RoomMessages', this.activeRoom, (response) => {
+                            this.messages[response.roomName] = response;
+                        });
+
+                    }
+                }
+            },
+            computed: {
+                isMemberOfActiveRoom() {
+                    return this.rooms[this.activeRoom];
+                }
+            },
+            
+            
+            created() {
+                this.username = prompt('Enter your username:');
+
+                this.socket.chat = io('http://localhost:3000/chatNamespace');
+                this.socket.chat.on('messageToRoom', (msg) => {
+                    this.receiveChatMessage(msg);
+                });
+                this.socket.chat.on('connect', () => {
+                    //this.toggleRoomMembership();
+                });
+
+                this.socket.chat.on('joinedRoom', (roomName) => {
+                    this.rooms[roomName] = true;
+                });
+                this.socket.chat.on('leftRoom', (roomName) => {
+                    this.rooms[roomName] = false;
+                });
+
+            }
+        });
+    
+    </script>
+</body>
+</html>
