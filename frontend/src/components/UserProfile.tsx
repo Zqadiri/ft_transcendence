@@ -33,6 +33,7 @@ const UserProfile = () => {
 	let params = useParams();
 	const [user, setUser] = useState<User | null | undefined>(null);
 	const [thisuser, setThisUser] = useState<User | null | undefined>(null);
+	const [usermh, setUsermh] = useState(null);
 
 	const friendOp = (endpoint: string, u: User | null | undefined) => {
 		if (u) {
@@ -44,6 +45,10 @@ const UserProfile = () => {
 	}
 
 	const updateUserProfile = (prm: Readonly<Params<string>>) => {
+		axios.get("/game/get_match_history?name=" + prm.userId)
+		.then((res) => {
+			setUsermh(res.data)
+		})
 		axios.get("/users?name=" + prm.userId)
 		.then((res) => {
 			console.log({user: res});
@@ -69,7 +74,7 @@ const UserProfile = () => {
 	}, [params])
 
 	useEffect(() => {
-		console.log({user, thisuser})
+		console.log({user, thisuser, usermh})
 	}, [user, thisuser])
 	// console.log({"cookies.get(\"name\")": cookies.get("name")})
 	if (params.userId === cookies.get("name")) {
