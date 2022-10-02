@@ -4,6 +4,7 @@ import { Navigate, Params, useParams } from "react-router-dom";
 import { cookies, ShowConditionally } from "./util";
 import '../styles/userprofile.scss'
 import Button from "./Button";
+import UserOperationsButtons from "./UserOperationsButtons";
 
 export interface User {
 	id: number;
@@ -33,17 +34,15 @@ const UserProfile = () => {
 	let params = useParams();
 	const [user, setUser] = useState<User | null | undefined>(null);
 	const [thisuser, setThisUser] = useState<User | null | undefined>(null);
+	const [usermh, setUsermh] = useState(null);
 
-	const friendOp = (endpoint: string, u: User | null | undefined) => {
-		if (u) {
-			axios.post("/users" + endpoint, { id: u.id })
-			.finally(() => {
-				updateUserProfile(params);
-			})
-		}
-	}
+
 
 	const updateUserProfile = (prm: Readonly<Params<string>>) => {
+		axios.get("/game/get_match_history?name=" + prm.userId)
+		.then((res) => {
+			setUsermh(res.data)
+		})
 		axios.get("/users?name=" + prm.userId)
 		.then((res) => {
 			console.log({user: res});
@@ -69,7 +68,7 @@ const UserProfile = () => {
 	}, [params])
 
 	useEffect(() => {
-		console.log({user, thisuser})
+		console.log({user, thisuser, usermh})
 	}, [user, thisuser])
 	// console.log({"cookies.get(\"name\")": cookies.get("name")})
 	if (params.userId === cookies.get("name")) {
@@ -77,58 +76,24 @@ const UserProfile = () => {
 	}
 	return (
 		<div className="userprofile d100">
-			{/* <Button>Add Friend</Button> */}
 			<ShowConditionally cond={user && thisuser}>
 				<>
-					<div className="leftpannel">
-						<div className="imagecontainer">
-							<div className="image" style={{ background: `url(${user?.avatar})` }}></div>
+					<div className="top">
+						<div className="background w100"></div>
+						<div className="activearea w100 flex-jc-sb flex-ai-fs">
+							<div className="left flex-center-column">
+								<div className="imagecontainer flex-center">
+									{/* <div className="image" style={{ background: `url(${user?.avatar})` }}></div> */}
+									<div className="before flex-center">
+										<img src={user?.avatar} alt="Profile Picture" className="image" />
+									</div>
+								</div>
+								<div className="namecontainer flex-center"><h2 className="name">{user?.username}</h2></div>
+							</div>
+							<div className="right flex-center flex-gap5">
+								<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
+							</div>
 						</div>
-						<div className="namecontainer"><h2 className="name">{user?.username}</h2></div>
-					</div>
-					<div className="rightpannel">
-						<ShowConditionally cond={!user?.blockedID.includes(parseInt(cookies.get("id")))}>
-							<>
-								<ShowConditionally cond={!thisuser?.blockedID.includes(user?.id ? user.id : 0)}>
-									<>
-										<ShowConditionally cond={!user?.FriendsID.includes(parseInt(cookies.get("id")))}>
-											<>
-												<ShowConditionally cond={!user?.incomingFRID.includes(parseInt(cookies.get("id")))}>
-													<>
-														<ShowConditionally cond={!user?.outgoingFRID.includes(parseInt(cookies.get("id")))}>
-															<Button className="mutate sendfr" onClick={() => {
-																friendOp("/add_friend", user);
-															}}>Send Friend Request</Button>
-															<>
-																<Button className="mutate acceptfr" onClick={() => {
-																	friendOp("/accept_friend", user);
-																}}>Accept Friend Request</Button>
-																<Button className="mutate declinefr" onClick={() => {
-																	friendOp("/decline_friend", user);
-																}}>Decline Friend Request</Button>
-															</>
-														</ShowConditionally>
-													</>
-													<Button className="mutate cancelfr" onClick={() => {
-														friendOp("/cancel_friend", user);
-													}}>Cancel Friend Request</Button>
-												</ShowConditionally>
-											</>
-											<Button className="mutate unfriend" onClick={() => {
-												friendOp("/remove_friend", user);
-											}}>Unfriend</Button>
-										</ShowConditionally>
-										<Button className="mutate block" onClick={() => {
-											friendOp("/block_user", user);
-										}}>Block User</Button>
-									</>
-									<Button className="mutate unblock" onClick={() => {
-										friendOp("/unblock_user", user);
-									}}>Unblock User</Button>
-								</ShowConditionally>
-							</>
-							<Button>This User Has Blocked You</Button>
-						</ShowConditionally>
 					</div>
 				</>
 				<ShowConditionally cond={user === undefined}>

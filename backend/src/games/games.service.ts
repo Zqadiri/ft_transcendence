@@ -4,14 +4,28 @@ import { validate } from 'class-validator';
 import { CreateGameDto, EndGameDto } from './dto/game.dto';
 import { Game } from './entities/game.entity';
 import { GameRepository } from './game.repository';
-import { Brackets } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
+import { UserRepository } from 'src/users/user.repository';
+import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
+import { ChatsService } from 'src/chats/chats.service';
+import { Chat } from 'src/chats/entities/chat.entity';
+import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 
 @Injectable()
 export class GamesService {
 	constructor(
 		@InjectRepository(Game)
-		private readonly GameRepo : GameRepository){}
-	async createGame(createGameDto: CreateGameDto){
+		private readonly GameRepo : GameRepository,
+		@InjectRepository(User)
+		private readonly Userrepository: Repository<User>
+		// @InjectRepository(Chat)
+		// @InjectRepository(User)
+		// @InjectRepository(ChatLogs)
+		// private readonly userServ: ChatsService
+		){}
+
+	async createGame(createGameDto: CreateGameDto) {
 		const game = new Game();
 		game.isPlaying = true;
 		game.firstPlayerID = createGameDto.firstPlayerID;
@@ -40,14 +54,12 @@ export class GamesService {
 	async endGame(end: EndGameDto){
         const game = await this.findGameByid(end.gameId);
 	
-		console.log(`game data ${JSON.stringify(game)}`);
-		console.log(`game data ${JSON.stringify(game)}`);
 		game.firstPlayerScore = end.firstPlayerScore;
 		game.secondPlayerScore = end.secondPlayerScore;
         game.isPlaying = false;
         game.finishedAt = end.finishedAt;
 
-        return this.GameRepo.update(end.gameId, game);
+        return await this.GameRepo.save(game);
     }
 
 	async remove(gameID: number){
@@ -65,8 +77,23 @@ export class GamesService {
 		return game;
 	}
 
+	async findGameByUserid(userId: number) {
+
+		const game = await this.GameRepo
+		  .createQueryBuilder('game')
+		  .where("game.firstPlayerID = :id OR game.secondPlayerID = :id", { id: userId })
+		  .andWhere('game.isPlaying = :value', { value: true })
+		  .getOne();
+
+		return game;
+	}
+
 	//! Game history
-	async findGameByUser(userID: number){
+	// Select all finished games where the userID is either the first or the second player 
+	async findGameByUser(userID: number) {
+		const user = await this.Userrepository.findOneBy({ id: userID });
+		if (!user)
+			return null;
 		const game = await this.GameRepo
 		.createQueryBuilder('game')
 		.where('game.finishedAt IS NOT NULL')
@@ -74,6 +101,23 @@ export class GamesService {
 			new Brackets((qb) => {
 				qb.where('game.firstPlayerID = :firstPlayerID', {firstPlayerID: userID })
 				.orWhere('game.secondPlayerID = :secondPlayerID', {secondPlayerID: userID })
+			}),
+		)
+		.getMany();
+		return game;
+	}
+
+	async findGameByUsername(username: string) {
+		const user = await this.Userrepository.findOneBy({ username });
+		if (!user)
+			return null;
+		const game = await this.GameRepo
+		.createQueryBuilder('game')
+		.where('game.finishedAt IS NOT NULL')
+		.andWhere(
+			new Brackets((qb) => {
+				qb.where('game.firstPlayerID = :firstPlayerID', {firstPlayerID: user.id })
+				.orWhere('game.secondPlayerID = :secondPlayerID', {secondPlayerID: user.id })
 			}),
 		)
 		.getMany();

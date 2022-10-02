@@ -15,7 +15,6 @@ import { playerOne, playerTwo, spectator } from './Data/PingPong.contants';
 import { statusSocket } from "../Matching/Matching";
 import { cookies } from "../../util";
 
-
 export let gameContext = createContext<any>({});
 
 export function splitPaddleControl()

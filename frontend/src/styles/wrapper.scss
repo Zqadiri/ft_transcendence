@@ -605,9 +605,12 @@
 								.invite:active {
 									background-color: orange;
 								}
-								// .view {
-									
-								// }
+								.spectate {
+									background-color: yellow;
+								}
+								.spectate:active {
+									background-color: orange;
+								}
 							}
 							.avatar {
 								border-radius: 100%;

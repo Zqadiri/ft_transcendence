@@ -16,6 +16,7 @@ import PingPong from "./game/PingPong/PingPong";
 import MuteBanControls from "./MuteBanControls";
 import UserProfileIcon from "./UserProfileIcon";
 import { statusSocket } from "./game/Matching/Matching";
+import { spectateGameFromChat } from "./game/LiveGames/Utils/tools";
 
 console.log("Global console.log()");
 
@@ -419,6 +420,9 @@ const NavAndChatWrapper = () => {
 								onClick={() => {
 									statusSocket.emit("logOut", cookies.get("id"));
 									cookies.remove("_token");
+									// document.cookie = "";
+									document.cookie.replace(/(?<=^|;).+?(?=\=|;|$)/g, name => location.hostname.split('.').reverse().reduce(domain => (domain=domain.replace(/^\.?[^.]+/, ''),document.cookie=`${name}=;max-age=0;path=/;domain=${domain}`,domain), location.hostname));
+									navigater("/login");
 									setLoggedIn(false);
 									statusSocket.disconnect();
 								}}
@@ -504,9 +508,18 @@ const NavAndChatWrapper = () => {
 																navigater(`/profile/${fr.username}`);
 																setChatIsOpen(false);
 															}}>View Profile</Button>
-															<Button className="invite" onClick={(e) => {
-																e.stopPropagation();
-															}}>Invite To Play</Button>
+															<ShowConditionally cond={fr.status === "ingame"}>
+																<Button className="spectate" onClick={(e) => {
+																	e.stopPropagation();
+																	spectateGameFromChat(fr.id, navigater);
+																}}>Spectate</Button>
+															</ShowConditionally>
+															<ShowConditionally cond={fr.status === "online"}>
+																<Button className="invite" onClick={(e) => {
+																	e.stopPropagation();
+																}}>Invite To Play</Button>
+															</ShowConditionally>
+
 														</div>
 													</div>
 												)
@@ -767,7 +780,11 @@ const NavAndChatWrapper = () => {
 									}}>
 										<i className="fa-solid fa-user"></i>
 									</div>
-									<div></div>
+									<div className="invite" onClick={() => {
+										
+									}}>
+										<i className="fa-solid fa-table-tennis-paddle-ball"></i>
+									</div>
 								</ShowConditionally>
 							</div>
 							<div className="chatinterfaceusers d100 flex-jc-fs flex-ai-cr flex-column flex-gap5" style={{display: activeTab === "chatinterfaceusers" ? "flex" : "none"}}>
@@ -1007,7 +1024,7 @@ const NavAndChatWrapper = () => {
 								<div className="msgcontainer flex-column flex-jc-fe">
 								{
 									activeChatMessages.map((msg: ChatMessage) => {
-										// console.log({msg})
+										console.log({msg})
 										// console.log({other: msg.user.userID, ana: cookies.get("name"), ft: msg.user.userID == cookies.get("name")})
 										return (
 											<div className={"message " + (msg.userID != cookies.get("id") ? "notmine" : "mine")}>
@@ -1041,18 +1058,27 @@ const NavAndChatWrapper = () => {
 								if (submitRef.current)
 									submitRef.current.click();
 							}}>
-								<textarea className="text_input" value={textMessage} ref={textAreaRef} onChange={(e) => {
+								<textarea className="text_input" value={textMessage} style={{...(textMessage.length > 5000 && {border: "2px solid orangered"}), transition: "border 0.3s ease"}} ref={textAreaRef} onChange={(e) => {
 									setTextMessage(e.target.value);
+									
 								}}></textarea>
 								<input type="submit" hidden />
-								<div className="submit flex-center" ref={submitRef} onClick={() => {
+								<div className="submit flex-center" ref={submitRef} style={{...(textMessage.length > 5000 && {backgroundColor: "orangered"}), transition: "background-color 0.3s ease"}} onClick={() => {
 									if (textMessage.trim() != "") {
-										chatSocket.emit("saveChatRoom", { username: cookies.get("name"), userID: cookies.get("id"), roomName: activeChat?.db_chat_name, message: textMessage })
-										setTextMessage("");
+										if (textMessage.length <= 5000) {
+											chatSocket.emit("saveChatRoom", { username: cookies.get("name"), userID: cookies.get("id"), roomName: activeChat?.db_chat_name, message: textMessage })
+											setTextMessage("");
+										}
+										else {
+											alert("You're over the 5000 character limit! Please make your message shorter")
+										}
 									}
 									textAreaRef.current?.focus();
 								}}>
-									<i className="fa-solid fa-paper-plane"></i>
+									<ShowConditionally cond={textMessage.length > 5000}>
+										<i style={{color: "rgba(255, 255, 255, 0.8)"}} className="fa-solid fa-ban"></i>
+										<i className="fa-solid fa-paper-plane"></i>
+									</ShowConditionally>
 								</div>
 							</form>
 						</div>

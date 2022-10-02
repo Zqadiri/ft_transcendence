@@ -73,19 +73,19 @@ export class ChatsService {
     return (ret);
   }
 
-  async checkIfDmExistedUsername(username1: string, username2: string)
-  {
-    const ret = await this.Chatrepository
-    .createQueryBuilder()
-    .where('type=:type', { type: ChatTypes.DM })
-    .andWhere('name=:name or name=:name2', {
-      name: `${username1},${username2}`,
-      name2: `${username2},${username1}`,
-    })
-    .getMany();
+//   async checkIfDmExistedUsername(username1: string, username2: string)
+//   {
+//     const ret = await this.Chatrepository
+//     .createQueryBuilder()
+//     .where('type=:type', { type: ChatTypes.DM })
+//     .andWhere('name=:name or name=:name2', {
+//       name: `${username1},${username2}`,
+//       name2: `${username2},${username1}`,
+//     })
+//     .getMany();
 
-    return (ret);
-  }
+//     return (ret);
+//   }
 
   async CreateDm(dm: CreateDmDto)
   {
@@ -107,7 +107,7 @@ export class ChatsService {
       const directmessage = this.Chatrepository.create({
         ownerID: user1.id,
         userID: [user1.id, user2.id],
-        name:`${user1.username},${user2.username}`,
+        name:`${user1.id},${user2.id}`,
         type: ChatTypes.DM,
         status: RoomStatus.PRIVATE
       });
@@ -128,7 +128,7 @@ export class ChatsService {
       throw new BadRequestException({code: 'invalid id', message: `User with '${dm.userID2}' does not exist`})
     }
 
-    const existeddm = await this.checkIfDmExistedUsername(user1.username, user2.username);
+    const existeddm = await this.checkIfDmExisted(user1.id, user2.id);
     if (existeddm.length)
     {
       await this.Chatrepository
@@ -137,8 +137,8 @@ export class ChatsService {
       .from(Chat)
       .where('type=:type', { type: ChatTypes.DM })
       .andWhere('name=:name or name=:name2', {
-        name: `${user1.username},${user2.username}`,
-        name2: `${user2.username},${user1.username}`,
+        name: `${user1.id},${user2.id}`,
+        name2: `${user2.id},${user1.id}`,
       })
       .execute()
     }

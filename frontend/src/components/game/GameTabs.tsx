@@ -1,6 +1,6 @@
 import "../../styles/game-styling.scss";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { SyntheticEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Matching from "./Matching/Matching"
 import LiveGames from "./LiveGames/LiveGames";
 import Leaderboard from "./Leaderboard/Leaderboard";
