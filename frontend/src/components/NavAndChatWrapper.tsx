@@ -16,6 +16,7 @@ import PingPong from "./game/PingPong/PingPong";
 import MuteBanControls from "./MuteBanControls";
 import UserProfileIcon from "./UserProfileIcon";
 import { statusSocket } from "./game/Matching/Matching";
+import { spectateGameFromChat } from "./game/LiveGames/Utils/tools";
 
 console.log("Global console.log()");
 
@@ -510,6 +511,7 @@ const NavAndChatWrapper = () => {
 															<ShowConditionally cond={fr.status === "ingame"}>
 																<Button className="spectate" onClick={(e) => {
 																	e.stopPropagation();
+																	spectateGameFromChat(fr.id, navigater);
 																}}>Spectate</Button>
 															</ShowConditionally>
 															<ShowConditionally cond={fr.status === "online"}>
@@ -778,7 +780,11 @@ const NavAndChatWrapper = () => {
 									}}>
 										<i className="fa-solid fa-user"></i>
 									</div>
-									<div></div>
+									<div className="invite" onClick={() => {
+										
+									}}>
+										<i className="fa-solid fa-table-tennis-paddle-ball"></i>
+									</div>
 								</ShowConditionally>
 							</div>
 							<div className="chatinterfaceusers d100 flex-jc-fs flex-ai-cr flex-column flex-gap5" style={{display: activeTab === "chatinterfaceusers" ? "flex" : "none"}}>

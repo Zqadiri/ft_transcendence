@@ -137,7 +137,7 @@
 	align-items: center;
 }
 
-.flex-center-column {
+.flex-center-column, .flex-column-center {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -239,7 +239,7 @@ body {
 	  }
 	  &::-webkit-scrollbar-button {
 		width: 43px;
-		height: 43px;
+		height: 0px;
 	  }
 	  &::-webkit-scrollbar-thumb {
 		background: $dark_blue;

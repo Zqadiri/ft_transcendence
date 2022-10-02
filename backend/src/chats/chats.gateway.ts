@@ -13,6 +13,7 @@ import { find } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm/repository/Repository';
+import { JwtService } from '@nestjs/jwt';
 
 
 @WebSocketGateway(
@@ -32,7 +33,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
   private logger: Logger = new Logger('ChatsGateway');
 
   constructor(private readonly chatsService: ChatsService, private readonly chatLogsService: ChatLogsService,
-    private readonly UsersService : UsersService ) {}
+    private readonly UsersService : UsersService, private readonly jwtService: JwtService ) {}
 
 
   afterInit(server: Server) {
@@ -81,6 +82,23 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection,  OnGate
 		client.emit('messageToRoomAck', message);
 	}
 
+	async validateJwt(token: string) {
+		try {
+			let decoded = await this.jwtService.verifyAsync(token, { secret: String(process.env.JWT_SECRET_KEY) });
+			// console.log({decoded})
+			if (decoded)
+				return decoded;
+			return false;
+		} catch {
+			return false;
+		}
+	}
+
+	@SubscribeMessage('validateJwtSyn')
+	async checkJwt(client: Socket, token: string) {
+		client.emit('validateJwtAck', await this.validateJwt(token));
+	}
+	
   @SubscribeMessage('socketJoinRoom')
   async handleJoinRoom(client: Socket, roomName: string)
   {
