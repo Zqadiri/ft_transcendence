@@ -73,7 +73,6 @@ const UserProfile = (props: { self: boolean }) => {
 	if (params.userId === cookies.get("name")) {
 		return <Navigate to={"/profile"}></Navigate>
 	}
-	// <UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
 	return (
 		<div className="userprofile d100">
 			<ShowConditionally cond={user && thisuser}>
@@ -91,6 +90,7 @@ const UserProfile = (props: { self: boolean }) => {
 								<div className="namecontainer flex-center"><h2 className="name">{user?.username}</h2></div>
 							</div>
 							<div className="right flex-center flex-gap5">
+								<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
 							</div>
 						</div>
 					</div>
