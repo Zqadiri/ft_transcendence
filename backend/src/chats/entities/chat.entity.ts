@@ -31,7 +31,6 @@ export class Chat{
 
 	@Column({
 		enum: ['dm', 'chatRoom'],
-		//nullable: false
 	})
 	type: string;
 
@@ -84,14 +83,4 @@ export class Chat{
 		if (this.password)
         	this.password = await bcrypt.hash(this.password, 10);  
     }
-
-	// @BeforeInsert()
-	// async hashPassword(){
-	// 	try{
-	// 		this.password = await bcrypt.hash(this.password, process.env.SALT);
-	// 	}
-	// 	catch(err){
-	// 		throw InternalServerErrorException;
-	// 	}
-	// }
 }

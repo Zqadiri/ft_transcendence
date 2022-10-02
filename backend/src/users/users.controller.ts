@@ -79,7 +79,7 @@ export class UsersController {
 		console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
-		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id);
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
 		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
@@ -103,7 +103,7 @@ export class UsersController {
 		console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
-		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id);
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
 		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
@@ -123,7 +123,7 @@ export class UsersController {
 		console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
-		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id);
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
 		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
@@ -148,7 +148,7 @@ export class UsersController {
 		console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
-		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id);
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
 		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
@@ -170,7 +170,7 @@ export class UsersController {
 		console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
-		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id);
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
 		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
@@ -193,7 +193,7 @@ export class UsersController {
 		console.log(newFriend);
 		if (!newFriend)
 			throw new UnauthorizedException('NOT a User');
-		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id); 
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
 		await this.chatsService.RemoveDm({userID1: user.id, userID2: newFriend.id});
@@ -256,21 +256,6 @@ export class UsersController {
 		res.send(friends);
 	}
 
-
-	// @ApiOperation({ summary: 'get friends list'})
-	// @Get('/blocked_list')
-	// async blockedFriend(@Req() req: any, @Res() res: any){
-	// 	const user = this.usersService.getUserById(58526); //! switch it to req.user.id
-	// 	if (!user)
-	// 		throw new BadRequestException("user does not exist");
-	// 	const friends = await this.userRepo
-	// 	.createQueryBuilder("db_user")
-	// 	.select(['db_user.username', 'db_user.avatar' ,'db_user.id', 'db_user.status'])
-	// 	.where(":id = ANY (db_user.blockedID)", {id: 58526})
-	// 	.getMany()
-	// 	res.send(friends);
-	// }
-
 	@UseGuards(jwtAuthGuard)
 	@ApiOperation({ summary: 'get friends list'})
     @Get('/blocked_list')
@@ -284,20 +269,7 @@ export class UsersController {
              console.error('get friends list', e);
              throw e;
          }
-    }
-
-
-	// @ApiOperation({ summary: 'Get user data by id' })
-    // @ApiResponse({
-    //     status: 200,
-    //     description: 'The found record',
-    //     type: User,
-    // })
-    // @Get()
-    // async getUserData(@Query() query: { id: number }){
-	// 	console.log(`the get user by name : ${query.id}`);
-    //     return await this.usersService.getUserById(query.id);
-    // }  
+    } 
 
 	@ApiOperation({ summary: 'Get user data by name or id' })
     @ApiResponse({

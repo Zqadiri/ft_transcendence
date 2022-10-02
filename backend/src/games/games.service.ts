@@ -14,7 +14,6 @@ export class GamesService {
 	async createGame(createGameDto: CreateGameDto){
 		const game = new Game();
 		game.isPlaying = true;
-		// game.isFinished = createGameDto.isFinished;
 		game.firstPlayerID = createGameDto.firstPlayerID;
 		game.secondPlayerID = createGameDto.secondPlayerID;
 		game.theme = createGameDto.theme;
@@ -67,7 +66,6 @@ export class GamesService {
 	}
 
 	//! Game history
-	// Select all finished games where the userID is either the first or the second player 
 	async findGameByUser(userID: number){
 		const game = await this.GameRepo
 		.createQueryBuilder('game')

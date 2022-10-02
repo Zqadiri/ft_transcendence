@@ -24,9 +24,6 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, swaggerConfig);
 	SwaggerModule.setup('api', app, document);
 	app.use(cookieParser());
-	//   app.useStaticAssets(join(__dirname, '..', 'static'));
-	//   app.setBaseViewsDir(join(__dirname, '..', 'views'));
-	//   app.setViewEngine('hbs');
 	const fs = require("fs"); // Or `import fs from "fs";` with ESM
 	if (!fs.existsSync(".env")) {
 		console.error("ENV FILE DOES NOT EXIST");

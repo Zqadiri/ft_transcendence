@@ -6,6 +6,7 @@ import { BadRequestException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { ApiTags, ApiOperation, ApiResponse} from '@nestjs/swagger';
 import { jwtAuthGuard } from './jwt-auth.guard';
+
 /*
 	Controllers are responsible for handling incoming 
 	requests and returning responses to the client.
@@ -44,10 +45,9 @@ export class AuthController
 			console.log('Player exists and 2FA is enabled');
 			await this.authService.sendJWTtoken(playerExists, response);
 		}
-		// else if (playerExists && playerExists.is2FacAuth === false ){
-		// 	console.log('Player exists and Not 2FA is enabled');
-			// return await this.authService.sendJWTtoken(playerExists, response);
-		// }
+		else if (playerExists && playerExists.is2FacAuth === false ){
+			console.log('Player exists and Not 2FA is enabled');
+		}
 		response.redirect('/');
 	}
 
