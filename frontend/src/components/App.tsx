@@ -1,5 +1,5 @@
 import '../styles/defaults.scss'
-import { Routes, Route, Navigate, Link } from "react-router-dom";
+import { Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import { cookies, isLoggedIn, ShowConditionally, useEffectOnce } from './util';
 import { useEffect } from 'react';
 import NavAndChatWrapper, { chatSocket } from './NavAndChatWrapper'
@@ -7,13 +7,37 @@ import Login from './Login';
 import { globalContext } from './util';
 import { useState } from 'react';
 import axios from 'axios';
+import { global } from './game/PingPong/Data/PingPong.d';
+import { handleInvitationDeclined } from './game/GameTabs';
 
 function App() {
-	const [loggedIn, setLoggedIn] = useState(isLoggedIn());
+	const	[loggedIn, setLoggedIn] = useState(isLoggedIn());
+	const	navigate = useNavigate();
+	const	currentUserId = cookies.get('id');
+
 	useEffectOnce(() => {
 		console.log({"loggedIn?": isLoggedIn()});
 	})
 	useEffect(() => {
+
+		chatSocket.off(currentUserId).on(currentUserId, async (roomName: string) => 
+		{
+			const	opponentId = roomName.split(":")[1];
+			const	userResp = await axios.get("/users?id=" + opponentId);
+
+			if (confirm(`${userResp.data.username} invited to play a game`) === true)
+			{
+				global.socket.connect();
+				global.socket.emit("joinInvitation", {roomName: roomName, userCounter: 2})
+			}
+			else
+				chatSocket.emit('invitationDeclined', opponentId);
+		})
+
+		chatSocket.off(`${currentUserId}declined`).on(`${currentUserId}declined` , async () => {
+			handleInvitationDeclined(navigate)
+		})
+
 		chatSocket.off("validateJwtAck").on("validateJwtAck", (payload) => {
 			// console.log({validatejwtpayload: payload})
 			if (!payload) {

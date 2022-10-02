@@ -11,12 +11,12 @@ import UserProfile, { User } from "./UserProfile";
 import { capitalize, cookies, getCookieHeader, globalContext, RRLink, ShowConditionally, useEffectOnce, valDef } from "./util";
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
-import GameTabs from "./game/GameTabs"
+import GameTabs, { handleGameInvitation } from "./game/GameTabs"
 import PingPong from "./game/PingPong/PingPong";
 import MuteBanControls from "./MuteBanControls";
 import UserProfileIcon from "./UserProfileIcon";
-import { statusSocket } from "./game/Matching/Matching";
 import { spectateGameFromChat } from "./game/LiveGames/Utils/tools";
+import { statusSocket } from "..";
 
 console.log("Global console.log()");
 

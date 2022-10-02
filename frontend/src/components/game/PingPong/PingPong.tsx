@@ -12,8 +12,8 @@ import { global } from './Data/PingPong.d';
 import { addSocketEventHandlers, handleLeftPaddle, handleRightPaddle, renderCanvas, resetGame } from './Utils/tools';
 import { CurrentPlayersData } from '../Interfaces/CurrentPlayersData.interface';
 import { playerOne, playerTwo, spectator } from './Data/PingPong.contants';
-import { statusSocket } from "../Matching/Matching";
 import { cookies } from "../../util";
+import { statusSocket } from "../../..";
 
 export let gameContext = createContext<any>({});
 
