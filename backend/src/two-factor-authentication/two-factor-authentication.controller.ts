@@ -40,6 +40,18 @@ export class TwoFactorAuthenticationController {
 		await this.twoFacAuthService.activateTwoFacAuth(request.user.id);
 	}
 
+	@ApiOperation({ summary: 'Disable 2FA' })
+	@Post('turn-off')
+	async turnoffTwoFacAuth(
+		@Req() request, 
+		@Body() {twoFacAuthCode} : TwoFacAuthCodeDto
+	){
+		const isValid = this.twoFacAuthService.isTwoFacAuthCodeValid(twoFacAuthCode, request.user.id);
+		if (!isValid)
+			throw new UnauthorizedException('Wrong authentication code');
+		await this.twoFacAuthService.deactivateTwoFacAuth(request.user.id);
+	}
+
 
 	@ApiOperation({ summary: 'Validate the 2FA code and set the cookie' })
 	@Post('authenticate')

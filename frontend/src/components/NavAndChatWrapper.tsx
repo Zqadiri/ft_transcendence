@@ -4,11 +4,8 @@ import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import "../styles/wrapper.scss"
 import Button from "./Button";
 import FourOFour from "./FourOFour";
-import Home from "./Home";
-import Profile from "./Profile";
-import Settings from "./Settings";
 import UserProfile, { User } from "./UserProfile";
-import { capitalize, cookies, getCookieHeader, globalContext, RRLink, ShowConditionally, useEffectOnce, valDef } from "./util";
+import { capitalize, cookies, globalContext, RRLink, ShowConditionally, useEffectOnce } from "./util";
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
 import GameTabs from "./game/GameTabs"
@@ -437,17 +434,11 @@ const NavAndChatWrapper = () => {
 			<Routes>
 				<Route path="/" element={<GameTabs />}></Route>
 				<Route path="/play" element={<PingPong />}></Route>
-				{/* <Route path="/" element={
-					<Home/>
-				}/> */}
-				<Route path="/settings" element={
-					<Settings/>
-				}/>
 				<Route path="/profile/:userId" element={
-					<UserProfile/>
+					<UserProfile self={false}/>
 				}/>
 				<Route path="/profile" element={
-					<Profile/>
+					<UserProfile self={true}/>
 				}/>
 				<Route path="*" element={
 					<FourOFour/>

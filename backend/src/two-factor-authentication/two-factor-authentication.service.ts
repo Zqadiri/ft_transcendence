@@ -49,6 +49,15 @@ export class TwoFactorAuthenticationService {
 	}
 
 	/*
+		set the two factor authentication on (true)
+	*/
+	async deactivateTwoFacAuth(userID: number){
+		return this.userRepository.update(userID, {
+			is2FacAuth: false
+		});
+	}
+
+	/*
 		Verify the user's code against the secret saved in the database
 	*/
 

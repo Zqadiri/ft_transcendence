@@ -30,7 +30,7 @@ export interface User {
 	twoFacAuthSecret: string | null;
 } 
 
-const UserProfile = () => {
+const UserProfile = (props: { self: boolean }) => {
 	let params = useParams();
 	const [user, setUser] = useState<User | null | undefined>(null);
 	const [thisuser, setThisUser] = useState<User | null | undefined>(null);
@@ -70,10 +70,10 @@ const UserProfile = () => {
 	useEffect(() => {
 		console.log({user, thisuser, usermh})
 	}, [user, thisuser])
-	// console.log({"cookies.get(\"name\")": cookies.get("name")})
 	if (params.userId === cookies.get("name")) {
 		return <Navigate to={"/profile"}></Navigate>
 	}
+	// <UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
 	return (
 		<div className="userprofile d100">
 			<ShowConditionally cond={user && thisuser}>
@@ -91,7 +91,6 @@ const UserProfile = () => {
 								<div className="namecontainer flex-center"><h2 className="name">{user?.username}</h2></div>
 							</div>
 							<div className="right flex-center flex-gap5">
-								<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
 							</div>
 						</div>
 					</div>
