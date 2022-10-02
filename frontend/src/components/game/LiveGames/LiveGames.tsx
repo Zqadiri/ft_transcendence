@@ -5,7 +5,6 @@ import { global } from "../PingPong/Data/PingPong.d";
 import { LiveGame } from "../Interfaces/LiveGame.interface";
 import { getGamesDataFromDatabase, setDataToJoinLiveGame, updateAvailableGames, updateLiveGamesScore } from "./Utils/tools";
 import Timer from "./Timer";
-import { spectator } from "../PingPong/Data/PingPong.contants";
 
 function			NoGamesFound(): JSX.Element
 {

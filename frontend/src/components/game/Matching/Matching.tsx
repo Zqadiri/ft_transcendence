@@ -4,15 +4,9 @@ import { global } from "../PingPong/Data/PingPong.d"
 import Waiting from "./Waiting";
 import Selection from "./Selection";
 import { selectionComponent } from "./Data/Matching.constants";
-import { useEffectOnce } from '../GameTabs';
+import { defaultComponent, useEffectOnce } from '../GameTabs';
 import { cookies } from "../../util";
-import { io } from 'socket.io-client';
-
-export const statusSocket = io('/status', {
-	forceNew: true,
-});
-
-statusSocket.emit('userId', cookies.get('id'));
+import { statusSocket } from '../../..';
 
 export	const	matchingContext = createContext<any>({});
 
@@ -51,7 +45,7 @@ function	addMatchingSocketEventHandler(navigate: Function)
 
 function	Matching(): JSX.Element
 {
-	const	[activeComponent, setActiveComponent] = useState<string>(selectionComponent);
+	const	[activeComponent, setActiveComponent] = useState<string>(defaultComponent);
 	const 	navigate = useNavigate();
 
 	useEffectOnce(() => {

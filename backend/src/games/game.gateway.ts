@@ -53,7 +53,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 			this.themeTwo.clients.pop();
 			this.themeTwo.usersId.pop();
 		}
-		
 		this.updateGame.setWinnerAfterDisconnect(client.id);
 		this.logger.log(client.id + " Disconnected");
 	}
@@ -109,6 +108,24 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 		}
 
 		this.logger.log(client.id + " joined Theme 2 & roomName " + roomName);
+	}
+
+	@SubscribeMessage("joinInvitation")
+	handleJoinInvitation(client: Socket, {roomName, userCounter}): void {
+
+		client.join(roomName);
+		client.emit("joinedRoom", roomName, userCounter);
+	
+		if (userCounter === 2)
+		{
+			const	clients = this.server.in(roomName).allSockets();
+			const	usersId = roomName.split(":");
+		
+			this.updateGame.initializeServerObject(this.server);
+			this.updateGame.create(roomName, "theme01", clients[0], clients[1], usersId[1], usersId[2]);
+			this.server.to(roomName).emit("secondPlayerJoined");
+		}
+		this.logger.log(client.id + " joined invitation & roomName " + roomName);
 	}
 
 	@SubscribeMessage("joinSpecificRoom")
