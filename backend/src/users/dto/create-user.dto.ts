@@ -1,14 +1,8 @@
-
-import { Trim } from 'class-sanitizer';
-import { IsEmail } from 'class-validator';
+/* Create New User */
 
 export class CreateUserDto{
-    public id: number;
+    public  id: number;
     public  username : string;
-
-    @IsEmail()
     public  email : string;
-
-    public avatar: string;
-    public TwoFA : boolean;
+    public  avatar: string;
 }

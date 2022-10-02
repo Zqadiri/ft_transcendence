@@ -70,11 +70,10 @@ export class AuthService {
 				const email = res.data.email;
 				const id = res.data.id;
 				const avatar = `https://avatars.dicebear.com/api/identicon/${username}.svg`
-				const TwoFA  = res.data.is2FacAuth;
-				data = {id, username, email, avatar, TwoFA};
+				data = {id, username, email, avatar};
 				return data;
 			})
-			.catch((err) => { 
+			.catch((err) => {
 			})
 		}
 		catch(err){
@@ -82,8 +81,8 @@ export class AuthService {
 		return data;
 	}
 
-	async sendJWTtoken(user: CreateUserDto, @Res() response: Response){
-		let {access_token} = await this.loginWithCredentials(user);
+	async sendJWTtoken(user: CreateUserDto, @Res() response: Response, TwoFa: boolean){
+		let {access_token} = await this.loginWithCredentials(user, TwoFa);
 		console.log(`access token :  ` + access_token);
 		response.cookie('_token', access_token,{
 			maxAge: 1000 * 60 * 60 * 24,
@@ -119,15 +118,28 @@ export class AuthService {
 		});
 	}
 
+	async TwoFaCookie(user: CreateUserDto, @Res() response: Response){
+		const payload = {username: user.username, id: user.id, TwoFA: true};
+		let access_token = await this.jwtService.signAsync(payload, {
+			secret: String(process.env.JWT_SECRET_KEY)});
+		response.cookie('_2FA', access_token,{
+			maxAge: 1000 * 60 * 60 * 24,
+			httpOnly: false,
+			domain: 'localhost',
+			sameSite: "strict",
+			secure: false,
+			path: '/'
+		});
+	}
+
 	/*
 		TODO: login method
 		Accepts the Credentials and creates a payload and pass it to the
 		sign function . the sign function generates a JWT.
 	*/
 
-	async loginWithCredentials(user: CreateUserDto) {
-		console.log({user})
-		const payload = {username: user.username, id: user.id}; //add iS2fa 
+	async loginWithCredentials(user: CreateUserDto, TwofA: boolean) {
+		const payload = {username: user.username, id: user.id, TwoFA: TwofA};
 		return { access_token : await this.jwtService.signAsync(payload, {
 			secret: String(process.env.JWT_SECRET_KEY)}) 
 		};
