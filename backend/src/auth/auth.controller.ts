@@ -28,8 +28,6 @@ export class AuthController
 	})
 	@Get('/login')
 	async access_token(@Query() query: {code: string}, @Res() response: Response){
-		console.log(response.statusCode);
-		console.log('test');
 		let obj : CreateUserDto;
 		let playerExists : any;
 		obj = await this.authService.getUserData(query.code);
@@ -39,21 +37,24 @@ export class AuthController
 		if (!playerExists){
 			console.log('does not Exists create user and add cookie');
 			this.playerService.create(obj);
-			await this.authService.sendJWTtoken(obj, response);
+			await this.authService.sendJWTtoken(obj, response, false);
+			response.redirect('/');
 		}
 		else if (playerExists && playerExists.is2FacAuth === false){
-			console.log('Player exists and 2FA is enabled');
-			await this.authService.sendJWTtoken(playerExists, response);
+			console.log('Player exists and 2FA is off');
+			await this.authService.sendJWTtoken(playerExists, response, false);
+			response.redirect('/');
 		}
-		else if (playerExists && playerExists.is2FacAuth === false ){
-			console.log('Player exists and Not 2FA is enabled');
+		else if (playerExists && playerExists.is2FacAuth === true){
+			console.log('Player exists and 2FA is on');
+			await this.authService.TwoFaCookie(playerExists, response);
+				response.redirect('/'); //! redirect to the appropriate page
 		}
-		response.redirect('/');
 	}
 
 	@ApiOperation({ summary: 'log out and clear cookie'})
 	@Delete('/log-out')
-	logout(@Res() res){
+	logout(@Res() res: Response){
 		res.clearCookie('_token');
 		res.end();
 	}

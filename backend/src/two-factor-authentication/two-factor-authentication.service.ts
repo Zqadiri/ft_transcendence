@@ -6,6 +6,7 @@ import { toFileStream } from 'qrcode';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 
 @Injectable()
 export class TwoFactorAuthenticationService {
@@ -17,8 +18,9 @@ export class TwoFactorAuthenticationService {
 	){}
 
 	/*  
-		URL with the otpauth:// protocol. It is used by 
-		applications such as Google Authenticator.
+		First thing is to create a secret key unique for every user.
+		Along with the above secret, we also generate a URL with the otpauth:// protocol.
+		Save the secret in the database
 	*/
 
 	async generateTwoFacAuthSecret(user: User){
@@ -26,40 +28,34 @@ export class TwoFactorAuthenticationService {
 		const urlPath = authenticator.keyuri(user.email, 
 		process.env.TWO_FACTOR_AUTHENTICATION_APP_NAME, secret);
 		await this.userService.setTwoFactorAuthenticationSecret(secret, user.id);
-		return {
-			secret,
-			urlPath
-		};
+		return urlPath;
 	}
 
-	// serve the otpauth URL to the user in a QR code
+	/*
+		Serve the otpauth URL to the user in a QR code
+	*/
+
 	public async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
 		return toFileStream(stream, otpauthUrl);
 	}
 
-	// set the two factor authentication on 
+	/*
+		set the two factor authentication on (true)
+	*/
 	async activateTwoFacAuth(userID: number){
 		return this.userRepository.update(userID, {
 			is2FacAuth: true
 		});
 	}
 
-	// Verify the user's code against the secret saved in the database
-	isTwoFacAuthCodeValid(twoFacAuthCode: string, user: User){
+	/*
+		Verify the user's code against the secret saved in the database
+	*/
+
+	async isTwoFacAuthCodeValid(twoFacAuthCode: string, user: User){
 		return authenticator.verify({
 			token: twoFacAuthCode,
 			secret: user.twoFacAuthSecret
 		})
 	}
-
-	//! its temp cus i already have an access token 
-	// getCookieWithJwt(userId: number, isSecondFactorAuthenticated = false){
-	// 	const payload: TokenPayload = { userId, isSecondFactorAuthenticated };
-	// 	const token = this.jwtService.sign(payload, {
-	// 		secret: process.env.SECRET,
-	// 	  	expiresIn: `1d`
-	// 	});
-	// 	return `Authentication=${token}; HttpOnly; Path=/; Max-Age=1d`;
-	// }
-
 }
