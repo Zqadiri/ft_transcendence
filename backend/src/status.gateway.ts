@@ -1,5 +1,6 @@
-import { OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { UsersService } from './users/users.service';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
 	namespace: "status",
@@ -10,6 +11,9 @@ import { UsersService } from './users/users.service';
 export class StatusGateway implements OnGatewayDisconnect {
 
 	constructor( private readonly userServ: UsersService ) {}
+
+	@WebSocketServer()
+	server: Server;
 
 	private	users = {};
 
@@ -51,9 +55,17 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 			delete this.users[client.id];
 			if (!this.hasUserid(userId))
+			{
 				this.userServ.updateStatus(userId, "offline");
+				this.server.emit("UserStatusChanged", {userId: userId, status: "offline"});
+			}
 			else
-				this.userServ.updateStatus(userId, this.getUserStatus(userId));
+			{
+				const	status: string = this.getUserStatus(userId);
+
+				this.userServ.updateStatus(userId, status);
+				this.server.emit("UserStatusChanged", {userId: userId, status: status});
+			}
 		}
 	}
 
@@ -63,7 +75,10 @@ export class StatusGateway implements OnGatewayDisconnect {
 		if (userId)
 		{
 			if (!this.hasUserid(userId))
+			{
 				this.userServ.updateStatus(userId, "online");
+				this.server.emit("UserStatusChanged", {userId: userId, status: "online"});
+			}
 			this.users[client.id] = [userId, "online"];
 		}
 	}
@@ -75,6 +90,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		{
 			this.users[client.id][1] = status;
 			this.userServ.updateStatus(Number(userId), status);
+			this.server.emit("UserStatusChanged", {userId: userId, status: status});
 		}
 	}
 
@@ -89,6 +105,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 					this.users[property][1] = "offline";
 			}
 			this.userServ.updateStatus(userId, "offline");
+			this.server.emit("UserStatusChanged", {userId: userId, status: "offline"});
 		}
 	}
 
