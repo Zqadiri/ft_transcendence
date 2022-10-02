@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import LiveGames from "./LiveGames/LiveGames";
 import Leaderboard from "./Leaderboard/Leaderboard";
 import { selectionComponent, waitingComponent } from "./Matching/Data/Matching.constants";
-import Matching from "./Matching/Matching";
+import Matching, { addMatchingSocketEventHandler } from "./Matching/Matching";
 import { global } from "./PingPong/Data/PingPong.d";
 import { cookies } from "../util";
 import { chatSocket } from "../NavAndChatWrapper";
@@ -28,10 +28,15 @@ export	function	handleGameInvitation(navigate: Function, opponentId: number)
 
 	defaultTabIndex = 0;
 	defaultComponent = waitingComponent;
-	global.socket.connect();
 
-	navigate("/");
+	// global.roomName = roomName;
+    // global.playerId = 1;
+    global.theme = "theme01";
+
+	global.socket.connect();
+	addMatchingSocketEventHandler(navigate);
 	global.socket.emit("joinInvitation", {roomName: roomName, userCounter: 1})
+	navigate("/play");
 	chatSocket.emit('inviteToGame', {friendId: opponentId, roomName: roomName});
 
 	// send an event in chat namespace
@@ -50,7 +55,7 @@ export	function	handleInvitationDeclined(navigate: Function)
 	defaultTabIndex = 1;
 	defaultComponent = selectionComponent;
 
-	navigate("/");
+	navigate("/play");
 }
 
 function			GameTabs(): JSX.Element {

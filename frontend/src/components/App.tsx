@@ -9,6 +9,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { global } from './game/PingPong/Data/PingPong.d';
 import { handleInvitationDeclined } from './game/GameTabs';
+import { addMatchingSocketEventHandler } from './game/Matching/Matching';
 
 function App() {
 	const	[loggedIn, setLoggedIn] = useState(isLoggedIn());
@@ -28,6 +29,13 @@ function App() {
 			if (confirm(`${userResp.data.username} invited to play a game`) === true)
 			{
 				global.socket.connect();
+
+				// global.roomName = roomName;
+				// global.playerId = 2;
+				global.theme = "theme01";
+				// global.secondPlayerExist = true;
+				
+				addMatchingSocketEventHandler(navigate);
 				global.socket.emit("joinInvitation", {roomName: roomName, userCounter: 2})
 			}
 			else

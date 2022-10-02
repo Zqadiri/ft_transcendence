@@ -123,6 +123,7 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 		
 			this.updateGame.initializeServerObject(this.server);
 			this.updateGame.create(roomName, "theme01", clients[0], clients[1], usersId[1], usersId[2]);
+			console.log({roomcustom: roomName})
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
 		this.logger.log(client.id + " joined invitation & roomName " + roomName);

@@ -29,7 +29,7 @@ function GameRules(): JSX.Element {
 }
 
 
-function	addMatchingSocketEventHandler(navigate: Function)
+export function	addMatchingSocketEventHandler(navigate: Function)
 {
 	global.socket.off("joinedRoom").on("joinedRoom", (room, playerId) => {
 		global.roomName = room;

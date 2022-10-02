@@ -508,6 +508,8 @@ const NavAndChatWrapper = () => {
 															<ShowConditionally cond={fr.status === "online"}>
 																<Button className="invite" onClick={(e) => {
 																	e.stopPropagation();
+																	setChatIsOpen(false);
+																	handleGameInvitation(navigater, fr.id);
 																}}>Invite To Play</Button>
 															</ShowConditionally>
 
