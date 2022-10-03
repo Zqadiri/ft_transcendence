@@ -43,8 +43,8 @@ export class User{
 	@Column({default: 0})
 	xp: number;
 
-	@Column({default: 'Beginner'})
-	rank: string;
+	@Column({default: 0})
+	rank: number;
 
 	@Column({default: false})
 	Matched : boolean;

@@ -10,14 +10,14 @@ async function	getLeaderboardUsers(setLeaderboardUsers: Function)
 	const	users = await axios.get("/users/all");
 
 	users.data.sort((a: any, b: any) => {
-		return b.xp === a.xp ? b.wins - a.wins : b.xp - a.xp;
+		return a.rank - b.rank;
 	});
 
 	setLeaderboardUsers([]);
-	users.data.map((user: any, index: number) => {
+	users.data.map((user: any) => {
 		setLeaderboardUsers((current: LeaderboardUser[]) => [...current,
 			{
-				rank: index + 1,
+				rank: user.rank,
 				id: user.id,
 				avatar: user.avatar,
 				username: user.username,
