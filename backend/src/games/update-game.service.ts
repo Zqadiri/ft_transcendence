@@ -87,8 +87,6 @@ export class UpdateGameService {
 
 		flawLessWinStreakAchieved = await this.gameServ.checkUserGamesForStreak(Number(game.secondPlayerID));
 		await this.userServ.calculateRank(Number(game.secondPlayerID), game.secondPlayerScore, game.firstPlayerScore, flawLessWinStreakAchieved);
-
-		await this.userServ.updateRank();
 	}
 
 	async	#checkForTheWinner(score1: number, score2: number, room: string, id: number)
