@@ -152,8 +152,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.server.emit(String(friendId), roomName);
 	}
 	@SubscribeMessage('invitationDeclined')
-	handleInvitationDeclined(client: Socket, friendId) {
-		this.server.emit(String(friendId)+"declined")
+	handleInvitationDeclined(client: Socket, {friendId, currentId}) {
+		this.server.emit(String(friendId)+"declined");
+		this.server.emit(String(currentId)+"declinedd");
 	}
 
 
