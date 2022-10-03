@@ -1,12 +1,13 @@
 import { useNavigate } from 'react-router-dom';
-import { useState, createContext } from "react";
+import { createContext } from "react";
 import { global } from "../PingPong/Data/PingPong.d"
 import Waiting from "./Waiting";
 import Selection from "./Selection";
-import { selectionComponent } from "./Data/Matching.constants";
-import { defaultComponent, useEffectOnce } from '../GameTabs';
+import { invitationWaiting, selectionComponent } from "./Data/Matching.constants";
+import { resetDefaults, useEffectOnce } from '../GameTabs';
 import { cookies } from "../../util";
 import { statusSocket } from '../../..';
+import { MoonLoader } from "react-spinners";
 
 export	const	matchingContext = createContext<any>({});
 
@@ -28,6 +29,24 @@ function GameRules(): JSX.Element {
 	);
 }
 
+function	InvitationWaiting(): JSX.Element
+{
+	return (
+		<>
+			<div className="waiting-container">
+				<div className="spinner" >
+					<MoonLoader color={'#F66B0E	'} speedMultiplier={0.4} size={25} />
+				</div>
+				<div className="cancel-button">
+					<p>
+						Waiting for the invited player...
+					</p>
+				</div>
+			</div>
+		</>
+	);
+}
+
 
 export function	addMatchingSocketEventHandler(navigate: Function)
 {
@@ -40,18 +59,27 @@ export function	addMatchingSocketEventHandler(navigate: Function)
 		global.secondPlayerExist = true;
 		statusSocket.emit('inGame', {userId: cookies.get('id'), status: "ingame"});
 		navigate("/play");
+		resetDefaults();
 	});
 }
 
-function	Matching(): JSX.Element
+function	Matching( {activeComponent, setActiveComponent}: {activeComponent: string, setActiveComponent: Function} ): JSX.Element
 {
-	const	[activeComponent, setActiveComponent] = useState<string>(defaultComponent);
 	const 	navigate = useNavigate();
 
 	useEffectOnce(() => {
 		addMatchingSocketEventHandler(navigate);
 	});
 
+	if (activeComponent === invitationWaiting)
+	{
+		return (
+			<>
+				<InvitationWaiting />
+				<GameRules />
+			</>
+		);
+	}
 	return (
 		<>
 			<matchingContext.Provider value={{activeComponent, setActiveComponent}}>

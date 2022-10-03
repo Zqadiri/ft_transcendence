@@ -15,6 +15,8 @@ import UserProfileIcon from "./UserProfileIcon";
 import { spectateGameFromChat } from "./game/LiveGames/Utils/tools";
 import { statusSocket } from "..";
 
+export	let		g_setIsMatching: Function;
+
 console.log("Global console.log()");
 
 export const chatSocket = (() => {
@@ -84,6 +86,8 @@ const NavAndChatWrapper = () => {
 		// "friends"
 		"rooms"
 	);
+	const	[isMatching, setIsMatching] = useState(false);
+	g_setIsMatching = setIsMatching;
 
 	const getFriendsTab = () => {
 		getFriendRequests();
@@ -509,7 +513,7 @@ const NavAndChatWrapper = () => {
 																	spectateGameFromChat(fr.id, navigater);
 																}}>Spectate</Button>
 															</ShowConditionally>
-															<ShowConditionally cond={fr.status === "online"}>
+															<ShowConditionally cond={fr.status === "online" && isMatching !== true}>
 																<Button className="invite" onClick={(e) => {
 																	e.stopPropagation();
 																	setChatIsOpen(false);

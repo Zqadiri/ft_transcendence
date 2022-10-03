@@ -1,13 +1,11 @@
-import { Body, Controller, Get, HttpException, HttpStatus, NotFoundException, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Query, Req, UseGuards } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { Game } from './entities/game.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GameRepository } from './game.repository';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { CreateGameDto, EndGameDto, UpdateScoreDto } from './dto/game.dto';
 import { UsersService } from 'src/users/users.service';
 import RequestWithUser from 'src/two-factor-authentication/dto/requestWithUser.interface';
-import { AuthGuard } from '@nestjs/passport';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('game')

@@ -292,11 +292,8 @@ export class UsersController {
 	@ApiOperation({ summary: 'Get all users' })
     @Get('/all')
     async getLiveGames() {
-        const users = await this.userRepo.find();
-        if (!users.length)
-			return null;
-
-        return users;
+		await	this.usersService.updateRank();
+        return	this.usersService.getAllUsers();
     }
 
 }

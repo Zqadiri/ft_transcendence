@@ -16,7 +16,7 @@ export class UpdateAfterGameDto{
     public wins: number;
     public losses : number;
     public level : number;
-    public rank : string;
+    public rank : number;
     public matched : boolean;
     public updatedAt : Date;
 }

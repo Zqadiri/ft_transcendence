@@ -23,28 +23,34 @@ function App() {
 
 		chatSocket.off(currentUserId).on(currentUserId, async (roomName: string) => 
 		{
+			let		declinedStatus = false;
+			chatSocket.off(`${currentUserId}declinedd`).on(`${currentUserId}declinedd` , async () => {
+				declinedStatus = true;
+			});
+
 			const	opponentId = roomName.split(":")[1];
 			const	userResp = await axios.get("/users?id=" + opponentId);
+			const	reply = confirm(`${userResp.data.username} invited you to play a game`);
+			const	currentUserResp = await axios.get("/users?id=" + currentUserId);
 
-			if (confirm(`${userResp.data.username} invited to play a game`) === true)
+			if (currentUserResp.data.status === "ingame" || declinedStatus)
+				return ;
+
+			if (reply)
 			{
 				global.socket.connect();
-
-				// global.roomName = roomName;
-				// global.playerId = 2;
 				global.theme = "theme01";
-				// global.secondPlayerExist = true;
-				
+
 				addMatchingSocketEventHandler(navigate);
 				global.socket.emit("joinInvitation", {roomName: roomName, userCounter: 2})
 			}
 			else
-				chatSocket.emit('invitationDeclined', opponentId);
-		})
+				chatSocket.emit('invitationDeclined', {friendId: opponentId, currentId: currentUserId});
+		});
 
 		chatSocket.off(`${currentUserId}declined`).on(`${currentUserId}declined` , async () => {
-			handleInvitationDeclined(navigate)
-		})
+			handleInvitationDeclined();
+		});
 
 		chatSocket.off("validateJwtAck").on("validateJwtAck", (payload) => {
 			// console.log({validatejwtpayload: payload})

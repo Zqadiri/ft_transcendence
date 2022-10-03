@@ -77,7 +77,7 @@ export class UpdateGameService {
 		this.server.local.emit("newGameIsAvailable");
 	}
 
-	async #updateUsersAchievements(gameId)
+	async	#updateUsersAchievements(gameId)
 	{
 		const	game = await this.gameServ.findGameByid(gameId);
 		let		flawLessWinStreakAchieved: boolean;
@@ -89,7 +89,7 @@ export class UpdateGameService {
 		await this.userServ.calculateRank(Number(game.secondPlayerID), game.secondPlayerScore, game.firstPlayerScore, flawLessWinStreakAchieved);
 	}
 
-	async #checkForTheWinner(score1: number, score2: number, room: string, id: number)
+	async	#checkForTheWinner(score1: number, score2: number, room: string, id: number)
 	{
 		if (score1 === 10 || score2 === 10)
 		{

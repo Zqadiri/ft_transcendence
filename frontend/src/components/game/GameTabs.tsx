@@ -3,14 +3,17 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { useEffect, useRef, useState } from "react";
 import LiveGames from "./LiveGames/LiveGames";
 import Leaderboard from "./Leaderboard/Leaderboard";
-import { selectionComponent, waitingComponent } from "./Matching/Data/Matching.constants";
+import { invitationWaiting, selectionComponent, waitingComponent } from "./Matching/Data/Matching.constants";
 import Matching, { addMatchingSocketEventHandler } from "./Matching/Matching";
 import { global } from "./PingPong/Data/PingPong.d";
 import { cookies } from "../util";
 import { chatSocket } from "../NavAndChatWrapper";
+import { statusSocket } from "../..";
 
+let					g_setTabIndex: Function;
+let					g_setActiveComponent: Function;
+let					defaultComponent: string = selectionComponent;
 let					defaultTabIndex: number = 1;
-export	let			defaultComponent: string = selectionComponent;
 
 export	function	useEffectOnce(callback: any): any {
 	const ref = useRef(true);
@@ -22,44 +25,48 @@ export	function	useEffectOnce(callback: any): any {
 	}, []);
 }
 
+export	function	resetDefaults()
+{
+	defaultComponent = selectionComponent;
+	defaultTabIndex = 1;
+}
+
 export	function	handleGameInvitation(navigate: Function, opponentId: number)
 {
 	const		roomName: string = `Room:${cookies.get('id')}:${opponentId}`;
 
+	navigate("/");
+	g_setActiveComponent(invitationWaiting)
+	g_setTabIndex(0);
+	defaultComponent = invitationWaiting;
 	defaultTabIndex = 0;
-	defaultComponent = waitingComponent;
-
-	// global.roomName = roomName;
-    // global.playerId = 1;
-    global.theme = "theme01";
 
 	global.socket.connect();
-	addMatchingSocketEventHandler(navigate);
-	global.socket.emit("joinInvitation", {roomName: roomName, userCounter: 1})
-	navigate("/play");
-	chatSocket.emit('inviteToGame', {friendId: opponentId, roomName: roomName});
 
-	// send an event in chat namespace
-	// handle it globally with a prompt
-	// wherever you are go to home
-	// chose play a game tab
-	// join theme01 with a special room name
-	// and show waiting component
-	// if the invited player didn't accept the invite or it disconnects, cancel the whole invitation
+	addMatchingSocketEventHandler(navigate);
+    global.theme = "theme01";
+	global.socket.emit("joinInvitation", {roomName: roomName, userCounter: 1})
+
+	chatSocket.emit('inviteToGame', {friendId: opponentId, roomName: roomName});
 }
 
-export	function	handleInvitationDeclined(navigate: Function)
+export	function	handleInvitationDeclined()
 {
+	alert("Your friend declined your invitation!");
 	global.socket.disconnect();
 
-	defaultTabIndex = 1;
-	defaultComponent = selectionComponent;
-
-	navigate("/play");
+	g_setActiveComponent(selectionComponent)
+	g_setTabIndex(1);
 }
 
 function			GameTabs(): JSX.Element {
 	const	[tabIndex, setTabIndex] = useState(defaultTabIndex);
+	const	[activeComponent, setActiveComponent] = useState<string>(defaultComponent);
+
+	useEffect(() => {
+		g_setTabIndex = setTabIndex;
+		g_setActiveComponent = setActiveComponent;
+	}, []);
 
 	return (
 		<>
@@ -73,7 +80,7 @@ function			GameTabs(): JSX.Element {
 					<Tab>Live Games</Tab>
 				</TabList>
 				<TabPanel>
-					<Matching />
+					<Matching activeComponent={activeComponent} setActiveComponent={setActiveComponent}/>
 				</TabPanel>
 				<TabPanel>
 					<Leaderboard />

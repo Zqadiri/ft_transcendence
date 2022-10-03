@@ -80,10 +80,15 @@ export class GamesService {
 	async findGameByUserid(userId: number) {
 
 		const game = await this.GameRepo
-		  .createQueryBuilder('game')
-		  .where("game.firstPlayerID = :id OR game.secondPlayerID = :id", { id: userId })
-		  .andWhere('game.isPlaying = :value', { value: true })
-		  .getOne();
+			.createQueryBuilder('game')
+			.where('game.isPlaying IS NOT FALSE')
+			.andWhere(
+				new Brackets((qb) => {
+					qb.where('game.firstPlayerID = :id', { id: userId })
+					.orWhere('game.secondPlayerID = :id', { id: userId })
+				}),
+			)
+			.getOne();
 
 		return game;
 	}

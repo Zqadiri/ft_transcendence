@@ -64,6 +64,7 @@ function	PingPong(): JSX.Element
 			global.socket.disconnect();
 			if (global.playerId !== spectator)
 				statusSocket.emit('inGame', {userId: cookies.get('id'), status: "online"});
+			console.log(`player id: ${global.playerId}`);
 		};
 	}, []);
 
