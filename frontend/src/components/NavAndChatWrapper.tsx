@@ -316,6 +316,10 @@ const NavAndChatWrapper = () => {
 		return prom;
 	}
 
+	useEffect(() => {
+		getFriends();
+	})
+
 	const getFriendRequests = () => {
 		axios.get("/users/friend_req")
 		.then((res: AxiosResponse) => {
@@ -564,18 +568,18 @@ const NavAndChatWrapper = () => {
 												<div className={"room flex-ai-cr flex-gap5 " + (room.db_chat_type === "dm" ? "dm" : "flex-jc-sb")} onClick={() => {roomOnClick(room)}}>
 													<ShowConditionally cond={room.db_chat_type === "dm"}>
 														<img src={friends.find(el => {
-															return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
+															return el.id === parseInt(room.db_chat_name.split(",").filter(el => el !== cookies.get("id"))[0])
 														})?.avatar} alt="" style={{ width: 45, height: 45, backgroundColor: "white", borderRadius: "100%" }} />
 													</ShowConditionally>
 													<div className="left flex-column flex-gap5">
-														<div className="name">{room.db_chat_type === "dm" ? room.db_chat_name.split(",").filter(el => el !== cookies.get("name")) : room.db_chat_name}</div>
+														<div className="name">{room.db_chat_type === "dm" ? friends.find(fr => fr.id === parseInt(room.db_chat_name.split(",").filter(el => el !== cookies.get("id"))[0]))?.username : room.db_chat_name}</div>
 														<div className={"owner " + (room.db_chat_type === "dm" ? "dm " + friends.find(el => {
-															return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
+															return el.id === parseInt(room.db_chat_name.split(",").filter(el => el !== cookies.get("id"))[0])
 														})?.status : "")}>
 															{
 																room.db_chat_type === "dm" ?
 																	friends.find(el => {
-																		return el.username === room.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0]
+																		return el.id === parseInt(room.db_chat_name.split(",").filter(el => el !== cookies.get("id"))[0])
 																	})?.status : room.ownerName
 															}
 															<ShowConditionally cond={room.db_chat_type !== "dm"}>
@@ -763,7 +767,7 @@ const NavAndChatWrapper = () => {
 						<div className="chatinterface d100 flex-column" style={{display: activeTab.startsWith("chatinterface") ? "flex" : "none"}}>
 							<div className="header flex-jc-sb flex-ai-cr">
 								<i className="fa-solid fa-arrow-left back" onClick={() => { setActiveTab("chat") }}></i>
-								<div className="name" onClick={() => setActiveTab("chatinterface")}>{activeChat?.db_chat_type === "dm" ? activeChat.db_chat_name.split(",").filter(el => el !== cookies.get("name"))[0] : activeChat?.db_chat_name}</div>
+								<div className="name" onClick={() => setActiveTab("chatinterface")}>{activeChat?.db_chat_type === "dm" ? friends.find(fr => fr.id === parseInt(activeChat.db_chat_name.split(",").filter(el => el !== cookies.get("id"))[0]))?.username : activeChat?.db_chat_name}</div>
 								<ShowConditionally cond={activeChat?.db_chat_type !== "dm"}>
 									<div className="users" onClick={() => {
 										getFriends().finally(() => {
