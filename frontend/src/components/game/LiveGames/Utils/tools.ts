@@ -106,8 +106,6 @@ export	async	function	spectateGameFromChat(userId: number, navigate: Function)
 {
 	const	gameResp = await axios.get("/game?userId=" + userId);
 
-	console.log({gameResp});
-
 	setDataToJoinLiveGame(gameResp.data.socketRoom, gameResp.data.theme);
 	global.socket.emit("joinSpecificRoom",  gameResp.data.socketRoom);
 

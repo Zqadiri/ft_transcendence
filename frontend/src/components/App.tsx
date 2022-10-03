@@ -25,16 +25,13 @@ function App() {
 		{
 			const	opponentId = roomName.split(":")[1];
 			const	userResp = await axios.get("/users?id=" + opponentId);
+			const	reply = confirm(`${userResp.data.username} invited you to play a game`);
 
-			if (confirm(`${userResp.data.username} invited to play a game`) === true)
+			if (reply)
 			{
 				global.socket.connect();
-
-				// global.roomName = roomName;
-				// global.playerId = 2;
 				global.theme = "theme01";
-				// global.secondPlayerExist = true;
-				
+
 				addMatchingSocketEventHandler(navigate);
 				global.socket.emit("joinInvitation", {roomName: roomName, userCounter: 2})
 			}
@@ -43,7 +40,7 @@ function App() {
 		})
 
 		chatSocket.off(`${currentUserId}declined`).on(`${currentUserId}declined` , async () => {
-			handleInvitationDeclined(navigate)
+			handleInvitationDeclined();
 		})
 
 		chatSocket.off("validateJwtAck").on("validateJwtAck", (payload) => {
