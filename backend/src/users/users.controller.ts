@@ -292,7 +292,8 @@ export class UsersController {
 	@ApiOperation({ summary: 'Get all users' })
     @Get('/all')
     async getLiveGames() {
-        return this.usersService.getAllUsers();
+		await	this.usersService.updateRank();
+        return	this.usersService.getAllUsers();
     }
 
 }

@@ -8,6 +8,7 @@ import Matching, { addMatchingSocketEventHandler } from "./Matching/Matching";
 import { global } from "./PingPong/Data/PingPong.d";
 import { cookies } from "../util";
 import { chatSocket } from "../NavAndChatWrapper";
+import { statusSocket } from "../..";
 
 let					g_setTabIndex: Function;
 let					g_setActiveComponent: Function;
