@@ -206,11 +206,16 @@ const NavAndChatWrapper = () => {
 		})
 		return promise;
 	}
+	const [self, setSelf] = useState<User | undefined>();
 	const [activeChatUsers, setActiveChatUsers] = useState<UserStat[]>([]);
 	const [activeChatMessages, _setActiveChatMessages] = useState<ChatMessage[]>([]);
-	const setActiveChatMessages = (x: ChatMessage[] | ((msgs: ChatMessage[]) => ChatMessage[])) => {
-		console.log({newValueMessages: x});
-		return _setActiveChatMessages(x);
+	const setActiveChatMessages = (x: ChatMessage[]) => {
+		// console.log({newValueMessages: x});
+		let msgs = x.filter(el => !self?.blockedID.includes(el.userID));
+		_setActiveChatMessages(msgs);
+		// console.log(msgs)
+		// if (msgs)
+		// return _setActiveChatMessages(x);
 	}
 
 	useEffect(() => {
@@ -254,25 +259,9 @@ const NavAndChatWrapper = () => {
 			console.log("received room messages... setting them");
 			axios.get("/users?id=" + cookies.get("id"))
 			.then((resMyself: AxiosResponse<User>) => {
-				// let buNames: string[] = [];
-				// let promises: Promise<AxiosResponse<User>>[] = [];
-				// resMyself.data.blockedID.forEach(id => {
-				// 	let prom = axios.get("/users?id=" + id)
-				// 	prom
-				// 	.then((res: AxiosResponse<User>) => {
-				// 		buNames.push(res.data.username);
-				// 	})
-				// 	promises.push(prom);
-				// })
-				// Promise.all(promises).then(() => {
-				// 	console.log({buNames});
-
-				
-				// })
-
-					let msgs = _msgs.filter(el => !resMyself.data.blockedID.includes(el.userID));
-					console.log(msgs)
-					setActiveChatMessages(msgs);
+				let msgs = _msgs.filter(el => !resMyself.data.blockedID.includes(el.userID));
+				console.log(msgs)
+				setActiveChatMessages(msgs);
 			})
 			.catch(() => {
 				setActiveChatMessages(_msgs);
@@ -342,6 +331,7 @@ const NavAndChatWrapper = () => {
 			getAllRooms();
 			getAllMyRooms();
 			getUserStats(activeChat);
+			getSelf();
 		}, 1000);
 		return () => {
 			clearInterval(int);
@@ -352,6 +342,12 @@ const NavAndChatWrapper = () => {
 		// console.log({activeChattttttttttttttttttttttttttt:activeChat})
 	}, [activeChat])
 
+	const getSelf = () => {
+		axios.get("/users?id=" + cookies.get("id"))
+		.then((resMyself: AxiosResponse<User>) => {
+			setSelf(resMyself.data);
+		})
+	}
 
 	const getUserStats = (chat: Chat | undefined | null) => {
 		axios.get("/chat/userStats/" + chat?.db_chat_name).then(res => {
