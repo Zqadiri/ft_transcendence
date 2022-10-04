@@ -83,7 +83,6 @@ export class AuthService {
 
 	async sendJWTtoken(user: CreateUserDto, @Res() response: Response, TwoFa: boolean){
 		let {access_token} = await this.loginWithCredentials(user, TwoFa);
-		console.log(`access token :  ` + access_token);
 		response.cookie('_token', access_token,{
 			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,

@@ -18,7 +18,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import RequestWithUser from 'src/two-factor-authentication/dto/requestWithUser.interface';
 import { ChatsService } from 'src/chats/chats.service';
-import { ChatTypes } from 'src/chats/dto/create-chat.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -216,7 +215,7 @@ export class UsersController {
 		// console.log(newFriend);
 		if (!newFriend)
 			throw new UnauthorizedException('NOT a User');
-		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id);
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
 		user.blockedID.remove(newFriend.id);
@@ -230,7 +229,7 @@ export class UsersController {
 	@Get('/friends_list')
 	@UseGuards(jwtAuthGuard)
 	async friendsList(@Req() req: any, @Res() res: any){
-		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id);
 		if (!user)
 			throw new BadRequestException("user does not exist");
 		const friends = await this.userRepo
@@ -245,7 +244,7 @@ export class UsersController {
 	@Get('/friend_req')
 	@UseGuards(jwtAuthGuard)
 	async friendReq(@Req() req: any, @Res() res: any){
-		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
+		const user = await this.usersService.getUserById(req.user.id);
 		if (!user)
 			throw new BadRequestException("user does not exist");
 		const friends = await this.userRepo
