@@ -284,7 +284,7 @@ const NavAndChatWrapper = () => {
 		chatSocket.off('messageToRoomAck').on('messageToRoomAck', (_msg: ChatMessage) => {
 			console.log("messageToRoom caught");
 			console.log({_msg})
-			_setActiveChatMessages((x: ChatMessage[]) => [...x, _msg]);
+			setActiveChatMessages([...activeChatMessages, _msg]);
 		})
 
 		chatSocket.off("Muted").on("Muted", (data: {userID: number, RoomID: string}) => {
