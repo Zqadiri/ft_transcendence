@@ -341,7 +341,7 @@ const NavAndChatWrapper = () => {
 			getCurrentRoomData();
 			getAllRooms();
 			getAllMyRooms();
-			getUserStats();
+			getUserStats(activeChat);
 		}, 1000);
 		return () => {
 			clearInterval(int);
@@ -353,8 +353,8 @@ const NavAndChatWrapper = () => {
 	}, [activeChat])
 
 
-	const getUserStats = () => {
-		axios.get("/chat/userStats/" + activeChat?.db_chat_name).then(res => {
+	const getUserStats = (chat: Chat | undefined | null) => {
+		axios.get("/chat/userStats/" + chat?.db_chat_name).then(res => {
 			setActiveChatUsers(res.data);
 		}).catch((err) => {
 
