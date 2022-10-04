@@ -107,8 +107,8 @@ export class UsersController {
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
 		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
-			user.outgoingFRID.splice(user.outgoingFRID.findIndex(el => el === newFriend.id));
-			newFriend.incomingFRID.splice(newFriend.incomingFRID.findIndex(el => el === user.id));
+			user.outgoingFRID.splice(user.outgoingFRID.findIndex(el => el === newFriend.id), 1);
+			newFriend.incomingFRID.splice(newFriend.incomingFRID.findIndex(el => el === user.id), 1);
 		}
 		await this.userRepo.save(user);
 		await this.userRepo.save(newFriend);
@@ -130,8 +130,8 @@ export class UsersController {
 			if (user.incomingFRID.includes(newFriend.id)) {
 				user.FriendsID.push(newFriend.id);
 				newFriend.FriendsID.push(user.id);
-				user.incomingFRID.splice(user.incomingFRID.findIndex(el => el === newFriend.id));
-				newFriend.outgoingFRID.splice(newFriend.outgoingFRID.findIndex(el => el === user.id));
+				user.incomingFRID.splice(user.incomingFRID.findIndex(el => el === newFriend.id), 1);
+				newFriend.outgoingFRID.splice(newFriend.outgoingFRID.findIndex(el => el === user.id), 1);
 				await this.chatsService.CreateDm({userID1: user.id, userID2: newFriend.id});
 			}
 		}
@@ -153,8 +153,8 @@ export class UsersController {
 			throw new UnauthorizedException('NOT a User');
 		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
 			if (user.incomingFRID.includes(newFriend.id)) {
-				user.incomingFRID.splice(user.incomingFRID.findIndex(el => el === newFriend.id));
-				newFriend.outgoingFRID.splice(newFriend.outgoingFRID.findIndex(el => el === user.id));
+				user.incomingFRID.splice(user.incomingFRID.findIndex(el => el === newFriend.id), 1);
+				newFriend.outgoingFRID.splice(newFriend.outgoingFRID.findIndex(el => el === user.id), 1);
 			}
 		}
 		await this.userRepo.save(user);
@@ -175,8 +175,8 @@ export class UsersController {
 			throw new UnauthorizedException('NOT a User');
 		if (!user.blockedID.includes(newFriend.id) && !newFriend.blockedID.includes(user.id)) {
 			if (user.FriendsID.includes(newFriend.id)) {
-				user.FriendsID.splice(user.FriendsID.findIndex(el => el === newFriend.id));
-				newFriend.FriendsID.splice(newFriend.FriendsID.findIndex(el => el === user.id));
+				user.FriendsID.splice(user.FriendsID.findIndex(el => el === newFriend.id), 1);
+				newFriend.FriendsID.splice(newFriend.FriendsID.findIndex(el => el === user.id), 1);
 				await this.chatsService.RemoveDm({userID1: user.id, userID2: newFriend.id});
 			}
 		}
@@ -197,11 +197,11 @@ export class UsersController {
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
 		await this.chatsService.RemoveDm({userID1: user.id, userID2: newFriend.id});
-		user.FriendsID.splice(user.FriendsID.findIndex(el => el === newFriend.id));
-		user.outgoingFRID.splice(user.outgoingFRID.findIndex(el => el === newFriend.id));
-		newFriend.FriendsID.splice(newFriend.FriendsID.findIndex(el => el === user.id));
-		newFriend.incomingFRID.splice(newFriend.incomingFRID.findIndex(el => el === user.id));
-		user.blockedID.splice(user.blockedID.findIndex(el => el === newFriend.id));
+		user.FriendsID.splice(user.FriendsID.findIndex(el => el === newFriend.id), 1);
+		user.outgoingFRID.splice(user.outgoingFRID.findIndex(el => el === newFriend.id), 1);
+		newFriend.FriendsID.splice(newFriend.FriendsID.findIndex(el => el === user.id), 1);
+		newFriend.incomingFRID.splice(newFriend.incomingFRID.findIndex(el => el === user.id), 1);
+		user.blockedID.splice(user.blockedID.findIndex(el => el === newFriend.id), 1);
 		user.blockedID.push(newFriend.id);
 		await this.userRepo.save(user);
 		await this.userRepo.save(newFriend);
@@ -219,8 +219,8 @@ export class UsersController {
 		const user = await this.usersService.getUserById(req.user.id); //! switch it to req.user.id
 		if (!user)
 			throw new UnauthorizedException('NOT a User');
-		user.blockedID.splice(user.blockedID.findIndex(el => el === newFriend.id));
-		// user.blockedID.splice(user.blockedID.findIndex(newFriend.id));
+		user.blockedID.splice(user.blockedID.findIndex(el => el === newFriend.id), 1);
+		// user.blockedID.splice(user.blockedID.findIndex(newFriend.id), 1);
 		console.log({testthisuser: user});
 		await this.userRepo.save(user);
 		res.end();
