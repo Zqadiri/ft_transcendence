@@ -208,11 +208,12 @@ const NavAndChatWrapper = () => {
 	}
 	const [self, setSelf] = useState<User | undefined>();
 	const [activeChatUsers, setActiveChatUsers] = useState<UserStat[]>([]);
-	const [activeChatMessages, _setActiveChatMessages] = useState<ChatMessage[]>([]);
-	const setActiveChatMessages = (x: ChatMessage[]) => {
+	const [displayActiveChatMessages, _setDisplayActiveChatMessages] = useState<ChatMessage[]>([]);
+	const [activeChatMessages, setActiveChatMessages] = useState<ChatMessage[]>([]);
+	const setDisplayActiveChatMessages = (x: ChatMessage[]) => {
 		// console.log({newValueMessages: x});
 		let msgs = x.filter(el => !self?.blockedID.includes(el.userID));
-		_setActiveChatMessages(msgs);
+		_setDisplayActiveChatMessages(msgs);
 		// console.log(msgs)
 		// if (msgs)
 		// return _setActiveChatMessages(x);
@@ -243,8 +244,8 @@ const NavAndChatWrapper = () => {
 	})
 
 	useEffect(() => {
-		setActiveChatMessages(activeChatMessages);
-	}, [self])
+		setDisplayActiveChatMessages(activeChatMessages);
+	}, [self, activeChatMessages])
 
 	useEffect(() => {
 		chatSocket.off('connect').on('connect', () => {
@@ -1042,7 +1043,7 @@ const NavAndChatWrapper = () => {
 							<div className="messages" ref={messagesRef} style={{display: activeTab === "chatinterface" ? "block" : "none"}}>
 								<div className="msgcontainer flex-column flex-jc-fe">
 								{
-									activeChatMessages.map((msg: ChatMessage) => {
+									displayActiveChatMessages.map((msg: ChatMessage) => {
 										console.log({msg})
 										// console.log({other: msg.user.userID, ana: cookies.get("name"), ft: msg.user.userID == cookies.get("name")})
 										return (
