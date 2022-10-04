@@ -10,6 +10,22 @@ import { ValidationPipe } from '@nestjs/common';
   NestFactory exposes a few static methods that allow creating an application instance.
 */
 
+declare global {
+	interface Array<T> {
+		remove(elem: T): Array<T>;
+	}
+}
+
+if (!Array.prototype.remove) {
+	Array.prototype.remove = function <T>(this: T[], elem: T): T[] {
+		let index = this.findIndex((el) => el === elem);
+		let count = 0;
+		if (index > -1)
+			count = 1;
+		return this.splice(index, count);
+	}
+}
+
 async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(
 		AppModule,
