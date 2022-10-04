@@ -320,10 +320,6 @@ const NavAndChatWrapper = () => {
 		return prom;
 	}
 
-	useEffect(() => {
-		getFriends();
-	})
-
 	const getFriendRequests = () => {
 		axios.get("/users/friend_req")
 		.then((res: AxiosResponse) => {
@@ -333,6 +329,11 @@ const NavAndChatWrapper = () => {
 
 	const [friends, setFriends] = useState<User[]>([]);
 	const [friendRequests, setFriendRequests] = useState<User[]>([]);
+
+	useEffectOnce(() => {
+		getAllMyRooms();
+		getFriends();
+	})
 
 	useEffect(() => {
 		// console.log({activeChattttttttttttttttttttttttttt:activeChat})
