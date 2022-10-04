@@ -341,6 +341,7 @@ const NavAndChatWrapper = () => {
 			getCurrentRoomData();
 			getAllRooms();
 			getAllMyRooms();
+			getUserStats();
 		}, 1000);
 		return () => {
 			clearInterval(int);
@@ -351,6 +352,14 @@ const NavAndChatWrapper = () => {
 		// console.log({activeChattttttttttttttttttttttttttt:activeChat})
 	}, [activeChat])
 
+
+	const getUserStats = () => {
+		axios.get("/chat/userStats/" + activeChat?.db_chat_name).then(res => {
+			setActiveChatUsers(res.data);
+		}).catch((err) => {
+
+		})
+	}
 
 	const [passwdMessage, _setPasswdMessage] = useState("");
 	const setPasswdMessage = (pwd: string) => {
