@@ -335,6 +335,18 @@ const NavAndChatWrapper = () => {
 		getFriends();
 	})
 
+	useEffectOnce(() => {
+		let int = setInterval(() => {
+			getFriendsTab();
+			getCurrentRoomData();
+			getAllRooms();
+			getAllMyRooms();
+		}, 1000);
+		return () => {
+			clearInterval(int);
+		}
+	})
+
 	useEffect(() => {
 		// console.log({activeChattttttttttttttttttttttttttt:activeChat})
 	}, [activeChat])
