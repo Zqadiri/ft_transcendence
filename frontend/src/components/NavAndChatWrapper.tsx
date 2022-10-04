@@ -243,6 +243,10 @@ const NavAndChatWrapper = () => {
 	})
 
 	useEffect(() => {
+		setActiveChatMessages(activeChatMessages);
+	}, [self])
+
+	useEffect(() => {
 		chatSocket.off('connect').on('connect', () => {
 			console.log("connected");
 		});
