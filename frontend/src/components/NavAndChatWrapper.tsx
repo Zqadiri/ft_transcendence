@@ -943,7 +943,7 @@ const NavAndChatWrapper = () => {
 												<div className="flex-column d100" style={{display: userType === "invited" ? "flex" : "none"}}>
 													{
 														(() => {
-															let ret = friends.filter(fr => currentChatRoomData?.InvitedUserID.some(id => id === fr.id)).map(fr => {
+															let ret = friends.filter(fr => currentChatRoomData?.InvitedUserID?.some(id => id === fr.id)).map(fr => {
 																return (
 																	<div className="tabuser invited w100">
 																		<div className="left flex-gap5 flex-ai-cr">
