@@ -998,7 +998,7 @@ const NavAndChatWrapper = () => {
 																activeChatUsers.find(el => cookies.get("name") === el.username)
 																&& (activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "owner"
 																	|| activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "admin")
-																&& (user.stat === "user" || user.stat === "admin")
+																&& (user.stat === "user" || user.stat === "admin") && user.id !== parseInt(cookies.get("id"))
 															}>
 																<>
 																	<MuteBanControls activeChat={activeChat} setActiveChat={setActiveChat} userID={user.id}></MuteBanControls>
