@@ -334,10 +334,6 @@ const NavAndChatWrapper = () => {
 	const [friends, setFriends] = useState<User[]>([]);
 	const [friendRequests, setFriendRequests] = useState<User[]>([]);
 
-	useEffectOnce(() => {
-		getAllMyRooms();
-	})
-
 	useEffect(() => {
 		// console.log({activeChattttttttttttttttttttttttttt:activeChat})
 	}, [activeChat])
