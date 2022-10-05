@@ -112,19 +112,22 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 
 	@SubscribeMessage("joinInvitation")
 	async handleJoinInvitation(client: Socket, {roomName, userCounter}) {
-
+		let		clients = await this.server.in(roomName).allSockets();
+	
+		if (userCounter === 2 && clients.size === 0)
+			return ;
 		client.join(roomName);
 		client.emit("joinedRoom", roomName, userCounter);
-	
-		if (userCounter === 2)
+
+		clients = await this.server.in(roomName).allSockets();
+		
+		if (clients.size === 2)
 		{
-			const	clients = await this.server.in(roomName).allSockets();
 			const	iter = clients.values();
 			const	usersId = roomName.split(":");
 		
 			this.updateGame.initializeServerObject(this.server);
 			this.updateGame.create(roomName, "theme01", iter.next().value, iter.next().value, usersId[1], usersId[2]);
-			console.log({roomcustom: roomName})
 			this.server.to(roomName).emit("secondPlayerJoined");
 		}
 		this.logger.log(client.id + " joined invitation & roomName " + roomName);
