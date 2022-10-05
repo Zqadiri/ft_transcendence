@@ -10,6 +10,15 @@ import axios from 'axios';
 import { global } from './game/PingPong/Data/PingPong.d';
 import { handleInvitationDeclined } from './game/GameTabs';
 import { addMatchingSocketEventHandler } from './game/Matching/Matching';
+import { confirm } from "react-confirm-box";
+
+
+const options = {
+	labels: {
+		confirmable: "Accept",
+		cancellable: "Decline"
+	}
+}
 
 function App() {
 	const	[loggedIn, setLoggedIn] = useState(isLoggedIn());
@@ -30,7 +39,7 @@ function App() {
 
 			const	opponentId = roomName.split(":")[1];
 			const	userResp = await axios.get("/users?id=" + opponentId);
-			const	reply = confirm(`${userResp.data.username} invited you to play a game`);
+			const	reply = await confirm(`${userResp.data.username} invited you to play a game`, options);
 			const	currentUserResp = await axios.get("/users?id=" + currentUserId);
 
 			if (currentUserResp.data.status === "ingame" || declinedStatus)
