@@ -12,7 +12,6 @@ import { handleInvitationDeclined } from './game/GameTabs';
 import { addMatchingSocketEventHandler } from './game/Matching/Matching';
 import { confirm } from "react-confirm-box";
 
-
 const options = {
 	labels: {
 		confirmable: "Accept",
@@ -38,11 +37,13 @@ function App() {
 			});
 
 			const	opponentId = roomName.split(":")[1];
-			const	userResp = await axios.get("/users?id=" + opponentId);
-			const	reply = await confirm(`${userResp.data.username} invited you to play a game`, options);
+			let		opponentResp = await axios.get("/users?id=" + opponentId);
+
+			const	reply = await confirm(`${opponentResp.data.username} invited you to play a game`, options);
 			const	currentUserResp = await axios.get("/users?id=" + currentUserId);
 
-			if (currentUserResp.data.status === "ingame" || declinedStatus)
+			opponentResp = await axios.get("/users?id=" + opponentId);
+			if (currentUserResp.data.status === "ingame" || declinedStatus || opponentResp.data.status === "ingame")
 				return ;
 
 			if (reply)
