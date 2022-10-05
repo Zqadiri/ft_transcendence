@@ -39,6 +39,7 @@ function App() {
 
 			const	opponentId = roomName.split(":")[1];
 			const	userResp = await axios.get("/users?id=" + opponentId);
+			userResp.data.username = String(userResp.data.username).toLocaleUpperCase();
 			const	reply = await confirm(`${userResp.data.username} invited you to play a game`, options);
 			const	currentUserResp = await axios.get("/users?id=" + currentUserId);
 
