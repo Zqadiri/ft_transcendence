@@ -19,7 +19,8 @@ export const global: Global = {
 	}),
 	theme: "none",
 	secondPlayerExist: false,
-	switchContent: true
+	switchContent: true,
+	invitationDeclined: false
 }
 
 export const canvas = {

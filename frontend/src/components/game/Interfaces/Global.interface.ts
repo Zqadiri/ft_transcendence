@@ -17,5 +17,6 @@ export interface Global {
 	socket: Socket,
 	theme: string,
 	secondPlayerExist: boolean,
-	switchContent: boolean
+	switchContent: boolean,
+	invitationDeclined: boolean
 }

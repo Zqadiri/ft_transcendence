@@ -337,7 +337,7 @@ const NavAndChatWrapper = () => {
 			getAllMyRooms();
 			getUserStats(activeChat);
 			getSelf();
-		}, 1000);
+		}, 1000 * 40);
 		return () => {
 			clearInterval(int);
 		}

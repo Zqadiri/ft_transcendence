@@ -38,8 +38,7 @@ function App() {
 
 			const	opponentId = roomName.split(":")[1];
 			let		opponentResp = await axios.get("/users?id=" + opponentId);
-
-			const	reply = await confirm(`${opponentResp.data.username} invited you to play a game`, options);
+			const	reply = await confirm(`${opponentResp.data.username} invited you to play a game. EXPIRES IN 1min`, options);
 			const	currentUserResp = await axios.get("/users?id=" + currentUserId);
 
 			opponentResp = await axios.get("/users?id=" + opponentId);

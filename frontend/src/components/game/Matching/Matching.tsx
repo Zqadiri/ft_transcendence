@@ -47,7 +47,6 @@ function	InvitationWaiting(): JSX.Element
 	);
 }
 
-
 export function	addMatchingSocketEventHandler(navigate: Function)
 {
 	global.socket.off("joinedRoom").on("joinedRoom", (room, playerId) => {
@@ -73,6 +72,15 @@ function	Matching( {activeComponent, setActiveComponent}: {activeComponent: stri
 
 	if (activeComponent === invitationWaiting)
 	{
+		setTimeout(() => {
+			console.log(global.invitationDeclined + " " + global.secondPlayerExist);
+			if (global.invitationDeclined === false && global.secondPlayerExist === false)
+			{
+				location.reload();
+				global.invitationDeclined = false;
+			}
+		}, 1000 * 60);
+
 		return (
 			<>
 				<InvitationWaiting />

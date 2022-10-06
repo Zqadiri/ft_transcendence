@@ -53,6 +53,7 @@ export	function	handleGameInvitation(navigate: Function, opponentId: number)
 export	function	handleInvitationDeclined()
 {
 	alert("Your friend declined your invitation!");
+	global.invitationDeclined = true;
 	global.socket.disconnect();
 
 	g_setActiveComponent(selectionComponent)
