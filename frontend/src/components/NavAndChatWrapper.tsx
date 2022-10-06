@@ -228,8 +228,11 @@ const NavAndChatWrapper = () => {
 	})
 
 	useEffect(() => {
-		if (messagesRef.current)
-			messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+		setTimeout(() => {
+			if (messagesRef.current) {
+				messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+			}
+		}, 100)
 	}, [activeChatMessages])
 
 	useEffectOnce(() => {
@@ -279,6 +282,15 @@ const NavAndChatWrapper = () => {
 			console.log({data})
 		})
 
+		statusSocket.off("UserStatusChanged").on("UserStatusChanged", (data: {userId: string | number, status: "online" | "offline" | "ingame"}) => {
+			console.log(`received user statsu changed: ${JSON.stringify(data)}`);
+			data.userId = parseInt(String(data.userId))
+			if (friends.find(fr => fr.id === data.userId)) {
+				let idx: number = friends.findIndex(fr => fr.id === data.userId);
+				setFriends([...friends.filter(fr => fr.id !== data.userId), {...friends[idx], status: data.status}])
+			}
+		})
+
 		// socket.to("room").emit("bannedFromRoom", { roomName: "room", releaseTime: })
 
 		chatSocket.off("messageToRoomSyn").on("messageToRoomSyn", (data) => {
@@ -324,24 +336,32 @@ const NavAndChatWrapper = () => {
 	const [friends, setFriends] = useState<User[]>([]);
 	const [friendRequests, setFriendRequests] = useState<User[]>([]);
 
+
+	useEffect(() => {
+		console.log({friends});
+	}, [friends])
+
 	useEffectOnce(() => {
 		getAllMyRooms();
 		getFriends();
 	})
 
-	useEffect(() => {
-		let int = setInterval(() => {
-			getFriendsTab();
-			getCurrentRoomData();
-			getAllRooms();
-			getAllMyRooms();
-			getUserStats(activeChat);
-			getSelf();
-		}, 1000 * 40);
-		return () => {
-			clearInterval(int);
-		}
-	}, [activeChat])
+	// useEffect(() => {
+	// 	let int = setInterval(() => {
+	// 		if (chatIsOpen) {
+	// 			getAllRooms();
+	// 			getAllMyRooms();
+	// 			getCurrentRoomData();
+	// 			if (activeChat)
+	// 				getUserStats(activeChat);
+	// 			getFriendsTab();
+	// 			getSelf();
+	// 		}
+	// 	}, 2000);
+	// 	return () => {
+	// 		clearInterval(int);
+	// 	}
+	// }, [activeChat, chatIsOpen])
 
 	useEffect(() => {
 		// console.log({activeChattttttttttttttttttttttttttt:activeChat})
@@ -508,7 +528,7 @@ const NavAndChatWrapper = () => {
 													<div className="friend flex-jc-sb" onClick={() => {
 														getAllMyRooms()
 														.finally(() => {
-															let cht = chatRooms.find(el => el.db_chat_type === "dm" && el.db_chat_name.split(",").includes(fr.username))
+															let cht = chatRooms.find(el => el.db_chat_type === "dm" && el.db_chat_name.split(",").includes(String(fr.id)))
 															if (cht)
 																roomOnClick(cht);
 														})
@@ -526,7 +546,7 @@ const NavAndChatWrapper = () => {
 																navigater(`/profile/${fr.username}`);
 																setChatIsOpen(false);
 															}}>View Profile</Button>
-															<ShowConditionally cond={fr.status === "ingame"}>
+															<ShowConditionally cond={fr.status === "ingame" && self?.status !== "ingame"}>
 																<Button className="spectate" onClick={(e) => {
 																	e.stopPropagation();
 																	spectateGameFromChat(fr.id, navigater);

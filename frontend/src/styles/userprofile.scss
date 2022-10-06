@@ -1,69 +1,16 @@
 @import './palette.scss';
 
 .userprofile {
-	// padding: 10px;
-	$gap: 15px;
-	$dim: 150px;
-	.top {
-		background-color: white;
-		padding-bottom: 50px;
-		border-bottom-left-radius: 100px;
-		border-bottom-right-radius: 100px;
-		box-shadow: 0px 10px 50px -10px #000000;
-		.background {
-			height: 200px;
-			// background-color: $darker_blue;
-			background: $dark_blue;
-			// background: linear-gradient(180deg,
-			// 					rgba(32,83,112,1) 0%,
-			// 					rgba(20,53,72,0.7707283597032564) 27%,
-			// 					rgba(0,0,0,0) 100%);
-		}
-		.activearea {
-			padding-inline: 100px;
-			.left {
-				gap: $gap;
-				.imagecontainer {
-					height: 0px;
-					padding-bottom: calc($dim / 2);
-					.before {
-						border: 5px solid transparent;
-						outline: 5px solid #f66b0e;
-						border-radius: 100%;
-					}
-					.image {
-						background-color: white;
-						height: $dim;
-						width: $dim;
-						border-radius: 100%;
-					}
-				}
-				.namecontainer {
-					background-color: #f66b0e;
-					border-radius: 99px;
-					padding: 5px 15px;
-					height: 50px;
-					.name {
-						color: white;
-						font-size: 150%;
-					}
-				}
-			}
-			.right {
-				box-sizing: content-box;
-				height: 50px;
-				padding-top: calc($dim / 2 + $gap);
-				.c_button {
-					padding: 5px 15px;
-					font-size: 100%;
-					color: white;
-					height: 100%;
-					border-radius: 99px;
-					font-weight: 700;
-					white-space: nowrap;
-				}
-				.block {
-					background-color: rgb(255, 51, 0);
+	.userinfo {
+		width: 33%;
+		.top {
+			.imgcontainer {
+				.image {
+					$dim: 100px;
+					width: $dim;
+					height: $dim;
+					background-color: white;
+					border-radius: 100%;
 				}
 			}
 		}

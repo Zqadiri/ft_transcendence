@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navigate, Params, useParams } from "react-router-dom";
-import { cookies, ShowConditionally } from "./util";
+import { cookies, ShowConditionally, useEffectOnce } from "./util";
 import '../styles/userprofile.scss'
 import Button from "./Button";
 import UserOperationsButtons from "./UserOperationsButtons";
@@ -35,15 +35,30 @@ const UserProfile = (props: { self: boolean }) => {
 	const [user, setUser] = useState<User | null | undefined>(null);
 	const [thisuser, setThisUser] = useState<User | null | undefined>(null);
 	const [usermh, setUsermh] = useState(null);
+	const [editingName, setEditingName] = useState(false);
+	const [editingPfp, setEditingPfp] = useState(false);
+	const [displayName, setDisplayName] = useState("");
+	const [enMessage, setEnMessage] = useState("");
 
+	useEffect(() => {
+		if (!editingName) {
+			setDisplayName(user?.username || "");
+		}
+	}, [user, thisuser, editingName])
 
+	useEffect(() => {
+		let int = setInterval(() => {
+			updateUserProfile(params);
+		}, 2000)
+		return () => clearInterval(int)
+	}, [params])
 
 	const updateUserProfile = (prm: Readonly<Params<string>>) => {
-		axios.get("/game/get_match_history?name=" + prm.userId)
+		axios.get("/game/get_match_history?name=" + (prm.userId || cookies.get("name")))
 		.then((res) => {
 			setUsermh(res.data)
 		})
-		axios.get("/users?name=" + prm.userId)
+		axios.get("/users?name=" + (prm.userId || cookies.get("name")))
 		.then((res) => {
 			console.log({user: res});
 			setUser(res.data);
@@ -63,9 +78,11 @@ const UserProfile = (props: { self: boolean }) => {
 		})
 	}
 
-	useEffect(() => {
+	useEffectOnce(() => {
 		updateUserProfile(params);
-	}, [params])
+	})
+
+	const uploadPfpRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		console.log({user, thisuser, usermh})
@@ -77,32 +94,69 @@ const UserProfile = (props: { self: boolean }) => {
 		<div className="userprofile d100">
 			<ShowConditionally cond={user && thisuser}>
 				<>
-					<div className="top">
-						<div className="background w100"></div>
-						<div className="activearea w100 flex-jc-sb flex-ai-fs">
-							<div className="left flex-center-column">
-								<div className="imagecontainer flex-center">
-									{/* <div className="image" style={{ background: `url(${user?.avatar})` }}></div> */}
-									<div className="before flex-center">
-										<img src={user?.avatar} alt="Profile Picture" className="image" />
-									</div>
+					<div className="userinfo">
+						<div className="top">
+							<div className="imgcontainer">
+								<img src={user?.avatar} className="image" alt="Profile Picture" />
+								<ShowConditionally cond={user?.id === thisuser?.id}>
+									<>
+										<div className="editoverlay" onClick={() => {
+											uploadPfpRef.current?.click();
+										}}>+ Change Profile Picture</div>
+										<input type="file" name="" id="" ref={uploadPfpRef} hidden onChange={() => {
+											setEditingPfp(true);
+										}}/>
+									</>
+								</ShowConditionally>
+								<div className={`status ${user?.status}`}></div>
+							</div>
+							<ShowConditionally cond={editingPfp}>
+								<div className="editpfp">
+									<Button>Save</Button>
+									<Button onClick={() => {
+										setEditingPfp(false);
+									}}>Cancel</Button>
 								</div>
-								<div className="namecontainer flex-center"><h2 className="name">{user?.username}</h2></div>
+							</ShowConditionally>
+							<div className="namecontainer">
+								<input type="text" className="name" value={displayName} onChange={(e) => {
+									if (editingName)
+										setDisplayName(e.target.value);
+								}}></input>
+								<ShowConditionally cond={user?.id === thisuser?.id && !editingName}>
+									<div className="iconcontainer" onClick={() => {
+										setEditingName(true);
+									}}>
+										<i className="fa-solid fa-edit"></i>
+									</div>
+								</ShowConditionally>
 							</div>
-							<div className="right flex-center flex-gap5">
-								<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
-							</div>
+							<div className="editnamemessage">{enMessage}</div>
+							<ShowConditionally cond={editingName}>
+								<div className="editname">
+									<Button onClick={() => {
+										// change name axios
+									}}>Save</Button>
+									<Button onClick={() => {
+										setEditingName(false);
+									}}>Cancel</Button>
+								</div>
+							</ShowConditionally>
 						</div>
+						<ShowConditionally cond={user?.id !== thisuser?.id}>
+							<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
+							<div className="bottom twofa"></div>
+						</ShowConditionally>
 					</div>
 				</>
-				<ShowConditionally cond={user === undefined}>
-					<div className="notfound d100 flex-center">
-						<div className="dotinner">
-							No Such User
-						</div>
+				<div className="notfound d100 flex-center">
+					<div className="dotinner">
+						<ShowConditionally cond={user === undefined}>
+							<>No User Called "{params.userId || cookies.get("name")}"</>
+							<>Loading</>
+						</ShowConditionally>
 					</div>
-					<div>Loading</div>
-				</ShowConditionally>
+				</div>
 			</ShowConditionally>
 		</div>
 	);
