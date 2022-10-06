@@ -76,7 +76,9 @@ function	Matching( {activeComponent, setActiveComponent}: {activeComponent: stri
 			console.log(global.invitationDeclined + " " + global.secondPlayerExist);
 			if (global.invitationDeclined === false && global.secondPlayerExist === false)
 			{
-				location.reload();
+				global.theme = "none";
+				global.socket.disconnect();
+				setActiveComponent(selectionComponent);
 				global.invitationDeclined = false;
 			}
 		}, 1000 * 60);
