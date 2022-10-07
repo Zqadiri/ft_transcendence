@@ -4,7 +4,7 @@ import { LiveGame } from "../../Interfaces/LiveGame.interface";
 import { spectator } from "../../PingPong/Data/PingPong.contants";
 import { global } from "../../PingPong/Data/PingPong.d";
 
-export async	function	getGamesDataFromDatabase(setLiveGamesData: Function, setNoLiveGamesExist: Function)
+export async	function	getGamesDataFromDatabase(setLiveGamesData: Function, setNoLiveGamesExist: Function, setAvailableGames: Function)
 {
 	try {
 		let		gameResp = await axios.get('/game/live');
@@ -41,6 +41,7 @@ export async	function	getGamesDataFromDatabase(setLiveGamesData: Function, setNo
 				]);
 			}
 			setNoLiveGamesExist(false);
+			setAvailableGames(gameResp.data.length);
 		}
 		else
 			setNoLiveGamesExist(true);
@@ -88,7 +89,9 @@ export	function 			updateAvailableGames(setAvailableGames: Function)
 	});
 
 	global.socket.off("gameEnded").on("gameEnded", () => {
-		setAvailableGames((current: number) => current - 1);
+		setAvailableGames((current: number) => {
+			return (current - 1);
+		});
 	});
 }
 

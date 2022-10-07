@@ -1,4 +1,4 @@
-import { OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { UsersService } from './users/users.service';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
@@ -12,7 +12,6 @@ import { Logger } from '@nestjs/common';
 export class StatusGateway implements OnGatewayDisconnect {
 
 	constructor( private readonly userServ: UsersService ) {}
-
 	@WebSocketServer()
 	server: Server;
 
@@ -94,7 +93,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 	async handleInGame(client: any, {userId, status})
 	{
 		this.logger.log(`inGame event got fired by: ${userId}, status: ${status}`);
-		if (userId && this.users[client.id])
+		if (this.users[client.id])
 		{
 			this.users[client.id][1] = status;
 			this.userServ.updateStatus(Number(userId), status);
@@ -106,13 +105,13 @@ export class StatusGateway implements OnGatewayDisconnect {
 	handleLogOut(client: any, userId)
 	{
 		this.logger.log(`logOut event got fired by: ${userId}, status: offline`);
+		for (const property in this.users)
+		{
+			if (this.users[property][0] === userId)
+				this.users[property][1] = "offline";
+		}
 		if (userId)
 		{
-			for (const property in this.users)
-			{
-				if (this.users[property][0] === userId)
-					this.users[property][1] = "offline";
-			}
 			this.userServ.updateStatus(userId, "offline");
 			this.server.emit("UserStatusChanged", {userId: userId, status: "offline"});
 		}

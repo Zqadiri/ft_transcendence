@@ -1,34 +1,28 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { matchingContext } from "./Matching";
 import { global } from "../PingPong/Data/PingPong.d"
 import { MoonLoader } from "react-spinners";
 import { selectionComponent } from "./Data/Matching.constants";
 import { g_setIsMatching } from "../../NavAndChatWrapper";
 
+let			isCanceled = false;
+
 function	Waiting(): JSX.Element
 {
-	let		{activeComponent, setActiveComponent} = useContext(matchingContext);
-	const	[isCanceled, setIsCanceled] = useState(false);
-
-	function	cancelRoom()
-	{
-		setIsCanceled(true);
-		setActiveComponent(selectionComponent);
-	}
+	let		{setActiveComponent} = useContext(matchingContext);
 
 	useEffect(() => {
 		window.onbeforeunload = () => "";
 		g_setIsMatching(true);
 
 		return () => {
-			console.log("canceled " + isCanceled);
-
 			if (isCanceled === false && global.secondPlayerExist === false)
+			{
 				alert("You matching is about to be canceled");
-			else
 				setActiveComponent(selectionComponent);
+			}
 
-			activeComponent = selectionComponent;
+			isCanceled = false;
 			g_setIsMatching(false);
 
 			if (global.secondPlayerExist === false)
@@ -36,6 +30,12 @@ function	Waiting(): JSX.Element
 			window.onbeforeunload = null;
 		};
 	}, []);
+
+	function	cancelRoom()
+	{
+		isCanceled = true;
+		setActiveComponent(selectionComponent);
+	}
 
 	return (
 		<>

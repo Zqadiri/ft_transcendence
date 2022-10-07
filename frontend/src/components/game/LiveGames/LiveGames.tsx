@@ -32,7 +32,7 @@ export function		LiveGames(): JSX.Element
 	useEffect(() => {
 		global.socket.connect();
 
-		getGamesDataFromDatabase(setLiveGamesData, setNoLiveGamesExist);
+		getGamesDataFromDatabase(setLiveGamesData, setNoLiveGamesExist, setAvailableGames);
 
 		return () => {
 			if (global.secondPlayerExist === false)

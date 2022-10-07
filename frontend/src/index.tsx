@@ -8,7 +8,9 @@ export const statusSocket = io('/status', {
 	forceNew: true,
 });
 
-statusSocket.emit('userId', cookies.get('id'));
+statusSocket.on("connect", () => {
+	statusSocket.emit('userId', cookies.get('id'));
+});
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
