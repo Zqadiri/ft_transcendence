@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Navigate, Params, useParams } from "react-router-dom";
-import { cookies, ShowConditionally, useEffectOnce } from "./util";
+import { cookies, globalContext, ShowConditionally, useEffectOnce } from "./util";
 import '../styles/userprofile.scss'
 import Button from "./Button";
 import UserOperationsButtons from "./UserOperationsButtons";
@@ -31,6 +31,7 @@ export interface User {
 } 
 
 const UserProfile = (props: { self: boolean }) => {
+	const { setLoggedIn } = useContext(globalContext);
 	let params = useParams();
 	const [user, setUser] = useState<User | null | undefined>(null);
 	const [thisuser, setThisUser] = useState<User | null | undefined>(null);
@@ -38,6 +39,7 @@ const UserProfile = (props: { self: boolean }) => {
 	const [editingName, setEditingName] = useState(false);
 	const [editingPfp, setEditingPfp] = useState(false);
 	const [displayName, setDisplayName] = useState("");
+	const [displayImage, setDisplayImage] = useState("");
 	const [enMessage, setEnMessage] = useState("");
 
 	useEffect(() => {
@@ -47,13 +49,20 @@ const UserProfile = (props: { self: boolean }) => {
 	}, [user, thisuser, editingName])
 
 	useEffect(() => {
+		if (!editingPfp) {
+			setDisplayImage(user?.avatar || "");
+		}
+	}, [user, thisuser, editingPfp])
+
+	useEffectOnce(() => {
 		let int = setInterval(() => {
 			updateUserProfile(params);
 		}, 2000)
-		return () => clearInterval(int)
-	}, [params])
+		return () => {clearInterval(int)}
+	})
 
 	const updateUserProfile = (prm: Readonly<Params<string>>) => {
+		console.log("called? updateuserprofile")
 		axios.get("/game/get_match_history?name=" + (prm.userId || cookies.get("name")))
 		.then((res) => {
 			setUsermh(res.data)
@@ -82,6 +91,15 @@ const UserProfile = (props: { self: boolean }) => {
 		updateUserProfile(params);
 	})
 
+	const readURL = (file: File) => {
+		return new Promise((res, rej) => {
+			const reader = new FileReader();
+			reader.onload = e => res(String(e.target?.result));
+			reader.onerror = e => rej(e);
+			reader.readAsDataURL(file);
+		});
+	};
+
 	const uploadPfpRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -97,13 +115,20 @@ const UserProfile = (props: { self: boolean }) => {
 					<div className="userinfo">
 						<div className="top">
 							<div className="imgcontainer">
-								<img src={user?.avatar} className="image" alt="Profile Picture" />
+								<div style={{backgroundImage: `url(${displayImage})`}} className="image" />
 								<ShowConditionally cond={user?.id === thisuser?.id}>
 									<>
 										<div className="editoverlay" onClick={() => {
 											uploadPfpRef.current?.click();
 										}}>+ Change Profile Picture</div>
-										<input type="file" name="" id="" ref={uploadPfpRef} hidden onChange={() => {
+										<input type="file" name="" id="" ref={uploadPfpRef} accept="image/*" hidden onChange={(e) => {
+											if (e.target.files) {
+												console.log("upload image...")
+												console.log({etarget: e.target})
+												readURL(e.target.files[0]).then((res) => {
+													setDisplayImage(String(res));
+												})
+											}
 											setEditingPfp(true);
 										}}/>
 									</>
@@ -112,7 +137,9 @@ const UserProfile = (props: { self: boolean }) => {
 							</div>
 							<ShowConditionally cond={editingPfp}>
 								<div className="editpfp">
-									<Button>Save</Button>
+									<Button onClick={() => {
+
+									}}>Save</Button>
 									<Button onClick={() => {
 										setEditingPfp(false);
 									}}>Cancel</Button>
@@ -135,7 +162,20 @@ const UserProfile = (props: { self: boolean }) => {
 							<ShowConditionally cond={editingName}>
 								<div className="editname">
 									<Button onClick={() => {
-										// change name axios
+										axios.post("/users/update_username", { username: displayName })
+										.then((res) => {
+											setEnMessage("Success!")
+											setTimeout(() => {
+												setEnMessage("");
+											}, 2000)
+										}).catch((err) => {
+											setEnMessage("Failed :(")
+											setTimeout(() => {
+												setEnMessage("");
+											}, 2000)
+										})
+										setLoggedIn(false);
+										setLoggedIn(true);
 									}}>Save</Button>
 									<Button onClick={() => {
 										setEditingName(false);

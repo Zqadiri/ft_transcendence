@@ -1,7 +1,6 @@
 import { Controller, ClassSerializerInterceptor,Get, UnauthorizedException,
-	BadRequestException, Param, HttpCode, UseGuards, Body, Res, Query, NotFoundException } from '@nestjs/common';
-import { UseInterceptors } from '@nestjs/common';
-import { UploadedFile } from '@nestjs/common';
+	BadRequestException, Param, HttpCode, UseGuards,HttpStatus, Body, Res, Query, NotFoundException } from '@nestjs/common';
+import { UseInterceptors, UploadedFile } from '@nestjs/common';
 import { Post, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Express } from 'express'
@@ -39,16 +38,18 @@ export class UsersController {
 		type: AvatarDto,
 	})
 	@Post('/upload_avatar')
-	@HttpCode(200)
 	@UseInterceptors(uploadInterceptor({
 		fieldName: 'file',
 		path: '/',
-		fileFilter: (req, file, callback) => {
-			if (!file.mimetype.includes('images'))
-				return callback(new BadRequestException('Provide a valid image'), false);
-		},
+		fileFilter: (request, file, callback) => {
+			if (!file.mimetype.includes('image')) {
+			  return callback(new BadRequestException('Provide a valid image'), false);
+			}
+			callback(null, true);
+		}
 	}))
 	async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File, @Res() res) {
+		console.log( "1 file : " + JSON.stringify(file));
 		const user = await this.usersService.uploadAvatar(req.user.id, {
 			filename: file.filename,
 			path: file.path,
@@ -59,15 +60,24 @@ export class UsersController {
 	
 	@ApiOperation({ summary: 'Change a user\'s username' })
 	@Post('/update_username')
-	async updateUsername(@Req() req, @Body('username') newUsername: string){
+	async updateUsername(@Req() req, @Body('username') newUsername: string, @Res() res) {
 		var result :any;
 		try{
 			result = await this.usersService.updateUsername(req.user.id, newUsername);
+			res.cookie('name', newUsername,{
+				maxAge: 1000 * 60 * 60 * 24,
+				httpOnly: false,
+				domain: 'localhost',
+				sameSite: "strict",
+				secure: false,
+				path: '/'
+			});
 		}
 		catch (err){
 			throw new UnauthorizedException('failed to update the username');
 		}
-		return result;
+		// return result;
+		res.send({message: "success!"});
 	}
 	
 	@ApiOperation({ summary: 'Add a friend to a user' })

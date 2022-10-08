@@ -55,7 +55,6 @@ export class ChatController {
             throw e;
         }
     }
-    
 
     @UseGuards(jwtAuthGuard)
     @Post('/LeaveRoom')
