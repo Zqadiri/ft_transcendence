@@ -5,7 +5,7 @@ import "../styles/wrapper.scss"
 import Button from "./Button";
 import FourOFour from "./FourOFour";
 import UserProfile, { User } from "./UserProfile";
-import { capitalize, cookies, globalContext, RRLink, ShowConditionally, useEffectOnce } from "./util";
+import { capitalize, cookies, deepcopy, globalContext, RRLink, ShowConditionally, useEffectOnce } from "./util";
 import io from 'socket.io-client';
 import ProtectedRoom from "./ProtectedRoom";
 import GameTabs, { handleGameInvitation } from "./game/GameTabs"
@@ -74,7 +74,7 @@ const NavAndChatWrapper = () => {
 		getCurrentRoomData();
 		return _setUserType(ut);
 	}
-	const { setLoggedIn } = useContext(globalContext);
+	const { loggedIn, setLoggedIn } = useContext(globalContext);
 	const navigater = useNavigate();
 	const [userIconDropdown, setUserIconDropdown] = useState(false);
 	const [chatIsOpen, setChatIsOpen] = useState(
@@ -289,6 +289,10 @@ const NavAndChatWrapper = () => {
 				let idx: number = friends.findIndex(fr => fr.id === data.userId);
 				setFriends([...friends.filter(fr => fr.id !== data.userId), {...friends[idx], status: data.status}])
 			}
+			else if (data.userId === parseInt(cookies.get("id"))) {
+				console.log({yeshere: data})
+				setSelf(x => (x ? {...x, status: data.status} : undefined));
+			}
 		})
 
 		// socket.to("room").emit("bannedFromRoom", { roomName: "room", releaseTime: })
@@ -344,6 +348,7 @@ const NavAndChatWrapper = () => {
 	useEffectOnce(() => {
 		getAllMyRooms();
 		getFriends();
+		getSelf();
 	})
 
 	// useEffect(() => {

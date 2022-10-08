@@ -59,15 +59,24 @@ export class UsersController {
 	
 	@ApiOperation({ summary: 'Change a user\'s username' })
 	@Post('/update_username')
-	async updateUsername(@Req() req, @Body('username') newUsername: string){
+	async updateUsername(@Req() req, @Body('username') newUsername: string, @Res() res) {
 		var result :any;
 		try{
 			result = await this.usersService.updateUsername(req.user.id, newUsername);
+			res.cookie('name', newUsername,{
+				maxAge: 1000 * 60 * 60 * 24,
+				httpOnly: false,
+				domain: 'localhost',
+				sameSite: "strict",
+				secure: false,
+				path: '/'
+			});
 		}
 		catch (err){
 			throw new UnauthorizedException('failed to update the username');
 		}
-		return result;
+		// return result;
+		res.send({message: "success!"});
 	}
 	
 	@ApiOperation({ summary: 'Add a friend to a user' })
