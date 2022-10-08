@@ -20,7 +20,7 @@ import { ChatsService } from 'src/chats/chats.service';
 
 @ApiTags('users')
 @Controller('users')
-// @UseGuards(jwtAuthGuard)
+@UseGuards(jwtAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
 
@@ -50,7 +50,7 @@ export class UsersController {
 	}))
 	async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File, @Res() res) {
 		console.log( "1 file : " + JSON.stringify(file));
-		const user = await this.usersService.uploadAvatar(58526, {
+		const user = await this.usersService.uploadAvatar(req.user.id, {
 			filename: file.filename,
 			path: file.path,
 			mimetype: file.mimetype
