@@ -1,4 +1,4 @@
-import { IsEnum, Equals, Length, IsOptional, IsNotEmpty, ValidateIf } from "class-validator";
+import { IsEnum, Equals, Length, IsOptional, IsNotEmpty, ValidateIf, IsNumber, isString, IsString } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Chat } from "../entities/chat.entity";
 import { Generated, Unique } from "typeorm";
@@ -22,9 +22,11 @@ export enum Action {
 
 export class CreateDmDto
 {
+	@IsNumber()
 	@ApiProperty({ description: "userID1 of the reciver" })
 	userID1: number;
 
+	@IsNumber()
 	@ApiProperty({ description: "userID2 of the reciver" })
 	userID2: number;
 }
@@ -54,6 +56,7 @@ export class RoomDto
 	@IsNotEmpty()
 	password: string;
 
+	@IsNumber()
 	@ApiProperty({ description: "username who want to join the chat Room" })
 	userID: number;
 }
@@ -73,6 +76,7 @@ export class SetRolestoMembersDto
 	@ApiProperty({ description: "Chat Room name" })
 	RoomID: string;
 
+	@IsNumber()
 	@ApiProperty({ description: "member of this Chat Room" })
 	userID: number;
 }
@@ -89,6 +93,7 @@ export class BanOrMuteMembersDto
 	@ApiProperty({ description: "Chat Room name" })
 	RoomID: string;
 
+	@IsNumber()
 	@ApiProperty({ description: "member of this Chat Room" })
 	userID: number;
 
@@ -110,9 +115,11 @@ export class BanOrMuteMembersPlusTokenDto
 	@ApiProperty({ description: "Chat Room name" })
 	token: string;
 
+	@IsNumber()
 	@ApiProperty({ description: "member of this Chat Room" })
 	userID: number;
 
+	@IsNumber()
 	@ApiProperty({ description: "duration of execute mute/ban member" })
 	duration: number;
 
