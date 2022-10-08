@@ -1,7 +1,6 @@
 import { Controller, ClassSerializerInterceptor,Get, UnauthorizedException,
-	BadRequestException, Param, HttpCode, UseGuards, Body, Res, Query, NotFoundException } from '@nestjs/common';
-import { UseInterceptors } from '@nestjs/common';
-import { UploadedFile } from '@nestjs/common';
+	BadRequestException, Param, HttpCode, UseGuards,HttpStatus, Body, Res, Query, NotFoundException } from '@nestjs/common';
+import { UseInterceptors, UploadedFile } from '@nestjs/common';
 import { Post, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Express } from 'express'
@@ -21,7 +20,7 @@ import { ChatsService } from 'src/chats/chats.service';
 
 @ApiTags('users')
 @Controller('users')
-@UseGuards(jwtAuthGuard)
+// @UseGuards(jwtAuthGuard)
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersController {
 
@@ -39,17 +38,19 @@ export class UsersController {
 		type: AvatarDto,
 	})
 	@Post('/upload_avatar')
-	@HttpCode(200)
 	@UseInterceptors(uploadInterceptor({
 		fieldName: 'file',
 		path: '/',
-		fileFilter: (req, file, callback) => {
-			if (!file.mimetype.includes('images'))
-				return callback(new BadRequestException('Provide a valid image'), false);
-		},
+		fileFilter: (request, file, callback) => {
+			if (!file.mimetype.includes('image')) {
+			  return callback(new BadRequestException('Provide a valid image'), false);
+			}
+			callback(null, true);
+		}
 	}))
 	async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File, @Res() res) {
-		const user = await this.usersService.uploadAvatar(req.user.id, {
+		console.log( "1 file : " + JSON.stringify(file));
+		const user = await this.usersService.uploadAvatar(58526, {
 			filename: file.filename,
 			path: file.path,
 			mimetype: file.mimetype

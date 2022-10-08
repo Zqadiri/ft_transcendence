@@ -16,18 +16,18 @@ function uploadInterceptor (options: uploadInterceptorOptions): Type<NestInterce
   class Interceptor implements NestInterceptor {
     fileInterceptor: NestInterceptor;
     constructor() {
+      console.log("HERE");
       const filesDestination = process.env.UPLOADED_FILES_DESTINATION;
  
       const destination = `${filesDestination}${options.path}`
-      
       const multerOptions: MulterOptions = {
-          storage: diskStorage({
-              destination
-            })
-        }
+        storage: diskStorage({
+          destination,
+        }),
+        fileFilter: options.fileFilter,
+      };
       this.fileInterceptor = new (FileInterceptor(options.fieldName, multerOptions));
     }
- 
     intercept(...args: Parameters<NestInterceptor['intercept']>) {
       return this.fileInterceptor.intercept(...args);
     }
