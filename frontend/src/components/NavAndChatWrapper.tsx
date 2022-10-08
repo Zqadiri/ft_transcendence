@@ -285,7 +285,6 @@ const NavAndChatWrapper = () => {
 			getFriends().finally(() => {
 				if (friends.find(fr => fr.id === data.userId)) {
 					// let idx: number = friends.findIndex(fr => fr.id === data.userId);
-					console.log({friends})
 					setFriends(frs => {
 						return frs.map(fr => {
 							if (fr.id === data.userId) {

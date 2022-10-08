@@ -47,16 +47,10 @@ export class UsersService {
 	}
 
 	async updateStatus(userId: number, status: string) {
-		const updateUserStatus = await this.getUserById(userId);
+		const user = await this.getUserById(userId);
 
-		if (updateUserStatus) {
-			await this.userRepository
-				.createQueryBuilder()
-				.update(User)
-				.set({ status: status })
-				.where("id = :id", { id: updateUserStatus.id })
-				.execute()
-		}
+		user.status = status;
+		await this.userRepository.save(user);
 	}
 
 	async updateAfterGame(userID: number, updateAfterGame: UpdateAfterGameDto) {
