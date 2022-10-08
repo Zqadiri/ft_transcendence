@@ -13,7 +13,6 @@ function ResultPrompt(): JSX.Element {
 
 	function goHomeComponent() {
 		setTimeout(() => {
-			resetGame();
 			navigate("/");
 		}, 3000)
 	}

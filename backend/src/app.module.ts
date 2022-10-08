@@ -7,7 +7,7 @@ import { GameModule } from './games/games.module';
 import { User } from './users/entities/user.entity'
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { AppLoggerMiddleware } from './logger.middleware';
+// import { AppLoggerMiddleware } from './logger.middleware';
 import { AuthService } from './auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
@@ -72,6 +72,6 @@ require('dotenv').config();
 
 export class AppModule implements NestModule {
 	configure(consumer: MiddlewareConsumer): void {
-		consumer.apply(AppLoggerMiddleware).forRoutes('*');
+		// consumer.apply(AppLoggerMiddleware).forRoutes('*');
 	}
 }

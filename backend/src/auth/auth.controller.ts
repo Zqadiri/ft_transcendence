@@ -35,13 +35,13 @@ export class AuthController
 		    throw new BadRequestException('Bad Request');
 		playerExists = await this.playerService.getUserById(obj.id);
 		if (!playerExists){
-			console.log('does not Exists create user and add cookie');
+			// console.log('does not Exists create user and add cookie');
 			this.playerService.create(obj);
 			await this.authService.sendJWTtoken(obj, response, false);
 			response.redirect('/');
 		}
 		else if (playerExists && playerExists.is2FacAuth === false){
-			console.log('Player exists and 2FA is off');
+			// console.log('Player exists and 2FA is off');
 			await this.authService.sendJWTtoken(playerExists, response, false);
 			response.redirect('/');
 		}

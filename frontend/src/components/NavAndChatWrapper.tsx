@@ -287,7 +287,9 @@ const NavAndChatWrapper = () => {
 			data.userId = parseInt(String(data.userId))
 			if (friends.find(fr => fr.id === data.userId)) {
 				let idx: number = friends.findIndex(fr => fr.id === data.userId);
-				setFriends([...friends.filter(fr => fr.id !== data.userId), {...friends[idx], status: data.status}])
+				console.log(`%cWe've Found Our Friend ${data.userId} ${friends[idx].username}`, `color: red;`);
+				friends[idx].status = data.status;
+				setFriends([...friends])
 			}
 		})
 

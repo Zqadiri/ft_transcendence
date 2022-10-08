@@ -518,7 +518,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           },
       });
       const isUserRoom = await this.findRoom(SetRolestoMembersDto.RoomID);
-	    console.log({SetRolestoMembersDto, isOwner, isUserRoom})
+	    // console.log({SetRolestoMembersDto, isOwner, isUserRoom})
       if (isOwner)
       {
         if (isOwner.AdminsID.length)
@@ -529,7 +529,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
         
           isOwner.AdminsID = isOwner.AdminsID.filter(item => item !== randomadmin);
 
-          console.log("random admin ", randomadmin);
+        //   console.log("random admin ", randomadmin);
 
           const ret_query = await this.Chatrepository
           .createQueryBuilder()
@@ -539,7 +539,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           .execute()
 
 
-          console.log("Leave the channel and give ownership to a random admin ", isOwner);
+        //   console.log("Leave the channel and give ownership to a random admin ", isOwner);
 
         }
         else if (!(isOwner.userID.length === 1))
@@ -555,7 +555,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           .andWhere("name = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
 
-          console.log("Leave the channel and give ownership to a random user ");
+        //   console.log("Leave the channel and give ownership to a random user ");
         }
         else if (isOwner.userID.length === 1)
         {
@@ -574,7 +574,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           .where("roomName = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
 
-          console.log("the Room is deleted ");
+        //   console.log("the Room is deleted ");
        
         }
       }
@@ -585,7 +585,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           if (isUserRoom.AdminsID.includes(SetRolestoMembersDto.userID))
           {
             isUserRoom.AdminsID = isUserRoom.AdminsID.filter(item => item !== SetRolestoMembersDto.userID);
-            console.log("Simple Admin Leaving this room");
+            // console.log("Simple Admin Leaving this room");
           }
           isUserRoom.userID = isUserRoom.userID.filter(item => item !== SetRolestoMembersDto.userID);
        
@@ -596,7 +596,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           .where("name = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
 
-          console.log("Simple user Leaving this room", isUserRoom);
+        //   console.log("Simple user Leaving this room", isUserRoom);
         }
         else
           throw new ForbiddenException({code: 'Forbidden', message: `cannot execute this operation {LeaveUserRoom}`})
@@ -633,7 +633,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           if (check.AdminsID.includes(user.id))
           {
             check.AdminsID = check.AdminsID.filter(item => item !== SetRolestoMembersDto.userID);
-            console.log("Admin kicked from this room");
+            // console.log("Admin kicked from this room");
           }
           check.userID = check.userID.filter(item => item !== SetRolestoMembersDto.userID);
 
@@ -644,7 +644,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           .where("name = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
 
-          console.log("the owner kicked this {user/admin} from this room", check);
+        //   console.log("the owner kicked this {user/admin} from this room", check);
         }
         else if (checkadmin && checkadmin.userID.includes(user.id) && checkadmin.ownerID !== user.id)
         {
@@ -659,7 +659,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
             .where("name = :name", {name: SetRolestoMembersDto.RoomID})
             .execute()
   
-            console.log("the admin kicked this user from this room", check);
+            // console.log("the admin kicked this user from this room", check);
           }
           else
             throw new ForbiddenException({code: 'Forbidden', message: `cannot execute this operation {KickUser}`});
@@ -710,7 +710,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           }
           else
             throw new ForbiddenException({code: 'Forbidden', message: `this user is already muted/banned for a specific time!!`})
-            console.log("owner", administrator);
+            // console.log("owner", administrator);
         }
         else if (checkadmin && checkadmin.userID.includes(user.id) && checkadmin.ownerID !== user.id)
         {
@@ -726,7 +726,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
             else
               throw new ForbiddenException({code: 'Forbidden', message: `this user is already muted/banned for a specific time!!`})
         
-            console.log("administrator", administrator);
+            // console.log("administrator", administrator);
           }
           else
             throw new ForbiddenException({code: 'Forbidden', message: `you can't mute/ban this user in this chat room!!`})
@@ -752,7 +752,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
               if ((mutedAndBannedID[i].current_time + mutedAndBannedID[i].duration * 1000) <= Date.now()) {
                 mutedAndBannedID = mutedAndBannedID.filter(item => item.userID !== mutedAndBannedID[i].userID);
     
-                console.log("filter user, from mutedID array ", mutedAndBannedID);
+                // console.log("filter user, from mutedID array ", mutedAndBannedID);
     
                 await this.Chatrepository
                   .createQueryBuilder()

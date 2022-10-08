@@ -30,7 +30,7 @@ export class AuthService {
 			redirect_uri: process.env.REDIRECT_URI,
 			code : code
 		};
-		console.log({payload})
+		// console.log({payload})
 		await axios({
 			method: 'post',
 			url: 'https://api.intra.42.fr/oauth/token',
@@ -40,13 +40,13 @@ export class AuthService {
 			}
 		})
 		.then((res) => {
-			console.log(res.data.access_token);
+			// console.log(res.data.access_token);
 			ret = res.data.access_token;
 			return ret;
 		})
 		.catch((err: AxiosError) => { 
-			console.log('ERROR!');
-			console.log({er: err.response.data})
+			// console.log('ERROR!');
+			// console.log({er: err.response.data})
 		})
 		return ret; 
 	}
@@ -56,7 +56,7 @@ export class AuthService {
 		let data: CreateUserDto;
 		try {
 			access_token = await this.getAccessToken (code);
-			console.log(`access token : ${access_token}`);
+			// console.log(`access token : ${access_token}`);
 			await axios({
 				method: 'get',
 				url: 'https://api.intra.42.fr/v2/me',

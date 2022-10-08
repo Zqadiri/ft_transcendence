@@ -2,7 +2,7 @@ import '../styles/defaults.scss'
 import { Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import { cookies, isLoggedIn, ShowConditionally, useEffectOnce } from './util';
 import { useEffect } from 'react';
-import NavAndChatWrapper, { chatSocket } from './NavAndChatWrapper'
+import NavAndChatWrapper, { chatSocket, g_setIsMatching } from './NavAndChatWrapper'
 import Login from './Login';
 import { globalContext } from './util';
 import { useState } from 'react';
@@ -47,7 +47,7 @@ function App() {
 
 			if (reply)
 			{
-				global.socket.connect();
+				global.socket.disconnect().connect();
 				global.theme = "theme01";
 
 				addMatchingSocketEventHandler(navigate);

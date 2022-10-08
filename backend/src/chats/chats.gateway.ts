@@ -41,11 +41,11 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	}
 
 	handleConnection(client: Socket, ...args: any[]) {
-		console.log(` client Connected ${client.id}`);
+		// console.log(` client Connected ${client.id}`);
 	}
 
 	handleDisconnect(client: Socket) {
-		console.log(` client Disconnected: ${client.id}`);
+		// console.log(` client Disconnected: ${client.id}`);
 	}
 
 	@SubscribeMessage('saveChatRoom')

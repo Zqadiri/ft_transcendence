@@ -25,7 +25,7 @@ export class AppController {
 	@Get('/authentication_page')
 	@Redirect()
 	async getAuthPage(@Res() response: Response){
-		console.log({url: process.env.INTRA_REDIRECT_URI})
+		// console.log({url: process.env.INTRA_REDIRECT_URI})
 		return { 
 			url: 'https://api.intra.42.fr/oauth/authorize?client_id=49a4b98742acf9bf17d4d7299520cad7fc235f437be130d267a93f39a1444185&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Flogin&response_type=code'
 		};	

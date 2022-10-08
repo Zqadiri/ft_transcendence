@@ -60,11 +60,10 @@ function	PingPong(): JSX.Element
 
 		return () => {
 			window.onbeforeunload = null;
-			resetGame();
 			global.socket.disconnect();
 			if (global.playerId !== spectator)
 				statusSocket.emit('inGame', {userId: cookies.get('id'), status: "online"});
-			console.log(`player id: ${global.playerId}`);
+			resetGame();
 		};
 	}, []);
 

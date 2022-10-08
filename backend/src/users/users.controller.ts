@@ -74,7 +74,7 @@ export class UsersController {
 	@Post('/add_friend')
 	async AddFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
-		console.log(newFriend);
+		// console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
 		const user = await this.usersService.getUserById(req.user.id);
@@ -97,7 +97,7 @@ export class UsersController {
 	@Post('/cancel_friend')
 	async CancelFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
-		console.log(newFriend);
+		// console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
 		const user = await this.usersService.getUserById(req.user.id);
@@ -116,7 +116,7 @@ export class UsersController {
 	@Post('/accept_friend')
 	async AcceptFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
-		console.log(newFriend);
+		// console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
 		const user = await this.usersService.getUserById(req.user.id);
@@ -140,7 +140,7 @@ export class UsersController {
 	@Post('/decline_friend')
 	async DeclineFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
-		console.log(newFriend);
+		// console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
 		const user = await this.usersService.getUserById(req.user.id);
@@ -161,7 +161,7 @@ export class UsersController {
 	@Post('/remove_friend')
 	async RemoveFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
-		console.log(newFriend);
+		// console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
 		const user = await this.usersService.getUserById(req.user.id);
@@ -183,7 +183,7 @@ export class UsersController {
 	@Post('/block_user')
 	async BlockFriend(@Body('id') userID : number, @Req() req: any, @Res() res: any){
 		const newFriend = await this.usersService.getUserById(userID);
-		console.log(newFriend);
+		// console.log(newFriend);
 		if (!newFriend)
 			throw new UnauthorizedException('NOT a User');
 		const user = await this.usersService.getUserById(req.user.id); 
@@ -213,7 +213,7 @@ export class UsersController {
 			throw new UnauthorizedException('NOT a User');
 		user.blockedID.remove(newFriend.id);
 		// user.blockedID.splice(user.blockedID.findIndex(newFriend.id), 1);
-		console.log({testthisuser: user});
+		// console.log({testthisuser: user});
 		await this.userRepo.save(user);
 		res.end();
 	}
@@ -251,7 +251,7 @@ export class UsersController {
     async blockedFriend(@Req() req: RequestWithUser,  @Res() res: any)
     {
         try {
-            console.log("get friends list ...");
+            // console.log("get friends list ...");
             const friends = await this.usersService.blockedFriend(req.user.id);
 			res.send(friends);
          } catch (e) {
