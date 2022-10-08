@@ -3,7 +3,7 @@ import { Controller, ClassSerializerInterceptor,Get, UnauthorizedException,
 import { UseInterceptors, UploadedFile } from '@nestjs/common';
 import { Post, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Express } from 'express'
+import { Express, Response } from 'express'
 import uploadInterceptor from './upload.interceptor';
 import { 
 	ApiTags,
@@ -48,12 +48,20 @@ export class UsersController {
 			callback(null, true);
 		}
 	}))
-	async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File, @Res() res) {
+	async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File, @Res() res: Response) {
 		console.log( "1 file : " + JSON.stringify(file));
 		const user = await this.usersService.uploadAvatar(req.user.id, {
 			filename: file.filename,
 			path: "/" + file.path,
 			mimetype: file.mimetype
+		});
+		res.cookie("avatar", "/" + file.path, {
+			maxAge: 1000 * 60 * 60 * 24,
+			httpOnly: false,
+			domain: 'localhost',
+			sameSite: "strict",
+			secure: false,
+			path: '/'
 		});
 		res.send({avatar: user.avatar});
 	}

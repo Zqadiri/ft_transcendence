@@ -197,6 +197,8 @@ const UserProfile = (props: { self: boolean }) => {
 											.finally(() => {
 												setEditingPfp(false);
 												updateUserProfile(params);
+												setLoggedIn(false);
+												setLoggedIn(true);
 											})
 										}
 
@@ -238,9 +240,9 @@ const UserProfile = (props: { self: boolean }) => {
 										}).finally(() => {
 											setEditingName(false);
 											updateUserProfile(params);
+											setLoggedIn(false);
+											setLoggedIn(true);
 										})
-										setLoggedIn(false);
-										setLoggedIn(true);
 									}}>Save</Button>
 									<Button onClick={() => {
 										setEditingName(false);
@@ -250,7 +252,14 @@ const UserProfile = (props: { self: boolean }) => {
 						</div>
 						<ShowConditionally cond={user?.id !== thisuser?.id}>
 							<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
-							<div className="bottom twofa"></div>
+							<div className="bottom twofa">
+								<ShowConditionally cond={thisuser?.is2FacAuth}>
+									<>
+										
+									</>
+									<></>
+								</ShowConditionally>
+							</div>
 						</ShowConditionally>
 					</div>
 				</>
