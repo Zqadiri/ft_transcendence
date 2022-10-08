@@ -628,14 +628,14 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           },
         });
 
-        if (check && check.userID.includes(user.id))
+        if (check && check.userID.includes(user.id) && check.ownerID !== user.id)
         {
           if (check.AdminsID.includes(user.id))
           {
-            check.AdminsID = check.AdminsID.filter(item => item !== SetRolestoMembersDto.userID);
+            check.AdminsID = check.AdminsID.filter(item => item !== user.id);
             console.log("Admin kicked from this room");
           }
-          check.userID = check.userID.filter(item => item !== SetRolestoMembersDto.userID);
+          check.userID = check.userID.filter(item => item !== user.id);
 
           await this.Chatrepository
           .createQueryBuilder()
@@ -643,23 +643,23 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           .set({userID: check.userID, AdminsID: check.AdminsID})
           .where("name = :name", {name: SetRolestoMembersDto.RoomID})
           .execute()
-
           console.log("the owner kicked this {user/admin} from this room", check);
         }
         else if (checkadmin && checkadmin.userID.includes(user.id) && checkadmin.ownerID !== user.id)
         {
-          if (checkadmin.AdminsID.includes(administrator))
+          if (checkadmin.AdminsID.includes(administrator) && administrator !== user.id)
           {
-            check.userID = check.userID.filter(item => item !== SetRolestoMembersDto.userID);
+            console.log("tab userID ",checkadmin.userID);
+            checkadmin.userID = checkadmin.userID.filter(item => item !== user.id);
 
             await this.Chatrepository
             .createQueryBuilder()
             .update(Chat)
-            .set({userID: check.userID})
+            .set({userID: checkadmin.userID})
             .where("name = :name", {name: SetRolestoMembersDto.RoomID})
             .execute()
   
-            console.log("the admin kicked this user from this room", check);
+            console.log("the admin kicked this user from this room", checkadmin);
           }
           else
             throw new ForbiddenException({code: 'Forbidden', message: `cannot execute this operation {KickUser}`});
