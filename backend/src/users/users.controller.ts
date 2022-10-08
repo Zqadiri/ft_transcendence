@@ -52,7 +52,7 @@ export class UsersController {
 		console.log( "1 file : " + JSON.stringify(file));
 		const user = await this.usersService.uploadAvatar(req.user.id, {
 			filename: file.filename,
-			path: file.path,
+			path: "/" + file.path,
 			mimetype: file.mimetype
 		});
 		res.send({avatar: user.avatar});

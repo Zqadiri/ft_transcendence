@@ -459,7 +459,7 @@ const NavAndChatWrapper = () => {
 							cookies.get("name")
 						} </div>
 						<div className="icon flex-center">
-							<img src={cookies.get("avatar")} alt="avatar" className="avatar" />
+							<div style={{backgroundImage: `url(${cookies.get("avatar")})`}} className="avatar" />
 						</div>
 						<div className={"dropdown " + (userIconDropdown ? "visible" : "hidden")}>
 							<RRLink to="/profile" className="profile elem no-underline flex-ai-cr flex-gap5">

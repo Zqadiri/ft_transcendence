@@ -39,13 +39,19 @@ const UserProfile = (props: { self: boolean }) => {
 	const [editingName, _setEditingName] = useState(false);
 	const [editingPfp, _setEditingPfp] = useState(false);
 	const setEditingPfp: React.Dispatch<React.SetStateAction<boolean>> = (x) => {
-		if (x === false)
-			setEnMessage("")
+		if (x === false) {
+			setTimeout(() => {
+				setEnMessage("")
+			}, 2000)
+		}
 		_setEditingPfp(x);
 	}
 	const setEditingName: React.Dispatch<React.SetStateAction<boolean>> = (x) => {
-		if (x === false)
-			setEnMessage("")
+		if (x === false) {
+			setTimeout(() => {
+				setEnMessage("")
+			}, 2000)
+		}
 		_setEditingName(x);
 	}
 	const [displayName, setDisplayName] = useState("");
@@ -112,7 +118,7 @@ const UserProfile = (props: { self: boolean }) => {
 	};
 
 	useEffect(() => {
-		if (editingName) {
+		if (editingName && user?.username && displayName != user.username) {
 			let tim = setTimeout(() => {
 				axios.get("/users?name=" + displayName).then(() => {
 					setEnMessage("Name Unavailable")
@@ -124,7 +130,7 @@ const UserProfile = (props: { self: boolean }) => {
 				clearTimeout(tim);
 			}
 		}
-	}, [displayName, editingName])
+	}, [displayName, editingName, user])
 
 	const uploadPfpRef = useRef<HTMLInputElement>(null);
 
@@ -165,31 +171,34 @@ const UserProfile = (props: { self: boolean }) => {
 							<ShowConditionally cond={editingPfp}>
 								<div className="editpfp">
 									<Button onClick={() => {
-										var formdata = new FormData();
-										formdata.append("file", displayImage, "[PROXY]");
-										var config = {
-											method: 'post',
-											url: 'localhost:3000/users/upload_avatar',
-											headers: {
-												'Content-Type': 'multipart/form-data'
-											},
-											data: formdata
-										};
+										if (uploadFileImage) {
+											var formdata = new FormData();
+											formdata.append("file", uploadFileImage, "[PROXY]");
+											var config = {
+												method: 'post',
+												url: '/users/upload_avatar',
+												headers: {
+													'Content-Type': 'multipart/form-data'
+												},
+												data: formdata
+											};
 
-										axios(config)
-										.then(function (response) {
-											// console.log(JSON.stringify(response.data));
-											// setEnMessage("Success!")
-											// setTimeout(() => {
-											// 	setEnMessage("");
-											// }, 2000)
-										})
-										.catch(function (error) {
-											console.log(error);
-										})
-										.finally(() => {
-											setEditingPfp(false);
-										})
+											axios(config)
+											.then(function (response) {
+												// console.log(JSON.stringify(response.data));
+												// setEnMessage("Success!")
+												// setTimeout(() => {
+												// 	setEnMessage("");
+												// }, 2000)
+											})
+											.catch(function (error) {
+												console.log(error);
+											})
+											.finally(() => {
+												setEditingPfp(false);
+												updateUserProfile(params);
+											})
+										}
 
 									}}>Save</Button>
 									<Button onClick={() => {
@@ -226,6 +235,9 @@ const UserProfile = (props: { self: boolean }) => {
 											setTimeout(() => {
 												setEnMessage("");
 											}, 2000)
+										}).finally(() => {
+											setEditingName(false);
+											updateUserProfile(params);
 										})
 										setLoggedIn(false);
 										setLoggedIn(true);

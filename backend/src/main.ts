@@ -37,6 +37,8 @@ async function bootstrap() {
 		.setVersion('1.0')
 		.build();
 
+	// app.useStaticAssets(join(__dirname, "../..", "backend/uploadedFile"))
+
 	const document = SwaggerModule.createDocument(app, swaggerConfig);
 	SwaggerModule.setup('api', app, document);
 	app.use(cookieParser());

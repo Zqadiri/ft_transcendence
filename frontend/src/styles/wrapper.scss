@@ -42,11 +42,11 @@
 				.avatar {
 					border-radius: 99px;
 					background-color: white;
-					.image {
-						height: 40px;
-						width: 40px;
-						border-radius: 99px;
-					}
+					height: 40px;
+					width: 40px;
+					background-position: center;
+					background-size: cover;
+					background-repeat: none;
 				}
 			}
 			.dropdown {
