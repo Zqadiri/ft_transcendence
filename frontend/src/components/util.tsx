@@ -26,7 +26,13 @@ export class MyCookies extends Cookies {
 
 export const cookies = new MyCookies();
 
-export const globalContext = createContext({loggedIn: false, setLoggedIn: (val: boolean) => {}});
+export const globalContext = createContext({loggedIn: false,
+											setLoggedIn: (val: boolean) => { },
+											chatIsOpen: false,
+											setChatIsOpen: (val: boolean) => { },
+											jwtSelf: {id: 0, username: ""},
+											setJwtSelf: (val: {id: number, username: string}) => {}
+										});
 
 export function ShowConditionally(props: any) {
 	let children = props.children;

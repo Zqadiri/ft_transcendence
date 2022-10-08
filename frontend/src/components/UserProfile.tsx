@@ -54,14 +54,15 @@ const UserProfile = (props: { self: boolean }) => {
 		}
 	}, [user, thisuser, editingPfp])
 
-	useEffect(() => {
+	useEffectOnce(() => {
 		let int = setInterval(() => {
 			updateUserProfile(params);
 		}, 2000)
-		return () => clearInterval(int)
-	}, [params])
+		return () => {clearInterval(int)}
+	})
 
 	const updateUserProfile = (prm: Readonly<Params<string>>) => {
+		console.log("called? updateuserprofile")
 		axios.get("/game/get_match_history?name=" + (prm.userId || cookies.get("name")))
 		.then((res) => {
 			setUsermh(res.data)

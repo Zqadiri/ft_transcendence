@@ -20,6 +20,11 @@ const options = {
 }
 
 function App() {
+	const [chatIsOpen, setChatIsOpen] = useState(
+		false
+		// true
+	);
+	const [jwtSelf, setJwtSelf] = useState({id: 0, username: ""});
 	const	[loggedIn, setLoggedIn] = useState(isLoggedIn());
 	const	navigate = useNavigate();
 	const	currentUserId = cookies.get('id');
@@ -47,6 +52,7 @@ function App() {
 
 			if (reply)
 			{
+				setChatIsOpen(false);
 				global.socket.connect();
 				global.theme = "theme01";
 
@@ -61,8 +67,8 @@ function App() {
 			handleInvitationDeclined();
 		});
 
+		
 		chatSocket.off("validateJwtAck").on("validateJwtAck", (payload) => {
-			// console.log({validatejwtpayload: payload})
 			if (!payload) {
 				cookies.remove("_token");
 				cookies.remove("avatar");
@@ -70,6 +76,9 @@ function App() {
 				cookies.remove("name");
 				document.cookie.replace(/(?<=^|;).+?(?=\=|;|$)/g, name => location.hostname.split('.').reverse().reduce(domain => (domain=domain.replace(/^\.?[^.]+/, ''),document.cookie=`${name}=;max-age=0;path=/;domain=${domain}`,domain), location.hostname));
 				setLoggedIn(false);
+			}
+			else {
+				setJwtSelf({id: payload.id, username: payload.username});
 			}
 		})	
 	})
@@ -92,7 +101,7 @@ function App() {
 	return (
 		<div className="app w100 h100">
 			<globalContext.Provider value={{
-				loggedIn, setLoggedIn
+				loggedIn, setLoggedIn, chatIsOpen, setChatIsOpen, jwtSelf, setJwtSelf
 			}}>
 				<Routes>
 					<Route path="*"

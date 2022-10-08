@@ -74,13 +74,10 @@ const NavAndChatWrapper = () => {
 		getCurrentRoomData();
 		return _setUserType(ut);
 	}
-	const { loggedIn, setLoggedIn } = useContext(globalContext);
+	const g_val = useContext(globalContext);
+	const { loggedIn, setLoggedIn, chatIsOpen, setChatIsOpen } = g_val;
 	const navigater = useNavigate();
 	const [userIconDropdown, setUserIconDropdown] = useState(false);
-	const [chatIsOpen, setChatIsOpen] = useState(
-		false
-		// true
-	);
 	const chatRef = useRef<HTMLDivElement>(null);
 	const [activeTab, _setActiveTab] = useState<ActiveTab>(
 		// "friends"
@@ -276,7 +273,7 @@ const NavAndChatWrapper = () => {
 			})
 		})
 
-		console.log("listening to joinedRoom");
+		// console.log("listening to joinedRoom");
 		chatSocket.off("joinedRoom").on("joinedRoom", (data) => {
 			console.log("joined room...")
 			console.log({data})
@@ -285,11 +282,21 @@ const NavAndChatWrapper = () => {
 		statusSocket.off("UserStatusChanged").on("UserStatusChanged", (data: {userId: string | number, status: "online" | "offline" | "ingame"}) => {
 			console.log(`received user statsu changed: ${JSON.stringify(data)}`);
 			data.userId = parseInt(String(data.userId))
-			if (friends.find(fr => fr.id === data.userId)) {
-				let idx: number = friends.findIndex(fr => fr.id === data.userId);
-				setFriends([...friends.filter(fr => fr.id !== data.userId), {...friends[idx], status: data.status}])
-			}
-			else if (data.userId === parseInt(cookies.get("id"))) {
+			getFriends().finally(() => {
+				if (friends.find(fr => fr.id === data.userId)) {
+					// let idx: number = friends.findIndex(fr => fr.id === data.userId);
+					console.log({friends})
+					setFriends(frs => {
+						return frs.map(fr => {
+							if (fr.id === data.userId) {
+								return {status: data.status, ...deepcopy(fr)};
+							}
+							return deepcopy(fr);
+						})
+					})
+				}
+			})
+			if (data.userId === parseInt(cookies.get("id"))) {
 				console.log({yeshere: data})
 				setSelf(x => (x ? {...x, status: data.status} : undefined));
 			}
@@ -301,7 +308,7 @@ const NavAndChatWrapper = () => {
 			chatSocket.emit("getMessageToRoom", { userID: cookies.get("id"), messageID: data.id });
 		})
 
-		console.log("listening to messageToRoom");
+		// console.log("listening to messageToRoom");
 		chatSocket.off('messageToRoomAck').on('messageToRoomAck', (_msg: ChatMessage) => {
 			console.log("messageToRoom caught");
 			console.log({_msg})
@@ -483,19 +490,21 @@ const NavAndChatWrapper = () => {
 					</div>
 				</div>
 			</nav>
-			<Routes>
-				<Route path="/" element={<GameTabs />}></Route>
-				<Route path="/play" element={<PingPong />}></Route>
-				<Route path="/profile/:userId" element={
-					<UserProfile self={false}/>
-				}/>
-				<Route path="/profile" element={
-					<UserProfile self={true}/>
-				}/>
-				<Route path="*" element={
-					<FourOFour/>
-				}/>
-			</Routes>
+			<globalContext.Provider value={{...g_val, chatIsOpen, setChatIsOpen}}>
+				<Routes>
+					<Route path="/" element={<GameTabs />}></Route>
+					<Route path="/play" element={<PingPong />}></Route>
+					<Route path="/profile/:userId" element={
+						<UserProfile self={false} />
+					} />
+					<Route path="/profile" element={
+						<UserProfile self={true} />
+					} />
+					<Route path="*" element={
+						<FourOFour />
+					} />
+				</Routes>
+			</globalContext.Provider>
 			<div id="chat-container" style={
 				{
 					// width: chatIsOpen ? "800px" : "44px",
