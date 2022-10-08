@@ -20,7 +20,7 @@
 		"build:watch": "vite build --watch",
 		"build:dev": "vite build --watch --mode dev",
 		"start": "vite",
-		"build": "tsc && vite build",
+		"build": "vite build",
 		"serve": "vite preview"
 	},
 	"devDependencies": {
