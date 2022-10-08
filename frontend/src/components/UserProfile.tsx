@@ -36,10 +36,21 @@ const UserProfile = (props: { self: boolean }) => {
 	const [user, setUser] = useState<User | null | undefined>(null);
 	const [thisuser, setThisUser] = useState<User | null | undefined>(null);
 	const [usermh, setUsermh] = useState(null);
-	const [editingName, setEditingName] = useState(false);
-	const [editingPfp, setEditingPfp] = useState(false);
+	const [editingName, _setEditingName] = useState(false);
+	const [editingPfp, _setEditingPfp] = useState(false);
+	const setEditingPfp: React.Dispatch<React.SetStateAction<boolean>> = (x) => {
+		if (x === false)
+			setEnMessage("")
+		_setEditingPfp(x);
+	}
+	const setEditingName: React.Dispatch<React.SetStateAction<boolean>> = (x) => {
+		if (x === false)
+			setEnMessage("")
+		_setEditingName(x);
+	}
 	const [displayName, setDisplayName] = useState("");
 	const [displayImage, setDisplayImage] = useState("");
+	const [uploadFileImage, setUploadFileImage] = useState<File>();
 	const [enMessage, setEnMessage] = useState("");
 
 	useEffect(() => {
@@ -100,6 +111,21 @@ const UserProfile = (props: { self: boolean }) => {
 		});
 	};
 
+	useEffect(() => {
+		if (editingName) {
+			let tim = setTimeout(() => {
+				axios.get("/users?name=" + displayName).then(() => {
+					setEnMessage("Name Unavailable")
+				}).catch(() => {
+					setEnMessage("Name Available")
+				})
+			}, 1000)
+			return () => {
+				clearTimeout(tim);
+			}
+		}
+	}, [displayName, editingName])
+
 	const uploadPfpRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -125,6 +151,7 @@ const UserProfile = (props: { self: boolean }) => {
 											if (e.target.files) {
 												console.log("upload image...")
 												console.log({etarget: e.target})
+												setUploadFileImage(e.target.files[0])
 												readURL(e.target.files[0]).then((res) => {
 													setDisplayImage(String(res));
 												})
@@ -138,6 +165,31 @@ const UserProfile = (props: { self: boolean }) => {
 							<ShowConditionally cond={editingPfp}>
 								<div className="editpfp">
 									<Button onClick={() => {
+										var formdata = new FormData();
+										formdata.append("file", displayImage, "[PROXY]");
+										var config = {
+											method: 'post',
+											url: 'localhost:3000/users/upload_avatar',
+											headers: {
+												'Content-Type': 'multipart/form-data'
+											},
+											data: formdata
+										};
+
+										axios(config)
+										.then(function (response) {
+											// console.log(JSON.stringify(response.data));
+											// setEnMessage("Success!")
+											// setTimeout(() => {
+											// 	setEnMessage("");
+											// }, 2000)
+										})
+										.catch(function (error) {
+											console.log(error);
+										})
+										.finally(() => {
+											setEditingPfp(false);
+										})
 
 									}}>Save</Button>
 									<Button onClick={() => {
@@ -147,8 +199,9 @@ const UserProfile = (props: { self: boolean }) => {
 							</ShowConditionally>
 							<div className="namecontainer">
 								<input type="text" className="name" value={displayName} onChange={(e) => {
-									if (editingName)
+									if (editingName) {
 										setDisplayName(e.target.value);
+									}
 								}}></input>
 								<ShowConditionally cond={user?.id === thisuser?.id && !editingName}>
 									<div className="iconcontainer" onClick={() => {

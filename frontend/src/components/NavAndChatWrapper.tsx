@@ -354,7 +354,7 @@ const NavAndChatWrapper = () => {
 
 	useEffectOnce(() => {
 		getAllMyRooms();
-		getFriends();
+		getFriendsTab();
 		getSelf();
 	})
 
@@ -566,7 +566,7 @@ const NavAndChatWrapper = () => {
 																	spectateGameFromChat(fr.id, navigater);
 																}}>Spectate</Button>
 															</ShowConditionally>
-															<ShowConditionally cond={fr.status === "online" && isMatching !== true}>
+															<ShowConditionally cond={fr.status === "online" && isMatching !== true && self?.status !== "ingame"}>
 																<Button className="invite" onClick={(e) => {
 																	e.stopPropagation();
 																	setChatIsOpen(false);
