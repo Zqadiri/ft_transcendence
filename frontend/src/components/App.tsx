@@ -53,11 +53,11 @@ function App() {
 			if (reply)
 			{
 				global.socket.disconnect().connect();
-				setChatIsOpen(false);
 				global.theme = "theme01";
-
+				
 				addMatchingSocketEventHandler(navigate);
 				global.socket.emit("joinInvitation", {roomName: roomName, userCounter: 2})
+				setChatIsOpen(false);
 			}
 			else
 				chatSocket.emit('invitationDeclined', {friendId: opponentId, currentId: currentUserId});

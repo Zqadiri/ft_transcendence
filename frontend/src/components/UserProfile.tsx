@@ -119,7 +119,7 @@ const UserProfile = (props: { self: boolean }) => {
 				}).catch(() => {
 					setEnMessage("Name Available")
 				})
-			}, 1000)
+			}, 500)
 			return () => {
 				clearTimeout(tim);
 			}
