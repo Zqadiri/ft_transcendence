@@ -51,7 +51,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 		return (status);
 	}
 
-	handleDisconnect(client: any) {
+	async handleDisconnect(client: any) {
 		this.logger.log(client.id + " Disconnected");
 
 		if (this.users[client.id])
@@ -61,15 +61,15 @@ export class StatusGateway implements OnGatewayDisconnect {
 			delete this.users[client.id];
 			if (!this.hasUserid(userId))
 			{
-				this.userServ.updateStatus(userId, "offline");
 				this.server.emit("UserStatusChanged", {userId: userId, status: "offline"});
+				await this.userServ.updateStatus(userId, "offline");
 			}
 			else
 			{
 				const	status: string = this.getUserStatus(userId);
 
-				this.userServ.updateStatus(userId, status);
 				this.server.emit("UserStatusChanged", {userId: userId, status: status});
+				await this.userServ.updateStatus(userId, status);
 			}
 		}
 	}
@@ -82,8 +82,8 @@ export class StatusGateway implements OnGatewayDisconnect {
 		{
 			if (!this.hasUserid(userId))
 			{
-				this.userServ.updateStatus(userId, "online");
 				this.server.emit("UserStatusChanged", {userId: userId, status: "online"});
+				await this.userServ.updateStatus(userId, "online");
 			}
 			this.users[client.id] = [userId, "online"];
 		}
@@ -102,7 +102,7 @@ export class StatusGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage("logOut")
-	handleLogOut(client: any, userId)
+	async handleLogOut(client: any, userId)
 	{
 		this.logger.log(`logOut event got fired by: ${userId}, status: offline`);
 		for (const property in this.users)
@@ -112,8 +112,8 @@ export class StatusGateway implements OnGatewayDisconnect {
 		}
 		if (userId)
 		{
-			this.userServ.updateStatus(userId, "offline");
 			this.server.emit("UserStatusChanged", {userId: userId, status: "offline"});
+			await this.userServ.updateStatus(userId, "offline");
 		}
 	}
 
