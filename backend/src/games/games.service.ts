@@ -108,12 +108,9 @@ export class GamesService {
 				.orWhere('game.secondPlayerID = :secondPlayerID', {secondPlayerID: userID })
 			}),
 		)
-		.innerJoin(User, 'db_user', 'db_user.id = game.firstPlayerID')
-		.addSelect('db_user.username', 'firstPlayerName')
-		.addSelect('db_user.avatar', 'firstPlayerAvatar')
-		.innerJoin(User, 'db_user', 'db_user.id = game.secondPlayerID')
-		.addSelect('db_user.username', 'secondPlayerName')
-		.addSelect('db_user.avatar', 'secondPlayerAvatar')
+		.leftJoin(User, 'db_user', '(db_user.id = game.firstPlayerID OR db_user.id = game.secondPlayerID) AND NOT db_user.id = :userID', { userID })
+		.addSelect('db_user.username', 'opponentPlayerName')
+		.addSelect('db_user.avatar', 'opponentPlayerAvatar')
 		.getMany();
 		return game;
 	}
