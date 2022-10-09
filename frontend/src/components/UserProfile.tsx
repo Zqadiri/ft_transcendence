@@ -30,12 +30,26 @@ export interface User {
 	twoFacAuthSecret: string | null;
 } 
 
+interface Game {
+	id: number;
+    socketRoom: string;
+	isPlaying:boolean;
+	firstPlayerID: string;
+	secondPlayerID: string;
+	firstPlayerScore: number;
+	secondPlayerScore: number;
+	theme: string;
+	createdAt: Date;
+	modifiedAt: Date;
+	finishedAt: Date;
+}
+
 const UserProfile = (props: { self: boolean }) => {
 	const { setLoggedIn } = useContext(globalContext);
 	let params = useParams();
 	const [user, setUser] = useState<User | null | undefined>(null);
 	const [thisuser, setThisUser] = useState<User | null | undefined>(null);
-	const [usermh, setUsermh] = useState(null);
+	const [usermh, setUsermh] = useState<Game[]>([]);
 	const [editingName, _setEditingName] = useState(false);
 	const [editingPfp, _setEditingPfp] = useState(false);
 	const [qrCode, setQrCode] = useState("");
@@ -180,7 +194,7 @@ const UserProfile = (props: { self: boolean }) => {
 		return <Navigate to={"/profile"}></Navigate>
 	}
 	return (
-		<div className="userprofile d100 flex-gap5">
+		<div className="userprofile d100 flex-gap20">
 			<ShowConditionally cond={user && thisuser}>
 				<>
 					{/* <div className="userinfowrapper d100 flex"> */}
@@ -337,10 +351,41 @@ const UserProfile = (props: { self: boolean }) => {
 							</ShowConditionally>
 						</div>
 					{/* </div> */}
-					<div className="usergameinfo">
-						<div className="userstats">userstats</div>
-						<div className="usermatchhistory">
-						usermatchhistory
+					<div className="usergameinfo flex-column flex-gap20">
+						<div className="header">
+							<h1>Match History</h1>
+							<div className="userstats">
+								<span className="user-rank">Rank: {user?.rank}</span>
+								<span className="user-xp">Xp: {user?.xp}</span>
+								<span className="user-level">Level: {user?.level}</span>
+								<span className="user-wins">Wins: {user?.wins}</span>
+								<span className="user-losses">Losses: {user?.losses}</span>
+							</div>
+						</div>
+						<div className="usermatch-history">
+							<ul>
+								{
+									usermh && usermh.map(game => {
+										return (
+											<li>
+												<div className="firstPlayeer">
+													<div className="avatar"></div>
+													<h3>{game.firstPlayerID}</h3>
+												</div>
+												<div className="match-results">
+													<span>{game.firstPlayerScore}</span>
+													<span> vs </span>
+													<span>{game.firstPlayerScore}</span>
+												</div>
+												<div className="secondPlayeer">
+													<div className="avatar"></div>
+													<h3>{game.secondPlayerID}</h3>
+												</div>
+											</li>
+										);
+									})
+								}
+							</ul>
 						</div>
 					</div>
 				</>
