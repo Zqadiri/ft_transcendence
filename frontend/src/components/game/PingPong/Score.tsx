@@ -8,9 +8,13 @@ function	Score( {s1, s2}: {s1: number, s2: number} ): JSX.Element
 	return (
 		<div className="score-panel flex-gap20 flex-jc-se flex-ai-cr" >
 			<div className="first-player">
-				<div className="prof-picture">
-					<img src={currentPlayersData.firstPlayerAvatar} alt="avatar1" />
-				</div>
+				<div className="prof-picture" style={{
+					backgroundImage: `url(${currentPlayersData.firstPlayerAvatar})`,
+					backgroundColor: "transparent",
+					backgroundPosition: "center",
+					backgroundSize: "cover",
+					backgroundRepeat: "none",
+				}}></div>
 				<h3>{currentPlayersData.firstPlayerName}</h3>
 			</div>
 			<div className="the-score flex-jc-sb flex-ai-cr ">
@@ -19,9 +23,13 @@ function	Score( {s1, s2}: {s1: number, s2: number} ): JSX.Element
 				<div>{s2}</div>
 			</div>
 			<div className="second-player">
-				<div className="prof-picture">
-					<img src={currentPlayersData.secondPlayerAvatar} alt="avatar2"/>
-				</div>
+				<div className="prof-picture" style={{
+					backgroundImage: `url(${currentPlayersData.secondPlayerAvatar})`,
+					backgroundColor: "transparent",
+					backgroundPosition: "center",
+					backgroundSize: "cover",
+					backgroundRepeat: "none",
+				}}></div>
 				<h3>{currentPlayersData.secondPlayerName}</h3>
 			</div>
 		</div>

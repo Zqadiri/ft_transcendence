@@ -24,7 +24,16 @@ function	LeaderboardPlayers({ldPlayers, searchTerm}: LeaderboardProps): JSX.Elem
 						}}>
 							<td className={`ld-rank rank${player.rank}`}><h3>{player.rank}</h3></td>
 							<td className="ld-player">
-								<div className="avatar"><img src={player.avatar} alt="avatar" /></div>
+								<div className="avatar" style={{
+									backgroundImage: `url(${player.avatar})`,
+									backgroundColor: "white",
+									backgroundPosition: "center",
+									backgroundSize: "cover",
+									backgroundRepeat: "none",
+								}}>
+
+								</div>
+								{/* <div className="avatar"><img src={player.avatar} alt="avatar" /></div> */}
 								<div className="username"><h3>{player.username}</h3></div>
 							</td>
 							<td className="ld-wins">{player.wins}</td>

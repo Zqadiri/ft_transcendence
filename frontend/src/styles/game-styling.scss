@@ -229,35 +229,33 @@ html {
 	padding: 18px 15px 15px;
 	font-weight: 0;
 	margin-bottom: 3%;
-	// box-shadow: 0px 20px 20px #cccccc;
 	box-shadow: 0px 20px 20px #e0e0e0;
 	cursor: pointer;
 }
 
 .live-games li div {
 	width: 33.33%;
-	float: left;
 	text-align: center;
 }
 
-.live-games li div img {
-	display: inline-block;
-	width: 60px;
-	height: 60px;
-	border-radius: 100%;
-	border: 3px solid white;
-	outline: 3px solid #112B3C;
+.live-games li div .img {
+	margin-inline: auto;
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    border: 4px solid white;
+    outline: 0.1em solid #182b3b;
 }
 
 .live-games li div:nth-child(2) h3 {
-	width: 33.33%;
+	width: 100%;
 	float: left;
 	font-size: 23px
 }
 
 .live-games li div:nth-child(1) h3,
 .live-games li div:nth-child(3) h3 {
-	margin-top: 5px;
+	margin-top: .7em;
 	font-size: 14px;
 }
 
@@ -310,46 +308,6 @@ html {
 
 .live-score-panel > * {
 	flex-basis: 1;
-}
-
-.animation-container {
-	height: 3px;
-	width: 100px !important;
-	display: flex;
-	justify-content: center;
-}
-
-@keyframes loadingbar {
-	0% {
-		transform: translateX(-20px) scaleX(0%);
-	}
-
-	25% {
-		transform: translateX(-10px) scaleX(200%);
-	}
-
-	50% {
-		transform: translateX(0px) scaleX(300%);
-	}
-
-	75% {
-		transform: translateX(10px) scaleX(200%);
-	}
-
-	100% {
-		transform: translateX(20px) scaleX(0%);
-	}
-}
-
-.bar {
-	height: 100%;
-	width: 10px !important;
-	animation-timing-function: linear;
-	background-color: #f66b0e;
-	animation-iteration-count: infinite;
-	animation-name: loadingbar;
-	animation-duration: 1.1s;
-	animation-direction: alternate;
 }
 
 /* Cancel Section */
@@ -484,24 +442,16 @@ html {
 	width: 65px;
 	height: 65px;
 	margin-inline: auto;
-	background-color: #efefef;
 	border-radius: 100%;
-	border: 2px solid #efefef;
+	border: 4px solid #efefef;
 	outline: 2px solid #F66B0E;
-}
-
-.container_sesco .score-panel .first-player .prof-picture img,
-.container_sesco .score-panel .second-player .prof-picture img {
-	border-radius: 100%;
-	width: 100%;
-	height: 100%;
 }
 
 .container_sesco .score-panel .first-player h3,
 .container_sesco .score-panel .second-player h3 {
 	font-size: 14px;
 	padding: 12px 0px 5px 0px;
-	color: #112B3C
+	color: #F66B0E
 }
 
 .container_sesco .score-panel .first-player > *,

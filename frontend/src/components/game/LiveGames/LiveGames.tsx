@@ -51,19 +51,28 @@ export function		LiveGames(): JSX.Element
 					return (
 						<li className="flex-jc-sb flex-ai-cr" key={current.id} onClick={() => joinLiveGame(current.socketRoom, current.theme)}>
 							<div>
-								<img src={current.avatar1} alt="user avatar"/>
+								<div className="img" style={{
+									backgroundImage: `url(${current.avatar1})`,
+									backgroundColor: "white",
+									backgroundPosition: "center",
+									backgroundSize: "cover",
+									backgroundRepeat: "none",
+								}}></div>
 								<h3>{current.user1}</h3>
 							</div>
 							<div className="live-score-panel">
 								<h3>{current.score1}</h3>
 								<Timer gameCreatedAt={current.createdAt} />
-								{/* <div className="animation-container">
-									<div className="bar"></div>
-								</div> */}
 								<h3>{current.score2}</h3>
 							</div>
 							<div>
-								<img src={current.avatar2} alt="user avatar"/>
+								<div className="img" style={{
+									backgroundImage: `url(${current.avatar2})`,
+									backgroundColor: "white",
+									backgroundPosition: "center",
+									backgroundSize: "cover",
+									backgroundRepeat: "none",
+								}}></div>
 								<h3>{current.user2}</h3>
 							</div>
 						</li>
