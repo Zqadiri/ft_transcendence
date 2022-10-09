@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ChatLogsDto } from './dto/chat-logs.dto';
@@ -63,7 +63,7 @@ export class ChatLogsService {
     .select("ChatLogs.userID", "userID")
     .addSelect("ChatLogs.roomName", "roomName")
     .addSelect("ChatLogs.message", "message")
-	.addSelect("ChatLogs.username", "username")
+	  .addSelect("ChatLogs.username", "username")
     .leftJoin(User, 'db_user', 'db_user.id = ChatLogs.userID')
     .addSelect('db_user.avatar', 'avatar')
     .where ("ChatLogs.id = :id", {id: messageID})

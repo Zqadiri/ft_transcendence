@@ -1,7 +1,7 @@
-import { Controller, UseGuards, Get, Res, Post, HttpCode, Body, Param, Req } from '@nestjs/common';
-import { CreateRoomDto, RoomDto, SetRolestoMembersDto, RoomNamedto, BanOrMuteMembersDto, RoomWoUserDto, CreateDmDto } from './dto/create-chat.dto';
+import { Controller, UseGuards, Get, Post, HttpCode, Body, Param, Req } from '@nestjs/common';
+import { CreateRoomDto, RoomDto, SetRolestoMembersDto, RoomNamedto, BanOrMuteMembersDto, RoomWoUserDto } from './dto/create-chat.dto';
 import { ChatsService } from './chats.service';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import RequestWithUser from 'src/two-factor-authentication/dto/requestWithUser.interface';
 
@@ -10,20 +10,6 @@ import RequestWithUser from 'src/two-factor-authentication/dto/requestWithUser.i
 export class ChatController {
 
     constructor(private readonly chatService : ChatsService) {}
-        
-    // @UseGuards(jwtAuthGuard)
-    // @Post('/Dm')
-    // @HttpCode(201)
-    // async createDm(@Req() req: RequestWithUser, @Body() dm: CreateDmDto) {
-    //     console.log("Creating direct messsage ...", dm);
-    //     try {
-    //         //const newRoom = await this.chatService.createRoom(roomDto, "oum");
-    //         await this.chatService.CreateDm(dm, req.user.id);
-    //     } catch (e) {
-    //         console.error('Failed to create dm message', e);
-    //         throw e;
-    //     }
-    // }
 
     @UseGuards(jwtAuthGuard)
     @Post('/CreateRoom')
@@ -31,7 +17,6 @@ export class ChatController {
     async createRoom(@Req() req: RequestWithUser, @Body() roomDto: CreateRoomDto) {
         // console.log("Creating chat room...", roomDto);
         try {
-            //const newRoom = await this.chatService.createRoom(roomDto, "oum");
             const newRoom = await this.chatService.createRoom(roomDto, req.user.id);
             return newRoom  ;
         } catch (e) {
@@ -44,8 +29,7 @@ export class ChatController {
     @Post('/JoinRoom')
     async JoinRoom(@Body() Roomdata: RoomWoUserDto , @Req() req: RequestWithUser)
     {
-        try
-        {
+        try {
             await this.chatService.JointoChatRoom({userID: req.user.id, ...Roomdata});
             // console.log("join to room...", Roomdata.name);
         } 
@@ -87,19 +71,6 @@ export class ChatController {
     async GetRoomInfo(@Req() req: RequestWithUser, @Body() room: { id: number })
     {
 		return this.chatService.Room(room.id);
-    }
-    
-    @UseGuards(jwtAuthGuard)
-    @Get('/users/:RoomName')
-    async getUsersFromRoom(@Param('RoomName') RoomName: string)
-    {
-        try {
-            // console.log("get users from room...", RoomName);
-            return await this.chatService.getUsersFromRoom(RoomName);
-         } catch (e) {
-             console.error('Failed to get users from room', e);
-             throw e;
-         }
     }
     
     @UseGuards(jwtAuthGuard)
@@ -205,30 +176,5 @@ export class ChatController {
             throw e;
         }
     }
-
-    // @Get('/ListMutedID/:RoomName')
-    // async ListMutedID(@Param('RoomName') RoomName: string)
-    // {
-    //     try {
-    //         console.log("get MutedID list...", RoomName);
-    //         return await this.chatService.ListMutedID(RoomName);
-    //      } catch (e) {
-    //          console.error('Failed to get muted ids list', e);
-    //          throw e;
-    //      }
-    // }
-
-    // @Get('/ListBannedID/:RoomName')
-    // async ListBannedID(@Param('RoomName') RoomName: string)
-    // {
-    //     try {
-    //         console.log("get BannedID list...", RoomName);
-    //         return await this.chatService.ListBannedID(RoomName);
-    //      } catch (e) {
-    //          console.error('Failed to get banned ids list', e);
-    //          throw e;
-    //      }
-    // }
-    
 }
 
