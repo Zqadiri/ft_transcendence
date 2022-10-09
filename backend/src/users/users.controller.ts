@@ -42,7 +42,9 @@ export class UsersController {
 	@Post('/upload_avatar')
 	@UseInterceptors(FileInterceptor('file', {
 		storage: diskStorage({
-		  destination: './uploadedFiles/avatars'
+			destination: function (req, file, cb) {
+				cb(null, process.env.UPLOADED_FILES_DESTINATION)
+			},
 		}),
 		fileFilter:(req, file, callback) => {
 			if (!file.mimetype.includes('image')) {
