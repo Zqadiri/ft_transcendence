@@ -46,13 +46,7 @@ export class UsersService {
 		return this.userRepository.update(userID, updatedUser);
 	}
 
-	async updateStatus(userId: number, status: string) {
-		const user = await this.getUserById(userId);
-
-		user.status = status;
-		await this.userRepository.save(user);
-	}
-
+	
 	async updateAfterGame(userID: number, updateAfterGame: UpdateAfterGameDto) {
 		const updatedUser = new User();
 		updatedUser.status = updateAfterGame.status;
@@ -65,19 +59,27 @@ export class UsersService {
 		updatedUser.updatedAt = updateAfterGame.updatedAt;
 		const _error = validate(updatedUser);
 		if ((await _error).length)
-			throw new HttpException({ message: 'User Data Validation Failed', _error }, HttpStatus.BAD_REQUEST);
+		throw new HttpException({ message: 'User Data Validation Failed', _error }, HttpStatus.BAD_REQUEST);
 		return this.userRepository.update(userID, updatedUser);
 	}
-
-	async isMatched(userID: number) {
-		const user = new User();
-		user.Matched = true;
-		user.status = 'ingame';
-		user.gameCounter++;
-		const _error = validate(user);
-		if ((await _error).length)
-			throw new HttpException({ message: 'User Data Validation Failed', _error }, HttpStatus.BAD_REQUEST);
-		return this.userRepository.update(userID, user);
+	
+	/*
+		Update user Status in the database
+	*/
+	async updateStatus(userId: number, status: string) {
+		const user = await this.getUserById(userId);
+		user.status = status;
+		await this.userRepository.save(user);
+	}
+	/*
+		Update the username 
+	*/
+	async updateUsername(id: number, newUsername: string) {
+		const user = await this.userRepository.preload({
+			id: id,
+			username: newUsername
+		});
+		await this.userRepository.save(user);
 	}
 
 	async removeFriend(user: User, removeID: number) {
@@ -85,17 +87,6 @@ export class UsersService {
 		if (index > -1) {
 			user.FriendsID.splice(index, 1);
 		}
-	}
-
-	async removeUser(userID: number) {
-		const user = await this.userRepository.findOne({
-			where: {
-				id: userID
-			}
-		});
-		if (!user)
-			throw new HttpException({ message: 'User Not Found' }, HttpStatus.BAD_REQUEST);
-		return this.userRepository.remove(user);
 	}
 
 	#unlockUserAchievements(user: User, currentPlayerScore: number, opponentScore: number, flawLessWinStreakAchieved: boolean) {
@@ -184,23 +175,10 @@ export class UsersService {
 		return await this.userRepository.save(user);
 	}
 
-	async updateUsername(id: number, newUsername: string) {
-		const user = await this.userRepository.preload({
-			id: id,
-			username: newUsername
-		});
-		await this.userRepository.save(user);
-	}
-
 	async blockedFriend(id: number) {
-		const user = this.getUserById(id); //! switch it to req.user.id
+		const user = this.getUserById(id);
 		if (!user)
 			throw new BadRequestException("user does not exist");
-		// const friends = await this.userRepository
-		// .createQueryBuilder("db_user")
-		// .select(['db_user.username', 'db_user.avatar' ,'db_user.id', 'db_user.status'])
-		// .where(":id = ANY (db_user.blockedID)", {id})
-		// .getMany()
 
 		const friends = await this.userRepository
 			.createQueryBuilder("db_user")

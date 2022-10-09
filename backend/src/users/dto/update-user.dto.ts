@@ -1,8 +1,7 @@
-import { IsEmail } from "class-validator";
+import { IsEmail, isNotEmpty, isString } from "class-validator";
 
 export class UpdateUserDto{
     public username : string;
-    @IsEmail()
     public email :string;
     public is2FacAuth : boolean;
     public status: string;

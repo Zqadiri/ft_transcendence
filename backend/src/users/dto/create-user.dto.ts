@@ -1,3 +1,5 @@
+import { IsNumber } from "class-validator";
+
 /* Create New User */
 
 export class CreateUserDto{

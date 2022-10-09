@@ -1,4 +1,5 @@
-import { Entity, Column, OneToMany } from "typeorm";
+import { IsEmail, MaxLength } from "class-validator";
+import { Entity, Column } from "typeorm";
 
 /*
 	Marks your model as an entity. Entity is a class which is 
@@ -11,12 +12,14 @@ export class User{
 	id: number;
 
 	@Column({unique: true })
+	@MaxLength(10)
 	username: string;
 
 	@Column()
 	avatar: string;
 
 	@Column()
+	@IsEmail()
 	email: string;
 
 	@Column({default: false})

@@ -49,7 +49,7 @@ export class TwoFactorAuthenticationService {
 	}
 
 	/*
-		set the two factor authentication on (true)
+		set the two factor authentication on (false)
 	*/
 	async deactivateTwoFacAuth(userID: number){
 		return this.userRepository.update(userID, {

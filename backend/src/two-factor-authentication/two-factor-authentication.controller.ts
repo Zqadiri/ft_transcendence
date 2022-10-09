@@ -8,8 +8,8 @@ import { jwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Response } from 'express';
 import RequestWithUser from './dto/requestWithUser.interface';
 
-// ! learn more about interceptors
 @ApiTags('two-factor-authentication')
+@UseGuards(jwtAuthGuard)
 @Controller('two-factor-authentication')
 @UseInterceptors(ClassSerializerInterceptor)
 export class TwoFactorAuthenticationController {
@@ -20,7 +20,6 @@ export class TwoFactorAuthenticationController {
 
 	@ApiOperation({ summary: 'Generate the Qrcode' })
 	@Post('generate')
-	@UseGuards(jwtAuthGuard)
 	async register(
 		@Req() request,
 		@Res() response: Response
@@ -32,7 +31,6 @@ export class TwoFactorAuthenticationController {
 
 	@ApiOperation({ summary: 'Enable 2FA' })
 	@Post('turn-on')
-	@UseGuards(jwtAuthGuard)
 	async turnOnTwoFacAuth(
 		@Req() request: RequestWithUser,
 		@Body() data: TwoFacAuthCodeDto
@@ -47,7 +45,6 @@ export class TwoFactorAuthenticationController {
 
 	@ApiOperation({ summary: 'Disable 2FA' })
 	@Post('turn-off')
-	@UseGuards(jwtAuthGuard)
 	async turnoffTwoFacAuth(
 		@Req() request: RequestWithUser,
 		@Body() data: TwoFacAuthCodeDto
@@ -63,7 +60,6 @@ export class TwoFactorAuthenticationController {
 
 	@ApiOperation({ summary: 'Validate the 2FA code and set the cookie' })
 	@Post('authenticate')
-	@UseGuards(jwtAuthGuard)
 	@HttpCode(200)
 	async authenticate(
 		@Req() req: RequestWithUser,

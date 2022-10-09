@@ -49,7 +49,6 @@ export class UsersController {
 		}
 	}))
 	async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File, @Res() res: Response) {
-		console.log( "1 file : " + JSON.stringify(file));
 		const user = await this.usersService.uploadAvatar(req.user.id, {
 			filename: file.filename,
 			path: "/" + file.path,
@@ -84,7 +83,6 @@ export class UsersController {
 		catch (err){
 			throw new UnauthorizedException('failed to update the username');
 		}
-		// return result;
 		res.send({message: "success!"});
 	}
 	
@@ -92,7 +90,6 @@ export class UsersController {
 	@Post('/add_friend')
 	async AddFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
-		// console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
 		const user = await this.usersService.getUserById(req.user.id);
@@ -115,7 +112,6 @@ export class UsersController {
 	@Post('/cancel_friend')
 	async CancelFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
-		// console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
 		const user = await this.usersService.getUserById(req.user.id);
@@ -134,7 +130,6 @@ export class UsersController {
 	@Post('/accept_friend')
 	async AcceptFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
-		// console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
 		const user = await this.usersService.getUserById(req.user.id);
@@ -158,7 +153,6 @@ export class UsersController {
 	@Post('/decline_friend')
 	async DeclineFriend(@Body('id') userID : number, @Req() req: RequestWithUser, @Res() res: any) {
 		const newFriend = await this.usersService.getUserById(userID);
-		// console.log(newFriend);
 		if (!newFriend)	
 			throw new UnauthorizedException('NOT a User');
 		const user = await this.usersService.getUserById(req.user.id);

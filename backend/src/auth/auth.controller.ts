@@ -7,11 +7,6 @@ import { UsersService } from 'src/users/users.service';
 import { ApiTags, ApiOperation, ApiResponse} from '@nestjs/swagger';
 import { jwtAuthGuard } from './jwt-auth.guard';
 
-/*
-	Controllers are responsible for handling incoming 
-	requests and returning responses to the client.
-*/
-
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController 
@@ -31,24 +26,23 @@ export class AuthController
 		let obj : CreateUserDto;
 		let playerExists : any;
 		obj = await this.authService.getUserData(query.code);
-		if (!obj)
+		if (!obj){
 		    throw new BadRequestException('Bad Request');
+		}
 		playerExists = await this.playerService.getUserById(obj.id);
 		if (!playerExists){
-			// console.log('does not Exists create user and add cookie');
 			this.playerService.create(obj);
 			await this.authService.sendJWTtoken(obj, response, false);
 			response.redirect('/');
 		}
 		else if (playerExists && playerExists.is2FacAuth === false){
-			// console.log('Player exists and 2FA is off');
 			await this.authService.sendJWTtoken(playerExists, response, false);
 			response.redirect('/');
 		}
 		else if (playerExists && playerExists.is2FacAuth === true){
 			console.log('Player exists and 2FA is on');
 			await this.authService.TwoFaCookie(playerExists, response);
-			response.redirect('/2fa'); //! redirect to the appropriate page
+			response.redirect('/2fa');
 		}
 	}
 
