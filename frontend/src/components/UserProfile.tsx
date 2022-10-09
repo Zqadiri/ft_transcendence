@@ -194,7 +194,7 @@ const UserProfile = (props: { self: boolean }) => {
 		return <Navigate to={"/profile"}></Navigate>
 	}
 	return (
-		<div className="userprofile d100 flex-gap20">
+		<div className="userprofile d100 flex">
 			<ShowConditionally cond={user && thisuser}>
 				<>
 					{/* <div className="userinfowrapper d100 flex"> */}
@@ -352,7 +352,7 @@ const UserProfile = (props: { self: boolean }) => {
 							</ShowConditionally>
 						</div>
 					{/* </div> */}
-					<div className="usergameinfo flex-column flex-gap20">
+					<div className="usergameinfo flex-column">
 						<div className="header">
 							<h1>Match History</h1>
 							<div className="userstats">
@@ -374,9 +374,9 @@ const UserProfile = (props: { self: boolean }) => {
 													<h3>{game.firstPlayerID}</h3>
 												</div>
 												<div className="match-results">
-													<span>{game.firstPlayerScore}</span>
-													<span> vs </span>
-													<span>{game.firstPlayerScore}</span>
+													<h3>{game.firstPlayerScore}</h3>
+													<h3>-</h3>
+													<h3>{game.secondPlayerScore}</h3>
 												</div>
 												<div className="secondPlayeer">
 													<div className="avatar"></div>
