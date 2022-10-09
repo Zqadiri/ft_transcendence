@@ -1,15 +1,11 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect, WsResponse } from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer, ConnectedSocket, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { ChatsService } from './chats.service';
 import { Server, Socket } from 'socket.io';
-import { parse } from 'cookie';
-import { Bind, Logger, Req, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogsService } from 'src/chat-logs/chat-logs.service';
 import { UsersService } from 'src/users/users.service';
-import { CreateRoomDto, RoomDto, SetRolestoMembersDto, RoomNamedto, CreateDmDto, BanOrMuteMembersDto, BanOrMuteMembersPlusTokenDto, RoomStatus } from './dto/create-chat.dto';
-import { Transform } from 'class-transformer';
-import e, { request } from 'express';
-import { find } from 'rxjs';
+import { BanOrMuteMembersPlusTokenDto } from './dto/create-chat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm/repository/Repository';
@@ -104,18 +100,6 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		client.emit('joinedRoom', roomName);
 	}
 
-	// @SubscribeMessage('socketJoinDM')
-	// async handleJoinDM(client: Socket, CreateDmDto: CreateDmDto)
-	// {
-	//   // let id : string;
-
-	//   // console.log("parse(client.handshake.headers.cookie)", parse(client.handshake.headers.cookie).id);
-	//   // const dm = await this.chatsService.CreateDm(CreateDmDto, +id);
-
-	//   client.join(dm.name);
-	//   //emit to specific client
-	//   client.emit('joinedDm', dm.name);
-	// }
 
 	@SubscribeMessage('socketleaveRoom')
 	async handleLeaveRoom(@ConnectedSocket() client: Socket, roomName: string) {
@@ -128,7 +112,6 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		const messages = await this.chatLogsService.DisplayRoomMessages(roomName);
 		console.log("messages", messages);
 		client.emit("RoomMessages", messages);
-		// return messages;
 	}
 
 	@SubscribeMessage('SocketMuteUser')
@@ -140,9 +123,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 			console.error('Failed to mute this user in this chat room', e);
 			throw e;
 		}
-
 	}
-
 
 	/*
 		Sesco Wrote This :)
@@ -156,27 +137,5 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.server.emit(String(friendId)+"declined");
 		this.server.emit(String(currentId)+"declinedd");
 	}
-
-
-   // identify the user who join the chat
-  
-  //  @SubscribeMessage('join') // listinig to an event named join
-  //   joinRoom(
-  //     @MessageBody('userID') userID: string,
-  //     @ConnectedSocket() client: Socket)
-  //   {
-  //     const username = this.chatsService.identify(userID, client.id);
-  //     return username;
-  //   }
-
-  //  //type a message and informe other users who is typing
-  //   @SubscribeMessage('typing') 
-  //   async typing(
-  //     @MessageBody('isTyping') isTyping: string,
-  //     @ConnectedSocket() client: Socket)
-  //     {
-  //       const name = await this.chatsService.getClientName(client.id);
-  //       client.broadcast.emit('typing', {name, isTyping});
-  //     }
-
+	
 }

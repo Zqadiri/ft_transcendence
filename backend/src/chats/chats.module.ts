@@ -7,7 +7,6 @@ import { UsersModule } from 'src/users/users.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { ChatController } from './chats.controller';
 import { User } from 'src/users/entities/user.entity';
-import { ChatLogsDto } from 'src/chat-logs/dto/chat-logs.dto';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 import { ChatLogsService } from 'src/chat-logs/chat-logs.service';
 import { ScheduleModule } from '@nestjs/schedule';

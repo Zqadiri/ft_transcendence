@@ -68,8 +68,12 @@ export class UsersService {
 	*/
 	async updateStatus(userId: number, status: string) {
 		const user = await this.getUserById(userId);
-		user.status = status;
-		await this.userRepository.save(user);
+
+		if (user && status)
+		{
+			user.status = status;
+			await this.userRepository.save(user);
+		}
 	}
 	/*
 		Update the username 

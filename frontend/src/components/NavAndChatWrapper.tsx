@@ -466,20 +466,20 @@ const NavAndChatWrapper = () => {
 								<span>Profile</span>
 							</RRLink>
 							<div className="bar_sickl"></div>
-							<RRLink to="/settings" className="settings elem no-underline flex-ai-cr flex-gap5">
+							{/* <RRLink to="/settings" className="settings elem no-underline flex-ai-cr flex-gap5">
 								<i className="fa-solid fa-gear"></i>
 								<span>Settings</span>
 							</RRLink>
-							<div className="bar_sickl"></div>
+							<div className="bar_sickl"></div> */}
 							<div className="logout elem flex-ai-cr flex-gap5"
 								onClick={() => {
 									statusSocket.emit("logOut", cookies.get("id"));
+									statusSocket.disconnect();
 									cookies.remove("_token");
 									// document.cookie = "";
 									document.cookie.replace(/(?<=^|;).+?(?=\=|;|$)/g, name => location.hostname.split('.').reverse().reduce(domain => (domain=domain.replace(/^\.?[^.]+/, ''),document.cookie=`${name}=;max-age=0;path=/;domain=${domain}`,domain), location.hostname));
 									navigater("/login");
 									setLoggedIn(false);
-									statusSocket.disconnect();
 								}}
 							>
 								<i className="fa-solid fa-right-from-bracket"></i>

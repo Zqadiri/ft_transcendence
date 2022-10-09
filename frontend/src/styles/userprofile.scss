@@ -1,12 +1,23 @@
 @import './palette.scss';
 
 .userprofile {
+	padding: 5px;
+	height: calc(100% - 86px);
 	.userinfo {
+		padding: 5px;
 		width: 33%;
+		min-height: 660px;
+		min-width: 230px;
+		background-color: white;
+		border-radius: 15px;
+		filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
 		.top {
 			.imgcontainer {
+				position: relative;
+				width: min-content;
+				$dim: 150px;
 				.image {
-					$dim: 100px;
+					filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
 					width: $dim;
 					height: $dim;
 					background-color: white;
@@ -15,7 +26,83 @@
 					background-size: cover;
 					border-radius: 100%;
 				}
+				.status {
+					$div: 5;
+					width: calc($dim / $div);
+					height: calc($dim / $div);
+					position: absolute;
+					border-radius: 100%;
+					right: 10px;
+					bottom: 10px;
+					outline: 5px solid white;
+					&.ingame {
+						background-color: orangered;
+					}
+					&.online {
+						background-color: rgb(27, 219, 27);
+					}
+					&.offline {
+						background-color: gray;
+					}
+				}
+				.editoverlay {
+					opacity: 0;
+					border-radius: 100%;
+					cursor: pointer;
+					position: absolute;
+					top: 0;
+					left: 0;
+					background-color: rgba(black, 0.3);
+					.inner {
+						width: 80%;
+						color: white;
+						font-weight: 700;
+
+					}
+					&:hover {
+						opacity: 1;
+					}
+				}
+			}
+			.editinfo {
+				.c_button {
+					flex-basis: 0px;
+					flex-grow: 1;
+					flex-shrink: 0;
+				}
 			}
 		}
+		.namecontainer {
+			position: relative;
+			.iconcontainer {
+				cursor: pointer;
+				position: absolute;
+				right: 8px;
+				top: 0;
+				height: 100%;
+				color: rgba(white, 0.5);
+				// width: 20px;
+				// font-size: 16px;
+				i {
+					padding-bottom: 1px;
+				}
+			}
+			input {
+				// width: 100%;
+				// max-width: 100%;
+				text-align: center;
+				background-color: orange;
+				border-radius: 99px;
+				color: white;
+				font-weight: 700;
+				font-size: 20px;
+			}
+		}
+	}
+	input {
+		border: 0px;
+		border-radius: 7px;
+		filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
+		padding: 5px 10px;
 	}
 }

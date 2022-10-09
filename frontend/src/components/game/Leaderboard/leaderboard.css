@@ -102,14 +102,8 @@
 .ld-content .avatar {
 	width: 3.5em;
 	height: 3.5em;
-}
-
-.ld-content .avatar img {
-	width: 100%;
-	height: 100%;
 	border-radius: 100%;
-	background-color: white;
-	border: 2px solid white;
+	border: 4px solid white;
 	outline: 1px solid #205375;
 }
 

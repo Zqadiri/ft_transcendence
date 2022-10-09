@@ -2,14 +2,12 @@ import { Injectable, ConflictException, BadRequestException, UnauthorizedExcepti
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm';
-import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes, RoomDto, SetRolestoMembersDto, BanOrMuteMembersDto, RoomNamedto, Action, RoomWoUserDto } from './dto/create-chat.dto';
+import { CreateDmDto, CreateRoomDto, RoomStatus, ChatTypes, RoomDto, SetRolestoMembersDto, BanOrMuteMembersDto, Action, RoomWoUserDto } from './dto/create-chat.dto';
 import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
-
-// import { Cron, CronExpression } from '@nestjs/schedule';
 @Injectable()
 export class ChatsService {
 
@@ -72,20 +70,6 @@ export class ChatsService {
 
     return (ret);
   }
-
-//   async checkIfDmExistedUsername(username1: string, username2: string)
-//   {
-//     const ret = await this.Chatrepository
-//     .createQueryBuilder()
-//     .where('type=:type', { type: ChatTypes.DM })
-//     .andWhere('name=:name or name=:name2', {
-//       name: `${username1},${username2}`,
-//       name2: `${username2},${username1}`,
-//     })
-//     .getMany();
-
-//     return (ret);
-//   }
 
   async CreateDm(dm: CreateDmDto)
   {
@@ -277,31 +261,6 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
         throw new UnauthorizedException({code: 'Unauthorized', message: `you have to set password to join '${roomName}'`})
     }
   }
-
-
-  async getUsersFromRoom(roomName: string)
-  {
-    // check if the room already exist
-    const name = await this.findRoom(roomName);
-
-    if (!name){
-      throw new BadRequestException({code: 'invalid chat room name', message: `Room with '${roomName}' does not exist`})
-    }
-    
-    const users = await this.Chatrepository
-    .createQueryBuilder("db_chat")
-    .select(['db_chat.userID']) // added selection
-    .where("db_chat.name = :name", { name: roomName })
-    .getOne();
-
-    const profils = await this.Userrepository
-    .createQueryBuilder("db_user")
-    .where("db_user.id IN (:...users)", { users: users.userID })
-    .getRawMany();
-    
-    return profils;
-  }
-
   
    /** **To do** Get users with stat[owner or admin or simple user or banned or muted], avatar, username, id */
   /** {id: 6432, username: sara, avatar: rtet, stat: owner} */
@@ -548,7 +507,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
 
           var randomuser = this.random_item(isOwner.userID);
 
-          const ret_query2 = await this.Chatrepository
+          await this.Chatrepository
           .createQueryBuilder()
           .update(Chat)
           .set({ownerID: randomuser, userID: isOwner.userID})
@@ -559,7 +518,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
         }
         else if (isOwner.userID.length === 1)
         {
-          const delete_room = await this.Chatrepository
+          await this.Chatrepository
           .createQueryBuilder()
           .delete()
           .from(Chat)
@@ -567,7 +526,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
           .execute()
          
           //delete messages from ChatLogs
-          const del = await this.ChatLogsrepository
+          await this.ChatLogsrepository
           .createQueryBuilder()
           .delete()
           .from(ChatLogs)
@@ -767,36 +726,6 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
         }
       }
     }
-
-    // async ListMutedID(roomName: string)
-    // {
-    //   let listMuted = [];
-      
-    //   const mutedIds = await this.Chatrepository
-    //   .createQueryBuilder("db_chat")
-    //   .select(['db_chat.MutedAndBannedID']) // added selection
-    //   .where("db_chat.name = :name", { name: roomName })
-    //   .getOne();
-
-    //   listMuted = mutedIds.MutedAndBannedID.filter(el => { return el.action === Action.MUTE });
-
-    //   return listMuted;
-    // }
-
-    // async ListBannedID(roomName: string)
-    // {
-    //   let listBanned = [];
-      
-    //   const bannedIds = await this.Chatrepository
-    //   .createQueryBuilder("db_chat")
-    //   .select(['db_chat.MutedAndBannedID']) // added selection
-    //   .where("db_chat.name = :name", { name: roomName })
-    //   .getOne();
-
-    //   listBanned = bannedIds.MutedAndBannedID.filter(el => { return el.action === Action.BAN });
-
-    //   return listBanned;
-    // }
 
   /*-------------------------------------------------------------------------- */
   

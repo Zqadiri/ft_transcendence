@@ -59,10 +59,10 @@ function	PingPong(): JSX.Element
 			navigate("/");
 
 		return () => {
-			window.onbeforeunload = null;
-			global.socket.disconnect();
 			if (global.playerId !== spectator)
 				statusSocket.emit('inGame', {userId: cookies.get('id'), status: "online"});
+			window.onbeforeunload = null;
+			global.socket.disconnect();
 			resetGame();
 		};
 	}, []);
