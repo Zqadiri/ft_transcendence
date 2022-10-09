@@ -278,7 +278,7 @@ const UserProfile = (props: { self: boolean }) => {
 										</div>
 									</ShowConditionally>
 								</div>
-								<div className="editnamemessage">{enMessage}</div>
+								<div className="editnamemessage align-text-center">{enMessage}</div>
 								<ShowConditionally cond={editingName}>
 									<div className="editinfo flex-center flex-gap5 editname">
 										<Button onClick={() => {
