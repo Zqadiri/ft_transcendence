@@ -13,11 +13,11 @@ export class Game{
 	@Column({default: false})
 	isPlaying:boolean;
 
-	@Column('varchar')
-	firstPlayerID: string;
+	@Column('int')
+	firstPlayerID: number;
 
-	@Column('varchar')
-	secondPlayerID: string;
+	@Column('int')
+	secondPlayerID: number;
 
 	@Column({default: 0})
 	firstPlayerScore: number;

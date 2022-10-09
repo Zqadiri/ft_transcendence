@@ -65,8 +65,8 @@ export class UpdateGameService {
 		this.gameCoordinates.set(room, tmp);
 	
 		const response = await this.gameServ.createGame({
-			firstPlayerID: String(firstUserID),
-			secondPlayerID: String(secondUserID),
+			firstPlayerID: firstUserID,
+			secondPlayerID: secondUserID,
 			theme: theme,
 			socketRoom: room,
 			createdAt: new Date(),

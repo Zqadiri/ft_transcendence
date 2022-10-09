@@ -269,7 +269,8 @@ const UserProfile = (props: { self: boolean }) => {
 										if (editingName) {
 											setDisplayName(e.target.value);
 										}
-									}}></input>
+									}}>
+									</input>
 									<ShowConditionally cond={user?.id === thisuser?.id && !editingName}>
 										<div className="iconcontainer flex-center-column" onClick={() => {
 											setEditingName(true);
