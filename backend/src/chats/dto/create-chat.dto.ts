@@ -1,8 +1,6 @@
-import { IsEnum, Equals, Length, IsOptional, IsNotEmpty, ValidateIf, IsNumber, isString, IsString } from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumber} from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
-import { Chat } from "../entities/chat.entity";
-import { Generated, Unique } from "typeorm";
-import { Exclude, Transform } from "class-transformer";
+import { Transform } from "class-transformer";
 
 export enum RoomStatus {
 	PUBLIC = 'public',
@@ -44,7 +42,6 @@ export class CreateRoomDto
 
 	@ApiProperty({ description: "Chat Room password"})
 	password: string;
-
 }
 
 export class RoomDto
@@ -103,7 +100,6 @@ export class BanOrMuteMembersDto
 	@IsEnum(Action)
 	@ApiProperty({ description: "mute/ban member", enum:Action})
 	action: string;
-
 }
 
 
@@ -126,6 +122,5 @@ export class BanOrMuteMembersPlusTokenDto
 	@IsEnum(Action)
 	@ApiProperty({ description: "mute/ban member", enum:Action})
 	action: string;
-
 }
 
