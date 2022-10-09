@@ -4,7 +4,7 @@ import { UseInterceptors, UploadedFile } from '@nestjs/common';
 import { Post, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Express, Response } from 'express'
-import uploadInterceptor from './upload.interceptor';
+import { diskStorage } from 'multer';
 import { 
 	ApiTags,
 	ApiOperation,
@@ -17,6 +17,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import RequestWithUser from 'src/two-factor-authentication/dto/requestWithUser.interface';
 import { ChatsService } from 'src/chats/chats.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('users')
 @Controller('users')
@@ -38,14 +39,17 @@ export class UsersController {
 		type: AvatarDto,
 	})
 	@Post('/upload_avatar')
-	@UseInterceptors(uploadInterceptor({
-		fieldName: 'file',
-		path: '/',
-		fileFilter: (request, file, callback) => {
+	@UseInterceptors(FileInterceptor('file', {
+		storage: diskStorage({
+			destination: function (req, file, cb) {
+				cb(null, process.env.UPLOADED_FILES_DESTINATION)
+			},
+		}),
+		fileFilter:(req, file, callback) => {
 			if (!file.mimetype.includes('image')) {
-			  return callback(new BadRequestException('Provide a valid image'), false);
-			}
-			callback(null, true);
+				return callback(new BadRequestException('Provide a valid image'), false);
+			  }
+			  callback(null, true);
 		}
 	}))
 	async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File, @Res() res: Response) {
