@@ -114,7 +114,6 @@ export class GamesService {
 		.addSelect('db_user.username', 'opponentPlayerName')
 		.addSelect('db_user.avatar', 'opponentPlayerAvatar')
 		.getRawMany();
-		console.log({game});
 		return game;
 	}
 
@@ -124,6 +123,7 @@ export class GamesService {
 			return null;
 		const game = await this.GameRepo
 		.createQueryBuilder('game')
+		.select('game.*')
 		.where('game.finishedAt IS NOT NULL')
 		.andWhere(
 			new Brackets((qb) => {
@@ -131,7 +131,11 @@ export class GamesService {
 				.orWhere('game.secondPlayerID = :secondPlayerID', {secondPlayerID: user.id })
 			}),
 		)
-		.getMany();
+		.leftJoin(User, 'db_user', 'db_user.id = game.firstPlayerID OR db_user.id = game.secondPlayerID'/* AND NOT db_user.id = :userID', { userID }*/)
+		.andWhere('NOT db_user.id = :userid', { userid: user.id })
+		.addSelect('db_user.username', 'opponentPlayerName')
+		.addSelect('db_user.avatar', 'opponentPlayerAvatar')
+		.getRawMany();
 		return game;
 	}
 
