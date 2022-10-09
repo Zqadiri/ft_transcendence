@@ -466,11 +466,11 @@ const NavAndChatWrapper = () => {
 								<span>Profile</span>
 							</RRLink>
 							<div className="bar_sickl"></div>
-							<RRLink to="/settings" className="settings elem no-underline flex-ai-cr flex-gap5">
+							{/* <RRLink to="/settings" className="settings elem no-underline flex-ai-cr flex-gap5">
 								<i className="fa-solid fa-gear"></i>
 								<span>Settings</span>
 							</RRLink>
-							<div className="bar_sickl"></div>
+							<div className="bar_sickl"></div> */}
 							<div className="logout elem flex-ai-cr flex-gap5"
 								onClick={() => {
 									statusSocket.emit("logOut", cookies.get("id"));

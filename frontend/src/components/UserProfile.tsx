@@ -60,7 +60,6 @@ const UserProfile = (props: { self: boolean }) => {
 	const [displayImage, setDisplayImage] = useState("");
 	const [uploadFileImage, setUploadFileImage] = useState<File>();
 	const [enMessage, setEnMessage] = useState("");
-	const nameInputSpanRef = useRef<HTMLSpanElement>(null);
 	function _imageEncode (arrayBuffer: any) {
 		let u8 = new Uint8Array(arrayBuffer)
 		let b64encoded = btoa(String([].reduce.call(new Uint8Array(arrayBuffer),function(p,c){return p+String.fromCharCode(c)},'')))
@@ -153,12 +152,6 @@ const UserProfile = (props: { self: boolean }) => {
 		});
 	};
 
-	const [nameInputWidth, setNameInputWidth] = useState(0);
-  
-	useEffect(() => {
-		if (nameInputSpanRef.current)
-			setNameInputWidth(nameInputSpanRef.current.offsetWidth);
-	}, [displayName, nameInputSpanRef.current]);
 
 	useEffect(() => {
 		if (editingName && user?.username && displayName != user.username && displayName.length < 13) {
@@ -190,12 +183,12 @@ const UserProfile = (props: { self: boolean }) => {
 		<div className="userprofile d100">
 			<ShowConditionally cond={user && thisuser}>
 				<>
-					<div className="userinfowrapper d100 flex">
+					{/* <div className="userinfowrapper d100 flex"> */}
 						<div className="userinfo flex-column-center flex-gap5 d100">
 							<div className="top flex-column-center flex-gap10">
 								<div className="imgcontainer">
 									<div style={{backgroundImage: `url(${displayImage})`}} className="image" />
-									<ShowConditionally cond={user?.id === thisuser?.id}>
+									<ShowConditionally cond={user?.id === thisuser?.id && !editingPfp}>
 										<>
 											<div className="editoverlay flex-center-column d100" onClick={() => {
 												uploadPfpRef.current?.click();
@@ -258,7 +251,7 @@ const UserProfile = (props: { self: boolean }) => {
 									</div>
 								</ShowConditionally>
 								<div className="namecontainer">
-									<input type="text" className="name" readOnly={Boolean(thisuser && user) && thisuser?.id !== user?.id} value={displayName} style={{width: nameInputWidth + 60, ...(displayName.length > 12 && { backgroundColor: "red" })}} onChange={(e) => {
+									<input type="text" className="name" readOnly={Boolean(thisuser && user) && thisuser?.id !== user?.id} value={displayName} style={{width: `calc(${displayName.length}ch + 60px)`, ...(displayName.length > 12 && { backgroundColor: "red" })}} onChange={(e) => {
 										if (editingName) {
 											setDisplayName(e.target.value);
 										}
@@ -303,7 +296,7 @@ const UserProfile = (props: { self: boolean }) => {
 								<div className="userop flex-center flex-gap5 flex-wrap">
 									<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
 								</div>
-								<div className="bottom flex-center-column flex-gap5 twofa">
+								<div className="bottom flex-center-column flex-gap10 twofa">
 									<ShowConditionally cond={!thisuser?.is2FacAuth}>
 										<img src={qrCode} alt="qrcode" />
 									</ShowConditionally>
@@ -343,10 +336,12 @@ const UserProfile = (props: { self: boolean }) => {
 								</div>
 							</ShowConditionally>
 						</div>
-					</div>
+					{/* </div> */}
 					<div className="usergameinfo">
 						<div className="userstats"></div>
-						<div className="usermatchhistory"></div>
+						<div className="usermatchhistory">
+
+						</div>
 					</div>
 				</>
 				<div className="notfound d100 flex-center">
@@ -358,7 +353,6 @@ const UserProfile = (props: { self: boolean }) => {
 					</div>
 				</div>
 			</ShowConditionally>
-			<span id="hidespan" ref={nameInputSpanRef} style={{height: "0px !important"}}>{displayName}</span>
 		</div>
 	);
 }
