@@ -1,7 +1,7 @@
 @import './palette.scss';
 
 .userprofile {
-	padding: 1em;
+	padding: 2.5em;
 	height: calc(100% - 86px);
 	.userinfo {
 		padding: 5px;
@@ -110,12 +110,13 @@
 	.usergameinfo {
 		background-color: white;
 		width: 80%;
-		height: 50%;
-		padding: 1em;
+		height: 50vh;
+		padding: 2em;
 		border-radius: 15px;
+		margin-left: 2em;
 		filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
 		.header {
-			padding: 1em 1em 1em;
+			padding: 0 1em 1em;
 			box-shadow: 0 10px 6px -6px #c7c7c7;
 			border-radius: 20px;
 			.userstats {
@@ -134,7 +135,8 @@
 				border-radius: 5px;
 				text-align: center;
 				color: white;
-				font-size: .8em
+				font-size: .8em;
+				font-weight: 600;
 			}
 		}
 		.usermatch-history {
