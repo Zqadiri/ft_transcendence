@@ -44,7 +44,7 @@ const UserProfile = (props: { self: boolean }) => {
 		if (x === false) {
 			setTimeout(() => {
 				setEnMessage("")
-			}, 2000)
+			}, 1000)
 		}
 		_setEditingPfp(x);
 	}
@@ -52,7 +52,7 @@ const UserProfile = (props: { self: boolean }) => {
 		if (x === false) {
 			setTimeout(() => {
 				setEnMessage("")
-			}, 2000)
+			}, 1000)
 		}
 		_setEditingName(x);
 	}
@@ -60,6 +60,7 @@ const UserProfile = (props: { self: boolean }) => {
 	const [displayImage, setDisplayImage] = useState("");
 	const [uploadFileImage, setUploadFileImage] = useState<File>();
 	const [enMessage, setEnMessage] = useState("");
+	const nameInputSpanRef = useRef<HTMLSpanElement>(null);
 	function _imageEncode (arrayBuffer: any) {
 		let u8 = new Uint8Array(arrayBuffer)
 		let b64encoded = btoa(String([].reduce.call(new Uint8Array(arrayBuffer),function(p,c){return p+String.fromCharCode(c)},'')))
@@ -152,8 +153,15 @@ const UserProfile = (props: { self: boolean }) => {
 		});
 	};
 
+	const [nameInputWidth, setNameInputWidth] = useState(0);
+  
 	useEffect(() => {
-		if (editingName && user?.username && displayName != user.username) {
+		if (nameInputSpanRef.current)
+			setNameInputWidth(nameInputSpanRef.current.offsetWidth);
+	}, [displayName, nameInputSpanRef.current]);
+
+	useEffect(() => {
+		if (editingName && user?.username && displayName != user.username && displayName.length < 13) {
 			let tim = setTimeout(() => {
 				axios.get("/users?name=" + displayName).then(() => {
 					setEnMessage("Name Unavailable")
@@ -164,6 +172,9 @@ const UserProfile = (props: { self: boolean }) => {
 			return () => {
 				clearTimeout(tim);
 			}
+		}
+		else if (displayName.length > 12) {
+			setEnMessage("Name Is Too Long (max: 12)")
 		}
 	}, [displayName, editingName, user])
 
@@ -179,153 +190,163 @@ const UserProfile = (props: { self: boolean }) => {
 		<div className="userprofile d100">
 			<ShowConditionally cond={user && thisuser}>
 				<>
-					<div className="userinfo">
-						<div className="top">
-							<div className="imgcontainer">
-								<div style={{backgroundImage: `url(${displayImage})`}} className="image" />
-								<ShowConditionally cond={user?.id === thisuser?.id}>
-									<>
-										<div className="editoverlay" onClick={() => {
-											uploadPfpRef.current?.click();
-										}}>+ Change Profile Picture</div>
-										<input type="file" name="" id="" ref={uploadPfpRef} accept="image/*" hidden onChange={(e) => {
-											if (e.target.files) {
-												console.log("upload image...")
-												console.log({etarget: e.target})
-												setUploadFileImage(e.target.files[0])
-												readURL(e.target.files[0]).then((res) => {
-													setDisplayImage(String(res));
+					<div className="userinfowrapper d100 flex">
+						<div className="userinfo flex-column-center flex-gap5 d100">
+							<div className="top flex-column-center flex-gap10">
+								<div className="imgcontainer">
+									<div style={{backgroundImage: `url(${displayImage})`}} className="image" />
+									<ShowConditionally cond={user?.id === thisuser?.id}>
+										<>
+											<div className="editoverlay flex-center-column d100" onClick={() => {
+												uploadPfpRef.current?.click();
+											}}>
+												<div className="inner align-text-center">+&nbsp;Change Profile Picture</div>
+											</div>
+											<input type="file" name="" id="" ref={uploadPfpRef} accept="image/*" hidden onChange={(e) => {
+												if (e.target.files) {
+													console.log("upload image...")
+													console.log({etarget: e.target})
+													setUploadFileImage(e.target.files[0])
+													readURL(e.target.files[0]).then((res) => {
+														setDisplayImage(String(res));
+													})
+												}
+												setEditingPfp(true);
+											}}/>
+										</>
+									</ShowConditionally>
+									<div className={`status ${user?.status}`}></div>
+								</div>
+								<ShowConditionally cond={editingPfp}>
+									<div className="editinfo flex-center flex-gap5 editpfp">
+										<Button onClick={() => {
+											if (uploadFileImage) {
+												var formdata = new FormData();
+												formdata.append("file", uploadFileImage, "[PROXY]");
+												var config = {
+													method: 'post',
+													url: '/users/upload_avatar',
+													headers: {
+														'Content-Type': 'multipart/form-data'
+													},
+													data: formdata
+												};
+
+												axios(config)
+												.then(function (response) {
+													// console.log(JSON.stringify(response.data));
+													// setEnMessage("Success!")
+													// setTimeout(() => {
+													// 	setEnMessage("");
+													// }, 2000)
+												})
+												.catch(function (error) {
+													console.log(error);
+												})
+												.finally(() => {
+													setEditingPfp(false);
+													updateUserProfile(params);
+													setLoggedIn(false);
+													setLoggedIn(true);
 												})
 											}
-											setEditingPfp(true);
-										}}/>
-									</>
-								</ShowConditionally>
-								<div className={`status ${user?.status}`}></div>
-							</div>
-							<ShowConditionally cond={editingPfp}>
-								<div className="editpfp">
-									<Button onClick={() => {
-										if (uploadFileImage) {
-											var formdata = new FormData();
-											formdata.append("file", uploadFileImage, "[PROXY]");
-											var config = {
-												method: 'post',
-												url: '/users/upload_avatar',
-												headers: {
-													'Content-Type': 'multipart/form-data'
-												},
-												data: formdata
-											};
 
-											axios(config)
-											.then(function (response) {
-												// console.log(JSON.stringify(response.data));
-												// setEnMessage("Success!")
-												// setTimeout(() => {
-												// 	setEnMessage("");
-												// }, 2000)
-											})
-											.catch(function (error) {
-												console.log(error);
-											})
-											.finally(() => {
-												setEditingPfp(false);
+										}} className="save">Save</Button>
+										<Button onClick={() => {
+											setEditingPfp(false);
+										}} className="cancel">Cancel</Button>
+									</div>
+								</ShowConditionally>
+								<div className="namecontainer">
+									<input type="text" className="name" readOnly={Boolean(thisuser && user) && thisuser?.id !== user?.id} value={displayName} style={{width: nameInputWidth + 60, ...(displayName.length > 12 && { backgroundColor: "red" })}} onChange={(e) => {
+										if (editingName) {
+											setDisplayName(e.target.value);
+										}
+									}}></input>
+									<ShowConditionally cond={user?.id === thisuser?.id && !editingName}>
+										<div className="iconcontainer flex-center-column" onClick={() => {
+											setEditingName(true);
+										}}>
+											<i className="fa-solid fa-edit"></i>
+										</div>
+									</ShowConditionally>
+								</div>
+								<div className="editnamemessage">{enMessage}</div>
+								<ShowConditionally cond={editingName}>
+									<div className="editinfo flex-center flex-gap5 editname">
+										<Button onClick={() => {
+											axios.post("/users/update_username", { username: displayName })
+											.then((res) => {
+												setEnMessage("Success!")
+												setTimeout(() => {
+													setEnMessage("");
+												}, 2000)
+											}).catch((err) => {
+												setEnMessage("Failed :(")
+												setTimeout(() => {
+													setEnMessage("");
+												}, 2000)
+											}).finally(() => {
+												setEditingName(false);
 												updateUserProfile(params);
 												setLoggedIn(false);
 												setLoggedIn(true);
 											})
-										}
-
-									}}>Save</Button>
-									<Button onClick={() => {
-										setEditingPfp(false);
-									}}>Cancel</Button>
-								</div>
-							</ShowConditionally>
-							<div className="namecontainer">
-								<input type="text" className="name" value={displayName} onChange={(e) => {
-									if (editingName) {
-										setDisplayName(e.target.value);
-									}
-								}}></input>
-								<ShowConditionally cond={user?.id === thisuser?.id && !editingName}>
-									<div className="iconcontainer" onClick={() => {
-										setEditingName(true);
-									}}>
-										<i className="fa-solid fa-edit"></i>
+										}} className="save">Save</Button>
+										<Button onClick={() => {
+											setEditingName(false);
+										}} className="cancel">Cancel</Button>
 									</div>
 								</ShowConditionally>
 							</div>
-							<div className="editnamemessage">{enMessage}</div>
-							<ShowConditionally cond={editingName}>
-								<div className="editname">
-									<Button onClick={() => {
-										axios.post("/users/update_username", { username: displayName })
-										.then((res) => {
-											setEnMessage("Success!")
-											setTimeout(() => {
-												setEnMessage("");
-											}, 2000)
-										}).catch((err) => {
-											setEnMessage("Failed :(")
-											setTimeout(() => {
-												setEnMessage("");
-											}, 2000)
-										}).finally(() => {
-											setEditingName(false);
-											updateUserProfile(params);
-											setLoggedIn(false);
-											setLoggedIn(true);
-										})
-									}}>Save</Button>
-									<Button onClick={() => {
-										setEditingName(false);
-									}}>Cancel</Button>
+							<ShowConditionally cond={user?.id !== thisuser?.id}>
+								<div className="userop flex-center flex-gap5 flex-wrap">
+									<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
+								</div>
+								<div className="bottom flex-center-column flex-gap5 twofa">
+									<ShowConditionally cond={!thisuser?.is2FacAuth}>
+										<img src={qrCode} alt="qrcode" />
+									</ShowConditionally>
+									<input type="password" value={twofaCode} onChange={(e) => { setTwofaCode(e.target.value) }}/>
+									<ShowConditionally cond={thisuser?.is2FacAuth}>
+										<Button onClick={() => {
+											axios.post("/two-factor-authentication/turn-off", { twoFacAuthCode: twofaCode }).then((res) => {
+												setEnMessage("Success!")
+												setTimeout(() => {
+													setEnMessage("");
+												}, 2000)
+											}).catch(err => {
+												setEnMessage(String(err.response.data.message))
+												setTimeout(() => {
+													setEnMessage("");
+												}, 2000)
+											}).finally(() => {
+												updateUserProfile(params);
+											})
+										}}>Turn Off 2fa</Button>
+										<Button onClick={() => {
+											axios.post("/two-factor-authentication/turn-on", { twoFacAuthCode: twofaCode }).then((res) => {
+												setEnMessage("Success!")
+												setTimeout(() => {
+													setEnMessage("");
+												}, 2000)
+											}).catch(err => {
+												setEnMessage(String(err.response.data.message))
+												setTimeout(() => {
+													setEnMessage("");
+												}, 2000)
+											}).finally(() => {
+												updateUserProfile(params);
+											})
+										}}>Turn On 2fa</Button>
+									</ShowConditionally>
 								</div>
 							</ShowConditionally>
 						</div>
-						<ShowConditionally cond={user?.id !== thisuser?.id}>
-							<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
-							<div className="bottom twofa">
-								<ShowConditionally cond={!thisuser?.is2FacAuth}>
-									<img src={qrCode} alt="qrcode" />
-								</ShowConditionally>
-								<input type="password" value={twofaCode} onChange={(e) => { setTwofaCode(e.target.value) }}/>
-								<ShowConditionally cond={thisuser?.is2FacAuth}>
-									<Button onClick={() => {
-										axios.post("/two-factor-authentication/turn-off", { twoFacAuthCode: twofaCode }).then((res) => {
-											setEnMessage("Success!")
-											setTimeout(() => {
-												setEnMessage("");
-											}, 2000)
-										}).catch(err => {
-											setEnMessage(String(err.response.data.message))
-											setTimeout(() => {
-												setEnMessage("");
-											}, 2000)
-										}).finally(() => {
-											updateUserProfile(params);
-										})
-									}}>Turn Off 2fa</Button>
-									<Button onClick={() => {
-										axios.post("/two-factor-authentication/turn-on", { twoFacAuthCode: twofaCode }).then((res) => {
-											setEnMessage("Success!")
-											setTimeout(() => {
-												setEnMessage("");
-											}, 2000)
-										}).catch(err => {
-											setEnMessage(String(err.response.data.message))
-											setTimeout(() => {
-												setEnMessage("");
-											}, 2000)
-										}).finally(() => {
-											updateUserProfile(params);
-										})
-									}}>Turn On 2fa</Button>
-								</ShowConditionally>
-							</div>
-						</ShowConditionally>
+					</div>
+					<div className="usergameinfo">
+						<div className="userstats"></div>
+						<div className="usermatchhistory"></div>
 					</div>
 				</>
 				<div className="notfound d100 flex-center">
@@ -337,6 +358,7 @@ const UserProfile = (props: { self: boolean }) => {
 					</div>
 				</div>
 			</ShowConditionally>
+			<span id="hidespan" ref={nameInputSpanRef} style={{height: "0px !important"}}>{displayName}</span>
 		</div>
 	);
 }
