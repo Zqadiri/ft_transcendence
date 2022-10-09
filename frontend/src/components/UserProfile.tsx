@@ -180,7 +180,7 @@ const UserProfile = (props: { self: boolean }) => {
 		return <Navigate to={"/profile"}></Navigate>
 	}
 	return (
-		<div className="userprofile d100">
+		<div className="userprofile d100 flex-gap5">
 			<ShowConditionally cond={user && thisuser}>
 				<>
 					{/* <div className="userinfowrapper d100 flex"> */}
@@ -264,7 +264,7 @@ const UserProfile = (props: { self: boolean }) => {
 										</div>
 									</ShowConditionally>
 								</div>
-								<div className="editnamemessage">{enMessage}</div>
+								<div className="editnamemessage align-text-center">{enMessage}</div>
 								<ShowConditionally cond={editingName}>
 									<div className="editinfo flex-center flex-gap5 editname">
 										<Button onClick={() => {
@@ -338,9 +338,9 @@ const UserProfile = (props: { self: boolean }) => {
 						</div>
 					{/* </div> */}
 					<div className="usergameinfo">
-						<div className="userstats"></div>
+						<div className="userstats">userstats</div>
 						<div className="usermatchhistory">
-
+						usermatchhistory
 						</div>
 					</div>
 				</>
