@@ -4,7 +4,6 @@ import { UseInterceptors, UploadedFile } from '@nestjs/common';
 import { Post, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Express, Response } from 'express'
-import uploadInterceptor from './upload.interceptor';
 import { diskStorage } from 'multer';
 import { 
 	ApiTags,
