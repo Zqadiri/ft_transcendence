@@ -73,12 +73,12 @@ function	Matching( {activeComponent, setActiveComponent}: {activeComponent: stri
 	if (activeComponent === invitationWaiting)
 	{
 		setTimeout(() => {
-			console.log(global.invitationDeclined + " " + global.secondPlayerExist);
 			if (global.invitationDeclined === false && global.secondPlayerExist === false)
 			{
 				global.theme = "none";
 				global.socket.disconnect();
 				setActiveComponent(selectionComponent);
+				resetDefaults();
 				global.invitationDeclined = false;
 			}
 		}, 1000 * 60);

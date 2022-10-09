@@ -56,6 +56,7 @@ export	function	handleInvitationDeclined()
 	global.socket.disconnect();
 
 	g_setActiveComponent(selectionComponent)
+	resetDefaults();
 	g_setTabIndex(1);
 }
 
