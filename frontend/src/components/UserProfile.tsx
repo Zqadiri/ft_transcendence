@@ -81,21 +81,19 @@ const UserProfile = (props: { self: boolean }) => {
 	// 	xhr.responseType = 'blob';
 	// 	xhr.send();
 	//   }
-	useEffectOnce(() => {
-		axios.post("/two-factor-authentication/generate", undefined, { responseType: 'blob' })
-		.then(res => {
-			var reader = new FileReader();
-			reader.onloadend = function () {
-				setQrCode(String(reader.result));
-			}
-			reader.readAsDataURL(res.data);
-		})
-		.catch(err => console.log({errqr: err}))
-		// toDataURL("/two-factor-authentication/generate", (data: string) => {
-		// 	console.log({data})
-		// 	setQrCode(data);
-		// })
-	})
+	useEffect(() => {
+		if (user && thisuser && user.id === thisuser.id && !thisuser.is2FacAuth && qrCode === "") {
+			axios.post("/two-factor-authentication/generate", undefined, { responseType: 'blob' })
+			.then(res => {
+				var reader = new FileReader();
+				reader.onloadend = function () {
+					setQrCode(String(reader.result));
+				}
+				reader.readAsDataURL(res.data);
+			})
+			.catch(err => console.log({errqr: err}))
+		}
+	}, [user, thisuser, qrCode])
 	useEffect(() => {
 		if (!editingName) {
 			setDisplayName(user?.username || "");
