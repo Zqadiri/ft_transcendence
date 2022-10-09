@@ -99,8 +99,9 @@ export class GamesService {
 		const user = await this.Userrepository.findOneBy({ id: userID });
 		if (!user)
 			return null;
-		const game = await this.GameRepo
+		const game: any = await this.GameRepo
 		.createQueryBuilder('game')
+		.select('game.*')
 		.where('game.finishedAt IS NOT NULL')
 		.andWhere(
 			new Brackets((qb) => {
@@ -108,10 +109,12 @@ export class GamesService {
 				.orWhere('game.secondPlayerID = :secondPlayerID', {secondPlayerID: userID })
 			}),
 		)
-		.leftJoin(User, 'db_user', '(db_user.id = game.firstPlayerID OR db_user.id = game.secondPlayerID) AND NOT db_user.id = :userID', { userID })
+		.leftJoin(User, 'db_user', 'db_user.id = game.firstPlayerID OR db_user.id = game.secondPlayerID'/* AND NOT db_user.id = :userID', { userID }*/)
+		.andWhere('NOT db_user.id = :userid', { userid: userID })
 		.addSelect('db_user.username', 'opponentPlayerName')
 		.addSelect('db_user.avatar', 'opponentPlayerAvatar')
-		.getMany();
+		.getRawMany();
+		console.log({game});
 		return game;
 	}
 
