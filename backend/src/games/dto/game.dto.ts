@@ -1,7 +1,7 @@
 
 export class CreateGameDto{
-    public firstPlayerID : string;
-    public secondPlayerID : string;
+    public firstPlayerID : number;
+    public secondPlayerID : number;
     public theme: string;
     public createdAt: Date;
 	public socketRoom: string;

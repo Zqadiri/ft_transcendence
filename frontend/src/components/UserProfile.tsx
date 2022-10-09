@@ -194,7 +194,7 @@ const UserProfile = (props: { self: boolean }) => {
 		return <Navigate to={"/profile"}></Navigate>
 	}
 	return (
-		<div className="userprofile d100 flex-gap20">
+		<div className="userprofile d100 flex">
 			<ShowConditionally cond={user && thisuser}>
 				<>
 					{/* <div className="userinfowrapper d100 flex"> */}
@@ -269,7 +269,8 @@ const UserProfile = (props: { self: boolean }) => {
 										if (editingName) {
 											setDisplayName(e.target.value);
 										}
-									}}></input>
+									}}>
+									</input>
 									<ShowConditionally cond={user?.id === thisuser?.id && !editingName}>
 										<div className="iconcontainer flex-center-column" onClick={() => {
 											setEditingName(true);
@@ -374,8 +375,8 @@ const UserProfile = (props: { self: boolean }) => {
 												</div>
 												<div className="match-results">
 													<h3>{game.firstPlayerScore}</h3>
-													<h3> - </h3>
-													<h3>{game.firstPlayerScore}</h3>
+													<h3>-</h3>
+													<h3>{game.secondPlayerScore}</h3>
 												</div>
 												<div className="secondPlayeer">
 													<div className="avatar"></div>
