@@ -1,6 +1,6 @@
 import '../styles/defaults.scss'
 import { Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
-import { cookies, isLoggedIn, ShowConditionally, useEffectOnce } from './util';
+import { cookies, is2FA, isLoggedIn, ShowConditionally, useEffectOnce } from './util';
 import { useEffect } from 'react';
 import NavAndChatWrapper, { chatSocket, g_setIsMatching } from './NavAndChatWrapper'
 import Login from './Login';
@@ -11,6 +11,7 @@ import { global } from './game/PingPong/Data/PingPong.d';
 import { handleInvitationDeclined } from './game/GameTabs';
 import { addMatchingSocketEventHandler } from './game/Matching/Matching';
 import { confirm } from "react-confirm-box";
+import TwoFA from './2fa';
 
 const options = {
 	labels: {
@@ -84,7 +85,8 @@ function App() {
 	})
 	useEffectOnce(() => {
 		let inter = setInterval(() => {
-			chatSocket.emit("validateJwtSyn", cookies.get("_token"));
+			if (cookies.get("_token"))
+				chatSocket.emit("validateJwtSyn", cookies.get("_token"));
 			// axios.get("/users?name=" + cookies.get("name")).then(() => { })
 			// 	.catch(() => {
 			// 		cookies.remove("_token");
@@ -108,7 +110,10 @@ function App() {
 						element={
 							<ShowConditionally cond={isLoggedIn()} >
 								<NavAndChatWrapper/>
-								<Navigate to="/login" replace/>
+								<ShowConditionally cond={is2FA()}>
+									<Navigate to="/2fa" replace />
+									<Navigate to="/login" replace />
+								</ShowConditionally>
 							</ShowConditionally>
 						}>
 					</Route>
@@ -125,6 +130,14 @@ function App() {
 							<ShowConditionally cond={isLoggedIn()} >
 								<Navigate to="/" replace/> 
 								<Login/>
+							</ShowConditionally>
+						}>
+					</Route>
+					<Route path="/2fa"
+						element={
+							<ShowConditionally cond={is2FA()}>
+								<TwoFA></TwoFA>
+								<Navigate to="/login" replace></Navigate>
 							</ShowConditionally>
 						}>
 					</Route>

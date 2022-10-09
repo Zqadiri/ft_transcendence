@@ -23,7 +23,7 @@ export class TwoFactorAuthenticationService {
 		Save the secret in the database
 	*/
 
-	async generateTwoFacAuthSecret(user: User){
+	async generateTwoFacAuthSecret(user: User) {
 		const secret = authenticator.generateSecret();
 		const urlPath = authenticator.keyuri(user.email, 
 		process.env.TWO_FACTOR_AUTHENTICATION_APP_NAME, secret);
@@ -62,9 +62,15 @@ export class TwoFactorAuthenticationService {
 	*/
 
 	async isTwoFacAuthCodeValid(twoFacAuthCode: string, user: User){
-		return authenticator.verify({
+		console.log({
 			token: twoFacAuthCode,
 			secret: user.twoFacAuthSecret
 		})
+		let boolret = authenticator.verify({
+			token: twoFacAuthCode,
+			secret: user.twoFacAuthSecret
+		})
+		console.log({verify2facode: boolret})
+		return boolret
 	}
 }

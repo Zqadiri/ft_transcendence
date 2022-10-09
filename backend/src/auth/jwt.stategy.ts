@@ -8,6 +8,9 @@ function cookieExtractor(req: any) : string {
 		if (req.cookies["_token"]) {
 			return req.cookies["_token"]
 		}
+		else if (req.cookies["_2FA"]) {
+			return req.cookies["_2FA"]
+		}
 	} catch {
 	}
 	return null;

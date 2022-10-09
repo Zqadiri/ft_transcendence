@@ -63,6 +63,10 @@ export function isLoggedIn() {
 	return cookies.get("_token");
 }
 
+export function is2FA() {
+	return cookies.get("_2FA")
+}
+
 export function RRLink(props: LinkProps & React.RefAttributes<HTMLAnchorElement>) {
 	// console.log("RRLink props:")
 	// console.log({props});

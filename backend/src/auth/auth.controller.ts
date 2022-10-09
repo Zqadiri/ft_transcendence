@@ -45,11 +45,11 @@ export class AuthController
 			await this.authService.sendJWTtoken(playerExists, response, false);
 			response.redirect('/');
 		}
-		// else if (playerExists && playerExists.is2FacAuth === true){
-		// 	console.log('Player exists and 2FA is on');
-		// 	await this.authService.TwoFaCookie(playerExists, response);
-		// 		response.redirect('/'); //! redirect to the appropriate page
-		// }
+		else if (playerExists && playerExists.is2FacAuth === true){
+			console.log('Player exists and 2FA is on');
+			await this.authService.TwoFaCookie(playerExists, response);
+			response.redirect('/2fa'); //! redirect to the appropriate page
+		}
 	}
 
 	@ApiOperation({ summary: 'log out and clear cookie'})

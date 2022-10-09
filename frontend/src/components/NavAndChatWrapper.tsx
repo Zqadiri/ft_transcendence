@@ -547,7 +547,14 @@ const NavAndChatWrapper = () => {
 														})
 													}}>
 														<div className="left flex-ai-cr flex-gap5">
-															<img src={fr.avatar} className="avatar" alt="" style={{ width: 45, height: 45 }} />
+															<div className="avatar" style={{
+																width: 45, height: 45,
+																backgroundImage: `url(${fr.avatar})`,
+																backgroundColor: "white",
+																backgroundPosition: "center",
+																backgroundSize: "cover",
+																backgroundRepeat: "none",
+															}} />
 															<div className="info flex-column">
 																<div className="name">{fr.username}</div>
 																<div className="status" style={{ color: { online: "green", offline: "gray", ingame: "orange" }[fr.status] }}>{fr.status}</div>
@@ -589,7 +596,13 @@ const NavAndChatWrapper = () => {
 												return (
 													<div className="friend_request flex-ai-cr flex-jc-sb">
 														<div className="left flex-gap5 flex-ai-cr">
-															<img src={frr.avatar} alt="" className="avatar" style={{ width: 45, height: 45 }}/>
+															<div className="avatar" style={{ width: 45, height: 45,
+																backgroundImage: `url(${frr.avatar})`,
+																backgroundColor: "white",
+																backgroundPosition: "center",
+																backgroundSize: "cover",
+																backgroundRepeat: "none",
+															}}/>
 															<div className="name">{frr.username}</div>
 														</div>
 														<div className="right flex-gap5 flex-ai-cr">
@@ -623,9 +636,14 @@ const NavAndChatWrapper = () => {
 											return (
 												<div className={"room flex-ai-cr flex-gap5 " + (room.db_chat_type === "dm" ? "dm" : "flex-jc-sb")} onClick={() => {roomOnClick(room)}}>
 													<ShowConditionally cond={room.db_chat_type === "dm"}>
-														<img src={friends.find(el => {
-															return el.id === parseInt(room.db_chat_name.split(",").filter(el => el !== cookies.get("id"))[0])
-														})?.avatar} alt="" style={{ width: 45, height: 45, backgroundColor: "white", borderRadius: "100%" }} />
+														<div style={{
+															backgroundImage: `url(${friends.find(el => {
+																return el.id === parseInt(room.db_chat_name.split(",").filter(el => el !== cookies.get("id"))[0])
+															})?.avatar})`,
+															backgroundColor: "white",
+															backgroundPosition: "center",
+															backgroundSize: "cover",
+															backgroundRepeat: "none", width: 45, height: 45, borderRadius: "100%" }} />
 													</ShowConditionally>
 													<div className="left flex-column flex-gap5">
 														<div className="name">{room.db_chat_type === "dm" ? friends.find(fr => fr.id === parseInt(room.db_chat_name.split(",").filter(el => el !== cookies.get("id"))[0]))?.username : room.db_chat_name}</div>
@@ -836,7 +854,7 @@ const NavAndChatWrapper = () => {
 									<div className="invite" onClick={() => {
 										
 									}}>
-										<i className="fa-solid fa-table-tennis-paddle-ball"></i>
+										{/* <i className="fa-solid fa-table-tennis-paddle-ball"></i> */}
 									</div>
 								</ShowConditionally>
 							</div>
@@ -958,7 +976,13 @@ const NavAndChatWrapper = () => {
 																return (
 																	<div className="tabuser invitable flex-jc-sb flex-ai-cr w100">
 																		<div className="left flex-gap5 flex-ai-cr">
-																			<img src={fr.avatar} alt="" className="avatar" />
+																			<div style={{
+																			backgroundImage: `url(${fr.avatar})`,
+																			backgroundColor: "white",
+																			backgroundPosition: "center",
+																			backgroundSize: "cover",
+																			backgroundRepeat: "none"
+																			}} className="avatar" />
 																			<div className="info flex-column">
 																				<div className="name">{fr.username}</div>
 																				<div className={"status " + fr.status}>{fr.status}</div>
@@ -990,7 +1014,13 @@ const NavAndChatWrapper = () => {
 																return (
 																	<div className="tabuser invited w100">
 																		<div className="left flex-gap5 flex-ai-cr">
-																			<img src={fr.avatar} alt="" className="avatar" />
+																			<div style={{
+																				backgroundImage: `url(${fr.avatar})`,
+																			backgroundColor: "white",
+																				backgroundPosition: "center",
+																				backgroundSize: "cover",
+																				backgroundRepeat: "none"
+																			}} className="avatar" />
 																			<div className="info flex-column">
 																				<div className="name">{fr.username}</div>
 																				<div className={"status " + fr.status}>{fr.status}</div>
@@ -1085,9 +1115,15 @@ const NavAndChatWrapper = () => {
 													<div className={"container flex flex-ai-fs flex-gap10"}>
 														{
 															msg.userID != cookies.get("id") ?
-																<div className="profilepic flex-center">
-																	<img src={msg.avatar ? msg.avatar : ""} alt="user avatar" />
-																</div>
+																<div className="profilepic flex-center" style={
+																	{
+																		backgroundImage: `url(${msg.avatar})`,
+																		backgroundColor: "white",
+																		backgroundPosition: "center",
+																		backgroundSize: "cover",
+																		backgroundRepeat: "none"
+																	}
+																} />
 															: <></>
 														}
 														<div className="message_text">

@@ -38,6 +38,8 @@ const UserProfile = (props: { self: boolean }) => {
 	const [usermh, setUsermh] = useState(null);
 	const [editingName, _setEditingName] = useState(false);
 	const [editingPfp, _setEditingPfp] = useState(false);
+	const [qrCode, setQrCode] = useState("");
+	const [twofaCode, setTwofaCode] = useState("");
 	const setEditingPfp: React.Dispatch<React.SetStateAction<boolean>> = (x) => {
 		if (x === false) {
 			setTimeout(() => {
@@ -58,7 +60,42 @@ const UserProfile = (props: { self: boolean }) => {
 	const [displayImage, setDisplayImage] = useState("");
 	const [uploadFileImage, setUploadFileImage] = useState<File>();
 	const [enMessage, setEnMessage] = useState("");
+	function _imageEncode (arrayBuffer: any) {
+		let u8 = new Uint8Array(arrayBuffer)
+		let b64encoded = btoa(String([].reduce.call(new Uint8Array(arrayBuffer),function(p,c){return p+String.fromCharCode(c)},'')))
+		let mimetype="image/png"
+		return "data:"+mimetype+";base64,"+b64encoded
+	}
 
+
+	// function toDataURL(url: string, callback: Function) {
+	// 	var xhr = new XMLHttpRequest();
+	// 	xhr.onload = function() {
+	// 	  var reader = new FileReader();
+	// 	  reader.onloadend = function() {
+	// 		callback(reader.result);
+	// 	  }
+	// 	  reader.readAsDataURL(xhr.response);
+	// 	};
+	// 	xhr.open('POST', url);
+	// 	xhr.responseType = 'blob';
+	// 	xhr.send();
+	//   }
+	useEffectOnce(() => {
+		axios.post("/two-factor-authentication/generate", undefined, { responseType: 'blob' })
+		.then(res => {
+			var reader = new FileReader();
+			reader.onloadend = function () {
+				setQrCode(String(reader.result));
+			}
+			reader.readAsDataURL(res.data);
+		})
+		.catch(err => console.log({errqr: err}))
+		// toDataURL("/two-factor-authentication/generate", (data: string) => {
+		// 	console.log({data})
+		// 	setQrCode(data);
+		// })
+	})
 	useEffect(() => {
 		if (!editingName) {
 			setDisplayName(user?.username || "");
@@ -80,11 +117,11 @@ const UserProfile = (props: { self: boolean }) => {
 
 	const updateUserProfile = (prm: Readonly<Params<string>>) => {
 		console.log("called? updateuserprofile")
-		axios.get("/game/get_match_history?name=" + (prm.userId || cookies.get("name")))
+		axios.get("/game/get_match_history?" + (prm.userId ? "name=" + prm.userId : "id=" + cookies.get("id")))
 		.then((res) => {
 			setUsermh(res.data)
 		})
-		axios.get("/users?name=" + (prm.userId || cookies.get("name")))
+		axios.get("/users?" + (prm.userId ? "name=" + prm.userId : "id=" + cookies.get("id")))
 		.then((res) => {
 			console.log({user: res});
 			setUser(res.data);
@@ -93,7 +130,7 @@ const UserProfile = (props: { self: boolean }) => {
 			console.log({err});
 			setUser(undefined);
 		})
-		axios.get("/users?name=" + cookies.get("name"))
+		axios.get("/users?id=" + cookies.get("id"))
 		.then((res) => {
 			console.log({thisuser: res});
 			setThisUser(res.data);
@@ -253,11 +290,41 @@ const UserProfile = (props: { self: boolean }) => {
 						<ShowConditionally cond={user?.id !== thisuser?.id}>
 							<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
 							<div className="bottom twofa">
+								<ShowConditionally cond={!thisuser?.is2FacAuth}>
+									<img src={qrCode} alt="qrcode" />
+								</ShowConditionally>
+								<input type="password" value={twofaCode} onChange={(e) => { setTwofaCode(e.target.value) }}/>
 								<ShowConditionally cond={thisuser?.is2FacAuth}>
-									<>
-										
-									</>
-									<></>
+									<Button onClick={() => {
+										axios.post("/two-factor-authentication/turn-off", { twoFacAuthCode: twofaCode }).then((res) => {
+											setEnMessage("Success!")
+											setTimeout(() => {
+												setEnMessage("");
+											}, 2000)
+										}).catch(err => {
+											setEnMessage(String(err.response.data.message))
+											setTimeout(() => {
+												setEnMessage("");
+											}, 2000)
+										}).finally(() => {
+											updateUserProfile(params);
+										})
+									}}>Turn Off 2fa</Button>
+									<Button onClick={() => {
+										axios.post("/two-factor-authentication/turn-on", { twoFacAuthCode: twofaCode }).then((res) => {
+											setEnMessage("Success!")
+											setTimeout(() => {
+												setEnMessage("");
+											}, 2000)
+										}).catch(err => {
+											setEnMessage(String(err.response.data.message))
+											setTimeout(() => {
+												setEnMessage("");
+											}, 2000)
+										}).finally(() => {
+											updateUserProfile(params);
+										})
+									}}>Turn On 2fa</Button>
 								</ShowConditionally>
 							</div>
 						</ShowConditionally>
