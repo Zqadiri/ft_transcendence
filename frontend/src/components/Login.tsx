@@ -7,6 +7,7 @@ import { useContext, useEffect } from "react";
 import axios from "axios";
 import { cookies, globalContext, ShowConditionally, useEffectOnce } from "./util";
 import loadingGif from '../img/loading.gif'
+import { statusSocket } from "..";
 
 const api_link = "/authentication_page"
 
@@ -40,7 +41,7 @@ const Login = () => {
 					<ShowConditionally cond={code}>
 						<img src={loadingGif} alt="" className="loading spin" />
 						<a href={api_link} className="no-underline">
-							<Button className="authorize flex-center flex-gap5">
+							<Button className="authorize flex-center flex-gap5"> {/*onClick={() => statusSocket.connect()}>*/}
 								<span className="text">
 									Login in with Intra
 								</span>

@@ -44,7 +44,7 @@ function	InvitationWaiting(): JSX.Element
 				</div>
 			</div>
 		</>
-	);
+);
 }
 
 export function	addMatchingSocketEventHandler(navigate: Function, loc: Location)

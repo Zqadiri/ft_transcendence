@@ -27,7 +27,7 @@ const TwoFA = () => {
 						<input className="input" type="password" value={twoFacAuthCode} onChange={(e) => { setTwoFacAuthCode(e.target.value) }}/>
 						<Button onClick={() => {
 							axios.post(api_link, { twoFacAuthCode }).then(() => {
-								navigater("/")
+								window.location.assign("/");
 							})
 						}} className="authorize flex-center flex-gap5">
 							<span className="text">
