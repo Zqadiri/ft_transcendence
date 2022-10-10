@@ -77,7 +77,7 @@ export class AuthService {
 		response.cookie('_token', access_token,{
 			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,
-			domain: '10.11.5.2',
+			domain: 'localhost',
 			sameSite: "strict",
 			secure: false,
 			path: '/'
@@ -85,7 +85,7 @@ export class AuthService {
 		response.cookie('name', user.username,{
 			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,
-			domain: '10.11.5.2',
+			domain: 'localhost',
 			sameSite: "strict",
 			secure: false,
 			path: '/'
@@ -93,7 +93,7 @@ export class AuthService {
 		response.cookie('id', user.id,{
 			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,
-			domain: '10.11.5.2',
+			domain: 'localhost',
 			sameSite: "strict",
 			secure: false,
 			path: '/'
@@ -101,7 +101,7 @@ export class AuthService {
 		response.cookie('avatar', user.avatar,{
 			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,
-			domain: '10.11.5.2',
+			domain: 'localhost',
 			sameSite: "strict",
 			secure: false,
 			path: '/'
@@ -115,7 +115,7 @@ export class AuthService {
 		response.cookie('_2FA', access_token,{
 			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,
-			domain: '10.11.5.2',
+			domain: 'localhost',
 			sameSite: "strict",
 			secure: false,
 			path: '/'
