@@ -315,7 +315,7 @@ const UserProfile = (props: { self: boolean }) => {
 								</div>
 								<div className="bottom flex-center-column flex-gap10 twofa">
 									<ShowConditionally cond={!thisuser?.is2FacAuth}>
-										<img src={qrCode} alt="qrcode" />
+										<img src={qrCode} alt="qrcode" className="qrcode"/>
 									</ShowConditionally>
 									<input type="password" value={twofaCode} onChange={(e) => { setTwofaCode(e.target.value) }}/>
 									<ShowConditionally cond={thisuser?.is2FacAuth}>
