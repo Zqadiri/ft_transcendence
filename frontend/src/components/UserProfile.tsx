@@ -372,10 +372,10 @@ const UserProfile = (props: { self: boolean }) => {
 										return (
 											<li className="flex-ai-cr">
 												<div className="firstPlayer flex-jc-cr flex-ai-cr">
+													<h3>{user && thisuser && user.id === thisuser.id ? cookies.get('name') : user?.username}</h3>
 													<div className="avatar" style={{
 														backgroundImage: `url(${user && thisuser && user.id === thisuser.id ? cookies.get('avatar') : user?.avatar})`,
 													}}></div>
-													<h3>{user && thisuser && user.id === thisuser.id ? cookies.get('name') : user?.username}</h3>
 												</div>
 												<div className="match-results">
 													<h3>{user && user.id === game.firstPlayerID ? game.firstPlayerScore : game.secondPlayerScore}</h3>
@@ -383,10 +383,10 @@ const UserProfile = (props: { self: boolean }) => {
 													<h3>{user && user.id === game.firstPlayerID ? game.secondPlayerScore : game.firstPlayerScore}</h3>
 												</div>
 												<div className="secondPlayer flex-jc-cr flex-ai-cr">
-													<h3>{game.opponentPlayerName}</h3>
 													<div className="avatar" style={{
 														backgroundImage: `url(${game.opponentPlayerAvatar})`,
 													}}></div>
+													<h3>{game.opponentPlayerName}</h3>
 												</div>
 											</li>
 										);
