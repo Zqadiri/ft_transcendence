@@ -72,9 +72,7 @@ export class UsersService {
 		if (user && status)
 		{
 			user.status = status;
-			console.log(`update status called ${user.username} ${user.status}`);
 			const ret = await this.userRepository.save(user);
-			console.log(`database return user: ${JSON.stringify(ret.username)} and status: ${JSON.stringify(ret.status)}`);
 		}
 	}
 	/*

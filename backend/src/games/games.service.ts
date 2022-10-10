@@ -143,7 +143,6 @@ export class GamesService {
                 counter++;
             }
         }
-		console.log(`streak counter ${counter}`);
         if (counter === streak)
 			return (true);
 		return (false);
