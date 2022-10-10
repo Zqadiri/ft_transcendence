@@ -34,10 +34,12 @@ interface Game {
 	id: number;
     socketRoom: string;
 	isPlaying:boolean;
-	firstPlayerID: string;
-	secondPlayerID: string;
+	firstPlayerID: number;
+	secondPlayerID: number;
 	firstPlayerScore: number;
 	secondPlayerScore: number;
+	opponentPlayerAvatar: string | undefined;
+	opponentPlayerName: string | undefined;
 	theme: string;
 	createdAt: Date;
 	modifiedAt: Date;
@@ -368,19 +370,23 @@ const UserProfile = (props: { self: boolean }) => {
 								{
 									usermh && usermh.map(game => {
 										return (
-											<li>
-												<div className="firstPlayeer">
-													<div className="avatar"></div>
-													<h3>{game.firstPlayerID}</h3>
+											<li className="flex-ai-cr">
+												<div className="firstPlayer flex-jc-cr flex-ai-cr">
+													<h3>{user && thisuser && user.id === thisuser.id ? cookies.get('name') : user?.username}</h3>
+													<div className="avatar" style={{
+														backgroundImage: `url(${user && thisuser && user.id === thisuser.id ? cookies.get('avatar') : user?.avatar})`,
+													}}></div>
 												</div>
 												<div className="match-results">
-													<h3>{game.firstPlayerScore}</h3>
+													<h3>{user && user.id === game.firstPlayerID ? game.firstPlayerScore : game.secondPlayerScore}</h3>
 													<h3>-</h3>
-													<h3>{game.secondPlayerScore}</h3>
+													<h3>{user && user.id === game.firstPlayerID ? game.secondPlayerScore : game.firstPlayerScore}</h3>
 												</div>
-												<div className="secondPlayeer">
-													<div className="avatar"></div>
-													<h3>{game.secondPlayerID}</h3>
+												<div className="secondPlayer flex-jc-cr flex-ai-cr">
+													<div className="avatar" style={{
+														backgroundImage: `url(${game.opponentPlayerAvatar})`,
+													}}></div>
+													<h3>{game.opponentPlayerName}</h3>
 												</div>
 											</li>
 										);

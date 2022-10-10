@@ -110,7 +110,7 @@
 	.usergameinfo {
 		background-color: white;
 		width: 80%;
-		height: 50vh;
+		height: 45vh;
 		padding: 2em;
 		border-radius: 15px;
 		margin-left: 2em;
@@ -123,7 +123,7 @@
 				display: flex;
 				gap: .5em;
 				margin-top: 1em;
-				.user-rank { background-color: #f66b0e; }
+				.user-rank { background-color: orange; }
 				.user-xp { background-color: #0a95ff; }
 				.user-level { background-color: #bc8a5f; }
 				.user-wins { background-color: #6a994e; }
@@ -149,8 +149,9 @@
 				li {
 					position: relative;
 					z-index: -1;
-					background-color: #efefef;
-					padding: .5em;
+					// background-color: #efefef;
+					box-shadow: 0px 4px 1px -1px rgb(0 0 0 / 8%);
+					padding: 1em .5em;
 					border-radius: 20px;
 					margin-bottom: .5em;
 					display: flex;
@@ -162,6 +163,23 @@
 					.match-results > * {
 						flex-grow: 1;
 						flex-basis: 0;
+					}
+					.avatar {
+						width: 50px;
+						height: 50px;
+						background-color: white;
+						background-position: center;
+						background-size: cover;
+						background-repeat: none;
+						border-radius: 100%;
+					}
+					.firstPlayer, .secondPlayer {
+						gap: 1.5em;
+					}
+					.firstPlayer h3, .secondPlayer h3 {
+						font-size: 1em;
+						color: #305372;
+						font-weight: normal;
 					}
 				}
 				li > * {
