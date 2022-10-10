@@ -81,6 +81,6 @@ export class Chat{
 	@BeforeUpdate()
 	async hashPassword() {
 		if (this.password)
-        	this.password = await bcrypt.hash(this.password, 10);  
+        	this.password = await bcrypt.hash(this.password, process.env.SALT);  
     }
 }

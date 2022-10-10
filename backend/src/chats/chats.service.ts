@@ -356,7 +356,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
         throw new UnauthorizedException({code: 'Unauthorized', message: `can not set password to '${RoomDto.name}' chat room!!`})
       });
 
-      const hash = await bcrypt.hash(RoomDto.password, 10);
+      const hash = await bcrypt.hash(RoomDto.password, process.env.SALT);
 
       await this.ChangeVisibility(hash, RoomStatus.PROTECTED, owner, RoomDto.name);
   }
