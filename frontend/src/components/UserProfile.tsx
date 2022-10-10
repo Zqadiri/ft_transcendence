@@ -16,7 +16,7 @@ import ReactTooltip from "react-tooltip";
 export type Achievement = "firstGame" | "levelThree" | "levelSix" | "closeCall" | "flawLessWin" | "flawLessWinStreak"
 
 const achievementSvg: { name: Achievement, svg: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>, title: string, desc: string}[] = [
-	{ name: "firstGame", svg: StarMedal1, title: "First Game", desc: "Win your first game" },
+	{ name: "firstGame", svg: StarMedal1, title: "First Game", desc: "Play your first game" },
 	{ name: "levelThree", svg: StarMedal2, title: "Level 3", desc: "Reach level 3" },
 	{ name: "levelSix", svg: StarMedal3, title: "Level 6", desc: "Reach level 6" },
 	{ name: "closeCall", svg: StarMedal4, title: "Close Call", desc: "Win 10 - 9 against someone" },
