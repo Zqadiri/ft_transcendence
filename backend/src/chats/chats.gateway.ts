@@ -59,7 +59,6 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		}
 
 		if (!user) {
-			createChatDto.username = finduser.username;
 			const msg = await this.chatLogsService.savechat(createChatDto);
 			this.server.to(createChatDto.roomName).emit('messageToRoomSyn', { id: msg.id });
 		}

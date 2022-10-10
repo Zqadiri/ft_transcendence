@@ -28,7 +28,6 @@ export class ChatLogsService {
         userID: chatlogsdto.userID,
         roomName: chatlogsdto.roomName,
         message: chatlogsdto.message,
-		username: chatlogsdto.username
     });
 
     return await this.ChatLogsrepository.save(msg);
@@ -45,9 +44,9 @@ export class ChatLogsService {
       .select("ChatLogs.userID", "userID")
       .addSelect("ChatLogs.roomName", "roomName")
       .addSelect("ChatLogs.message", "message")
-      .addSelect("ChatLogs.username", "username")
       .leftJoin(User, 'db_user', 'db_user.id = ChatLogs.userID')
       .addSelect('db_user.avatar', 'avatar')
+      .addSelect('db_user.username', 'username')
       .orderBy({'ChatLogs.createdAt': 'ASC'})
       .where ("ChatLogs.roomName = :roomName", {roomName: roomName})
       .getRawMany()

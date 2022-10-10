@@ -20,7 +20,7 @@ function	LeaderboardPlayers({ldPlayers, searchTerm}: LeaderboardProps): JSX.Elem
 						found += 1;
 					return (
 						<tr key={player.id} style={{cursor: "pointer"}} onClick={() => {
-							navigater(`/profile/${player.username}`)
+							navigater(`/profile/${encodeURIComponent(player.username)}`)
 						}}>
 							<td className={`ld-rank rank${player.rank}`}><h3>{player.rank}</h3></td>
 							<td className="ld-player">

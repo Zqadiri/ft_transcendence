@@ -14,9 +14,6 @@ export class ChatLogs extends BaseEntity {
     @Column()
     userID: number;
 
-	@Column()
-    username: string;
-
     @Column()
     roomName: string;
 

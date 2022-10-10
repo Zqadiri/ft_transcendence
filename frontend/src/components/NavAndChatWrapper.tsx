@@ -563,7 +563,7 @@ const NavAndChatWrapper = () => {
 														<div className="right flex-ai-cr flex-gap5">
 															<Button className="view" onClick={(e) => {
 																e.stopPropagation();
-																navigater(`/profile/${fr.username}`);
+																navigater(`/profile/${encodeURIComponent(fr.username)}`);
 																setChatIsOpen(false);
 															}}>View Profile</Button>
 															<ShowConditionally cond={fr.status === "ingame" && self?.status !== "ingame"}>
