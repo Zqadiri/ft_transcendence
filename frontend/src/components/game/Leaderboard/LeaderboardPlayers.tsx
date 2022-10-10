@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { cookies } from "../../util";
 import { LeaderboardUser } from "../Interfaces/LeaderboardUser";
 
 interface LeaderboardProps {
@@ -20,7 +21,7 @@ function	LeaderboardPlayers({ldPlayers, searchTerm}: LeaderboardProps): JSX.Elem
 						found += 1;
 					return (
 						<tr key={player.id} style={{cursor: "pointer"}} onClick={() => {
-							navigater(`/profile/${encodeURIComponent(player.username)}`)
+							navigater(`/profile/${player.username === cookies.get("name") ? "" : encodeURIComponent(player.username)}`)
 						}}>
 							<td className={`ld-rank rank${player.rank}`}><h3>{player.rank}</h3></td>
 							<td className="ld-player">
