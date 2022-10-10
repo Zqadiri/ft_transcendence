@@ -168,7 +168,8 @@
 						flex-basis: 0;
 					}
 					.avatar {
-						width: 50px;
+						flex-shrink: 0;
+						width: 50px !important;
 						height: 50px;
 						background-color: white;
 						background-position: center;
@@ -183,11 +184,17 @@
 						font-size: 1em;
 						color: #305372;
 						font-weight: normal;
+						text-overflow: ellipsis;
+						overflow: hidden;
+						max-width: 80px;
+						flex-shrink: 1;
 					}
 				}
 				li > * {
 					flex-grow: 1;
 					flex-basis: 0;
+					flex-shrink: 1;
+					width: 0;
 				}
 			}
 		}
