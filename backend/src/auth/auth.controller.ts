@@ -33,7 +33,7 @@ export class AuthController
 		if (!playerExists){
 			this.playerService.create(obj);
 			await this.authService.sendJWTtoken(obj, response, false);
-			response.redirect('/');
+			response.redirect('/profile');
 		}
 		else if (playerExists && playerExists.is2FacAuth === false){
 			await this.authService.sendJWTtoken(playerExists, response, false);
