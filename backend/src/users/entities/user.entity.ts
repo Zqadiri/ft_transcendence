@@ -14,7 +14,7 @@ export class User{
 	@Column({unique: true })
 	@IsNotEmpty()
     @IsString()
-	@MaxLength(10)
+	@MaxLength(12)
 	username: string;
 
 	@Column()

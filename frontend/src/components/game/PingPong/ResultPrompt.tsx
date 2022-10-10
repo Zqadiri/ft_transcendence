@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { playerOne, spectator } from "./Data/PingPong.contants";
 import { global } from "./Data/PingPong.d"
 import { gameContext } from "./PingPong";
@@ -8,14 +8,20 @@ function ResultPrompt(): JSX.Element {
 	let		resultMessage: string;
 	let		winnerName: string = "You";
 	let		mainColor: string;
-
+	const timeoutcodeRef = useRef(0);
 	const {currentPlayersData, navigate} = useContext(gameContext);
 
 	function goHomeComponent() {
-		setTimeout(() => {
+		timeoutcodeRef.current = setTimeout(() => {
 			navigate("/");
 		}, 3000)
 	}
+
+	useEffect(() => {
+		return () => {
+			clearTimeout(timeoutcodeRef.current)
+		}
+	}, [])
 
 	if (global.playerId === spectator)
 	{

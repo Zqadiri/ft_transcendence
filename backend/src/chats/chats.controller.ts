@@ -20,7 +20,7 @@ export class ChatController {
             const newRoom = await this.chatService.createRoom(roomDto, req.user.id);
             return newRoom  ;
         } catch (e) {
-            console.error('Failed to initiate room', e);
+            // console.error('Failed to initiate room', e);
             throw e;
         }
     }
@@ -35,7 +35,7 @@ export class ChatController {
         } 
         catch (e)
         {
-            console.error('Failed to join room', e);
+            // console.error('Failed to join room', e);
             throw e;
         }
     }

@@ -27,7 +27,8 @@ export class AuthController
 		let playerExists : any;
 		obj = await this.authService.getUserData(query.code);
 		if (!obj){
-		    throw new BadRequestException('Bad Request');
+		    // throw new BadRequestException('Bad Request');
+			response.redirect('/login');
 		}
 		playerExists = await this.playerService.getUserById(obj.id);
 		if (!playerExists){

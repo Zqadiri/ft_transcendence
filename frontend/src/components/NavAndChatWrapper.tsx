@@ -64,7 +64,7 @@ export type ActiveTab = "rooms" | "friends" | "chat" | "chatinterface" | "chatin
 const NavAndChatWrapper = () => {
 	const [userType, _setUserType] = useState<"invite" | "invited" | "users">("users");
 	const setUserType = (ut: "invite" | "invited" | "users") => {
-		axios.get("/chat/userStats/" + activeChat?.db_chat_name).then(res => {
+		axios.get("/chat/userStats/" + encodeURIComponent(activeChat?.db_chat_name || "")).then(res => {
 			// console.log({userstats: res.data});
 			setActiveChatUsers(res.data);
 		}).catch((err) => {
@@ -167,7 +167,7 @@ const NavAndChatWrapper = () => {
 			// setActiveChatMessages([]);
 			console.log("chatsokcet.emit('getroommessages')");
 			chatSocket.emit("GetRoomMessages", newActiveChat.db_chat_name);
-			axios.get("/chat/userStats/" + newActiveChat.db_chat_name).then(res => {
+			axios.get("/chat/userStats/" + encodeURIComponent(newActiveChat.db_chat_name)).then(res => {
 				console.log({userstats: res.data});
 				setActiveChatUsers(res.data);
 			}).catch((err) => {
@@ -386,7 +386,7 @@ const NavAndChatWrapper = () => {
 	}
 
 	const getUserStats = (chat: Chat | undefined | null) => {
-		axios.get("/chat/userStats/" + chat?.db_chat_name).then(res => {
+		axios.get("/chat/userStats/" + encodeURIComponent(chat?.db_chat_name || "")).then(res => {
 			setActiveChatUsers(res.data);
 		}).catch((err) => {
 
@@ -425,7 +425,7 @@ const NavAndChatWrapper = () => {
 			chatSocket.emit("socketLeaveRoom", activeChat?.db_chat_name);
 		chatSocket.emit("socketJoinRoom", room.db_chat_name);
 		// if (room.db_chat_type !== "dm")
-		axios.get("/chat/userStats/" + room.db_chat_name).then(res => {
+		axios.get("/chat/userStats/" + encodeURIComponent(room.db_chat_name)).then(res => {
 			// console.log({userstats: res.data});
 			let acu: UserStat[] = res.data;
 			console.log({ "acu.find(el => el.id === cookies.get(\"id\"))": acu.find(el => el.id === parseInt(cookies.get("id"))), acu })
@@ -1107,7 +1107,7 @@ const NavAndChatWrapper = () => {
 								<div className="msgcontainer flex-column flex-jc-fe">
 								{
 									displayActiveChatMessages.map((msg: ChatMessage) => {
-										console.log({msg})
+										// console.log({msg})
 										// console.log({other: msg.user.userID, ana: cookies.get("name"), ft: msg.user.userID == cookies.get("name")})
 										return (
 											<div className={"message " + (msg.userID != cookies.get("id") ? "notmine" : "mine")}>

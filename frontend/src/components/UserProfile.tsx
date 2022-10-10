@@ -141,12 +141,16 @@ const UserProfile = (props: { self: boolean }) => {
 		}
 	}, [user, thisuser, editingPfp])
 
-	useEffectOnce(() => {
+	useEffect(() => {
 		let int = setInterval(() => {
 			updateUserProfile(params);
 		}, 2000)
 		return () => {clearInterval(int)}
-	})
+	}, [params.userId])
+
+	useEffect(() => {
+		updateUserProfile(params);
+	}, [params.userId])
 
 	const updateUserProfile = (prm: Readonly<Params<string>>) => {
 		console.log("called? updateuserprofile")
@@ -378,7 +382,7 @@ const UserProfile = (props: { self: boolean }) => {
 						</div>
 					{/* </div> */}
 					<div className="usergameinfo flex-column flex-gap20">
-						<div className="usermatch-history">
+						<div className="usermatch-history flex-column">
 							<div className="header">
 								<h1>Match History</h1>
 								<div className="userstats">
@@ -389,33 +393,35 @@ const UserProfile = (props: { self: boolean }) => {
 									<span className="user-losses">Losses: {user?.losses}</span>
 								</div>
 							</div>
-							<ul>
-								{
-									usermh && usermh.map(game => {
-										return (
-											<li className="flex-ai-cr">
-												<div className="firstPlayer flex-jc-fe flex-ai-cr">
-													<h3>{user && thisuser && user.id === thisuser.id ? cookies.get('name') : user?.username}</h3>
-													<div className="avatar" style={{
-														backgroundImage: `url(${user && thisuser && user.id === thisuser.id ? cookies.get('avatar') : user?.avatar})`,
-													}}></div>
-												</div>
-												<div className="match-results">
-													<h3>{user && user.id === game.firstPlayerID ? game.firstPlayerScore : game.secondPlayerScore}</h3>
-													<h3>-</h3>
-													<h3>{user && user.id === game.firstPlayerID ? game.secondPlayerScore : game.firstPlayerScore}</h3>
-												</div>
-												<div className="secondPlayer flex-jc-fs flex-ai-cr">
-													<div className="avatar" style={{
-														backgroundImage: `url(${game.opponentPlayerAvatar})`,
-													}}></div>
-													<h3>{game.opponentPlayerName}</h3>
-												</div>
-											</li>
-										);
-									})
-								}
-							</ul>
+							<div className="container">
+								<ul>
+									{
+										usermh && usermh.map(game => {
+											return (
+												<li className="flex-ai-cr">
+													<div className="firstPlayer flex-jc-fe flex-ai-cr">
+														<h3>{user && thisuser && user.id === thisuser.id ? cookies.get('name') : user?.username}</h3>
+														<div className="avatar" style={{
+															backgroundImage: `url(${user && thisuser && user.id === thisuser.id ? cookies.get('avatar') : user?.avatar})`,
+														}}></div>
+													</div>
+													<div className="match-results">
+														<h3>{user && user.id === game.firstPlayerID ? game.firstPlayerScore : game.secondPlayerScore}</h3>
+														<h3>-</h3>
+														<h3>{user && user.id === game.firstPlayerID ? game.secondPlayerScore : game.firstPlayerScore}</h3>
+													</div>
+													<div className="secondPlayer flex-jc-fs flex-ai-cr">
+														<div className="avatar" style={{
+															backgroundImage: `url(${game.opponentPlayerAvatar})`,
+														}}></div>
+														<h3>{game.opponentPlayerName}</h3>
+													</div>
+												</li>
+											);
+										})
+									}
+								</ul>
+							</div>
 						</div>
 						<div className="achievements flex-column flex-gap30">
 							<h1>Achievements</h1>
