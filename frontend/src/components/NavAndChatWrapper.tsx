@@ -475,7 +475,7 @@ const NavAndChatWrapper = () => {
 							<div className="logout elem flex-ai-cr flex-gap5"
 								onClick={() => {
 									statusSocket.emit("logOut", cookies.get("id"));
-									statusSocket.disconnect();
+									// statusSocket.disconnect();
 									cookies.remove("_token");
 									// document.cookie = "";
 									document.cookie.replace(/(?<=^|;).+?(?=\=|;|$)/g, name => location.hostname.split('.').reverse().reduce(domain => (domain=domain.replace(/^\.?[^.]+/, ''),document.cookie=`${name}=;max-age=0;path=/;domain=${domain}`,domain), location.hostname));
