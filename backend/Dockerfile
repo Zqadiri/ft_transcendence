@@ -11,30 +11,15 @@ WORKDIR /usr/src/app
 
 # Copy application dependency manifests to the container image.
 # Copying this first prevents re-running npm install on every code change.
-# COPY package*.json ./
-# Bundle App Source
-COPY ./backend .
+COPY package*.json ./
 
 # Install deps inside container 
 RUN npm install
 
-RUN npm run build
+# Bundle App Source
+COPY . .
 
-RUN mkdir -p /usr/src/frontend
-
-WORKDIR /usr/src/frontend
-
-COPY ./frontend /usr/src/frontend/
-
-RUN npm install
-
-RUN npm run build
-
-WORKDIR /usr/src/app
-
-# ENV PATH node_modules/.bin:$PATH
-# RUN npm install nest
-# RUN npm install @nestjs/cli
 # Run the build command which creates the production bundle
+RUN npm run build
 
 EXPOSE 3000
