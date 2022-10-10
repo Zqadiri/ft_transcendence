@@ -2,7 +2,7 @@ import { Injectable, HttpStatus, HttpException, BadRequestException } from '@nes
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto, UpdateAfterGameDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateAfterGameDto, updateUsernameDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
 import { AvatarDto } from './dto/upload.dto';
 import { validate } from 'class-validator';
@@ -78,12 +78,24 @@ export class UsersService {
 	/*
 		Update the username 
 	*/
-	async updateUsername(id: number, newUsername: string) {
-		const user = await this.userRepository.preload({
-			id: id,
-			username: newUsername
-		});
-		await this.userRepository.save(user);
+	// async updateUsername(id: number, newUsername: string) {
+	// 	const user = await this.userRepository.preload({
+	// 		id: id,
+	// 		username: newUsername
+	// 	});
+	// 	await this.userRepository.save(user);
+	// }
+
+	async updateUsername(id: number, updateUsername: updateUsernameDto) {
+		const user = new User();
+		user.id = id;
+		user.username = updateUsername.username;
+		const _error = await validate(user);
+		if (_error.length > 0){
+			// console.log(_error);
+			throw new HttpException({ message: 'Invalid username', _error }, HttpStatus.BAD_REQUEST);
+		}
+		return await this.userRepository.save(user);
 	}
 
 	async removeFriend(user: User, removeID: number) {

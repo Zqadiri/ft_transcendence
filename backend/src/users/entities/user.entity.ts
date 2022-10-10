@@ -1,4 +1,4 @@
-import { IsEmail, MaxLength } from "class-validator";
+import { MaxLength, IsNotEmpty, IsString } from "class-validator";
 import { Entity, Column } from "typeorm";
 
 /*
@@ -12,6 +12,8 @@ export class User{
 	id: number;
 
 	@Column({unique: true })
+	@IsNotEmpty()
+    @IsString()
 	@MaxLength(10)
 	username: string;
 
@@ -19,7 +21,6 @@ export class User{
 	avatar: string;
 
 	@Column()
-	@IsEmail()
 	email: string;
 
 	@Column({default: false})

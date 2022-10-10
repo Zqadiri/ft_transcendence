@@ -5,6 +5,7 @@ import { Post, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Express, Response } from 'express'
 import { diskStorage } from 'multer';
+import { updateUsernameDto } from './dto/update-user.dto';
 import { 
 	ApiTags,
 	ApiOperation,
@@ -74,8 +75,12 @@ export class UsersController {
 	@Post('/update_username')
 	async updateUsername(@Req() req, @Body('username') newUsername: string, @Res() res) {
 		var result :any;
+		var data : updateUsernameDto;
+		// data.id = req.user.id;
+		data = {username: newUsername}
+		console.log(`data: ${JSON.stringify(data)}`);
 		try{
-			result = await this.usersService.updateUsername(req.user.id, newUsername);
+			result = await this.usersService.updateUsername( req.user.id, data);
 			res.cookie('name', newUsername,{
 				maxAge: 1000 * 60 * 60 * 24,
 				httpOnly: false,

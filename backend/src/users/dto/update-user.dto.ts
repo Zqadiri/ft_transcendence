@@ -1,4 +1,4 @@
-import { IsEmail, isNotEmpty, isString } from "class-validator";
+import { IsNotEmpty, IsString } from "class-validator";
 
 export class UpdateUserDto{
     public username : string;
@@ -18,4 +18,11 @@ export class UpdateAfterGameDto{
     public rank : number;
     public matched : boolean;
     public updatedAt : Date;
+}
+
+export class updateUsernameDto{
+    // public id: number;
+
+
+    public username: string;
 }
