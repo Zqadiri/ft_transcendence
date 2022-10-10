@@ -5,12 +5,7 @@ import { CreateGameDto, EndGameDto } from './dto/game.dto';
 import { Game } from './entities/game.entity';
 import { GameRepository } from './game.repository';
 import { Brackets, Repository } from 'typeorm';
-import { UserRepository } from 'src/users/user.repository';
 import { User } from 'src/users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
-import { ChatsService } from 'src/chats/chats.service';
-import { Chat } from 'src/chats/entities/chat.entity';
-import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 
 @Injectable()
 export class GamesService {
@@ -19,10 +14,6 @@ export class GamesService {
 		private readonly GameRepo : GameRepository,
 		@InjectRepository(User)
 		private readonly Userrepository: Repository<User>
-		// @InjectRepository(Chat)
-		// @InjectRepository(User)
-		// @InjectRepository(ChatLogs)
-		// private readonly userServ: ChatsService
 		){}
 
 	async createGame(createGameDto: CreateGameDto) {

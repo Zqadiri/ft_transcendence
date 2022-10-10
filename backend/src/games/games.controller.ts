@@ -8,6 +8,7 @@ import { UsersService } from 'src/users/users.service';
 import RequestWithUser from 'src/two-factor-authentication/dto/requestWithUser.interface';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
+@UseGuards(jwtAuthGuard)
 @Controller('game')
 export class GameController {
 
@@ -18,9 +19,10 @@ export class GameController {
 		private readonly userServ: UsersService
 	) { }
 
+
 	@Get('/get_match_history')
-	@UseGuards(jwtAuthGuard)
-	async GetMatchHistory(@Query() query: { id: number, name: string }, @Req() req: RequestWithUser) {
+	async GetMatchHistory(@Query() query: { id: number, name: string }, @Req() req: RequestWithUser)
+	{
 		if (query.id) {
 			let mh = await this.gameServ.findGameByUser(query.id);
 			if (mh)
