@@ -3,6 +3,8 @@ version: "3.9"
 services:
 #nestjs backend
   backend:
+    env_file:
+      - ./backend/.env
   # build from Dockerfile
     build:
       dockerfile: Dockerfile
@@ -22,42 +24,33 @@ services:
     depends_on: 
       - postgres
     environment:
-      DATABASE_URL: postgres://qwerty:qwerty@postgres:5432/db
+      # DATABASE_URL: postgres://qwerty:qwerty@postgres:5432/db
       NODE_ENV: dev
       PORT: 3000
     ports:
       - 3000:3000
       - 9229:9229
-
-  # frontend:
-  #   build:
-  #     dockerfile: Dockerfile
-  #     context: ./frontend
-  #     target: dev
-  #   volumes:
-  #     - ./frontend:/usr/src/frontend
-  #     - /usr/frontend/src/app/node-modules
-    # link to chat backend 
-    # links:
-    #   - backend
-
   postgres:
+    env_file:
+      - ./backend/.env
     #use postgres image from dockerhub
     image: postgres:14.4
-    environment:
-      POSTGRES_USER: qwerty
-      POSTGRES_PASSWORD: qwerty
-      POSTGRES_DB: db
+    # environment:
+    #   POSTGRES_USER: qwerty
+    #   POSTGRES_PASSWORD: qwerty
+    #   POSTGRES_DB: db
     ports:
       - 5432:5432
 
   postgres_admin:
+    env_file:
+      - ./backend/.env
     image: dpage/pgadmin4:6.11
     depends_on: 
       - postgres
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: qwerty
+    # environment:
+    #   PGADMIN_DEFAULT_EMAIL: admin@admin.com
+    #   PGADMIN_DEFAULT_PASSWORD: qwerty
     ports:
       - 5050:80
     
