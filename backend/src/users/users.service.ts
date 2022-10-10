@@ -72,19 +72,14 @@ export class UsersService {
 		if (user && status)
 		{
 			user.status = status;
-			await this.userRepository.save(user);
+			console.log(`update status called ${user.username} ${user.status}`);
+			const ret = await this.userRepository.save(user);
+			console.log(`database return user: ${JSON.stringify(ret.username)} and status: ${JSON.stringify(ret.status)}`);
 		}
 	}
 	/*
 		Update the username 
 	*/
-	// async updateUsername(id: number, newUsername: string) {
-	// 	const user = await this.userRepository.preload({
-	// 		id: id,
-	// 		username: newUsername
-	// 	});
-	// 	await this.userRepository.save(user);
-	// }
 
 	async updateUsername(id: number, updateUsername: updateUsernameDto) {
 		const user = new User();

@@ -157,9 +157,12 @@ export class UpdateGameService {
 
 	activateGame(room: string)
 	{
-		this.gameCoordinates.get(room).pause = false;
-		if (this.global.isSimulationInitiated === false)
-			this.#sendDataToFrontend();
+		if (this.gameCoordinates.get(room))
+		{
+			this.gameCoordinates.get(room).pause = false;
+			if (this.global.isSimulationInitiated === false)
+				this.#sendDataToFrontend();
+		}
 	}
 
 	initializeScorePanel(room: string): void
