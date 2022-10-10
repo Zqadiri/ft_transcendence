@@ -1061,11 +1061,32 @@ const NavAndChatWrapper = () => {
 																activeChatUsers.find(el => cookies.get("name") === el.username)
 																&& (activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "owner"
 																	|| activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "admin")
-																&& (user.stat === "user" || user.stat === "admin") && user.id !== parseInt(cookies.get("id"))
+																&& (user.stat === "user") && user.id !== parseInt(cookies.get("id"))
 															}>
 																<>
 																	<MuteBanControls activeChat={activeChat} setActiveChat={setActiveChat} userID={user.id}></MuteBanControls>
 																</>
+															</ShowConditionally>
+															<ShowConditionally cond={activeChatUsers.find(el => cookies.get("name") === el.username)
+																&& ((activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "owner" && user.stat !== "owner")
+																	|| (activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "admin" && user.stat !== "owner" && user.stat !== "admin"))}>
+																<div className="iconcontainer" onClick={() => {
+																	axios.post("/chat/kickUser", { RoomID: activeChat?.db_chat_name, userID: user.id })
+																	.then(() => {
+																		chatSocket.emit("SocketMuteUser", {
+																			RoomID: activeChat?.db_chat_name,
+																			userID: user.id,
+																			duration: -1,
+																			action: "kick",
+																			// token: cookies.get("_token")
+																		})
+																	}).finally(() => {
+																		setActiveChat(activeChat)
+																	})
+																}}>
+																	<i className="fa-solid fa-door-open"></i>
+																	<p>{"Kick User"}</p>
+																</div>
 															</ShowConditionally>
 															<ShowConditionally cond={
 																activeChatUsers.find(el => cookies.get("name") === el.username)?.stat === "owner"

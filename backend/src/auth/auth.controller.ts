@@ -29,6 +29,7 @@ export class AuthController
 		if (!obj){
 		    // throw new BadRequestException('Bad Request');
 			response.redirect('/login');
+			return {}
 		}
 		playerExists = await this.playerService.getUserById(obj.id);
 		if (!playerExists){

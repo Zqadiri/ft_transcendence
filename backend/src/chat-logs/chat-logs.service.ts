@@ -62,9 +62,9 @@ export class ChatLogsService {
     .select("ChatLogs.userID", "userID")
     .addSelect("ChatLogs.roomName", "roomName")
     .addSelect("ChatLogs.message", "message")
-	  .addSelect("ChatLogs.username", "username")
     .leftJoin(User, 'db_user', 'db_user.id = ChatLogs.userID')
     .addSelect('db_user.avatar', 'avatar')
+    .addSelect('db_user.username', 'username')
     .where ("ChatLogs.id = :id", {id: messageID})
     .getRawOne()
 
