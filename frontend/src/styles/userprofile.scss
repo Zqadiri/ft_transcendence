@@ -3,11 +3,13 @@
 .userprofile {
 	padding: 2.5em;
 	height: calc(100% - 86px);
+	$dim: 150px;
 	.userinfo {
 		padding: 5px;
 		width: 33%;
 		min-height: 660px;
 		min-width: 230px;
+		max-width: 340px;
 		background-color: white;
 		border-radius: 15px;
 		filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
@@ -15,7 +17,6 @@
 			.imgcontainer {
 				position: relative;
 				width: min-content;
-				$dim: 150px;
 				.image {
 					filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
 					width: $dim;
@@ -103,6 +104,11 @@
 	}
 	.qrcode {
 		image-rendering: pixelated;
+		width: $dim;
+		filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
+		border: 5px solid white;
+		border-radius: 20%;
+		height: $dim;
 	}
 	input {
 		border: 0px;
@@ -111,13 +117,8 @@
 		padding: 5px 10px;
 	}
 	.usergameinfo {
-		background-color: white;
 		width: 80%;
-		height: 45vh;
-		padding: 2em;
-		border-radius: 15px;
-		margin-left: 2em;
-		filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
+		min-height: 660px;
 		.header {
 			padding: 0 1em 1em;
 			box-shadow: 0 10px 6px -6px #c7c7c7;
@@ -143,9 +144,14 @@
 			}
 		}
 		.usermatch-history {
+			background-color: white;
+			height: 45vh;
+			padding: 2em;
+			border-radius: 15px;
+			filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
 			height: 500px;
+			margin-left: 2em;
 			overflow: auto;
-			padding-top: 1.5em;
 			ul {
 				list-style: none;
 				margin: 0 1.5em;
@@ -195,6 +201,37 @@
 					flex-basis: 0;
 					flex-shrink: 1;
 					width: 0;
+				}
+			}
+		}
+		.achievements {
+			background-color: white;
+			// height: 45vh;
+			padding: 2em;
+			border-radius: 15px;
+			filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
+			// height: 500px;
+			flex-grow: 1;
+			margin-left: 2em;
+			overflow: auto;
+			.inner {
+				margin-inline: auto;
+				// display: inline;
+				width: fit-content;
+				height: 100%;
+			}
+			.ac {
+				.svg {
+					$svgdim: 100px;
+					width: $svgdim;
+					height: $svgdim;
+					&.off {
+						filter: grayscale(100%);
+					}
+				}
+				.title {
+					width: min-content;
+					text-align: center;
 				}
 			}
 		}

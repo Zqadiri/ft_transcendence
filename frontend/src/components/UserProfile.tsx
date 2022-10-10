@@ -5,6 +5,23 @@ import { cookies, globalContext, ShowConditionally, useEffectOnce } from "./util
 import '../styles/userprofile.scss'
 import Button from "./Button";
 import UserOperationsButtons from "./UserOperationsButtons";
+import { ReactComponent as StarMedal1 } from "../img/1-star-medal.svg";
+import { ReactComponent as StarMedal2 } from "../img/2-star-medal.svg";
+import { ReactComponent as StarMedal3 } from "../img/3-star-medal.svg";
+import { ReactComponent as StarMedal4 } from "../img/4-star-medal.svg";
+import { ReactComponent as StarMedal5 } from "../img/5-star-medal.svg";
+import { ReactComponent as StarMedal6 } from "../img/6-star-medal.svg";
+
+export type Achievement = "firstGame" | "levelThree" | "levelSix" | "closeCall" | "flawLessWin" | "flawLessWinStreak"
+
+const achievementSvg: { name: Achievement, svg: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {title?: string | undefined;}>, title: string, desc: string}[] = [
+	{ name: "firstGame", svg: StarMedal1, title: "First Game", desc: "Win your first game" },
+	{ name: "levelThree", svg: StarMedal2, title: "Level 3", desc: "Reach level 3" },
+	{ name: "levelSix", svg: StarMedal3, title: "Level 6", desc: "Reach level 6" },
+	{ name: "closeCall", svg: StarMedal4, title: "Close Call", desc: "Win 10 - 9 against someone" },
+	{ name: "flawLessWin", svg: StarMedal5, title: "Flawless Win", desc: "Win 10 - 0 against someone" },
+	{ name: "flawLessWinStreak", svg: StarMedal6, title: "Flawless Winstreak", desc: "Win 10 - 0 five times" },
+]
 
 export interface User {
 	id: number;
@@ -19,8 +36,8 @@ export interface User {
 	level: number;
 	xp: number;
 	rank: string;
-	Matched : boolean;
-	achievement: string[] | null;
+	Matched: boolean;
+	achievement: Achievement[] | null;
 	FriendsID: number[]; 
 	blockedID: number[];
 	outgoingFRID: number[];
@@ -200,7 +217,7 @@ const UserProfile = (props: { self: boolean }) => {
 			<ShowConditionally cond={user && thisuser}>
 				<>
 					{/* <div className="userinfowrapper d100 flex"> */}
-						<div className="userinfo flex-column-center flex-gap5 d100">
+						<div className="userinfo flex-column flex-ai-cr flex-jc-sa flex-gap5 d100">
 							<div className="top flex-column-center flex-gap10">
 								<div className="imgcontainer">
 									<div style={{backgroundImage: `url(${displayImage})`}} className="image" />
@@ -309,11 +326,14 @@ const UserProfile = (props: { self: boolean }) => {
 										}} className="cancel">Cancel</Button>
 									</div>
 								</ShowConditionally>
+								<ShowConditionally cond={user?.id !== thisuser?.id}>
+									<div className="userop flex-center flex-gap5 flex-wrap">
+										<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
+									</div>
+								</ShowConditionally>
 							</div>
 							<ShowConditionally cond={user?.id !== thisuser?.id}>
-								<div className="userop flex-center flex-gap5 flex-wrap">
-									<UserOperationsButtons {...{ user, thisuser, updateUserProfile, params }}></UserOperationsButtons>
-								</div>
+								<div></div>
 								<div className="bottom flex-center-column flex-gap10 twofa">
 									<ShowConditionally cond={!thisuser?.is2FacAuth}>
 										<img src={qrCode} alt="qrcode" className="qrcode"/>
@@ -355,18 +375,18 @@ const UserProfile = (props: { self: boolean }) => {
 							</ShowConditionally>
 						</div>
 					{/* </div> */}
-					<div className="usergameinfo flex-column">
-						<div className="header">
-							<h1>Match History</h1>
-							<div className="userstats">
-								<span className="user-rank">Rank: {user?.rank}</span>
-								<span className="user-xp">Xp: {user?.xp}</span>
-								<span className="user-level">Level: {user?.level}</span>
-								<span className="user-wins">Wins: {user?.wins}</span>
-								<span className="user-losses">Losses: {user?.losses}</span>
-							</div>
-						</div>
+					<div className="usergameinfo flex-column flex-gap20">
 						<div className="usermatch-history">
+							<div className="header">
+								<h1>Match History</h1>
+								<div className="userstats">
+									<span className="user-rank">Rank: {user?.rank}</span>
+									<span className="user-xp">Xp: {user?.xp}</span>
+									<span className="user-level">Level: {user?.level}</span>
+									<span className="user-wins">Wins: {user?.wins}</span>
+									<span className="user-losses">Losses: {user?.losses}</span>
+								</div>
+							</div>
 							<ul>
 								{
 									usermh && usermh.map(game => {
@@ -394,6 +414,20 @@ const UserProfile = (props: { self: boolean }) => {
 									})
 								}
 							</ul>
+						</div>
+						<div className="achievements">
+							<div className="inner flex-gap10">
+								{
+									achievementSvg.map(ac => {
+										return (
+											<div className="ac flex-column-center">
+												<ac.svg className={"svg " + (user?.achievement?.includes(ac.name) ? "on" : "off")}></ac.svg>
+												<div className="title">{ac.title}</div>
+											</div>
+										)
+									})
+								}
+							</div>
 						</div>
 					</div>
 				</>
