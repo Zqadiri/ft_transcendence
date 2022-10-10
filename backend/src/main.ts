@@ -37,14 +37,12 @@ async function bootstrap() {
 		.setVersion('1.0')
 		.build();
 
-	// app.useStaticAssets(join(__dirname, "../..", "backend/uploadedFile"))
-
 	const document = SwaggerModule.createDocument(app, swaggerConfig);
 	SwaggerModule.setup('api', app, document);
 	app.use(cookieParser());
 	const fs = require("fs"); // Or `import fs from "fs";` with ESM
 	if (!fs.existsSync(".env")) {
-		console.error("ENV FILE DOES NOT EXIST");
+		console.error("MISSING FILE [env]");
 		throw "Error";
 	}
 	await app.listen(3000);

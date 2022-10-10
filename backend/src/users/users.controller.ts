@@ -52,6 +52,7 @@ export class UsersController {
 			  callback(null, true);
 		}
 	}))
+
 	async uploadFile(@Req() req, @UploadedFile() file: Express.Multer.File, @Res() res: Response) {
 		const user = await this.usersService.uploadAvatar(req.user.id, {
 			filename: file.filename,
