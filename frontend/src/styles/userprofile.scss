@@ -101,6 +101,9 @@
 			}
 		}
 	}
+	.qrcode {
+		image-rendering: pixelated;
+	}
 	input {
 		border: 0px;
 		border-radius: 7px;
