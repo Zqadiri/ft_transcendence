@@ -216,7 +216,7 @@ const UserProfile = (props: { self: boolean }) => {
 		console.log({user, thisuser, usermh})
 	}, [user, thisuser])
 	if (params.userId === cookies.get("name")) {
-		return <Navigate to={"/profile"}></Navigate>
+		return <Navigate to={"/profile"} replace></Navigate>
 	}
 	return (
 		<div className="userprofile d100 flex">
