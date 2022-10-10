@@ -37,10 +37,17 @@ async function bootstrap() {
 		.setVersion('1.0')
 		.build();
 
+	const dir = './public'
+
+	// check if directory exists
 	const document = SwaggerModule.createDocument(app, swaggerConfig);
 	SwaggerModule.setup('api', app, document);
 	app.use(cookieParser());
 	const fs = require("fs"); // Or `import fs from "fs";` with ESM
+	if (!fs.existsSync(dir)) {
+		console.error("MISSING FILE [public]");
+		throw "Error";
+	}
 	if (!fs.existsSync(".env")) {
 		console.error("MISSING FILE [env]");
 		throw "Error";
