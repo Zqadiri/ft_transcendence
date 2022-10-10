@@ -37,8 +37,8 @@ require('dotenv').config();
 	imports: 
 		[
 			ServeStaticModule.forRoot({
-				rootPath: join(__dirname, "../..", "app/uploadedFile"),
-				serveRoot: '/uploadedFile',
+				rootPath: join(__dirname, "../..", "app/public"),
+				serveRoot: '/public',
 			}),
 			ServeStaticModule.forRoot({
 				rootPath: join(__dirname, "../..", "frontend/dist"),
