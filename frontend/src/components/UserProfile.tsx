@@ -371,22 +371,22 @@ const UserProfile = (props: { self: boolean }) => {
 									usermh && usermh.map(game => {
 										return (
 											<li className="flex-ai-cr">
-												<div className="firstPlayeer flex-jc-cr flex-ai-cr">
+												<div className="firstPlayer flex-jc-cr flex-ai-cr">
 													<div className="avatar" style={{
 														backgroundImage: `url(${user && thisuser && user.id === thisuser.id ? cookies.get('avatar') : user?.avatar})`,
 													}}></div>
-													{/* <h3>{cookies.get('name')}</h3> */}
+													<h3>{user && thisuser && user.id === thisuser.id ? cookies.get('name') : user?.username}</h3>
 												</div>
 												<div className="match-results">
 													<h3>{user && user.id === game.firstPlayerID ? game.firstPlayerScore : game.secondPlayerScore}</h3>
 													<h3>-</h3>
 													<h3>{user && user.id === game.firstPlayerID ? game.secondPlayerScore : game.firstPlayerScore}</h3>
 												</div>
-												<div className="secondPlayeer flex-jc-cr flex-ai-cr">
+												<div className="secondPlayer flex-jc-cr flex-ai-cr">
+													<h3>{game.opponentPlayerName}</h3>
 													<div className="avatar" style={{
 														backgroundImage: `url(${game.opponentPlayerAvatar})`,
 													}}></div>
-													{/* <h3>{game.opponentPlayerName}</h3> */}
 												</div>
 											</li>
 										);

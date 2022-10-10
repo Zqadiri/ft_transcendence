@@ -173,6 +173,14 @@
 						background-repeat: none;
 						border-radius: 100%;
 					}
+					.firstPlayer, .secondPlayer {
+						gap: 1.5em;
+					}
+					.firstPlayer h3, .secondPlayer h3 {
+						font-size: 1em;
+						color: #305372;
+						font-weight: normal;
+					}
 				}
 				li > * {
 					flex-grow: 1;
