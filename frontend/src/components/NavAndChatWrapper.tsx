@@ -452,8 +452,8 @@ const NavAndChatWrapper = () => {
 						</div>
 					</RRLink>
 				</div>
-				<div className="navelem flex-jc-fe flex-ai-cr" onClick={() => { setUserIconDropdown(x => !x) }}>
-					<div className="container flex-center right">
+				<div className="navelem flex-jc-fe flex-ai-cr" >
+					<div className="container flex-center right" onClick={() => { setUserIconDropdown(x => !x) }}>
 						<div className="name"> {
 							cookies.get("name")
 						} </div>
