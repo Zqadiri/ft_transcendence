@@ -27,7 +27,7 @@ export class GamesService {
 		const _error = validate(game);
 		if ((await _error).length)
 			throw new HttpException({ message: 'Game Data Validation Failed', _error }, HttpStatus.BAD_REQUEST);
-		return this.GameRepo.save(game);
+		return await this.GameRepo.save(game);
 	}
 	
 	// false === FirstPlayer and true === SecondPlayer
@@ -39,7 +39,7 @@ export class GamesService {
 			game.firstPlayerScore = score;
 		else if (playerNum === true)
 			game.secondPlayerScore = score;
-		return this.GameRepo.update(gameID, game);
+		return await this.GameRepo.update(gameID, game);
 	}
 
 	async endGame(end: EndGameDto){
@@ -57,7 +57,7 @@ export class GamesService {
 		const game = await this.findGameByid(gameID);
 		if (!game)
 			throw new HttpException({ message: 'Game Not Found' }, HttpStatus.BAD_REQUEST);
-		return this.GameRepo.remove(game);
+		return await this.GameRepo.remove(game);
 	}
 
 	async findGameByid(id: number) {

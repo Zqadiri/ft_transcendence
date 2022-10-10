@@ -43,7 +43,7 @@ export class UsersService {
 		const _error = validate(updatedUser);
 		if ((await _error).length)
 			throw new HttpException({ message: 'User Data Validation Failed', _error }, HttpStatus.BAD_REQUEST);
-		return this.userRepository.update(userID, updatedUser);
+		return await this.userRepository.update(userID, updatedUser);
 	}
 
 	
@@ -60,7 +60,7 @@ export class UsersService {
 		const _error = validate(updatedUser);
 		if ((await _error).length)
 		throw new HttpException({ message: 'User Data Validation Failed', _error }, HttpStatus.BAD_REQUEST);
-		return this.userRepository.update(userID, updatedUser);
+		return await this.userRepository.update(userID, updatedUser);
 	}
 	
 	/*
@@ -148,7 +148,7 @@ export class UsersService {
 
 		this.#unlockUserAchievements(user, currentPlayerScore, opponentScore, flawLessWinStreakAchieved);
 
-		return this.userRepository.update(userID, user);
+		return await this.userRepository.save(user);
 	}
 
 	async getUserById(id: number): Promise<User> {
@@ -170,7 +170,7 @@ export class UsersService {
 	}
 
 	async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
-		return this.userRepository.update(userId, {
+		return await this.userRepository.update(userId, {
 			twoFacAuthSecret: secret
 		});
 	}
