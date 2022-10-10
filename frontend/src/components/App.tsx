@@ -1,5 +1,5 @@
 import '../styles/defaults.scss'
-import { Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, Link, useNavigate, useLocation } from "react-router-dom";
 import { cookies, is2FA, isLoggedIn, ShowConditionally, useEffectOnce } from './util';
 import { useEffect } from 'react';
 import NavAndChatWrapper, { chatSocket, g_setIsMatching } from './NavAndChatWrapper'
@@ -29,6 +29,7 @@ function App() {
 	const	[loggedIn, setLoggedIn] = useState(isLoggedIn());
 	const	navigate = useNavigate();
 	const	currentUserId = cookies.get('id');
+	const	loc = useLocation();
 
 	useEffectOnce(() => {
 		console.log({"loggedIn?": isLoggedIn()});
@@ -56,7 +57,7 @@ function App() {
 				global.socket.disconnect().connect();
 				global.theme = "theme01";
 				
-				addMatchingSocketEventHandler(navigate);
+				addMatchingSocketEventHandler(navigate, loc);
 				global.socket.emit("joinInvitation", {roomName: roomName, userCounter: 2})
 				setChatIsOpen(false);
 			}

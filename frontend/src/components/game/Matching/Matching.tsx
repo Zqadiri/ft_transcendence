@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Location, useLocation, useNavigate } from 'react-router-dom';
 import { createContext } from "react";
 import { global } from "../PingPong/Data/PingPong.d"
 import Waiting from "./Waiting";
@@ -47,7 +47,7 @@ function	InvitationWaiting(): JSX.Element
 	);
 }
 
-export function	addMatchingSocketEventHandler(navigate: Function)
+export function	addMatchingSocketEventHandler(navigate: Function, loc: Location)
 {
 	global.socket.off("joinedRoom").on("joinedRoom", (room, playerId) => {
 		global.roomName = room;
@@ -57,7 +57,15 @@ export function	addMatchingSocketEventHandler(navigate: Function)
 	global.socket.off("secondPlayerJoined").on("secondPlayerJoined", () => {
 		global.secondPlayerExist = true;
 		statusSocket.emit('inGame', {userId: cookies.get('id'), status: "ingame"});
-		navigate("/play");
+		console.log({loc})
+		if (loc.pathname.startsWith("/play")) {
+			navigate("/");
+			setTimeout(() => {
+				navigate("/play");
+			}, 150);
+		}
+		else
+			navigate("/play");
 		resetDefaults();
 	});
 }
@@ -65,9 +73,10 @@ export function	addMatchingSocketEventHandler(navigate: Function)
 function	Matching( {activeComponent, setActiveComponent}: {activeComponent: string, setActiveComponent: Function} ): JSX.Element
 {
 	const 	navigate = useNavigate();
+	const	loc = useLocation();
 
 	useEffectOnce(() => {
-		addMatchingSocketEventHandler(navigate);
+		addMatchingSocketEventHandler(navigate, loc);
 	});
 
 	if (activeComponent === invitationWaiting)

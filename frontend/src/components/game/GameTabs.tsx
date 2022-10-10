@@ -8,6 +8,7 @@ import Matching, { addMatchingSocketEventHandler } from "./Matching/Matching";
 import { global } from "./PingPong/Data/PingPong.d";
 import { cookies } from "../util";
 import { chatSocket } from "../NavAndChatWrapper";
+import { Location, useLocation } from "react-router-dom";
 
 let					g_setTabIndex: Function;
 let					g_setActiveComponent: Function;
@@ -30,7 +31,7 @@ export	function	resetDefaults()
 	defaultTabIndex = 1;
 }
 
-export	function	handleGameInvitation(navigate: Function, opponentId: number)
+export	function	handleGameInvitation(navigate: Function, opponentId: number, loc: Location)
 {
 	const		roomName: string = `Room:${cookies.get('id')}:${opponentId}`;
 
@@ -42,7 +43,7 @@ export	function	handleGameInvitation(navigate: Function, opponentId: number)
 
 	global.socket.connect();
 
-	addMatchingSocketEventHandler(navigate);
+	addMatchingSocketEventHandler(navigate, loc);
     global.theme = "theme01";
 	global.socket.emit("joinInvitation", {roomName: roomName, userCounter: 1})
 

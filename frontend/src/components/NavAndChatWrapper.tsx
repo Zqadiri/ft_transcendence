@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import "../styles/wrapper.scss"
 import Button from "./Button";
 import FourOFour from "./FourOFour";
@@ -357,6 +357,7 @@ const NavAndChatWrapper = () => {
 		getSelf();
 	})
 
+	const loc = useLocation();
 	// useEffect(() => {
 	// 	let int = setInterval(() => {
 	// 		if (chatIsOpen) {
@@ -576,7 +577,7 @@ const NavAndChatWrapper = () => {
 																<Button className="invite" onClick={(e) => {
 																	e.stopPropagation();
 																	setChatIsOpen(false);
-																	handleGameInvitation(navigater, fr.id);
+																	handleGameInvitation(navigater, fr.id, loc);
 																}}>Invite To Play</Button>
 															</ShowConditionally>
 
