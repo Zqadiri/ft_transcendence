@@ -6,10 +6,11 @@
 	$dim: 150px;
 	.userinfo {
 		padding: 5px;
-		width: 33%;
-		min-height: 660px;
+		// width: 33%;
+		flex-grow: 1;
+		min-height: 774px;
 		min-width: 230px;
-		max-width: 340px;
+		max-width: 255px;
 		background-color: white;
 		border-radius: 15px;
 		filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
@@ -117,8 +118,12 @@
 		padding: 5px 10px;
 	}
 	.usergameinfo {
-		width: 80%;
-		min-height: 660px;
+		// width: 66%;
+		flex-grow: 2;
+		flex-shrink: 1;
+		flex-basis: 0;
+		min-height: 734px;
+		width: 0;
 		.header {
 			padding: 0 1em 1em;
 			box-shadow: 0 10px 6px -6px #c7c7c7;
@@ -145,13 +150,15 @@
 		}
 		.usermatch-history {
 			background-color: white;
-			height: 45vh;
+			// height: 45vh;
+			min-height: 400px;
 			padding: 2em;
 			border-radius: 15px;
 			filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
-			height: 500px;
+			// min-height: 500px;
 			margin-left: 2em;
 			overflow: auto;
+			flex-grow: 2;
 			ul {
 				list-style: none;
 				margin: 0 1.5em;
@@ -192,7 +199,7 @@
 						font-weight: normal;
 						text-overflow: ellipsis;
 						overflow: hidden;
-						max-width: 80px;
+						// max-width: 80px;
 						flex-shrink: 1;
 					}
 				}
@@ -207,33 +214,89 @@
 		.achievements {
 			background-color: white;
 			// height: 45vh;
-			padding: 2em;
+			padding: 2em calc(2em + 16px);
 			border-radius: 15px;
 			filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
 			// height: 500px;
 			flex-grow: 1;
 			margin-left: 2em;
 			overflow: auto;
+			min-height: 353px;
 			.inner {
+				padding-right: 20px;
 				margin-inline: auto;
 				// display: inline;
 				width: fit-content;
 				height: 100%;
 			}
 			.ac {
+				$svgdim: 100px;
+				padding: 10px;
+				border-radius: 15px;
+				width: min-content;
+				height: calc($svgdim * 2);
+				box-shadow: 0 0 10px rgba(black, 0.3);
 				.svg {
-					$svgdim: 100px;
 					width: $svgdim;
 					height: $svgdim;
 					&.off {
 						filter: grayscale(100%);
+						transition: filter ease 0.5s;
 					}
 				}
-				.title {
-					width: min-content;
+				.title, .desc {
+					// width: min-content;
 					text-align: center;
+				}
+				.desc {
+					transition: opacity ease 0.5s;
+					transition: padding-top ease 0.5s;
+					color: $darker_blue;
+					&.on {
+						padding-top: 20px;
+					}
+					font-size: 12px;
+					&.off {
+						// height: 0px;
+						opacity: 0;
+						padding-top: 0px;
+					}
+				}
+				&.off {
+					&:hover {
+						.svg {
+							filter: none;
+						}
+						.desc.off {
+							// color: $darker_blue;
+							opacity: 1;
+							// height: unset;
+							padding-top: 20px;
+						}
+					}
 				}
 			}
 		}
 	}
+}
+@media (max-width: 860px) {
+	.userprofile {
+		flex-direction: column;
+		gap: 20px;
+		.userinfo {
+			max-width: unset;
+			width: 100%;
+		}
+		.usergameinfo {
+			width: 100%;
+			margin: 0;
+			.achievements, .usermatch-history  {
+				margin: 0;
+				width: 100%;
+			}
+			.achievements {
+				margin-bottom: 20px;
+			}
+		}
+	}	
 }
