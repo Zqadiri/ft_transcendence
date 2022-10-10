@@ -4,7 +4,6 @@ import { Game } from './entities/game.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GameRepository } from './game.repository';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { UsersService } from 'src/users/users.service';
 import RequestWithUser from 'src/two-factor-authentication/dto/requestWithUser.interface';
 import { jwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
@@ -16,9 +15,8 @@ export class GameController {
 		@InjectRepository(Game)
 		private readonly gameRepo: GameRepository,
 		private readonly gameServ: GamesService,
-		private readonly userServ: UsersService
-	) { }
 
+	) { }
 
 	@Get('/get_match_history')
 	async GetMatchHistory(@Query() query: { id: number, name: string }, @Req() req: RequestWithUser)
