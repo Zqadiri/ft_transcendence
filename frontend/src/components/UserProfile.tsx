@@ -285,23 +285,24 @@ const UserProfile = (props: { self: boolean }) => {
 								<ShowConditionally cond={editingName}>
 									<div className="editinfo flex-center flex-gap5 editname">
 										<Button onClick={() => {
-											axios.post("/users/update_username", { username: displayName })
-											.then((res) => {
-												setEnMessage("Success!")
-												setTimeout(() => {
-													setEnMessage("");
-												}, 2000)
-											}).catch((err) => {
-												setEnMessage("Failed :(")
-												setTimeout(() => {
-													setEnMessage("");
-												}, 2000)
-											}).finally(() => {
-												setEditingName(false);
-												updateUserProfile(params);
-												setLoggedIn(false);
-												setLoggedIn(true);
-											})
+											if (displayName.length < 13)
+												axios.post("/users/update_username", { username: displayName })
+												.then((res) => {
+													setEnMessage("Success!")
+													setTimeout(() => {
+														setEnMessage("");
+													}, 2000)
+												}).catch((err) => {
+													setEnMessage("Failed :(")
+													setTimeout(() => {
+														setEnMessage("");
+													}, 2000)
+												}).finally(() => {
+													setEditingName(false);
+													updateUserProfile(params);
+													setLoggedIn(false);
+													setLoggedIn(true);
+												})
 										}} className="save">Save</Button>
 										<Button onClick={() => {
 											setEditingName(false);
@@ -371,7 +372,7 @@ const UserProfile = (props: { self: boolean }) => {
 									usermh && usermh.map(game => {
 										return (
 											<li className="flex-ai-cr">
-												<div className="firstPlayer flex-jc-cr flex-ai-cr">
+												<div className="firstPlayer flex-jc-fe flex-ai-cr">
 													<h3>{user && thisuser && user.id === thisuser.id ? cookies.get('name') : user?.username}</h3>
 													<div className="avatar" style={{
 														backgroundImage: `url(${user && thisuser && user.id === thisuser.id ? cookies.get('avatar') : user?.avatar})`,
@@ -382,7 +383,7 @@ const UserProfile = (props: { self: boolean }) => {
 													<h3>-</h3>
 													<h3>{user && user.id === game.firstPlayerID ? game.secondPlayerScore : game.firstPlayerScore}</h3>
 												</div>
-												<div className="secondPlayer flex-jc-cr flex-ai-cr">
+												<div className="secondPlayer flex-jc-fs flex-ai-cr">
 													<div className="avatar" style={{
 														backgroundImage: `url(${game.opponentPlayerAvatar})`,
 													}}></div>
