@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Navigate, Params, useParams } from "react-router-dom";
+import { Navigate, Params, useParams, useSearchParams } from "react-router-dom";
 import { cookies, globalContext, ShowConditionally, useEffectOnce } from "./util";
 import '../styles/userprofile.scss'
 import Button from "./Button";
@@ -11,6 +11,7 @@ import { ReactComponent as StarMedal3 } from "../img/3-star-medal.svg";
 import { ReactComponent as StarMedal4 } from "../img/4-star-medal.svg";
 import { ReactComponent as StarMedal5 } from "../img/5-star-medal.svg";
 import { ReactComponent as StarMedal6 } from "../img/6-star-medal.svg";
+import ReactTooltip from "react-tooltip";
 
 export type Achievement = "firstGame" | "levelThree" | "levelSix" | "closeCall" | "flawLessWin" | "flawLessWinStreak"
 
@@ -66,10 +67,11 @@ interface Game {
 const UserProfile = (props: { self: boolean }) => {
 	const { setLoggedIn } = useContext(globalContext);
 	let params = useParams();
+	let [sparams, __] = useSearchParams();
 	const [user, setUser] = useState<User | null | undefined>(null);
 	const [thisuser, setThisUser] = useState<User | null | undefined>(null);
 	const [usermh, setUsermh] = useState<Game[]>([]);
-	const [editingName, _setEditingName] = useState(false);
+	const [editingName, _setEditingName] = useState(sparams.get("ft") ? true : false);
 	const [editingPfp, _setEditingPfp] = useState(false);
 	const [qrCode, setQrCode] = useState("");
 	const [twofaCode, setTwofaCode] = useState("");
@@ -415,19 +417,24 @@ const UserProfile = (props: { self: boolean }) => {
 								}
 							</ul>
 						</div>
-						<div className="achievements">
-							<div className="inner flex-gap10">
+						<div className="achievements flex-column flex-gap30">
+							<h1>Achievements</h1>
+							<div className="inner flex-gap10 flex-ai-cr">
 								{
 									achievementSvg.map(ac => {
 										return (
-											<div className="ac flex-column-center">
-												<ac.svg className={"svg " + (user?.achievement?.includes(ac.name) ? "on" : "off")}></ac.svg>
-												<div className="title">{ac.title}</div>
-											</div>
+											<>
+												<div className={"ac flex-column-center " + (user?.achievement?.includes(ac.name) ? "on" : "off")} >
+													<ac.svg data-tip={ac.desc} className={"svg " + (user?.achievement?.includes(ac.name) ? "on" : "off")}></ac.svg>
+													<div className="title">{ac.title}</div>
+													<div className={"desc " + (user?.achievement?.includes(ac.name) ? "on" : "off")}>{ac.desc}</div>
+													{/* <ReactTooltip backgroundColor="black"></ReactTooltip> */}
+												</div>
+											</>
 										)
 									})
 								}
-							</div>
+							</div> 
 						</div>
 					</div>
 				</>
