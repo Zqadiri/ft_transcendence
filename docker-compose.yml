@@ -12,19 +12,10 @@ services:
       context: ./
       # only build the dev stage from Dockerfile
       target: dev
-    # Mount our host dir to the docker container
-    # Mount chat directory (./chat) to (:) docker container (/usr/src/app)
-    # Reflect File changes from host to container
-    # volumes:
-    #   - ./backend:/usr/src/app
-    #   - ./frontend:/usr/src/frontend
-    # RUN in debug mode: npm run start:debug --> Also start your vscode debugger
-    # RUN in dev mode: npm run start:dev
     command: npm run start:dev
     depends_on: 
       - postgres
     environment:
-      # DATABASE_URL: postgres://qwerty:qwerty@postgres:5432/db
       NODE_ENV: dev
       PORT: 3000
     ports:
@@ -35,10 +26,6 @@ services:
       - ./backend/.env
     #use postgres image from dockerhub
     image: postgres:14.4
-    # environment:
-    #   POSTGRES_USER: qwerty
-    #   POSTGRES_PASSWORD: qwerty
-    #   POSTGRES_DB: db
     ports:
       - 5432:5432
 
@@ -48,9 +35,6 @@ services:
     image: dpage/pgadmin4:6.11
     depends_on: 
       - postgres
-    # environment:
-    #   PGADMIN_DEFAULT_EMAIL: admin@admin.com
-    #   PGADMIN_DEFAULT_PASSWORD: qwerty
     ports:
       - 5050:80
     
