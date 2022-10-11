@@ -14,6 +14,7 @@ const TwoFA = () => {
 	const [query, setQuery] = useSearchParams();
 	const { loggedIn, setLoggedIn } = useContext(globalContext);
 	const [twoFacAuthCode, setTwoFacAuthCode] = useState("");
+	const [message, setMessage] = useState("");
 	let code = query.get('code')
 	let navigater = useNavigate()
 	return (
@@ -24,10 +25,13 @@ const TwoFA = () => {
 						PONG
 					</h1>
 					<div className="container flex-column-center flex-gap10">
-						<input className="input" type="password" value={twoFacAuthCode} onChange={(e) => { setTwoFacAuthCode(e.target.value) }}/>
+						<input className="input" placeholder={message} type="password" value={twoFacAuthCode} onChange={(e) => { setTwoFacAuthCode(e.target.value) }}/>
 						<Button onClick={() => {
 							axios.post(api_link, { twoFacAuthCode }).then(() => {
 								window.location.assign("/");
+							}).catch((err) => {
+								setMessage(err.response.data.message);
+								setTwoFacAuthCode("");
 							})
 						}} className="authorize flex-center flex-gap5">
 							<span className="text">
