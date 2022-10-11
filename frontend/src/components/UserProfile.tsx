@@ -141,6 +141,8 @@ const UserProfile = (props: { self: boolean }) => {
 		}
 	}, [user, thisuser, editingPfp])
 
+	const [statusHidden, setStatusHidden] = useState(true);
+
 	useEffect(() => {
 		let int = setInterval(() => {
 			updateUserProfile(params);
@@ -154,11 +156,12 @@ const UserProfile = (props: { self: boolean }) => {
 
 	const updateUserProfile = (prm: Readonly<Params<string>>) => {
 		console.log("called? updateuserprofile")
-		axios.get("/game/get_match_history?" + (prm.userId ? "name=" + prm.userId : "id=" + cookies.get("id")))
+		let prom = []
+		prom.push(axios.get("/game/get_match_history?" + (prm.userId ? "name=" + prm.userId : "id=" + cookies.get("id")))
 		.then((res) => {
 			setUsermh(res.data)
-		})
-		axios.get("/users?" + (prm.userId ? "name=" + prm.userId : "id=" + cookies.get("id")))
+		}))
+		prom.push(axios.get("/users?" + (prm.userId ? "name=" + prm.userId : "id=" + cookies.get("id")))
 		.then((res) => {
 			console.log({user: res});
 			setUser(res.data);
@@ -166,8 +169,8 @@ const UserProfile = (props: { self: boolean }) => {
 		.catch((err) => {
 			console.log({err});
 			setUser(undefined);
-		})
-		axios.get("/users?id=" + cookies.get("id"))
+		}))
+		prom.push(axios.get("/users?id=" + cookies.get("id"))
 		.then((res) => {
 			console.log({thisuser: res});
 			setThisUser(res.data);
@@ -175,11 +178,19 @@ const UserProfile = (props: { self: boolean }) => {
 		.catch((err) => {
 			console.log({err});
 			setUser(undefined);
-		})
+		}))
+		return prom;
 	}
 
 	useEffectOnce(() => {
 		updateUserProfile(params);
+		let tim = setTimeout(() => {
+			updateUserProfile(params);
+			setStatusHidden(false);
+		}, 500)
+		return () => {
+			clearTimeout(tim);
+		}
 	})
 
 	const readURL = (file: File) => {
@@ -247,7 +258,7 @@ const UserProfile = (props: { self: boolean }) => {
 											}}/>
 										</>
 									</ShowConditionally>
-									<div className={`status ${user?.status}`}></div>
+									<div className={`status ${user?.status}`} style={{ display: statusHidden ? "none" : "block"}}></div>
 								</div>
 								<ShowConditionally cond={editingPfp}>
 									<div className="editinfo flex-center flex-gap5 editpfp">

@@ -1137,15 +1137,7 @@ const NavAndChatWrapper = () => {
 													<div className={"container flex flex-ai-fs flex-gap10"}>
 														{
 															msg.userID != cookies.get("id") ?
-																<div className="profilepic flex-center" style={
-																	{
-																		backgroundImage: `url(${msg.avatar})`,
-																		backgroundColor: "white",
-																		backgroundPosition: "center",
-																		backgroundSize: "cover",
-																		backgroundRepeat: "none"
-																	}
-																} />
+																<UserProfileIcon className="profilepic" image={msg.avatar} userid={msg.userID} username={msg.username} navigater={navigater}></UserProfileIcon>
 															: <></>
 														}
 														<div className="message_text">

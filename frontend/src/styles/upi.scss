@@ -1,9 +1,38 @@
+@import "./palette.scss";
 
 .c_upi {
+	cursor: pointer;
+	.button_list {
+		background-color: $darker_blue;
+		color: $less_pastel_white;
+		border-radius: 5px;
+		filter: drop-shadow(0px 0px 5px rgba(0,0,0,.3));
+		height: max-content;
+		display: none;
+		.c_button {
+			width: max-content;
+			align-self: stretch;
+			&:active {
+				background-color: rgba(black, 0.2);
+			}
+			background-color: $darker_blue;
+			color: $less_pastel_white;
+			font-size: 10px;
+		}
+		bottom: 50%;
+		left: 50%;
+		z-index: 5;
+	}
+	&:hover {
+		.button_list {
+			display: flex;
+		}
+	}
 	.image {
-		$def_dim: 40px;
-		width: $def_dim;
-		height: $def_dim;
-		background-color: white;
+		// $def_dim: 40px;
+		// width: $def_dim;
+		// height: $def_dim;
+		border-radius: 100%;
+		// background-color: white;
 	}
 }
