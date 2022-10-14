@@ -22,7 +22,6 @@ const ProtectedRoom = ({ room, getAllRooms, getAllMyRooms, key }: any) => {
 					e.preventDefault();
 					axios.post("/chat/joinRoom",
 						{ name: room.db_chat_name, password: roomPasswordInput },
-						{ headers: { cookie: getCookieHeader() } }
 					).then((res: any) => {
 						getAllRooms();
 						getAllMyRooms();

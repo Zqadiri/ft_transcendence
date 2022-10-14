@@ -109,7 +109,6 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	@SubscribeMessage('GetRoomMessages')
 	async displayRoomMessages(client: Socket, roomName: string) {
 		const messages = await this.chatLogsService.DisplayRoomMessages(roomName);
-		console.log("messages", messages);
 		client.emit("RoomMessages", messages);
 	}
 

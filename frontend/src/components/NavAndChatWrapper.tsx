@@ -296,8 +296,10 @@ const NavAndChatWrapper = () => {
 				}
 			})
 			if (data.userId === parseInt(cookies.get("id"))) {
-				console.log({yeshere: data})
-				setSelf(x => (x ? {...x, status: data.status} : undefined));
+				if (data.status === "offline")
+					statusSocket.emit('userId', cookies.get('id'));
+				else
+					setSelf(x => (x ? {...x, status: data.status} : undefined));
 			}
 		})
 
@@ -1049,7 +1051,7 @@ const NavAndChatWrapper = () => {
 											<div className="user flex-ai-cr flex-jc-sb">
 												<div className="right flex-gap5 flex-ai-cr">
 													{/* <img src={user.avatar} alt="" className="avatar" /> */}
-													<UserProfileIcon avatar={user.avatar} className="avatar" ></UserProfileIcon>
+													<UserProfileIcon image={user.avatar} className="avatar" userid={user.id} username={user.username} ></UserProfileIcon>
 													<div className="left container flex-column">
 														<div className="name">{user.username}</div>
 														<div className="id">{user.id}</div>
