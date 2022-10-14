@@ -1,0 +1,662 @@
+@import "./palette.scss";
+
+.c_wrapper {
+	background-color: $pastel_white;
+	height: 100%;
+	.navbar {
+		padding: 10px;
+		background-color: $rich_orange;
+		position: relative;
+		z-index: 9;
+		.navelem {
+			flex-basis: 0px;
+			flex-grow: 1;
+		}
+		.mid {
+			h1 {
+				user-select: none;
+				font-weight: 900;
+				font-size: 300%;
+				color: white;
+				.circle {
+					padding-bottom: 5px;
+					font-size: 70%;
+				}
+			}
+		}
+		.right {
+			width: fit-content;
+			position: relative;
+			background-color: $darker_blue;
+			padding: 7px;
+			border-radius: 99px;
+			cursor: pointer;
+			.name {
+				user-select: none;
+				font-weight: 600;
+				padding-inline: 10px;
+				color: white;
+			}
+			.icon {
+				width: 40px;
+				.avatar {
+					border-radius: 99px;
+					height: 40px;
+					width: 40px;
+					background-color: white;
+					background-position: center;
+					background-size: cover;
+					background-repeat: none;
+				}
+			}
+			.dropdown {
+				&.hidden {
+					display: none;
+				}
+				cursor: default;
+				display: flex;
+				flex-direction: column;
+				gap: 5px;
+				background-color: white;
+				width: 100px;
+				padding: 10px;
+				border-radius: 10px;
+				position: absolute;
+				top: 60px;
+				border: 1px solid $darker_blue;
+				.bar_sickl {
+					border-top: 1px solid $darker_blue;
+				}
+				.elem {
+					* {
+						color: $darker_blue;
+					}
+					i {
+						font-size: 12px;
+					}
+					span {
+						user-select: none;
+					}
+					cursor: pointer;
+				}
+			}
+		}
+	}
+}
+
+.c_wrapper {
+	position: relative;
+	#chat-container {
+		pointer-events: none;
+		overflow: visible;
+		position: fixed;
+		z-index: 10;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		// max-height: fit-content;
+		// max-width: fit-content;
+		max-height: 500px;
+		max-width: 800px;
+		// transition: width 0.4s ease;
+		// transition: height 0.4s ease;
+		#chat {
+			max-height: 500px;
+			pointer-events: all;
+			$pad: 5px;
+			transition: transform 0.2s ease;
+			box-sizing: border-box;
+			max-width: 800px;
+			width: 100%;
+			height: 100%;
+			// min-width: fit-content;
+			padding: $pad;
+			border-top-right-radius: 9px;
+			background-color: $less_pastel_white;
+			.top_section {
+				gap: $pad;
+				.c_button {
+					background-color: $darker_blue;
+					&:active {
+						background-color: $dark_blue;
+						color: $less_pastel_white;
+							* {
+							color: $less_pastel_white;
+						}
+					}
+					color: $less_pastel_white;
+					* {
+						color: $less_pastel_white;
+					}
+					height: 40px;
+				}
+				.controller {
+					font-size: 16px;
+					width: 40px;
+					height: 40px;
+				}
+				.nav {
+					flex-grow: 5;
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					// gap: $pad;
+					.c_button {
+						border-radius: 0px;
+						flex-basis: 0px;
+						flex-grow: 1;
+					}
+					$button_border_radius: 99px;
+					.c_button:first-child {
+						border-top-left-radius: $button_border_radius;
+						border-bottom-left-radius: $button_border_radius;
+					}
+					.c_button:last-child {
+						border-top-right-radius: $button_border_radius;
+						border-bottom-right-radius: $button_border_radius;
+					}
+				}
+				.c_button.active {
+					background-color: $dark_blue;
+				}
+			}
+			.body {
+				max-width: 100%;
+				padding-block: 10px;
+				padding-bottom: 45px;
+				height: 100%;
+				// box-sizing: border-box;
+				.chatscroll {
+					.chat {
+						overflow-y: auto;
+						.empty {
+							.inner {
+								font-size: 150%;
+								font-weight: 700;
+								color: rgba(black, 0.2);
+							}
+						}
+						.room {
+							cursor: pointer;
+							padding: 10px 20px;
+							background-color: $darker_blue;
+							border-radius: 99px;
+							min-height: fit-content;
+							.name {
+								color: $less_pastel_white;
+								font-size: 24px;
+								font-weight: 600;
+								line-height: 100%;
+							}
+							&.dm {
+								padding-inline: 10px;
+								.name {
+									font-weight: 700;
+									font-size: 16px;
+								}
+								.left {
+									justify-content: center;
+								}
+							}
+							.left {
+								height: 45px
+							}
+							.owner {
+								color: $less_pastel_white;
+								font-size: 12px;
+								&.dm {
+									font-size: 16px;
+									font-weight: 500;
+									line-height: 100%;
+								}
+								&.online {
+									color: rgb(27, 161, 27);
+								}
+								&.ingame {
+									color: orange;
+								}
+								&.offline {
+									color: gray;
+								}
+							}
+							.icon {
+								color: $less_pastel_white;
+								width: 20px;
+								height: 20px;
+							}
+							.num {
+								color: $less_pastel_white;
+								font-weight: 600;
+								font-size: 16px;
+							}
+						}
+					}
+				}
+				.chatinterface {
+					overflow-y: hidden;
+					max-width: 100%;
+					border: 2px solid $darker_blue;
+					// background-color: $dark_blue;
+					border-radius: 13px;
+					.header {
+						padding: 5px 10px;
+						border-top-left-radius: 7px;
+						border-top-right-radius: 7px;
+						background-color: $darker_blue;
+						min-height: 40px;
+						color: $less_pastel_white;
+						border-bottom: 2px solid $less_pastel_white;
+						.users, .back {
+							font-size: 16px;
+							cursor: pointer;
+						}
+					}
+					.chatinterfaceusers {
+						overflow-y: auto;
+						padding: 5px;
+						.empty {
+							.inner {
+								font-size: 150%;
+								font-weight: 700;
+								color: rgba(black, 0.2);
+							}
+						}
+						.tabuser {
+							padding: 7px;
+							border-radius: 99px;
+							background-color: $darker_blue;
+							color: $less_pastel_white;
+							.left {
+								.status {
+									&.online {
+										color: rgb(27, 161, 27);
+									}
+									&.ingame {
+										color: orange;
+									}
+									&.offline {
+										color: gray;
+									}
+								}
+								.avatar {
+									background-color: white;
+									border-radius: 100%;
+									$dim: 45px;
+									width: $dim;
+									height: $dim;
+								}
+							}
+							.right {
+								padding-right: 10px;
+							}
+						}
+						.selectusertype {
+							.c_button {
+								background-color: $darker_blue;
+								&:active {
+									background-color: $dark_blue;
+								}
+								&.active {
+									background-color: $dark_blue;
+								}
+								$button_border_radius: 99px;
+								border-radius: 0;
+								color: $less_pastel_white;
+								&:first-child {
+									border-top-left-radius: $button_border_radius;
+									border-bottom-left-radius: $button_border_radius;
+								}
+								&:last-child {
+									border-top-right-radius: $button_border_radius;
+									border-bottom-right-radius: $button_border_radius;
+								}
+							}
+						}
+						input {
+							border: 2px solid $darker_blue;
+							border-radius: 5px;
+						}
+						.changeroompassword {
+							align-items: stretch;
+						}
+						.leave {
+							width: fit-content;
+							background-color: rgb(230, 52, 52);
+							font-weight: 900;
+						}
+						.user {
+							// height: 40px;
+							padding: 7px;
+							background-color: $darker_blue;
+							color: $less_pastel_white;
+							border-radius: 99px;
+							width: 100%;
+							.avatar {
+								.image {
+									background-color: white;
+									width: 45px;
+									height: 45px;
+									border-radius: 999px;
+								}
+							}
+							.container {
+								.id {
+									color: gray;
+									font-size: 75%;
+								}
+							}
+							.iconcontainer {
+								padding-right: 10px;
+								cursor: pointer;
+								width: 20px;
+								display: flex;
+								align-items: center;
+								justify-content: center;
+								// position: relative;
+								p {
+									white-space: nowrap;
+									display: none;
+								}
+								&:hover {
+									p {
+										display: flex;
+										justify-content: center;
+										padding: 3px;
+										transform: translateY(-28px);
+										font-size: 12px;
+										border-radius: 3px;
+										display: inline-block;
+										position: absolute;
+										color: $less_pastel_white;
+										background-color: $dark_blue;
+										font-weight: 600;
+										// border: 1px solid gray;
+										pointer-events: none;
+										width: fit-content;
+										&::before {
+											content: "";
+											position: absolute;
+											left: calc(50% - 5px);
+											top: 100%;
+											border: 5px solid;
+											border-color:	$dark_blue
+															rgba($dark_blue, 0)
+															rgba($dark_blue, 0)
+															rgba($dark_blue, 0);
+										}
+									}
+								}
+							}
+							.addadmin {
+								.plus {
+									position: absolute;
+									font-size: 75%;
+									color: $darker_blue;
+								}
+							}
+						}
+					}
+					// .name {
+					// 	cursor: pointer;
+					// }
+					.messages {
+						// background-color: $pastel_dark_blue;
+						// margin-inline: 15px;
+						height: 85%;
+						border-bottom-left-radius: 7px;
+						border-bottom-right-radius: 7px;
+						max-width: 100%;
+						overflow-y: scroll;
+						.msgcontainer {
+							padding-block: 5px;
+							padding-left: 5px;
+							max-width: 100%;
+							min-height: 100%;
+							max-height: unset;
+							.message {
+								width: fit-content;
+								max-width: 80%;
+								.container {
+									width: 100%;
+									// margin-inline: 5px;
+									padding: 5px;
+									// width: fit-content;
+									.profilepic {
+										width: 40px;
+										height: 40px;
+										background-color: white;
+										border-radius: 999px;
+										flex-shrink: 0;
+										flex-basis: 40px;
+									}
+									.message_text {
+										// word-wrap: break-all;
+										overflow-wrap: break-word;
+										white-space: pre-wrap;	
+										padding: 10px 10px;
+										padding-right: 40px;
+										padding-bottom: 20px;
+										min-height: 40px;
+										width: 100%;
+										max-width: 100%;
+										border-radius: 7px;
+										background-color: $less_pastel_white;
+									}
+								}
+								&.notmine {
+									align-self: flex-start;
+									.message_text {
+										.username {
+											color: gray;
+											font-size: 75%;
+										}
+										background-color: white;
+										filter: drop-shadow(0px 0px 5px rgba(black, 0.3));
+										padding-top: 5px;
+									}
+								}
+								&.mine {
+									align-self: flex-end;
+									.message_text {
+										color: $less_pastel_white;
+										background-color: $darker_blue;
+									}
+								}
+							}
+						}
+					}
+					.input {
+						gap: 10px;
+						border-top: 2px solid rgba($darker_blue, 0.2);
+						// background-color: gray;
+						border-bottom-left-radius: 7px;
+						border-bottom-right-radius: 7px;
+						height: 60px;
+						padding-inline: 10px;
+						padding-block: 10px;
+						align-items: stretch;
+						.text_input {
+							outline: 0;
+							padding-top: 5px;
+							resize: none;
+							width: 90%;
+							height: 100%;
+							padding-inline: 5px;
+							border-radius: 7px;
+							border: 2px solid rgb(28, 54, 83);
+							// font-weight: 700;
+							background-color: white;
+							color: $darker_blue;
+							font-size: 16px;
+						}
+						.submit {
+							border-radius: 7px;
+							cursor: pointer;
+							width: 10%;
+							background-color: $pastel_dark_blue;
+						}
+					}
+				}
+				.rooms {
+					gap: 10px;
+					.top_section {
+						.roomnav {
+							flex-grow: 5;
+							.c_button {
+								flex-grow: 1;
+								flex-basis: 0px;
+							}
+						}
+					}
+					.roomsbody {
+						overflow-y: auto;
+						flex-grow: 1;
+						.create-room-form {
+							label {
+								min-width: 100px;
+							}
+							.type_radios {
+								flex-grow: 1;
+							}
+							.type_subcontainer {
+								label {
+									flex-grow: 1;
+								}
+							}
+
+						}
+						input[type="text"], input[type="password"] {
+							background-color: white;
+							border: 2px solid $darker_blue;
+							font-weight: 600;
+							border-radius: 7px;
+							padding: 5px;
+						}
+						.norooms {
+							h1 {
+								color: rgba(black, 0.2);
+							}
+						}
+						.publicrooms {
+							overflow-y: auto;
+							.room {
+								// cursor: pointer;
+								padding: 10px;
+								background-color: $darker_blue;
+								border-radius: 7px;
+								min-height: fit-content;
+						
+								.name {
+									color: $less_pastel_white;
+									font-size: 24px;
+									font-weight: 600;
+								}
+						
+								.owner {
+									color: $less_pastel_white;
+									font-size: 12px;
+								}
+						
+								.icon {
+									color: $less_pastel_white;
+									width: 20px;
+									height: 20px;
+								}
+						
+								.num {
+									color: $less_pastel_white;
+									font-weight: 600;
+									font-size: 16px;
+								}
+							}
+						}
+					}
+				}
+				.friends {
+					overflow-y: auto;
+					height: 100%;
+					.empty {
+						height: 80px;
+						width: 100%;
+						.inner {
+							font-size: 150%;
+							color: rgba(#000, 0.2);
+							font-weight: 700;
+						}
+					}
+					padding-inline: 10px;
+					.title {
+						font-size: 200%;
+						padding-block: 20px;
+					}
+					.friendscontainer {
+						.friend {
+							padding: 10px;
+							cursor: pointer;
+							border-radius: 99px;
+							background-color: $darker_blue;
+							.right {
+								padding-right: 10px;
+								.invite {
+									background-color: yellow;
+								}
+								.invite:active {
+									background-color: orange;
+								}
+								.spectate {
+									background-color: yellow;
+								}
+								.spectate:active {
+									background-color: orange;
+								}
+							}
+							.avatar {
+								border-radius: 100%;
+								background-color: white;
+							}
+							.name {
+								color: $less_pastel_white;
+							}
+							.status {
+								font-weight: 700;
+							}
+						}
+					}
+					.fr_req {
+						.container {
+							.friend_request {
+								padding: 10px;
+								cursor: pointer;
+								border-radius: 99px;
+								background-color: $darker_blue;
+								.right {
+									padding-right: 10px;
+									.decline {
+										background-color: orangered;
+									}
+									.decline:active {
+										background-color: red
+									}
+									// .view {
+										
+									// }
+								}
+								.avatar {
+									border-radius: 100%;
+									background-color: white;
+								}
+								.name {
+									color: $less_pastel_white;
+								}
+								.status {
+									font-weight: 700;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
