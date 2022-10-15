@@ -27,7 +27,7 @@ If you are more curious about this project , you could find our Notion documenta
 
 ## Collaborators:
 
-- [@ZainebQadiri](https://github.com/sbensarg)
+- [@ZainebQadiri](https://github.com/Zqadiri)
 - [@SaraBensarghin](https://github.com/sbensarg)
 - [@sickl8](https://github.com/sickl8)
 - [@AyoubAmzouar](https://github.com/Ayoub-Amzouar)
