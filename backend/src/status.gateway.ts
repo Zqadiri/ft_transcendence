@@ -42,10 +42,12 @@ export class StatusGateway implements OnGatewayDisconnect {
 		}
 	}
 
-	#addNewClient(client: string, user: U_Status) {
+	#addNewClient(client: string, user: U_Status): boolean {
 		if (!user.clients.includes(client)) {
 			user.clients.push(client);
+			return true;
 		}
+		return false;
 	}
 
 	@SubscribeMessage("updateStatus")
@@ -63,19 +65,18 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 			this.usersStatus.set(userId, user);
 			await this.userServ.updateStatus(userId, status);
+			this.server.emit("UserStatusChanged", { userId: userId, status: status });
 		}
 		else {
 			user = this.usersStatus.get(userId);
-
-			this.#addNewClient(client.id, user);
-
-			if (user.status !== "ingame")
-			{
-				user.status = status;
-				await this.userServ.updateStatus(userId, status);
-			}
+		
 			this.usersStatus.set(userId, user);
+			if (this.#addNewClient(client.id, user) && user.status === "ingame")
+				return ;
+	
+			user.status = status;
+			await this.userServ.updateStatus(userId, status);
+			this.server.emit("UserStatusChanged", { userId: userId, status: status });
 		}
-		user.status !== "ingame" ? this.server.emit("UserStatusChanged", { userId: userId, status: status }) : "";
 	}
 }
