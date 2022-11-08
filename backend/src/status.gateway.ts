@@ -3,6 +3,11 @@ import { UsersService } from './users/users.service';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 
+interface U_Status {
+	clients: string[],
+	status: string
+}
+
 @WebSocketGateway({
 	namespace: "status",
 	cors: {
@@ -11,110 +16,66 @@ import { Logger } from '@nestjs/common';
 })
 export class StatusGateway implements OnGatewayDisconnect {
 
-	constructor( private readonly userServ: UsersService ) {}
+	constructor(private readonly userServ: UsersService) { }
 	@WebSocketServer()
 	server: Server;
 
-
-	private logger: Logger = new Logger("StatusGateway");
-
-	private	users = {};
-
-	hasUserid(userId: number): boolean
-	{
-		let		found: boolean = false;
-
-		for (const property in this.users) {
-			if (this.users[property][0] === userId)
-			{
-				found = true;
-				break ;
-			}
-		}
-		return (found);
-	}
-
-	getUserStatus(userId: number): string
-	{
-		let		status: string;
-
-		for (const property in this.users)
-		{
-			if (this.users[property][0] === userId)
-			{
-				status = this.users[property][1];
-				if (status === "offline")
-					delete this.users[property];
-				break ;
-			}
-		}
-		return (status);
-	}
+	private usersStatus = new Map<number, U_Status>();
 
 	async handleDisconnect(client: any) {
-		this.logger.log(client.id + " Disconnected");
-
-		if (this.users[client.id])
+		let index: number;
+		for (const [key, value] of this.usersStatus)
 		{
-			const	userId: number = this.users[client.id][0];
+			index = value.clients.indexOf(client.id);
 
-			delete this.users[client.id];
-			if (!this.hasUserid(userId))
+			if (index !== -1)
 			{
-				this.server.emit("UserStatusChanged", {userId: userId, status: "offline"});
-				await this.userServ.updateStatus(userId, "offline");
+				value.clients.splice(index, 1);
+
+				if (value.clients.length === 0) {
+					await this.userServ.updateStatus(key, "offline");
+					this.server.emit("UserStatusChanged", { userId: key, status: "offline" });
+					this.usersStatus.delete(key);
+				}
+				break;
 			}
-			else
-			{
-				const	status: string = this.getUserStatus(userId);
+		}
+	}
 
-				this.server.emit("UserStatusChanged", {userId: userId, status: status});
+	#addNewClient(client: string, user: U_Status) {
+		if (!user.clients.includes(client)) {
+			user.clients.push(client);
+		}
+	}
+
+	@SubscribeMessage("updateStatus")
+	async handleUpdateStatus(client: any, { userId, status }) {
+		if (!userId || !status)
+			return;
+
+		let user: U_Status;
+
+		if (!this.usersStatus.has(userId)) {
+			user = {
+				clients: [client.id],
+				status: status
+			}
+
+			this.usersStatus.set(userId, user);
+			await this.userServ.updateStatus(userId, status);
+		}
+		else {
+			user = this.usersStatus.get(userId);
+
+			this.#addNewClient(client.id, user);
+
+			if (user.status !== "ingame")
+			{
+				user.status = status;
 				await this.userServ.updateStatus(userId, status);
 			}
+			this.usersStatus.set(userId, user);
 		}
+		user.status !== "ingame" ? this.server.emit("UserStatusChanged", { userId: userId, status: status }) : "";
 	}
-
-	@SubscribeMessage("userId")
-	async handleUserId(client: any, userId: number)
-	{
-		this.logger.log(`userId event got fired by: ${userId}, status: online`);
-		if (userId)
-		{
-			if (!this.hasUserid(userId))
-			{
-				this.server.emit("UserStatusChanged", {userId: userId, status: "online"});
-				await this.userServ.updateStatus(userId, "online");
-			}
-			this.users[client.id] = [userId, "online"];
-		}
-	}
-
-	@SubscribeMessage("inGame")
-	async handleInGame(client: any, {userId, status})
-	{
-		if (this.users[client.id])
-		{
-			this.users[client.id][1] = status;
-			this.server.emit("UserStatusChanged", {userId: userId, status: status});
-			await this.userServ.updateStatus(Number(userId), status);
-			this.logger.log(`inGame event got fired by: ${userId}, status: ${status}`);
-		}
-	}
-
-	@SubscribeMessage("logOut")
-	async handleLogOut(client: any, userId)
-	{
-		this.logger.log(`logOut event got fired by: ${userId}, status: offline`);
-		for (const property in this.users)
-		{
-			if (this.users[property][0] === userId)
-				this.users[property][1] = "offline";
-		}
-		if (userId)
-		{
-			this.server.emit("UserStatusChanged", {userId: userId, status: "offline"});
-			await this.userServ.updateStatus(userId, "offline");
-		}
-	}
-
 }

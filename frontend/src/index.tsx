@@ -9,7 +9,7 @@ export const statusSocket = io('/status', {
 });
 
 statusSocket.on("connect", () => {
-	statusSocket.emit('userId', cookies.get('id'));
+	statusSocket.emit("updateStatus", {userId: cookies.get('id'), status: "online"});
 });
 
 const root = ReactDOM.createRoot(

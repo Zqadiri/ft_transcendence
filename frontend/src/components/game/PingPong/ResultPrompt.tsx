@@ -20,7 +20,6 @@ function ResultPrompt(): JSX.Element {
 	useEffect(() => {
 		return () => {
 			clearTimeout(timeoutcodeRef.current)
-			location.reload();
 		}
 	}, [])
 

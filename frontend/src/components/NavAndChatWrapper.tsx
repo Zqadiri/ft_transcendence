@@ -297,7 +297,7 @@ const NavAndChatWrapper = () => {
 			})
 			if (data.userId === parseInt(cookies.get("id"))) {
 				if (data.status === "offline")
-					statusSocket.emit('userId', cookies.get('id'));
+					statusSocket.emit("UserStatusChanged", {userId: cookies.get('id'), status: "offline"});
 				else
 					setSelf(x => (x ? {...x, status: data.status} : undefined));
 			}
@@ -476,7 +476,6 @@ const NavAndChatWrapper = () => {
 							<div className="bar_sickl"></div> */}
 							<div className="logout elem flex-ai-cr flex-gap5"
 								onClick={() => {
-									statusSocket.emit("logOut", cookies.get("id"));
 									statusSocket.disconnect();
 									cookies.remove("_token");
 									// document.cookie = "";
