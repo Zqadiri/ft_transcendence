@@ -9,14 +9,12 @@ import { BanOrMuteMembersPlusTokenDto } from './dto/create-chat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
 import { Repository } from 'typeorm/repository/Repository';
-import { JwtService } from '@nestjs/jwt';
 
 
 @WebSocketGateway(
 	{
 		namespace: '/chatNamespace'
 	},
-
 )
 export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
@@ -29,15 +27,15 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	private logger: Logger = new Logger('ChatsGateway');
 
 	constructor(private readonly chatsService: ChatsService, private readonly chatLogsService: ChatLogsService,
-		private readonly UsersService: UsersService, private readonly jwtService: JwtService) { }
+		private readonly UsersService: UsersService) { }
 
 
 	afterInit(server: Server) {
 		this.logger.log('Initiaalized!');
 	}
 
-	handleConnection(client: Socket, ...args: any[]) {
-		// console.log(` client Connected ${client.id}`);
+	async handleConnection(client: Socket, ...args: any[]) {
+		await this.chatsService.getUserFromSocket(client);
 	}
 
 	handleDisconnect(client: Socket) {
@@ -47,8 +45,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	@SubscribeMessage('saveChatRoom')
 	async create(@ConnectedSocket() client: Socket, @MessageBody() createChatDto: ChatLogsDto) {
 
-		// emit the message just to specific roomz
-		const finduser = await this.chatLogsService.findUserUsingID(createChatDto.userID);
+		// emit the message just to specific room
+		const finduser = await this.chatsService.getUserFromSocket(client);
+		//const finduser = await this.chatLogsService.findUserUsingID(createChatDto.userID);
 		const findroom = await this.chatsService.findRoom(createChatDto.roomName);
 
 		let user: { action: string; userID: number; current_time: number; duration: number; } | undefined;
@@ -69,28 +68,29 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	async handleGetMessageToRoom(client: Socket, data: { userID: number, messageID: number }) {
 		const message = await this.chatLogsService.GetMessage(data.messageID);
 		const blockedlist = await this.UsersService.blockedFriend(data.userID);
-		const user = await this.chatLogsService.findUserUsingID(message.userID);
+		const user = await this.chatsService.getUserFromSocket(client);
+		//const user = await this.chatLogsService.findUserUsingID(message.userID);
 
 		if (!blockedlist.blockedID.find(elm => elm === user.id))
 			client.emit('messageToRoomAck', message);
 	}
 
-	async validateJwt(token: string) {
-		try {
-			let decoded = await this.jwtService.verifyAsync(token, { secret: String(process.env.JWT_SECRET_KEY) });
-			// console.log({decoded})
-			if (decoded)
-				return decoded;
-			return false;
-		} catch {
-			return false;
-		}
-	}
+	// async validateJwt(token: string) {
+	// 	try {
+	// 		let decoded = await this.jwtService.verifyAsync(token, { secret: String(process.env.JWT_SECRET_KEY) });
+	// 		// console.log({decoded})
+	// 		if (decoded)
+	// 			return decoded;
+	// 		return false;
+	// 	} catch {
+	// 		return false;
+	// 	}
+	// }
 
-	@SubscribeMessage('validateJwtSyn')
-	async checkJwt(client: Socket, token: string) {
-		client.emit('validateJwtAck', await this.validateJwt(token));
-	}
+	// @SubscribeMessage('validateJwtSyn')
+	// async checkJwt(client: Socket, token: string) {
+	// 	client.emit('validateJwtAck', await this.validateJwt(token));
+	// }
 
 	@SubscribeMessage('socketJoinRoom')
 	async handleJoinRoom(client: Socket, roomName: string) {

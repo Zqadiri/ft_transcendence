@@ -7,6 +7,11 @@ import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { ChatLogs } from 'src/chat-logs/entities/chat-log.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { JwtService } from '@nestjs/jwt';
+import { Socket } from 'socket.io';
+import { WsException } from '@nestjs/websockets';
+import { parse } from 'cookie';
+
 
 @Injectable()
 export class ChatsService {
@@ -22,7 +27,32 @@ export class ChatsService {
 
   private readonly logger = new Logger(ChatsService.name);
 
+  constructor(private readonly jwtService: JwtService) { }
 
+
+  /** Get the authentication token from the cookies*/
+
+  async getUserFromAuthenticationToken(token: string) {
+		
+		const payload = await this.jwtService.verify(token, { secret: String(process.env.JWT_SECRET_KEY) });
+
+		if (payload.id) 
+			return this.findUser(payload.id);
+	}
+
+  async getUserFromSocket(socket: Socket)
+  {
+	  const cookie = socket.handshake.headers.cookie;
+	  const { Authentication: authenticationToken } = parse(cookie);
+	  const user = await this.getUserFromAuthenticationToken(authenticationToken);
+	  if (!user) {
+		  throw new WsException('Invalid credentials.');
+		}
+		return user;
+	}
+
+  /** ----------------------------------------------------- */
+  
   async findUser(userID: number)
   {
     // findOneBy - Finds the first entity that matches given FindOptionsWhere.

@@ -8,7 +8,7 @@ import { User } from './entities/user.entity';
 import { UserRepository } from './user.repository';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-
+import { JwtService } from '@nestjs/jwt';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -19,6 +19,6 @@ import { UsersService } from './users.service';
     ]),
   ],
   controllers: [UsersController],
-  providers: [UsersService, ChatsService, ChatLogsService]
+  providers: [UsersService, ChatsService, ChatLogsService, JwtService]
 })
 export class UsersModule {}
