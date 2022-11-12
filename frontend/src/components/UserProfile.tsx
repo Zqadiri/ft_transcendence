@@ -12,6 +12,7 @@ import { ReactComponent as StarMedal4 } from "../img/4-star-medal.svg";
 import { ReactComponent as StarMedal5 } from "../img/5-star-medal.svg";
 import { ReactComponent as StarMedal6 } from "../img/6-star-medal.svg";
 import ReactTooltip from "react-tooltip";
+import { chatSocket } from "./NavAndChatWrapper";
 
 export type Achievement = "firstGame" | "levelThree" | "levelSix" | "closeCall" | "flawLessWin" | "flawLessWinStreak"
 
@@ -183,6 +184,7 @@ const UserProfile = (props: { self: boolean }) => {
 	}
 
 	useEffectOnce(() => {
+		chatSocket.disconnect().connect();
 		updateUserProfile(params);
 		let tim = setTimeout(() => {
 			updateUserProfile(params);

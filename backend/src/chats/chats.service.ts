@@ -36,19 +36,24 @@ export class ChatsService {
 		
 		const payload = await this.jwtService.verify(token, { secret: String(process.env.JWT_SECRET_KEY) });
 
-		if (payload.id) 
-			return this.findUser(payload.id);
-	}
+		if (payload.id){
+      return this.findUser(payload.id);
+    }
+  }
 
   async getUserFromSocket(socket: Socket)
   {
-	  const cookie = socket.handshake.headers.cookie;
-	  const { Authentication: authenticationToken } = parse(cookie);
-	  const user = await this.getUserFromAuthenticationToken(authenticationToken);
-	  if (!user) {
-		  throw new WsException('Invalid credentials.');
-		}
-		return user;
+	  const authenticationToken = socket.handshake.auth.token;
+	  // const { Authentication: authenticationToken } = parse(cookie);
+    if (authenticationToken)
+    {
+      const user = await this.getUserFromAuthenticationToken(authenticationToken);
+
+      if (!user) {
+        throw new WsException('Invalid credentials.');
+      }
+      return user;
+    }
 	}
 
   /** ----------------------------------------------------- */

@@ -70,6 +70,7 @@ function	PingPong(): JSX.Element
 			window.onbeforeunload = null;
 			global.socket.disconnect();
 			resetGame();
+			location.reload();
 		};
 	}, []);
 

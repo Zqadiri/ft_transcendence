@@ -21,7 +21,12 @@ console.log("Global console.log()");
 
 export const chatSocket = (() => {
 	console.log("connecting to chatNamespace...");
-	return io("/chatNamespace", { forceNew: true });
+	return io("/chatNamespace", {
+		 forceNew: true,
+		 auth: { 
+			token: cookies.get("_token")
+		  }
+		});
 })();
 
 export interface UserStat {
