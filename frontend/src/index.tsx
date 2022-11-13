@@ -6,10 +6,13 @@ import { io } from 'socket.io-client';
 
 export const statusSocket = io('/status', {
 	forceNew: true,
+	auth: { 
+		token: cookies.get("_token")
+	}
 });
 
 statusSocket.on("connect", () => {
-	statusSocket.emit("updateStatus", {userId: cookies.get('id'), status: "online"});
+	statusSocket.emit("updateStatus", "online");
 });
 
 const root = ReactDOM.createRoot(

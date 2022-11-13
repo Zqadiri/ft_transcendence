@@ -1,4 +1,5 @@
 import { io } from "socket.io-client";
+import { cookies } from "../../../util";
 import { Global } from "../../Interfaces/Global.interface";
 
 export const global: Global = {
@@ -15,7 +16,10 @@ export const global: Global = {
 	playerId: 0,
 	socket: io("/game", {
 		closeOnBeforeunload: false,
-		autoConnect: false
+		autoConnect: false,
+		auth: { 
+			token: cookies.get("_token")
+		}
 	}),
 	theme: "none",
 	secondPlayerExist: false,

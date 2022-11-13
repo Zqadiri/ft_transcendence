@@ -1,7 +1,8 @@
 import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { UsersService } from './users/users.service';
 import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
+import { ChatsService } from './chats/chats.service';
 
 interface U_Status {
 	clients: string[],
@@ -19,6 +20,9 @@ export class StatusGateway implements OnGatewayDisconnect {
 	constructor(private readonly userServ: UsersService) { }
 	@WebSocketServer()
 	server: Server;
+
+	@Inject(ChatsService)
+	private chatsService: ChatsService;
 
 	private usersStatus = new Map<number, U_Status>();
 
@@ -51,32 +55,33 @@ export class StatusGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage("updateStatus")
-	async handleUpdateStatus(client: any, { userId, status }) {
-		if (!userId || !status)
+	async handleUpdateStatus(client: any, status: string) {
+		const	userData = await this.chatsService.getUserFromSocket(client);
+		if (!userData || !status)
 			return;
 
 		let user: U_Status;
 
-		if (!this.usersStatus.has(userId)) {
+		if (!this.usersStatus.has(userData.id)) {
 			user = {
 				clients: [client.id],
 				status: status
 			}
 
-			this.usersStatus.set(userId, user);
-			await this.userServ.updateStatus(userId, status);
-			this.server.emit("UserStatusChanged", { userId: userId, status: status });
+			this.usersStatus.set(userData.id, user);
+			await this.userServ.updateStatus(userData.id, status);
+			this.server.emit("UserStatusChanged", { userId: userData.id, status: status });
 		}
 		else {
-			user = this.usersStatus.get(userId);
+			user = this.usersStatus.get(userData.id);
 		
-			this.usersStatus.set(userId, user);
 			if (this.#addNewClient(client.id, user) && user.status === "ingame")
 				return ;
 	
 			user.status = status;
-			await this.userServ.updateStatus(userId, status);
-			this.server.emit("UserStatusChanged", { userId: userId, status: status });
+			this.usersStatus.set(userData.id, user);
+			await this.userServ.updateStatus(userData.id, status);
+			this.server.emit("UserStatusChanged", { userId: userData.id, status: status });
 		}
 	}
 }

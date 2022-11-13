@@ -41,19 +41,17 @@ export class ChatsService {
     }
   }
 
-  async getUserFromSocket(socket: Socket)
-  {
-	  const authenticationToken = socket.handshake.auth.token;
-	  // const { Authentication: authenticationToken } = parse(cookie);
-    if (authenticationToken)
-    {
-      const user = await this.getUserFromAuthenticationToken(authenticationToken);
+	async getUserFromSocket(socket: Socket) {
+		const authenticationToken = socket.handshake.auth.token;
+		// const { Authentication: authenticationToken } = parse(cookie);
+		if (authenticationToken) {
+			const user = await this.getUserFromAuthenticationToken(authenticationToken);
 
-      if (!user) {
-        throw new WsException('Invalid credentials.');
-      }
-      return user;
-    }
+			if (!user) {
+				throw new WsException('Invalid credentials.');
+			}
+			return user;
+		}
 	}
 
   /** ----------------------------------------------------- */

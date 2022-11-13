@@ -9,6 +9,8 @@ import { UpdateGameService } from './update-game.service';
 import { UserRepository } from 'src/users/user.repository';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { ChatsService } from 'src/chats/chats.service';
+import { ChatsModule } from 'src/chats/chats.module';
 
 @Module({
   imports: [
@@ -16,8 +18,9 @@ import { UsersService } from 'src/users/users.service';
       Game,
 	  GameRepository,
 	  UserRepository,
-	  User
+	  User,
     ]),
+	ChatsModule
   ],
   controllers: [GameController],
   providers: [UsersService, GamesService, GameGateway, UpdateGameService]

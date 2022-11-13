@@ -12,7 +12,6 @@ import { global } from './Data/PingPong.d';
 import { addSocketEventHandlers, handleLeftPaddle, handleRightPaddle, renderCanvas, resetGame } from './Utils/tools';
 import { CurrentPlayersData } from '../Interfaces/CurrentPlayersData.interface';
 import { playerOne, playerTwo, spectator } from './Data/PingPong.contants';
-import { cookies } from "../../util";
 import { statusSocket } from "../../..";
 
 export let gameContext = createContext<any>({});
@@ -60,17 +59,17 @@ function	PingPong(): JSX.Element
 
 		return () => {
 			if (global.playerId !== spectator && global.playerId === 1)
-				statusSocket.emit("updateStatus", {userId: cookies.get('id'), status: "online"});
+				statusSocket.emit("updateStatus", "online");
 			else if (global.playerId !== spectator && global.playerId === 2)
 			{
 				setTimeout(() => {
-					statusSocket.emit("updateStatus", {userId: cookies.get('id'), status: "online"});
+					statusSocket.emit("updateStatus", "online");
 				}, 500);
 			}
 			window.onbeforeunload = null;
 			global.socket.disconnect();
 			resetGame();
-			location.reload();
+			// location.reload();
 		};
 	}, []);
 

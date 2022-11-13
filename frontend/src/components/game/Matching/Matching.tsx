@@ -56,8 +56,8 @@ export function	addMatchingSocketEventHandler(navigate: Function, loc: Location)
 
 	global.socket.off("secondPlayerJoined").on("secondPlayerJoined", () => {
 		global.secondPlayerExist = true;
-		statusSocket.emit("updateStatus", {userId: cookies.get('id'), status: "ingame"});
-		console.log({loc})
+		statusSocket.emit("updateStatus", "ingame");
+
 		if (loc.pathname.startsWith("/play")) {
 			navigate("/");
 			setTimeout(() => {

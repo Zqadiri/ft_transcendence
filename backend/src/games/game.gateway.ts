@@ -1,6 +1,7 @@
-import { Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayDisconnect, OnGatewayConnection } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ChatsService } from 'src/chats/chats.service';
 import { UpdateGameService } from './update-game.service';
 
 interface	MatchingData {
@@ -19,6 +20,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 
 	private	themeOne: MatchingData;
 	private	themeTwo: MatchingData;
+	
+	@Inject(ChatsService)
+	private chatsService: ChatsService;
 
 	@WebSocketServer()
 	server: Server;
@@ -38,7 +42,8 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 		};
 	}
 
-	handleConnection(client: any, ...args: any[]) {
+	async handleConnection(client: any, ...args: any[]) {
+		await this.chatsService.getUserFromSocket(client);
 		this.logger.log(client.id + " Connected");
 	}
 
@@ -72,13 +77,14 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	@SubscribeMessage("joinTheme1")
-	handleJoinTheme1(client: Socket, userId: number): void {
+	async handleJoinTheme1(client: Socket) {
+		const	user = await this.chatsService.getUserFromSocket(client);
 		const	roomName = "Room #" + this.themeOne.roomCounter;
 
-		if (this.themeOne.usersId.length === 1 && this.themeOne.usersId[0] === userId)
+		if (this.themeOne.usersId.length === 1 && this.themeOne.usersId[0] === user.id)
 			return;
 		this.themeOne.clients.push(client.id);
-		this.themeOne.usersId.push(userId);
+		this.themeOne.usersId.push(user.id);
 
 		client.join(roomName);
 		client.emit("joinedRoom", roomName, this.themeOne.clients.length);
@@ -90,13 +96,14 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	@SubscribeMessage("joinTheme2")
-	handleJoinTheme2(client: Socket, userId: number): void {
+	async handleJoinTheme2(client: Socket) {
+		const	user = await this.chatsService.getUserFromSocket(client);
 		const	roomName = "Room #" + this.themeTwo.roomCounter;
 
-		if (this.themeTwo.usersId.length === 1 && this.themeTwo.usersId[0] === userId)
+		if (this.themeTwo.usersId.length === 1 && this.themeTwo.usersId[0] === user.id)
 			return;
 		this.themeTwo.clients.push(client.id);
-		this.themeTwo.usersId.push(userId);
+		this.themeTwo.usersId.push(user.id);
 
 		client.join(roomName);
 		client.emit("joinedRoom", roomName, this.themeTwo.clients.length);

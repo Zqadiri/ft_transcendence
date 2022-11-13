@@ -30,9 +30,9 @@ function			Selection(): JSX.Element {
 			global.socket.connect();
 
 			if (activeTheme === "theme01")
-				global.socket.emit("joinTheme1", Number(cookies.get("id")));
+				global.socket.emit("joinTheme1");
 			else if (activeTheme === "theme02")
-				global.socket.emit("joinTheme2", Number(cookies.get("id")));
+				global.socket.emit("joinTheme2");
 
 			setActiveComponent(waitingComponent);
 		}
