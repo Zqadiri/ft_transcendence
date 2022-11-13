@@ -63,7 +63,7 @@ export class UsersController {
 		res.cookie("avatar", "/" + file.path, {
 			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,
-			domain: 'localhost',
+			domain: '10.11.7.6',
 			sameSite: "strict",
 			secure: false,
 			path: '/'
@@ -84,7 +84,7 @@ export class UsersController {
 			res.cookie('name', newUsername,{
 				maxAge: 1000 * 60 * 60 * 24,
 				httpOnly: false,
-				domain: 'localhost',
+				domain: '10.11.7.6',
 				sameSite: "strict",
 				secure: false,
 				path: '/'

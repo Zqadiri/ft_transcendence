@@ -56,32 +56,31 @@ export class StatusGateway implements OnGatewayDisconnect {
 
 	@SubscribeMessage("updateStatus")
 	async handleUpdateStatus(client: any, status: string) {
-		const	userData = await this.chatsService.getUserFromSocket(client);
-		if (!userData || !status)
-			return;
+		try {
+			const	userData = await this.chatsService.getUserFromSocket(client);
+			let user: U_Status;
 
-		let user: U_Status;
+			if (!this.usersStatus.has(userData.id)) {
+				user = {
+					clients: [client.id],
+					status: status
+				}
 
-		if (!this.usersStatus.has(userData.id)) {
-			user = {
-				clients: [client.id],
-				status: status
+				this.usersStatus.set(userData.id, user);
+				await this.userServ.updateStatus(userData.id, status);
+				this.server.emit("UserStatusChanged", { userId: userData.id, status: status });
 			}
-
-			this.usersStatus.set(userData.id, user);
-			await this.userServ.updateStatus(userData.id, status);
-			this.server.emit("UserStatusChanged", { userId: userData.id, status: status });
-		}
-		else {
-			user = this.usersStatus.get(userData.id);
+			else {
+				user = this.usersStatus.get(userData.id);
+			
+				if (this.#addNewClient(client.id, user) && user.status === "ingame")
+					return ;
 		
-			if (this.#addNewClient(client.id, user) && user.status === "ingame")
-				return ;
-	
-			user.status = status;
-			this.usersStatus.set(userData.id, user);
-			await this.userServ.updateStatus(userData.id, status);
-			this.server.emit("UserStatusChanged", { userId: userData.id, status: status });
-		}
+				user.status = status;
+				this.usersStatus.set(userData.id, user);
+				await this.userServ.updateStatus(userData.id, status);
+				this.server.emit("UserStatusChanged", { userId: userData.id, status: status });
+			}
+		} catch {}
 	}
 }

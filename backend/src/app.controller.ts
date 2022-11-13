@@ -24,7 +24,8 @@ export class AppController {
 	@Redirect()
 	async getAuthPage(@Res() response: Response){
 		return { 
-			url: 'https://api.intra.42.fr/oauth/authorize?client_id=92e62198e4bd75e7df8ab207bde4e884ad61f6c05cae826d6d0e18e98327391b&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Flogin&response_type=code'
+			url : 'https://api.intra.42.fr/oauth/authorize?client_id=92e62198e4bd75e7df8ab207bde4e884ad61f6c05cae826d6d0e18e98327391b&redirect_uri=http%3A%2F%2F10.11.7.6%3A3000%2Fauth%2Flogin&response_type=code'
+			// url: 'https://api.intra.42.fr/oauth/authorize?client_id=92e62198e4bd75e7df8ab207bde4e884ad61f6c05cae826d6d0e18e98327391b&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Flogin&response_type=code'
 		};	
 	}
 }

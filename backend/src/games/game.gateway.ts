@@ -43,8 +43,12 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	async handleConnection(client: any, ...args: any[]) {
-		await this.chatsService.getUserFromSocket(client);
-		this.logger.log(client.id + " Connected");
+		try {
+			await this.chatsService.getUserFromSocket(client);
+			this.logger.log(client.id + " Connected");
+		} catch {
+			this.logger.log(client.id + " was NOT Connected");
+		}
 	}
 
 	handleDisconnect(client: any) {
@@ -78,66 +82,80 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 
 	@SubscribeMessage("joinTheme1")
 	async handleJoinTheme1(client: Socket) {
-		const	user = await this.chatsService.getUserFromSocket(client);
-		const	roomName = "Room #" + this.themeOne.roomCounter;
-
-		if (this.themeOne.usersId.length === 1 && this.themeOne.usersId[0] === user.id)
-			return;
-		this.themeOne.clients.push(client.id);
-		this.themeOne.usersId.push(user.id);
-
-		client.join(roomName);
-		client.emit("joinedRoom", roomName, this.themeOne.clients.length);
-
-		if (this.#checkSecondPlayer(roomName, this.themeOne, "theme01"))
-			this.themeOne.roomCounter = this.themeOne.roomCounter % 1000000000;
-
-		this.logger.log(client.id + " joined Theme 1 & roomName " + roomName);
+		try {
+			const	user = await this.chatsService.getUserFromSocket(client);
+			const	roomName = "Room #" + this.themeOne.roomCounter;
+	
+			if (this.themeOne.usersId.length === 1 && this.themeOne.usersId[0] === user.id)
+				return;
+			this.themeOne.clients.push(client.id);
+			this.themeOne.usersId.push(user.id);
+	
+			client.join(roomName);
+			client.emit("joinedRoom", roomName, this.themeOne.clients.length);
+	
+			if (this.#checkSecondPlayer(roomName, this.themeOne, "theme01"))
+				this.themeOne.roomCounter = this.themeOne.roomCounter % 1000000000;
+	
+			this.logger.log(client.id + " joined Theme 1 & roomName " + roomName);
+		} catch {}
 	}
 
 	@SubscribeMessage("joinTheme2")
 	async handleJoinTheme2(client: Socket) {
-		const	user = await this.chatsService.getUserFromSocket(client);
-		const	roomName = "Room #" + this.themeTwo.roomCounter;
-
-		if (this.themeTwo.usersId.length === 1 && this.themeTwo.usersId[0] === user.id)
-			return;
-		this.themeTwo.clients.push(client.id);
-		this.themeTwo.usersId.push(user.id);
-
-		client.join(roomName);
-		client.emit("joinedRoom", roomName, this.themeTwo.clients.length);
+		try {
+			const	user = await this.chatsService.getUserFromSocket(client);
+			const	roomName = "Room #" + this.themeTwo.roomCounter;
 	
-		if (this.#checkSecondPlayer(roomName, this.themeTwo, "theme02"))
-		{
-			if (this.themeTwo.roomCounter > 2000000000)
-				this.themeTwo.roomCounter = 1000000000;
-		}
-
-		this.logger.log(client.id + " joined Theme 2 & roomName " + roomName);
+			if (this.themeTwo.usersId.length === 1 && this.themeTwo.usersId[0] === user.id)
+				return;
+			this.themeTwo.clients.push(client.id);
+			this.themeTwo.usersId.push(user.id);
+	
+			client.join(roomName);
+			client.emit("joinedRoom", roomName, this.themeTwo.clients.length);
+		
+			if (this.#checkSecondPlayer(roomName, this.themeTwo, "theme02"))
+			{
+				if (this.themeTwo.roomCounter > 2000000000)
+					this.themeTwo.roomCounter = 1000000000;
+			}
+	
+			this.logger.log(client.id + " joined Theme 2 & roomName " + roomName);
+		} catch {}
 	}
 
 	@SubscribeMessage("joinInvitation")
 	async handleJoinInvitation(client: Socket, {roomName, userCounter}) {
 		let		clients = await this.server.in(roomName).allSockets();
-	
+
+		// this case is to protect the inviter disconnection before invite is accepted
 		if (userCounter === 2 && clients.size === 0)
 			return ;
-		client.join(roomName);
-		client.emit("joinedRoom", roomName, userCounter);
 
-		clients = await this.server.in(roomName).allSockets();
-		
-		if (clients.size === 2)
-		{
-			const	iter = clients.values();
+		try {
+			const	user = await this.chatsService.getUserFromSocket(client);
 			const	usersId = roomName.split(":");
-		
-			this.updateGame.initializeServerObject(this.server);
-			this.updateGame.create(roomName, "theme01", iter.next().value, iter.next().value, usersId[1], usersId[2]);
-			this.server.to(roomName).emit("secondPlayerJoined");
+
+			if ( (clients.size === 0 && String(user.id) !== usersId[1]) || (clients.size === 1 && String(user.id) !== usersId[2]) )
+				return ;
+
+			client.join(roomName);
+			client.emit("joinedRoom", roomName, userCounter);
+
+			clients = await this.server.in(roomName).allSockets();
+			
+			if (clients.size === 2)
+			{
+				const	iter = clients.values();
+			
+				this.updateGame.initializeServerObject(this.server);
+				this.updateGame.create(roomName, "theme01", iter.next().value, iter.next().value, usersId[1], usersId[2]);
+				this.server.to(roomName).emit("secondPlayerJoined");
+			}
+			this.logger.log(client.id + " joined invitation & roomName " + roomName);
 		}
-		this.logger.log(client.id + " joined invitation & roomName " + roomName);
+		catch {}
 	}
 
 	@SubscribeMessage("joinSpecificRoom")
@@ -157,6 +175,6 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 
 	@SubscribeMessage("updatePaddlePosition")
 	handleUpdatePaddlePosition(client: Socket, {roomName, playerId, paddleY}): void {
-		this.updateGame.updatePaddlePosition(paddleY, roomName, playerId);
+		this.updateGame.updatePaddlePosition(paddleY, roomName, playerId, client.id);
 	}
 }

@@ -266,15 +266,15 @@ export class UpdateGameService {
 		}
 	}
 
-	updatePaddlePosition(paddlePosition: number, room: string, playerId: number): void
+	updatePaddlePosition(paddlePosition: number, room: string, playerId: number, clientId: string): void
 	{
 		let tmp: GameCoor = this.gameCoordinates.get(room);
 
 		if (tmp)
 		{
-			if (playerId === 1)
+			if (playerId === 1 && tmp.player1.socketId === clientId)
 				tmp.player1.y = paddlePosition;
-			else if (playerId === 2)
+			else if (playerId === 2 && tmp.player2.socketId === clientId)
 				tmp.player2.y = paddlePosition;
 
 			this.gameCoordinates.set(room, tmp);

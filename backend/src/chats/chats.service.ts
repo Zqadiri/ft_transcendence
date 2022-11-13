@@ -33,12 +33,19 @@ export class ChatsService {
   /** Get the authentication token from the cookies*/
 
   async getUserFromAuthenticationToken(token: string) {
-		
-		const payload = await this.jwtService.verify(token, { secret: String(process.env.JWT_SECRET_KEY) });
+		try
+		{	
+			const payload = await this.jwtService.verify(token, { secret: String(process.env.JWT_SECRET_KEY) });
 
-		if (payload.id){
-      return this.findUser(payload.id);
-    }
+			if (payload.id){
+      		return this.findUser(payload.id);
+			}
+		}catch(e)
+		{
+
+		}
+	
+
   }
 
 	async getUserFromSocket(socket: Socket) {
@@ -48,6 +55,7 @@ export class ChatsService {
 			const user = await this.getUserFromAuthenticationToken(authenticationToken);
 
 			if (!user) {
+				socket.emit("validateJwtAck", 0);
 				throw new WsException('Invalid credentials.');
 			}
 			return user;
@@ -438,6 +446,15 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     .select(['*'])
     .where("id=:id", { id })
     .getRawOne()
+    return room; 
+  }
+
+  async AllUserRoom(userId: number)
+  {
+    const room = await this.Chatrepository
+    .createQueryBuilder()
+    .where(":id = ANY (Chat.userID)", { id: userId })
+    .getMany()
     return room; 
   }
 

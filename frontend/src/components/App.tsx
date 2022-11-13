@@ -8,10 +8,11 @@ import { globalContext } from './util';
 import { useState } from 'react';
 import axios from 'axios';
 import { global } from './game/PingPong/Data/PingPong.d';
-import { handleInvitationDeclined } from './game/GameTabs';
+import { defaultComponent, handleInvitationDeclined } from './game/GameTabs';
 import { addMatchingSocketEventHandler } from './game/Matching/Matching';
 import { confirm } from "react-confirm-box";
 import TwoFA from './2fa';
+import { invitationWaiting } from './game/Matching/Data/Matching.constants';
 
 const options = {
 	labels: {
@@ -40,7 +41,8 @@ function App() {
 		{
 			let		declinedStatus = false;
 			chatSocket.off(`${currentUserId}declinedd`).on(`${currentUserId}declinedd` , async () => {
-				declinedStatus = true;
+				if (defaultComponent === invitationWaiting)
+					declinedStatus = true;
 			});
 
 			const	opponentId = roomName.split(":")[1];
@@ -62,11 +64,12 @@ function App() {
 				setChatIsOpen(false);
 			}
 			else
-				chatSocket.emit('invitationDeclined', {friendId: opponentId, currentId: currentUserId});
+				chatSocket.emit('invitationDeclined', opponentId);
 		});
 
 		chatSocket.off(`${currentUserId}declined`).on(`${currentUserId}declined` , async () => {
-			handleInvitationDeclined();
+			if (defaultComponent === invitationWaiting)
+				handleInvitationDeclined();
 		});
 
 		

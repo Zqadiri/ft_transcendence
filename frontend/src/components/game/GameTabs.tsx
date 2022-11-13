@@ -12,7 +12,7 @@ import { Location, useLocation } from "react-router-dom";
 
 let					g_setTabIndex: Function;
 let					g_setActiveComponent: Function;
-let					defaultComponent: string = selectionComponent;
+export let			defaultComponent: string = selectionComponent;
 let					defaultTabIndex: number = 1;
 
 export	function	useEffectOnce(callback: any): any {
