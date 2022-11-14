@@ -34,11 +34,14 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		this.logger.log('Initiaalized!');
 	}
 
-	async handleConnection(client: Socket, ...args: any[]) {
+	async handleConnection(
+// @ConnectedSocket()
+client: Socket, ...args: any[]) {
 		try{
 			await this.chatsService.getUserFromSocket(client);
 		}catch(e)
 		{
+			console.log({e})
 			console.error('Failed to verify token');
 		}
 	}
@@ -48,7 +51,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	}
 
 	@SubscribeMessage('saveChatRoom')
-	async create(@ConnectedSocket() client: Socket, @MessageBody() createChatDto: ChatLogsDto) {
+	async create(
+@ConnectedSocket()
+client: Socket, @MessageBody() createChatDto: ChatLogsDto) {
 		try {
 			// emit the message just to specific room
 			const finduser = await this.chatsService.getUserFromSocket(client);
@@ -69,12 +74,15 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 			}
 		}catch (e)
 		{
+			console.log({d:e})
 			console.error('Failed to verify token');
 		}
 	}
 
 	@SubscribeMessage('getMessageToRoom')
-	async handleGetMessageToRoom(client: Socket, data: { userID: number, messageID: number }) {
+	async handleGetMessageToRoom(
+// @ConnectedSocket()
+client: Socket, data: { userID: number, messageID: number }) {
 		try{
 			const user = await this.chatsService.getUserFromSocket(client);
 			const message: ChatLogsDto = await this.chatLogsService.GetMessage(data.messageID);
@@ -86,6 +94,7 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 				client.emit('messageToRoomAck', message);
 		} catch(e)
 		{
+			console.log({f:e})
 			console.error('Failed to verify token');
 		}
 		
@@ -109,7 +118,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	// }
 
 	@SubscribeMessage('socketJoinRoom')
-	async handleJoinRoom(client: Socket, roomName: string) {
+	async handleJoinRoom(
+//@ConnectedSocket()
+client: Socket, roomName: string) {
 		try {
 			const user = await this.chatsService.getUserFromSocket(client);
 			const room = await this.chatsService.findRoom(roomName);
@@ -123,7 +134,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 
 
 	@SubscribeMessage('socketleaveRoom')
-	async handleLeaveRoom(@ConnectedSocket() client: Socket, roomName: string) {
+	async handleLeaveRoom(
+//@ConnectedSocket()
+client: Socket, roomName: string) {
 		try {
 			const user = await this.chatsService.getUserFromSocket(client);
 			const room = await this.chatsService.findRoom(roomName);
@@ -135,7 +148,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	}
 
 	@SubscribeMessage('GetRoomMessages')
-	async displayRoomMessages(client: Socket, roomName: string) {
+	async displayRoomMessages(
+// @ConnectedSocket()
+client: Socket, roomName: string) {
 		try {
 			const user = await this.chatsService.getUserFromSocket(client);
 			const messages = await this.chatLogsService.DisplayRoomMessages(roomName);
@@ -147,15 +162,20 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 	}
 
 	@SubscribeMessage('SocketMuteUser')
-	async Mute(client: Socket, @MessageBody() setRolesDto: BanOrMuteMembersPlusTokenDto) {
+	async Mute(
+@ConnectedSocket()
+client: Socket, @MessageBody() setRolesDto: BanOrMuteMembersPlusTokenDto) {
 
 		try {
 			const user = await this.chatsService.getUserFromSocket(client);
 			const room = await this.chatsService.findRoom(setRolesDto.RoomID);
 
 			if (room.AdminsID.includes(user.id) || room.ownerID == user.id) {
+				console.log("is in here?")
+				console.log({setroles: setRolesDto})
 				this.server.to(setRolesDto.RoomID).emit('Muted', setRolesDto);
 			}
+			console.log("test test")
 		} catch (e) {
 			console.error('Failed to mute this user in this chat room', e);
 			throw e;
@@ -166,7 +186,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		Sesco Wrote This :)
 	*/
 	@SubscribeMessage('inviteToGame')
-	async	handleInviteToGame(client: Socket, {friendId, roomName} : {friendId: number, roomName: string}) {
+	async	handleInviteToGame(
+// @ConnectedSocket()
+client: Socket, {friendId, roomName} : {friendId: number, roomName: string}) {
 		try {
 			const user = await this.chatsService.getUserFromSocket(client);
 			const rooms: Chat[] = await this.chatsService.AllUserRoom(user.id);
@@ -178,7 +200,9 @@ export class ChatsGateway implements OnGatewayInit, OnGatewayConnection, OnGatew
 		} catch {}
 	}
 	@SubscribeMessage('invitationDeclined')
-	async	handleInvitationDeclined(client: Socket, friendId: number) {
+	async	handleInvitationDeclined(
+//@ConnectedSocket()
+client: Socket, friendId: number) {
 		try {
 			const user = await this.chatsService.getUserFromSocket(client);
 

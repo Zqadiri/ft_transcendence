@@ -70,7 +70,7 @@ export class GamesService {
 
 	async findGameByUserid(userId: number) {
 
-		const game = await this.GameRepo
+		const game: Game = await this.GameRepo
 			.createQueryBuilder('game')
 			.where('game.isPlaying IS NOT FALSE')
 			.andWhere(

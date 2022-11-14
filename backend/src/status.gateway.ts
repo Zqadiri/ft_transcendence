@@ -1,4 +1,4 @@
-import { OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { UsersService } from './users/users.service';
 import { Server, Socket } from 'socket.io';
 import { Inject, Logger } from '@nestjs/common';
@@ -55,7 +55,9 @@ export class StatusGateway implements OnGatewayDisconnect {
 	}
 
 	@SubscribeMessage("updateStatus")
-	async handleUpdateStatus(client: any, status: string) {
+	async handleUpdateStatus(
+// @ConnectedSocket()
+client: Socket, status: string) {
 		try {
 			const	userData = await this.chatsService.getUserFromSocket(client);
 			let user: U_Status;

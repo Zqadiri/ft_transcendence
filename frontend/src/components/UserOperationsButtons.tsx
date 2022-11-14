@@ -56,7 +56,17 @@ const UserOperationsButtons = ({ user, thisuser, params, updateUserProfile }: { 
 						}}>Unblock User</Button>
 					</ShowConditionally>
 				</>
-				<Button>This User Has Blocked You</Button>
+				<>
+					<Button>This User Has Blocked You</Button>
+					<ShowConditionally cond={!thisuser?.blockedID.includes(user?.id ? user.id : 0)}>
+						<Button className="mutate block" onClick={() => {
+							friendOp("/block_user", user);
+						}}>Block User</Button>
+						<Button className="mutate unblock" onClick={() => {
+							friendOp("/unblock_user", user);
+						}}>Unblock User</Button>
+					</ShowConditionally>
+				</>
 			</ShowConditionally>
 		</>
 	)

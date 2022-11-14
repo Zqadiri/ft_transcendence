@@ -63,7 +63,7 @@ export class UsersController {
 		res.cookie("avatar", "/" + file.path, {
 			maxAge: 1000 * 60 * 60 * 24,
 			httpOnly: false,
-			domain: '10.11.7.6',
+			domain: 'localhost',
 			sameSite: "strict",
 			secure: false,
 			path: '/'
@@ -73,7 +73,7 @@ export class UsersController {
 	
 	@ApiOperation({ summary: 'Change a user\'s username' })
 	@Post('/update_username')
-	async updateUsername(@Req() req, @Body('username') newUsername: string, @Res() res) {
+	async updateUsername(@Req() req: RequestWithUser, @Body('username') newUsername: string, @Res() res) {
 		var result :any;
 		var data : updateUsernameDto;
 		// data.id = req.user.id;
@@ -84,7 +84,7 @@ export class UsersController {
 			res.cookie('name', newUsername,{
 				maxAge: 1000 * 60 * 60 * 24,
 				httpOnly: false,
-				domain: '10.11.7.6',
+				domain: 'localhost',
 				sameSite: "strict",
 				secure: false,
 				path: '/'
@@ -242,7 +242,7 @@ export class UsersController {
 
 	@ApiOperation({ summary: 'get friends list'})
 	@Get('/friends_list')
-	async friendsList(@Req() req: any, @Res() res: any){
+	async friendsList(@Req() req: RequestWithUser, @Res() res: any){
 		const user = await this.usersService.getUserById(req.user.id);
 		if (!user)
 			throw new BadRequestException("user does not exist");
@@ -304,7 +304,7 @@ export class UsersController {
     @Get('/all')
     async getLiveGames() {
 		await	this.usersService.updateRank();
-        return	this.usersService.getAllUsers();
+        return	await this.usersService.getAllUsersSecure();
     }
 
 }

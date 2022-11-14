@@ -20,6 +20,11 @@ export class UpdateAfterGameDto{
     public updatedAt : Date;
 }
 
+export class UserGameDataDto extends UpdateAfterGameDto {
+	public username: string;
+	public avatar: string;
+}
+
 export class updateUsernameDto{
     // public id: number;
 

@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Post, HttpCode, Body, Param, Req } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, HttpCode, Body, Param, Req, ForbiddenException } from '@nestjs/common';
 import { CreateRoomDto, RoomDto, SetRolestoMembersDto, RoomNamedto, BanOrMuteMembersDto, RoomWoUserDto } from './dto/create-chat.dto';
 import { ChatsService } from './chats.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -70,16 +70,22 @@ export class ChatController {
     @Post('/GetRoomInfo')
     async GetRoomInfo(@Req() req: RequestWithUser, @Body() room: { id: number })
     {
-		return this.chatService.Room(room.id);
+		const froom = await this.chatService.findRoomWithId(room.id);
+		if (froom && froom.userID.includes(req.user.id)) {
+			return await this.chatService.Room(room.id);
+		}
+		else {
+			throw new ForbiddenException();
+		}
     }
     
     @UseGuards(jwtAuthGuard)
     @Get('/userStats/:RoomName')
-    async getuserstat(@Param('RoomName') RoomName: string)
+    async getuserstat(@Req() req: RequestWithUser, @Param('RoomName') RoomName: string)
     {
         try {
             // console.log("get users with stats from room...", RoomName);
-            return await this.chatService.userStat(RoomName);
+            return await this.chatService.userStat(RoomName, req.user.id);
          } catch (e) {
              console.error('Failed to get users with stats from room', e);
              throw e;

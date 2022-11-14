@@ -311,6 +311,7 @@ const NavAndChatWrapper = () => {
 		// socket.to("room").emit("bannedFromRoom", { roomName: "room", releaseTime: })
 
 		chatSocket.off("messageToRoomSyn").on("messageToRoomSyn", (data) => {
+			console.log({getroommessagesdata: data})
 			chatSocket.emit("getMessageToRoom", { userID: cookies.get("id"), messageID: data.id });
 		})
 

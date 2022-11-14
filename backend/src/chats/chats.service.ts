@@ -74,6 +74,11 @@ export class ChatsService {
   {
     return await this.Chatrepository.findOneBy({ name: roomName });
   }
+
+  async findRoomWithId(roomId: number)
+  {
+    return await this.Chatrepository.findOneBy({ id: roomId });
+  }
   
   async checkRoomOwner(RoomName: string, owner: number)
   {
@@ -317,7 +322,7 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     return p;
   }
 
-  async userStat(roomName: string)
+  async userStat(roomName: string, userId: number)
   {
     const user_data = [];
     // check if the room already exist
@@ -326,6 +331,9 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     if (!name){
       throw new BadRequestException({code: 'invalid chat room name', message: `Room with '${roomName}' does not exist`})
     }
+	if (!name.userID.includes(userId)) {
+		throw new ForbiddenException();
+	}
       
       const profils = await this.Userrepository
       .createQueryBuilder("db_user")
@@ -446,7 +454,8 @@ async InviteUser(owner: number, SetRolestoMembersDto: SetRolestoMembersDto)
     .select(['*'])
     .where("id=:id", { id })
     .getRawOne()
-    return room; 
+	let hacks = {...room, password: ""}
+    return hacks;
   }
 
   async AllUserRoom(userId: number)

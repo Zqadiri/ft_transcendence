@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsNumber} from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumber, Matches} from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Transform } from "class-transformer";
 
@@ -33,6 +33,7 @@ export class CreateRoomDto
 {
 	@Transform(({ value }) => {return value.trim()})
 	@IsNotEmpty()
+	@Matches(/^(?!.*(\d+,\d+|Room:\d+:\d+|Room #\d+)).*$/, { message: "Name is reserved" })
 	@ApiProperty({ description: "Chat Room name" })
 	name: string;
 

@@ -1,5 +1,5 @@
 import { Inject, Logger } from '@nestjs/common';
-import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayDisconnect, OnGatewayConnection } from '@nestjs/websockets';
+import { SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayDisconnect, OnGatewayConnection, ConnectedSocket } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatsService } from 'src/chats/chats.service';
 import { UpdateGameService } from './update-game.service';
@@ -42,7 +42,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 		};
 	}
 
-	async handleConnection(client: any, ...args: any[]) {
+	async handleConnection(
+//@ConnectedSocket()
+client: Socket, ...args: any[]) {
 		try {
 			await this.chatsService.getUserFromSocket(client);
 			this.logger.log(client.id + " Connected");
@@ -81,7 +83,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	@SubscribeMessage("joinTheme1")
-	async handleJoinTheme1(client: Socket) {
+	async handleJoinTheme1(
+//@ConnectedSocket()
+client: Socket) {
 		try {
 			const	user = await this.chatsService.getUserFromSocket(client);
 			const	roomName = "Room #" + this.themeOne.roomCounter;
@@ -102,7 +106,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	@SubscribeMessage("joinTheme2")
-	async handleJoinTheme2(client: Socket) {
+	async handleJoinTheme2(
+//@ConnectedSocket()
+client: Socket) {
 		try {
 			const	user = await this.chatsService.getUserFromSocket(client);
 			const	roomName = "Room #" + this.themeTwo.roomCounter;
@@ -126,7 +132,9 @@ export class GameGateway implements OnGatewayDisconnect, OnGatewayConnection {
 	}
 
 	@SubscribeMessage("joinInvitation")
-	async handleJoinInvitation(client: Socket, {roomName, userCounter}) {
+	async handleJoinInvitation(
+//@ConnectedSocket()
+client: Socket, {roomName, userCounter}) {
 		let		clients = await this.server.in(roomName).allSockets();
 
 		// this case is to protect the inviter disconnection before invite is accepted

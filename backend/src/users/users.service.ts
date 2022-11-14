@@ -2,7 +2,7 @@ import { Injectable, HttpStatus, HttpException, BadRequestException } from '@nes
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto, UpdateAfterGameDto, updateUsernameDto } from './dto/update-user.dto';
+import { UpdateUserDto, UpdateAfterGameDto, updateUsernameDto, UserGameDataDto } from './dto/update-user.dto';
 import { UserRepository } from './user.repository';
 import { AvatarDto } from './dto/upload.dto';
 import { validate } from 'class-validator';
@@ -151,7 +151,34 @@ export class UsersService {
 		return await this.userRepository.save(user);
 	}
 
+	removeSensitiveData(user: User) {
+		try {
+			let ret: User = JSON.parse(JSON.stringify(user));
+	
+			// delete ret.twoFacAuthSecret;
+			delete ret.email;
+			// delete ret.blockedID;
+			// delete ret.outgoingFRID;
+			// delete ret.incomingFRID;
+			return ret
+			// return user;
+		} catch {}
+		return user;
+	}
+
 	async getUserById(id: number): Promise<User> {
+		const player = await this.userRepository.findOne({
+			where: {
+				id: id,
+			}
+		});
+		let ret: User = this.removeSensitiveData(player);
+		if (ret)
+			delete ret.twoFacAuthSecret;
+		return ret;
+	}
+
+	async getUserByIdAll(id: number): Promise<User> {
 		const player = await this.userRepository.findOne({
 			where: {
 				id: id,
@@ -166,7 +193,7 @@ export class UsersService {
 				username: name,
 			}
 		});
-		return player;
+		return this.removeSensitiveData(player);
 	}
 
 	async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
@@ -196,9 +223,25 @@ export class UsersService {
 			.getOne()
 		return (friends);
 	}
+	async getAllUsersSecure() {
+		return (await this.getAllUsers()).map(user => {
+			return {
+				id: user.id,
+				username: user.username,
+				status: user.status,
+				gameCounter: user.gameCounter,
+				wins: user.wins,
+				losses: user.losses,
+				level: user.level,
+				rank: user.rank,
+				avatar: user.avatar,
+				xp: user.xp
+			}
+		});
+	}
 
 	async getAllUsers() {
-		const users = await this.userRepository.find();
+		const users: User[] = await this.userRepository.find();
 
 		if (!users.length)
 			return null;
