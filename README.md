@@ -30,4 +30,4 @@ If you are more curious about this project , you could find our Notion documenta
 - [@ZainebQadiri](https://github.com/Zqadiri)
 - [@SaraBensarghin](https://github.com/sbensarg)
 - [@sickl8](https://github.com/sickl8)
-- [@AyoubAmzouar](https://github.com/Ayoub-Amzouar)
+- [@AyoubAmzouar](https://github.com/Ayoub-Amzouar) 
